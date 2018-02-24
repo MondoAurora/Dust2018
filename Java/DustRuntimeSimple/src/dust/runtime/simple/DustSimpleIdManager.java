@@ -3,7 +3,7 @@ package dust.runtime.simple;
 import dust.pub.DustRuntimeComponents;
 import dust.pub.DustUtilsDev;
 
-public class DustSimpleIdManager implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustIdManager {
+public class DustSimpleIdManager implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustIdManager, DustRuntimeComponents.DustShutdownAware {
 	
 	DustUtilsFactory<String, SimpleType> factType = new DustUtilsFactory<String, SimpleType>(true) {
 		@Override
@@ -23,4 +23,9 @@ public class DustSimpleIdManager implements DustSimpleRuntimeComponents, DustRun
 		return factType.get(idType).get(idField);
 	}
 
+	@Override
+	public void shutdown() throws Exception {
+		DustUtilsDev.dump("Shut down Identifier manager");
+		factType.clear();
+	}
 }
