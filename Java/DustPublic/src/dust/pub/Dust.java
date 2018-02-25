@@ -18,6 +18,10 @@ public class Dust implements DustRuntimeComponents {
 
 		idMgr = optLoadInit(cfg, DustConfigKeys.DustIdManager);
 		rt = optLoadInit(cfg, DustConfigKeys.DustRuntime);
+
+		DustBinaryManager binMgr = optLoadInit(cfg, DustConfigKeys.DustBinaryManager);
+		rt.setBinaryManager(binMgr);
+		
 		optLoadInit(cfg, DustConfigKeys.DustNodeInit);
 	}
 

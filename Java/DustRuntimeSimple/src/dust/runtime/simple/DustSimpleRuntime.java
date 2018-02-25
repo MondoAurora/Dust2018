@@ -4,10 +4,18 @@ import dust.pub.DustRuntimeComponents;
 import dust.pub.DustUtilsDev;
 
 public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustRuntime {
+	
+	DustSimpleContext ctxRoot;
+	DustBinaryManager binMgr;
 
 	@Override
 	public void init(DustConfig config) throws Exception {
 		DustUtilsDev.dump("Initializing runtime", this.getClass());
+	}
+	
+	@Override
+	public void setBinaryManager(DustBinaryManager binMgr) {
+		this.binMgr = binMgr;
 	}
 
 	

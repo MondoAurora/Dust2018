@@ -8,7 +8,7 @@ public interface DustRuntimeComponents extends DustComponents {
 	String CFG_LISTFLAG = "*";
 	
 	enum DustConfigKeys {
-		DustIdManager, DustRuntime, DustNodeInit
+		DustIdManager, DustBinaryManager, DustRuntime, DustNodeInit
 	}
 
 	abstract class DustConfig {
@@ -43,17 +43,24 @@ public interface DustRuntimeComponents extends DustComponents {
 	interface DustShutdownAware {
 		void shutdown() throws Exception;
 	}
+	
+	public interface DustBinaryManager extends DustShutdownAware {
+		void initLogicInstance(DustEntity owner, DustEntity command) throws Exception;
+		void sendMessage(DustEntity msg) throws Exception;
+		
+		<LogicClass> Class<LogicClass> getEntityLogicClass(DustEntity entity) throws Exception;
+		DustEntity enterCustomLogic(Object logic) throws Exception;
+		void leaveCustomLogic();
+	}
 
-	interface DustDataContainer {
+
+	interface DustRuntime extends DustConfigurable {
+		void setBinaryManager(DustBinaryManager binMgr);
 		DustEntity getEntity(DustContext root, DustField... path);
 
 		<ValType> ValType getFieldValue(DustEntity entity, DustField field);
-
 		void setFieldValue(DustEntity entity, DustField field, Object value);
 
-	}
-
-	interface DustRuntime extends DustConfigurable, DustDataContainer {
 		void send(DustEntity msg);
 	}
 

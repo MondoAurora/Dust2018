@@ -2,6 +2,7 @@ package dust.runtime.simple;
 
 import dust.pub.DustRuntimeComponents;
 import dust.pub.DustUtilsDev;
+import dust.utils.DustUtilsFactory;
 
 public class DustSimpleIdManager implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustIdManager, DustRuntimeComponents.DustShutdownAware {
 	
