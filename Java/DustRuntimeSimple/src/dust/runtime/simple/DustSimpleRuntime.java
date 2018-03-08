@@ -27,14 +27,12 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRunti
 
 	@Override
 	public <ValType> ValType getFieldValue(DustEntity entity, DustField field) {
-		// TODO Auto-generated method stub
-		return null;
+		return ((SimpleEntity)entity).getFieldValue(field);
 	}
 
 	@Override
 	public void setFieldValue(DustEntity entity, DustField field, Object value) {
-		// TODO Auto-generated method stub
-		
+		((SimpleEntity)entity).setFieldValue(field, value);
 	}
 
 	@Override

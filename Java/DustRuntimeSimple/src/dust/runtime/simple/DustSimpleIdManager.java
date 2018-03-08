@@ -6,12 +6,17 @@ import dust.utils.DustUtilsFactory;
 
 public class DustSimpleIdManager implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustIdManager, DustRuntimeComponents.DustShutdownAware {
 	
-	DustUtilsFactory<String, SimpleType> factType = new DustUtilsFactory<String, SimpleType>(true) {
+	private DustUtilsFactory<String, SimpleType> factType = new DustUtilsFactory<String, SimpleType>(true) {
 		@Override
 		protected SimpleType create(String key, Object... hints) {
 			return new SimpleType(key);
 		}
 	};
+	
+	SimpleType getType(String idType) {
+		return factType.get(idType);
+	}
+
 
 	@Override
 	public void init(DustConfig config) throws Exception {
@@ -20,8 +25,8 @@ public class DustSimpleIdManager implements DustSimpleRuntimeComponents, DustRun
 	}
 
 	@Override
-	public DustField getField(String idType, String idField) {
-		return factType.get(idType).get(idField);
+	public SimpleField getField(String idType, String idField) {
+		return getType(idType).get(idField);
 	}
 
 	@Override

@@ -6,8 +6,12 @@ public interface DustComponents {
 		esTemporal, esInSync, esRefChanged, esChanged, esConstructed, esDestructed
 	}
 
-	interface DustIdentifier {
+	enum DustFieldType {
+		fldId, fldInt, fldFloat, fldBool, fldRefSingle, fldRefSet, fldRefArray
 	}
+
+//	interface DustIdentifier {
+//	}
 
 	interface DustField {
 	}

@@ -3,15 +3,19 @@ package dust.runtime.simple;
 import java.util.HashMap;
 import java.util.Map;
 
+import dust.gen.base.DustBaseServices;
 import dust.pub.DustRuntimeComponents;
 import dust.utils.DustUtilsFactory;
 
-public interface DustSimpleRuntimeComponents extends DustRuntimeComponents {
+public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, DustBaseServices {
 	String IDSEP = ".";
 
 	class SimpleField implements DustField {
 		SimpleType type;
+		
 		String id;
+		DustFieldType fldType;
+		SimpleField revField;
 
 		public SimpleField(SimpleType type, String key) {
 			this.type = type;
@@ -21,6 +25,11 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents {
 		@Override
 		public String toString() {
 			return id;
+		}
+		
+		
+		public DustFieldType getFldType() {
+			return fldType;
 		}
 	}
 
@@ -132,7 +141,27 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents {
 				m.setFieldValue(field, value);
 			}
 		}
+	}
+	
+	abstract class SimpleFilter implements DustBaseFilter {
+		public boolean dustFilterMatch(DustEntity entity) throws Exception {
+			return filter((SimpleEntity) entity);
+		}
 
+		protected abstract boolean filter(SimpleEntity entity);
+	}
+
+	abstract class SimpleProcessor implements DustBaseProcessor {
+		@Override
+		public void dustProcessorProcess(DustEntity entity) throws Exception {
+			process((SimpleEntity) entity);
+		}
+
+		protected abstract void process(SimpleEntity entity);
+	}
+
+	interface DustBaseProcessor {
+		void dustProcessorProcess(DustEntity entity) throws Exception;
 	}
 
 }

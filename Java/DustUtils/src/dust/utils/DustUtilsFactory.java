@@ -15,6 +15,10 @@ public abstract class DustUtilsFactory<KeyType, ValType> {
 	
 	protected abstract ValType create(KeyType key, Object... hints);
 	
+	protected void initNew(ValType item, KeyType key, Object... hints) {
+		
+	}
+	
 	public synchronized ValType peek(KeyType key) {
 		return content.get(key);
 	}
@@ -25,6 +29,7 @@ public abstract class DustUtilsFactory<KeyType, ValType> {
 		if ( null == v ) {
 			v = create(key, hints);
 			content.put(key, v);
+			initNew(v, key, hints);
 		}
 		
 		return v;
