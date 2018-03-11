@@ -9,7 +9,7 @@ import dust.utils.DustUtilsFactory;
 
 public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseServices, DustBaseServices.DustBaseSource {
 
-	private DustSimpleIdManager idMgr;
+	private DustSimpleMetaManager idMgr;
 	
 	private Set<DustBaseSource> parentSources = new HashSet<>();
 	
@@ -37,14 +37,14 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 		}
 	};
 	
-	DustSimpleContext(DustSimpleIdManager idMgr) {
+	DustSimpleContext(DustSimpleMetaManager idMgr) {
 		this.idMgr = idMgr;
 	}
 
-	public DustEntity getEntity(DustContext root, DustField... path) {
+	public DustEntity getEntity(DustContext root, DustAttrDef... path) {
 		SimpleEntity e = rootEntities.get(root);
 		
-		for ( DustField f : path ) {
+		for ( DustAttrDef f : path ) {
 			e = e.getFieldValue(f);
 			if ( null == e ) {
 				return null;

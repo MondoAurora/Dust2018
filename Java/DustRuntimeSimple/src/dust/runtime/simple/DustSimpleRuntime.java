@@ -1,7 +1,6 @@
 package dust.runtime.simple;
 
 import dust.pub.DustRuntimeComponents;
-import dust.pub.DustUtilsDev;
 
 public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustRuntime {
 	
@@ -10,7 +9,6 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRunti
 
 	@Override
 	public void init(DustConfig config) throws Exception {
-		DustUtilsDev.dump("Initializing runtime", this.getClass());
 	}
 	
 	@Override
@@ -20,18 +18,18 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRunti
 
 	
 	@Override
-	public DustEntity getEntity(DustContext root, DustField... path) {
+	public DustEntity getEntity(DustContext root, DustAttrDef... path) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <ValType> ValType getFieldValue(DustEntity entity, DustField field) {
+	public <ValType> ValType getAttrValue(DustEntity entity, DustAttrDef field) {
 		return ((SimpleEntity)entity).getFieldValue(field);
 	}
 
 	@Override
-	public void setFieldValue(DustEntity entity, DustField field, Object value) {
+	public void setAttrValue(DustEntity entity, DustAttrDef field, Object value) {
 		((SimpleEntity)entity).setFieldValue(field, value);
 	}
 

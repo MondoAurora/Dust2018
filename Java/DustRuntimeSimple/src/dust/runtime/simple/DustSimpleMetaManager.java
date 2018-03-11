@@ -1,10 +1,9 @@
 package dust.runtime.simple;
 
 import dust.pub.DustRuntimeComponents;
-import dust.pub.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 
-public class DustSimpleIdManager implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustIdManager, DustRuntimeComponents.DustShutdownAware {
+public class DustSimpleMetaManager implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustMetaManager, DustRuntimeComponents.DustShutdownAware {
 	
 	private DustUtilsFactory<String, SimpleType> factType = new DustUtilsFactory<String, SimpleType>(true) {
 		@Override
@@ -20,18 +19,25 @@ public class DustSimpleIdManager implements DustSimpleRuntimeComponents, DustRun
 
 	@Override
 	public void init(DustConfig config) throws Exception {
-		DustUtilsDev.dump("Initializing Identifier manager", this.getClass());
-
-	}
-
-	@Override
-	public SimpleField getField(String idType, String idField) {
-		return getType(idType).get(idField);
 	}
 
 	@Override
 	public void shutdown() throws Exception {
-		DustUtilsDev.dump("Shut down Identifier manager");
 		factType.clear();
+	}
+
+	@Override
+	public SimpleField getAttrDef(String idType, String id) {
+		return getType(idType).get(id);
+	}
+
+	@Override
+	public DustLinkDef getLinkDef(String idType, String id) {
+		return null;
+	}
+
+	@Override
+	public DustMsgDef getMsgDef(String idService, String id) {
+		return null;
 	}
 }

@@ -8,13 +8,26 @@ import dust.pub.DustRuntimeComponents;
 import dust.utils.DustUtilsFactory;
 
 public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, DustBaseServices {
+	
+	enum DustEntityState {
+		esTemporal, esInSync, esRefChanged, esChanged, esConstructed, esDestructed
+	}
+
+	enum DustAttrType {
+		fldId, fldInt, fldFloat, fldBool;
+	}
+
+	enum DustLinkType {
+		linkSingle, linkSet, linkArray;
+	}
+	
 	String IDSEP = ".";
 
-	class SimpleField implements DustField {
+	class SimpleField implements DustAttrDef {
 		SimpleType type;
 		
 		String id;
-		DustFieldType fldType;
+		DustAttrType fldType;
 		SimpleField revField;
 
 		public SimpleField(SimpleType type, String key) {
@@ -28,7 +41,7 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 		}
 		
 		
-		public DustFieldType getFldType() {
+		public DustAttrType getAttrType() {
 			return fldType;
 		}
 	}
@@ -55,7 +68,7 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 
 	class SimpleModel {
 		SimpleType type;
-		Map<DustField, Object> values = new HashMap<>();
+		Map<DustAttrDef, Object> values = new HashMap<>();
 
 		public SimpleModel(SimpleType type) {
 			this.type = type;
@@ -66,31 +79,17 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 		}
 
 		@SuppressWarnings("unchecked")
-		public <ValType> ValType getFieldValue(DustField field) {
+		public <ValType> ValType getFieldValue(DustAttrDef field) {
 			return (ValType) values.get(field);
 		}
 
-		public void setFieldValue(DustField field, Object value) {
-			Object oldVal = values.get(field);
-			SimpleEntity ref = null;
-
-			if (oldVal instanceof SimpleEntity) {
-				ref = (SimpleEntity) oldVal;
-				if (null == value) {
-					ref.setState(DustEntityState.esDestructed);
-				} else {
-					ref.setFieldValue(null, value);
-				}
-			}
-
-			if (value instanceof SimpleEntity) {
-				ref.setFieldValue(null, value);
-				// set reference
-			} else {
-				values.put(field, value);
-			}
+		public void breakRef(DustAttrDef field, SimpleEntity ref) {
+			ref.setState(DustEntityState.esDestructed);
 		}
 
+		public void setFieldValue(DustAttrDef field, Object value) {
+			values.put(field, value);
+		}
 	}
 
 	class SimpleEntity implements DustEntity {
@@ -119,7 +118,6 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 			return ctx;
 		}
 
-		@Override
 		public DustEntityState getState() {
 			return state;
 		}
@@ -128,12 +126,12 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 			return type.toString();
 		}
 
-		public <ValType> ValType getFieldValue(DustField field) {
+		public <ValType> ValType getFieldValue(DustAttrDef field) {
 			SimpleModel m = factModels.peek(((SimpleField) field).type);
 			return (null == m) ? null : m.getFieldValue(field);
 		}
 
-		public void setFieldValue(DustField field, Object value) {
+		public void setFieldValue(DustAttrDef field, Object value) {
 			SimpleType tt = ((SimpleField) field).type;
 			SimpleModel m = (null == value) ? factModels.peek(tt) : factModels.get(tt);
 
@@ -142,26 +140,4 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 			}
 		}
 	}
-	
-	abstract class SimpleFilter implements DustBaseFilter {
-		public boolean dustFilterMatch(DustEntity entity) throws Exception {
-			return filter((SimpleEntity) entity);
-		}
-
-		protected abstract boolean filter(SimpleEntity entity);
-	}
-
-	abstract class SimpleProcessor implements DustBaseProcessor {
-		@Override
-		public void dustProcessorProcess(DustEntity entity) throws Exception {
-			process((SimpleEntity) entity);
-		}
-
-		protected abstract void process(SimpleEntity entity);
-	}
-
-	interface DustBaseProcessor {
-		void dustProcessorProcess(DustEntity entity) throws Exception;
-	}
-
 }
