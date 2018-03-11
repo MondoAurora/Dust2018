@@ -1,0 +1,5 @@
+Relation as an entity may not refer to field, it merely connects two entities.
+  field reference is another type, StructuralRelation.
+  perhaps relation may extend to dynamic, expression based, where the field definition contains expression
+  
+  That may result similar access to enumerating direct and dynamic relations, or even "all", including those not containing field

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>DustDocs</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>docs</name>
+			<type>2</type>
+			<locationURI>Dust2018/docs</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>Dust2018</name>
+			<value>file:/C:/Users/loran/work/git/Dust2018</value>
+		</variable>
+	</variableList>
+</projectDescription>
