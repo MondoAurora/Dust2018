@@ -47,9 +47,9 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 	}
 
 	class SimpleType extends DustUtilsFactory<String, SimpleField> {
-		String id;
+		DustEntity id;
 
-		public SimpleType(String key) {
+		public SimpleType(DustEntity key) {
 			super(true);
 
 			this.id = key;
@@ -60,10 +60,6 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 			return new SimpleField(this, key);
 		}
 
-		@Override
-		public String toString() {
-			return id;
-		}
 	}
 
 	class SimpleModel {

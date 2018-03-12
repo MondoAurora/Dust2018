@@ -2,7 +2,7 @@ package dust.pub;
 
 import java.io.PrintStream;
 
-public class DustUtilsDev implements DustComponents {
+public class DustUtilsDev extends DustUtils {
 	private static PrintStream out = System.out;
 
 	public static void dump(Object... stuff) {
@@ -19,17 +19,4 @@ public class DustUtilsDev implements DustComponents {
 			out.println();
 		}
 	}
-
-	public static boolean isEmpty(String str) {
-		return (null == str) ? true : str.isEmpty();
-	}
-	
-	public static void wrapException(Throwable t, DustEntity errInfo) {
-		if ( t instanceof DustException ) {
-			throw (DustException) t;
-		} else {
-			throw new DustException(errInfo, t);
-		}
-	}
-
 }

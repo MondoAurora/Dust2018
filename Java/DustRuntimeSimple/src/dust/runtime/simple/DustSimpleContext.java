@@ -55,17 +55,17 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 	}
 
 	@Override
-	public boolean dustSourceIsTypeSupported(String type) {
+	public boolean dustSourceIsTypeSupported(DustEntity eType) {
 		return true;
 	}
 
 	@Override
-	public SimpleEntity dustSourceGet(String type, String srcId, String revId) throws Exception {
-		return factGlobalEntities.get(idMgr.getType(type)).get(srcId, revId);
+	public SimpleEntity dustSourceGet(DustEntity eType, String srcId, String revId) throws Exception {
+		return factGlobalEntities.get(idMgr.getType(eType)).get(srcId, revId);
 	}
 
 	@Override
-	public void dustSourceFind(String type, DustEntity expression, DustEntity processor) throws Exception {
+	public void dustSourceFind(DustEntity eType, DustEntity expression, DustEntity processor) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}

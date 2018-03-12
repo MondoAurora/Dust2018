@@ -16,13 +16,6 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRunti
 		this.binMgr = binMgr;
 	}
 
-	
-	@Override
-	public DustEntity getEntity(DustContext root, DustAttrDef... path) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public <ValType> ValType getAttrValue(DustEntity entity, DustAttrDef field) {
 		return ((SimpleEntity)entity).getFieldValue(field);
@@ -37,6 +30,19 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRunti
 	public void send(DustEntity msg) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void processRefs(DustItemProcessor proc, DustEntity root, DustLinkDef... path) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public DustEntity modifyRefs(DustRefCommand refCmd, DustEntity left, DustEntity right, DustLinkDef linkDef,
+			Object... params) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

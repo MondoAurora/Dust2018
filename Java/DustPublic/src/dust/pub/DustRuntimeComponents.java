@@ -67,9 +67,10 @@ public interface DustRuntimeComponents extends DustComponents {
 	}
 
 	interface DustMetaManager extends DustConfigurable {
-		DustAttrDef getAttrDef(String idType, String id);
-		DustLinkDef getLinkDef(String idType, String id);
-		DustMsgDef getMsgDef(String idService, String id);
+		void registerUnit(Class<? extends Enum<?>> types, Class<? extends Enum<?>> services);
+//		DustAttrDef getAttrDef(Enum<?> eType, String id);
+//		DustLinkDef getLinkDef(Enum<?> eType, String id);
+//		DustMsgDef getMsgDef(Enum<?> eService, String id);
 	}
 
 	class DustConfigStd extends DustConfig {

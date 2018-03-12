@@ -64,9 +64,13 @@ public class Dust implements DustRuntimeComponents {
 		return ret;
 	}
 
-	public static DustAttrDef getAttrDef(String idType, String id) {
-		return META_MANAGER.getAttrDef(idType, id);
-	}
+//	public static void registerUnit(Class<? extends Enum<?>> types, Class<? extends Enum<?>> services) {
+//		META_MANAGER.registerUnit(types, services);		
+//	}
+
+//	public static DustAttrDef getAttrDef(DustEntity eType, String id) {
+//		return META_MANAGER.getAttrDef(eType, id);
+//	}
 	
 	public static <ValType> ValType getAttrValue(DustEntity entity, DustAttrDef field) {
 		return RUNTIME.getAttrValue(entity, field);
@@ -77,9 +81,9 @@ public class Dust implements DustRuntimeComponents {
 	}
 
 	
-	public static DustLinkDef getLinkDef(String idType, String id) {
-		return META_MANAGER.getLinkDef(idType, id);
-	}
+//	public static DustLinkDef getLinkDef(DustEntity eType, String id) {
+//		return META_MANAGER.getLinkDef(eType, id);
+//	}
 	
 	public static void processRefs(DustItemProcessor proc, DustEntity root, DustLinkDef... path) {
 		RUNTIME.processRefs(proc, root, path);

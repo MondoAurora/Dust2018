@@ -5,15 +5,15 @@ import dust.utils.DustUtilsFactory;
 
 public class DustSimpleMetaManager implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustMetaManager, DustRuntimeComponents.DustShutdownAware {
 	
-	private DustUtilsFactory<String, SimpleType> factType = new DustUtilsFactory<String, SimpleType>(true) {
+	private DustUtilsFactory<DustEntity, SimpleType> factType = new DustUtilsFactory<DustEntity, SimpleType>(true) {
 		@Override
-		protected SimpleType create(String key, Object... hints) {
+		protected SimpleType create(DustEntity key, Object... hints) {
 			return new SimpleType(key);
 		}
 	};
 	
-	SimpleType getType(String idType) {
-		return factType.get(idType);
+	SimpleType getType(DustEntity eType) {
+		return factType.get(eType);
 	}
 
 
@@ -25,19 +25,24 @@ public class DustSimpleMetaManager implements DustSimpleRuntimeComponents, DustR
 	public void shutdown() throws Exception {
 		factType.clear();
 	}
-
+	
 	@Override
-	public SimpleField getAttrDef(String idType, String id) {
-		return getType(idType).get(id);
+	public void registerUnit(Class<? extends Enum<?>> types, Class<? extends Enum<?>> services) {
+		// TODO Auto-generated method stub		
 	}
 
-	@Override
-	public DustLinkDef getLinkDef(String idType, String id) {
-		return null;
-	}
-
-	@Override
-	public DustMsgDef getMsgDef(String idService, String id) {
-		return null;
-	}
+//	@Override
+//	public SimpleField getAttrDef(DustEntity eType, String id) {
+//		return getType(eType).get(id);
+//	}
+//
+//	@Override
+//	public DustLinkDef getLinkDef(DustEntity eType, String id) {
+//		return null;
+//	}
+//
+//	@Override
+//	public DustMsgDef getMsgDef(DustEntity eService, String id) {
+//		return null;
+//	}
 }
