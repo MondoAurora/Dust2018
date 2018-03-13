@@ -3,12 +3,14 @@ package dust.pub;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface DustRuntimeComponents extends DustComponents {
+import dust.gen.dust.base.DustBaseComponents;
+
+public interface DustBootComponents extends DustBaseComponents {
 	String CFG_KEYVALUESEP = "=";
 	String CFG_LISTFLAG = "*";
 
 	enum DustConfigKeys {
-		DustMetaManager, DustBinaryManager, DustRuntime, DustNodeInit
+		DustBinaryManager, DustRuntime, DustNodeInit
 	}
 
 	abstract class DustConfig {
@@ -45,32 +47,29 @@ public interface DustRuntimeComponents extends DustComponents {
 	}
 
 	public interface DustBinaryManager extends DustShutdownAware {
-		void initLogicInstance(DustEntity owner, DustEntity command) throws Exception;
-		void sendMessage(DustEntity msg) throws Exception;
+		void initLogicInstance(DustBaseEntity owner, DustBaseEntity command) throws Exception;
+		void sendMessage(DustBaseEntity msg) throws Exception;
 
-		<LogicClass> Class<LogicClass> getEntityLogicClass(DustEntity entity) throws Exception;
-		DustEntity enterCustomLogic(Object logic) throws Exception;
+		<LogicClass> Class<LogicClass> getEntityLogicClass(DustBaseEntity entity) throws Exception;
+		DustBaseEntity enterCustomLogic(Object logic) throws Exception;
 		void leaveCustomLogic();
 	}
 
-	interface DustRuntime extends DustConfigurable {
+	interface DustRuntime extends DustConfigurable, DustBaseComponents.DustBaseBlockProcessor {
 		void setBinaryManager(DustBinaryManager binMgr);
 
-		<ValType> ValType getAttrValue(DustEntity entity, DustAttrDef field);
-		void setAttrValue(DustEntity entity, DustAttrDef field, Object value);
+		<ValType> ValType getAttrValue(DustBaseEntity entity, DustBaseAttributeDef field);
+		void setAttrValue(DustBaseEntity entity, DustBaseAttributeDef field, Object value);
 
-		void processRefs(DustItemProcessor proc, DustEntity root, DustLinkDef... path);
-		DustEntity modifyRefs(DustRefCommand refCmd, DustEntity left, DustEntity right, DustLinkDef linkDef,
+		void processRefs(DustBaseVisitor proc, DustBaseEntity root, DustBaseLinkDef... path);
+		DustBaseEntity modifyRefs(DustBaseLinkCommand refCmd, DustBaseEntity left, DustBaseEntity right, DustBaseLinkDef linkDef,
 				Object... params);
 
-		void send(DustEntity msg);
+		void send(DustBaseEntity msg);
 	}
 
 	interface DustMetaManager extends DustConfigurable {
 		void registerUnit(Class<? extends Enum<?>> types, Class<? extends Enum<?>> services);
-//		DustAttrDef getAttrDef(Enum<?> eType, String id);
-//		DustLinkDef getLinkDef(Enum<?> eType, String id);
-//		DustMsgDef getMsgDef(Enum<?> eService, String id);
 	}
 
 	class DustConfigStd extends DustConfig {

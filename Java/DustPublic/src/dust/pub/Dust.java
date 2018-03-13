@@ -1,12 +1,9 @@
 package dust.pub;
 
-import java.util.ArrayList;
-
-public class Dust implements DustRuntimeComponents {
+public class Dust implements DustBootComponents {
 	
-	private static DustMetaManager META_MANAGER;
 	private static DustRuntime RUNTIME;
-	private static ArrayList<DustShutdownAware> SHUTDOWN_COMPONENTS = new ArrayList<>();
+//	private static ArrayList<DustShutdownAware> SHUTDOWN_COMPONENTS = new ArrayList<>();
 	
 	public static void main(String[] args) throws Exception {
 		DustConfig cfg = new DustConfigConsole(args);
@@ -22,31 +19,39 @@ public class Dust implements DustRuntimeComponents {
 	}
 
 	protected static void shutdown() {
-		for(DustShutdownAware dsa : SHUTDOWN_COMPONENTS ) {
-			try {
-				DustUtilsDev.dump("Shutting down", dsa.getClass().getName());
-				dsa.shutdown();
-			} catch (Exception e) {
-				DustUtils.wrapException(e, null);
-			}
+		try {
+			RUNTIME.dustBaseBlockProcessorEnd(DustBaseVisitorResponse.OK, null);
+		} catch (Exception e) {
+			DustUtils.wrapException(e, null);
 		}
+		
+//		for(DustShutdownAware dsa : SHUTDOWN_COMPONENTS ) {
+//			try {
+//				DustUtilsDev.dump("Shutting down", dsa.getClass().getName());
+//				dsa.shutdown();
+//			} catch (Exception e) {
+//				DustUtils.wrapException(e, null);
+//			}
+//		}
 	}
 
 	protected static void initComps(DustConfig cfg) throws Exception {
-		META_MANAGER = optLoadInit(cfg, DustConfigKeys.DustMetaManager);
+//		META_MANAGER = optLoadInit(cfg, DustConfigKeys.DustMetaManager);
 		RUNTIME = optLoadInit(cfg, DustConfigKeys.DustRuntime);
 
 		DustBinaryManager binMgr = optLoadInit(cfg, DustConfigKeys.DustBinaryManager);
 		RUNTIME.setBinaryManager(binMgr);
 		
+		RUNTIME.dustBaseBlockProcessorBegin();
+		
 		optLoadInit(cfg, DustConfigKeys.DustNodeInit);
 	}
 
-	protected static void optAddShutdown(Object comp) {
-		if ( comp instanceof DustShutdownAware ) {
-			SHUTDOWN_COMPONENTS.add(0, (DustShutdownAware)comp);
-		}
-	}
+//	protected static void optAddShutdown(Object comp) {
+//		if ( comp instanceof DustShutdownAware ) {
+//			SHUTDOWN_COMPONENTS.add(0, (DustShutdownAware)comp);
+//		}
+//	}
 
 	@SuppressWarnings("unchecked")
 	protected static <RetType extends DustConfigurable> RetType optLoadInit(DustConfig cfg, DustConfigKeys key) throws Exception {
@@ -58,45 +63,29 @@ public class Dust implements DustRuntimeComponents {
 			DustUtilsDev.dump("Initializing", cName);
 			ret.init(cfg);
 			
-			optAddShutdown(ret);
+//			optAddShutdown(ret);
 		}
 		
 		return ret;
 	}
 
-//	public static void registerUnit(Class<? extends Enum<?>> types, Class<? extends Enum<?>> services) {
-//		META_MANAGER.registerUnit(types, services);		
-//	}
-
-//	public static DustAttrDef getAttrDef(DustEntity eType, String id) {
-//		return META_MANAGER.getAttrDef(eType, id);
-//	}
-	
-	public static <ValType> ValType getAttrValue(DustEntity entity, DustAttrDef field) {
+	public static <ValType> ValType getAttrValue(DustBaseEntity entity, DustBaseAttributeDef field) {
 		return RUNTIME.getAttrValue(entity, field);
 	}
 
-	public static void setAttrValue(DustEntity entity, DustAttrDef field, Object value) {
+	public static void setAttrValue(DustBaseEntity entity, DustBaseAttributeDef field, Object value) {
 		RUNTIME.setAttrValue(entity, field, value);
 	}
-
 	
-//	public static DustLinkDef getLinkDef(DustEntity eType, String id) {
-//		return META_MANAGER.getLinkDef(eType, id);
-//	}
-	
-	public static void processRefs(DustItemProcessor proc, DustEntity root, DustLinkDef... path) {
+	public static void processRefs(DustBaseVisitor proc, DustBaseEntity root, DustBaseLinkDef... path) {
 		RUNTIME.processRefs(proc, root, path);
 	}
 
-	public static DustEntity modifyRefs(DustRefCommand refCmd, DustEntity left, DustEntity right, DustLinkDef linkDef, Object... params) {
+	public static DustBaseEntity modifyRefs(DustBaseLinkCommand refCmd, DustBaseEntity left, DustBaseEntity right, DustBaseLinkDef linkDef, Object... params) {
 		return RUNTIME.modifyRefs(refCmd, left, right, linkDef, params);
 	}
-
-
 	
-	public static void send(DustEntity msg) {
+	public static void send(DustBaseEntity msg) {
 		RUNTIME.send(msg);
 	}
-
 }

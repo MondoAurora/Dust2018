@@ -1,13 +1,14 @@
-package dust.gen.base;
-import dust.pub.DustUnitComponents;
+package dust.gen.dust.utils;
 
-public interface DustUtilsComponents extends DustUnitComponents {
+import dust.gen.dust.meta.DustMetaComponents;
+
+public interface DustUtilsComponents extends DustMetaComponents {
 	
-	enum DustUtilsIdentifiedAtt implements DustAttrDef {
+	enum DustUtilsIdentifiedAtt implements DustBaseAttributeDef {
 		id
 	}
 	
-	enum DustUtilsTypes implements DustTypeDescriptor {
+	enum DustUtilsTypes implements DustMetaTypeDescriptor {
 		Identified(DustUtilsIdentifiedAtt.class,null);
 		
 		private final Class<? extends Enum<?>> atts;

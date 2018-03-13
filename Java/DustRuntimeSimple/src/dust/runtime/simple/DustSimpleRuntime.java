@@ -1,11 +1,15 @@
 package dust.runtime.simple;
 
-import dust.pub.DustRuntimeComponents;
+import dust.pub.DustBootComponents;
 
-public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRuntimeComponents.DustRuntime {
-	
+public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootComponents.DustRuntime {
+	DustSimpleMetaManager metaMgr;
 	DustSimpleContext ctxRoot;
 	DustBinaryManager binMgr;
+	
+	public DustSimpleRuntime() {
+		metaMgr = new DustSimpleMetaManager();
+	}
 
 	@Override
 	public void init(DustConfig config) throws Exception {
@@ -15,31 +19,39 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustRunti
 	public void setBinaryManager(DustBinaryManager binMgr) {
 		this.binMgr = binMgr;
 	}
+	
+	@Override
+	public void dustBaseBlockProcessorBegin() throws Exception {
+	}
+	
+	@Override
+	public void dustBaseBlockProcessorEnd(DustBaseVisitorResponse lastResp, Exception optException) throws Exception {
+	}
 
 	@Override
-	public <ValType> ValType getAttrValue(DustEntity entity, DustAttrDef field) {
+	public <ValType> ValType getAttrValue(DustBaseEntity entity, DustBaseAttributeDef field) {
 		return ((SimpleEntity)entity).getFieldValue(field);
 	}
 
 	@Override
-	public void setAttrValue(DustEntity entity, DustAttrDef field, Object value) {
+	public void setAttrValue(DustBaseEntity entity, DustBaseAttributeDef field, Object value) {
 		((SimpleEntity)entity).setFieldValue(field, value);
 	}
 
 	@Override
-	public void send(DustEntity msg) {
+	public void send(DustBaseEntity msg) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void processRefs(DustItemProcessor proc, DustEntity root, DustLinkDef... path) {
+	public void processRefs(DustBaseVisitor proc, DustBaseEntity root, DustBaseLinkDef... path) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public DustEntity modifyRefs(DustRefCommand refCmd, DustEntity left, DustEntity right, DustLinkDef linkDef,
+	public DustBaseEntity modifyRefs(DustBaseLinkCommand refCmd, DustBaseEntity left, DustBaseEntity right, DustBaseLinkDef linkDef,
 			Object... params) {
 		// TODO Auto-generated method stub
 		return null;

@@ -3,11 +3,11 @@ package dust.runtime.simple;
 import java.util.HashMap;
 import java.util.Map;
 
-import dust.gen.base.DustBaseServices;
-import dust.pub.DustRuntimeComponents;
+import dust.gen.dust.base.DustBaseServices;
+import dust.pub.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
-public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, DustBaseServices {
+public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBaseServices {
 	
 	enum DustEntityState {
 		esTemporal, esInSync, esRefChanged, esChanged, esConstructed, esDestructed
@@ -23,7 +23,7 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 	
 	String IDSEP = ".";
 
-	class SimpleField implements DustAttrDef {
+	class SimpleField implements DustBaseAttributeDef {
 		SimpleType type;
 		
 		String id;
@@ -47,9 +47,9 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 	}
 
 	class SimpleType extends DustUtilsFactory<String, SimpleField> {
-		DustEntity id;
+		DustBaseEntity id;
 
-		public SimpleType(DustEntity key) {
+		public SimpleType(DustBaseEntity key) {
 			super(true);
 
 			this.id = key;
@@ -64,7 +64,7 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 
 	class SimpleModel {
 		SimpleType type;
-		Map<DustAttrDef, Object> values = new HashMap<>();
+		Map<DustBaseAttributeDef, Object> values = new HashMap<>();
 
 		public SimpleModel(SimpleType type) {
 			this.type = type;
@@ -75,20 +75,20 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 		}
 
 		@SuppressWarnings("unchecked")
-		public <ValType> ValType getFieldValue(DustAttrDef field) {
+		public <ValType> ValType getFieldValue(DustBaseAttributeDef field) {
 			return (ValType) values.get(field);
 		}
 
-		public void breakRef(DustAttrDef field, SimpleEntity ref) {
+		public void breakRef(DustBaseAttributeDef field, SimpleEntity ref) {
 			ref.setState(DustEntityState.esDestructed);
 		}
 
-		public void setFieldValue(DustAttrDef field, Object value) {
+		public void setFieldValue(DustBaseAttributeDef field, Object value) {
 			values.put(field, value);
 		}
 	}
 
-	class SimpleEntity implements DustEntity {
+	class SimpleEntity implements DustBaseEntity {
 		private DustSimpleContext ctx;
 		private DustEntityState state;
 
@@ -122,12 +122,12 @@ public interface DustSimpleRuntimeComponents extends DustRuntimeComponents, Dust
 			return type.toString();
 		}
 
-		public <ValType> ValType getFieldValue(DustAttrDef field) {
+		public <ValType> ValType getFieldValue(DustBaseAttributeDef field) {
 			SimpleModel m = factModels.peek(((SimpleField) field).type);
 			return (null == m) ? null : m.getFieldValue(field);
 		}
 
-		public void setFieldValue(DustAttrDef field, Object value) {
+		public void setFieldValue(DustBaseAttributeDef field, Object value) {
 			SimpleType tt = ((SimpleField) field).type;
 			SimpleModel m = (null == value) ? factModels.peek(tt) : factModels.get(tt);
 

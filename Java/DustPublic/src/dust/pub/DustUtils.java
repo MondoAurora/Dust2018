@@ -1,6 +1,8 @@
 package dust.pub;
 
-public class DustUtils implements DustComponents {
+import dust.gen.dust.base.DustBaseComponents;
+
+public class DustUtils implements DustBaseComponents {
 
 	public static String toString(Object ob) {
 		return (null == ob) ? "" : ob.toString();
@@ -10,7 +12,7 @@ public class DustUtils implements DustComponents {
 		return (null == str) ? true : str.isEmpty();
 	}
 	
-	public static void wrapException(Throwable t, DustEntity errInfo) {
+	public static void wrapException(Throwable t, DustBaseEntity errInfo) {
 		if ( t instanceof DustException ) {
 			throw (DustException) t;
 		} else {

@@ -4,7 +4,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import dust.gen.base.DustBaseServices;
+import dust.gen.dust.base.DustBaseServices;
 import dust.utils.DustUtilsFactory;
 
 public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseServices, DustBaseServices.DustBaseSource {
@@ -13,7 +13,7 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 	
 	private Set<DustBaseSource> parentSources = new HashSet<>();
 	
-	private EnumMap<DustContext, SimpleEntity> rootEntities = new EnumMap<>(DustContext.class);
+	private EnumMap<DustBaseContext, SimpleEntity> rootEntities = new EnumMap<>(DustBaseContext.class);
 	private Set<SimpleEntity> allKnownEntities = new HashSet<>();
 	private DustUtilsFactory<SimpleType, DustUtilsFactory<String, SimpleEntity>> factGlobalEntities = new DustUtilsFactory<SimpleType, DustUtilsFactory<String, SimpleEntity>>(true) {
 		@Override
@@ -41,10 +41,10 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 		this.idMgr = idMgr;
 	}
 
-	public DustEntity getEntity(DustContext root, DustAttrDef... path) {
+	public DustBaseEntity getEntity(DustBaseContext root, DustBaseAttributeDef... path) {
 		SimpleEntity e = rootEntities.get(root);
 		
-		for ( DustAttrDef f : path ) {
+		for ( DustBaseAttributeDef f : path ) {
 			e = e.getFieldValue(f);
 			if ( null == e ) {
 				return null;
@@ -55,23 +55,23 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 	}
 
 	@Override
-	public boolean dustSourceIsTypeSupported(DustEntity eType) {
+	public boolean dustSourceIsTypeSupported(DustBaseEntity eType) {
 		return true;
 	}
 
 	@Override
-	public SimpleEntity dustSourceGet(DustEntity eType, String srcId, String revId) throws Exception {
+	public SimpleEntity dustSourceGet(DustBaseEntity eType, String srcId, String revId) throws Exception {
 		return factGlobalEntities.get(idMgr.getType(eType)).get(srcId, revId);
 	}
 
 	@Override
-	public void dustSourceFind(DustEntity eType, DustEntity expression, DustEntity processor) throws Exception {
+	public void dustSourceFind(DustBaseEntity eType, DustBaseEntity expression, DustBaseEntity processor) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void dustSourceDestruct(DustEntity entity) throws Exception {
+	public void dustSourceDestruct(DustBaseEntity entity) throws Exception {
 		((SimpleEntity)entity).setState(DustEntityState.esDestructed);
 	}
 	
