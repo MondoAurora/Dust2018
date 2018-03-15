@@ -4,11 +4,17 @@ public interface DustBaseComponents {
 
 	interface DustBaseEntity {
 	}
+	
+	enum DustEntityState implements DustBaseEntity {
+		Temporal, InSync, RefChanged, Changed, Constructed, Destructed
+	}
+	
 
-	interface DustBaseAttributeDef {
+
+	interface DustBaseAttribute {
 	}
 
-	interface DustBaseLinkDef {
+	interface DustBaseLink {
 	}
 
 	enum DustBaseLinkCommand implements DustBaseEntity {
@@ -31,5 +37,15 @@ public interface DustBaseComponents {
 	enum DustBaseContext implements DustBaseEntity {
 		Self, Message, Block;
 	}
+	
+	interface DustRuntime extends DustBaseBlockProcessor {
+		<ValType> ValType getAttrValue(DustBaseEntity entity, DustBaseAttribute field);
+		void setAttrValue(DustBaseEntity entity, DustBaseAttribute field, Object value);
 
+		void processRefs(DustBaseVisitor proc, DustBaseEntity root, DustBaseLink... path);
+		DustBaseEntity modifyRefs(DustBaseLinkCommand refCmd, DustBaseEntity left, DustBaseEntity right, DustBaseLink linkDef,
+				Object... params);
+
+		void send(DustBaseEntity msg);
+	}
 }

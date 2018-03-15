@@ -1,4 +1,4 @@
-package dust.pub;
+package dust.pub.boot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,22 +54,9 @@ public interface DustBootComponents extends DustBaseComponents {
 		DustBaseEntity enterCustomLogic(Object logic) throws Exception;
 		void leaveCustomLogic();
 	}
-
-	interface DustRuntime extends DustConfigurable, DustBaseComponents.DustBaseBlockProcessor {
+	
+	interface DustRuntimeBootable extends DustRuntime, DustConfigurable {
 		void setBinaryManager(DustBinaryManager binMgr);
-
-		<ValType> ValType getAttrValue(DustBaseEntity entity, DustBaseAttributeDef field);
-		void setAttrValue(DustBaseEntity entity, DustBaseAttributeDef field, Object value);
-
-		void processRefs(DustBaseVisitor proc, DustBaseEntity root, DustBaseLinkDef... path);
-		DustBaseEntity modifyRefs(DustBaseLinkCommand refCmd, DustBaseEntity left, DustBaseEntity right, DustBaseLinkDef linkDef,
-				Object... params);
-
-		void send(DustBaseEntity msg);
-	}
-
-	interface DustMetaManager extends DustConfigurable {
-		void registerUnit(Class<? extends Enum<?>> types, Class<? extends Enum<?>> services);
 	}
 
 	class DustConfigStd extends DustConfig {

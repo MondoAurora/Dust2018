@@ -9,8 +9,6 @@ import dust.utils.DustUtilsFactory;
 
 public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseServices, DustBaseServices.DustBaseSource {
 
-	private DustSimpleMetaManager idMgr;
-	
 	private Set<DustBaseSource> parentSources = new HashSet<>();
 	
 	private EnumMap<DustBaseContext, SimpleEntity> rootEntities = new EnumMap<>(DustBaseContext.class);
@@ -28,7 +26,7 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 				
 				protected void initNew(SimpleEntity item, String key, Object... hints) {
 					for ( DustBaseSource src : parentSources ) {
-						if ( src.dustSourceIsTypeSupported(typeKey.id)) {
+						if ( src.dustSourceIsTypeSupported(typeKey.getEntity())) {
 							// load the instance content
 						}
 					}
@@ -37,15 +35,11 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 		}
 	};
 	
-	DustSimpleContext(DustSimpleMetaManager idMgr) {
-		this.idMgr = idMgr;
-	}
-
-	public DustBaseEntity getEntity(DustBaseContext root, DustBaseAttributeDef... path) {
-		SimpleEntity e = rootEntities.get(root);
+	public DustBaseEntity getEntity(SimpleEntity root, DustBaseLink... path) {
+		SimpleEntity e = root;
 		
-		for ( DustBaseAttributeDef f : path ) {
-			e = e.getFieldValue(f);
+		for ( DustBaseLink lnk : path ) {
+//			e = e.getFieldValue(f);
 			if ( null == e ) {
 				return null;
 			}
@@ -61,7 +55,8 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 
 	@Override
 	public SimpleEntity dustSourceGet(DustBaseEntity eType, String srcId, String revId) throws Exception {
-		return factGlobalEntities.get(idMgr.getType(eType)).get(srcId, revId);
+		return null;
+//		return factGlobalEntities.get(metaMgr.getType(eType)).get(srcId, revId);
 	}
 
 	@Override
@@ -72,7 +67,7 @@ public class DustSimpleContext implements DustSimpleRuntimeComponents, DustBaseS
 
 	@Override
 	public void dustSourceDestruct(DustBaseEntity entity) throws Exception {
-		((SimpleEntity)entity).setState(DustEntityState.esDestructed);
+		((SimpleEntity)entity).setState(DustEntityState.Destructed);
 	}
 	
 

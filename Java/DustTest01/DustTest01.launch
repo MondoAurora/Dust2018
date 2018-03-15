@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/DustPublic/src/dust/pub/Dust.java"/>
+<listEntry value="/DustPublic/src/dust/pub/boot/DustBootConsole.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -10,7 +10,7 @@
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="dust.pub.Dust"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="dust.pub.boot.DustBootConsole"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="DustMetaManager=dust.runtime.simple.DustSimpleMetaManager DustRuntime=dust.runtime.simple.DustSimpleRuntime"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="DustTest01"/>
 </launchConfiguration>

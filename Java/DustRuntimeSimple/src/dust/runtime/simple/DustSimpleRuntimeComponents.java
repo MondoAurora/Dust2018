@@ -3,68 +3,82 @@ package dust.runtime.simple;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.omg.CORBA.CTX_RESTRICT_SCOPE;
+
 import dust.gen.dust.base.DustBaseServices;
-import dust.pub.DustBootComponents;
+import dust.gen.dust.meta.DustMetaComponents;
+import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
-public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBaseServices {
+public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBaseServices, DustMetaComponents {
 	
-	enum DustEntityState {
-		esTemporal, esInSync, esRefChanged, esChanged, esConstructed, esDestructed
-	}
-
-	enum DustAttrType {
-		fldId, fldInt, fldFloat, fldBool;
-	}
-
-	enum DustLinkType {
-		linkSingle, linkSet, linkArray;
-	}
-	
-	String IDSEP = ".";
-
-	class SimpleField implements DustBaseAttributeDef {
+	class SimpleAttribute {
 		SimpleType type;
 		
-		String id;
+		DustBaseAttribute id;
 		DustAttrType fldType;
-		SimpleField revField;
 
-		public SimpleField(SimpleType type, String key) {
+		public SimpleAttribute(SimpleType type, DustBaseAttribute key) {
 			this.type = type;
 			this.id = key;
 		}
 
 		@Override
 		public String toString() {
-			return id;
+			return id.toString();
 		}
-		
 		
 		public DustAttrType getAttrType() {
 			return fldType;
 		}
 	}
 
-	class SimpleType extends DustUtilsFactory<String, SimpleField> {
-		DustBaseEntity id;
+	class SimpleLinkDef {
+		SimpleType type;
+		
+		DustBaseLink id;
+		DustAttrType fldType;
+		SimpleLinkDef backRef;
 
-		public SimpleType(DustBaseEntity key) {
-			super(true);
-
+		public SimpleLinkDef(SimpleType type, DustBaseLink key) {
+			this.type = type;
 			this.id = key;
 		}
 
 		@Override
-		protected SimpleField create(String key, Object... hints) {
-			return new SimpleField(this, key);
+		public String toString() {
+			return id.toString();
+		}
+		
+		public DustAttrType getAttrType() {
+			return fldType;
+		}
+	}
+
+	class SimpleType extends DustUtilsFactory<DustBaseAttribute, SimpleAttribute> {
+		Enum<?> id;
+		SimpleEntity entity;
+
+		public SimpleType(Enum<?> key) {
+			super(true);
+
+			this.id = key;
+		}
+		
+		public SimpleEntity getEntity() {
+			return entity;
+		}
+
+		@Override
+		protected SimpleAttribute create(DustBaseAttribute key, Object... hints) {
+			return new SimpleAttribute(this, key);
 		}
 
 	}
 
 	class SimpleModel {
 		SimpleType type;
-		Map<DustBaseAttributeDef, Object> values = new HashMap<>();
+		Map<SimpleAttribute, Object> values = new HashMap<>();
 
 		public SimpleModel(SimpleType type) {
 			this.type = type;
@@ -75,16 +89,12 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 		}
 
 		@SuppressWarnings("unchecked")
-		public <ValType> ValType getFieldValue(DustBaseAttributeDef field) {
-			return (ValType) values.get(field);
+		public <ValType> ValType getFieldValue(SimpleAttribute att) {
+			return (ValType) values.get(att);
 		}
 
-		public void breakRef(DustBaseAttributeDef field, SimpleEntity ref) {
-			ref.setState(DustEntityState.esDestructed);
-		}
-
-		public void setFieldValue(DustBaseAttributeDef field, Object value) {
-			values.put(field, value);
+		public void setFieldValue(SimpleAttribute att, Object value) {
+			values.put(att, value);
 		}
 	}
 
@@ -122,17 +132,17 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 			return type.toString();
 		}
 
-		public <ValType> ValType getFieldValue(DustBaseAttributeDef field) {
-			SimpleModel m = factModels.peek(((SimpleField) field).type);
-			return (null == m) ? null : m.getFieldValue(field);
+		public <ValType> ValType getFieldValue(SimpleAttribute att) {
+			SimpleModel m = factModels.peek(att.type);
+			return (null == m) ? null : m.getFieldValue(att);
 		}
 
-		public void setFieldValue(DustBaseAttributeDef field, Object value) {
-			SimpleType tt = ((SimpleField) field).type;
+		public void setFieldValue(SimpleAttribute att, Object value) {
+			SimpleType tt = ((SimpleAttribute) att).type;
 			SimpleModel m = (null == value) ? factModels.peek(tt) : factModels.get(tt);
 
 			if (null != m) {
-				m.setFieldValue(field, value);
+				m.setFieldValue(att, value);
 			}
 		}
 	}
