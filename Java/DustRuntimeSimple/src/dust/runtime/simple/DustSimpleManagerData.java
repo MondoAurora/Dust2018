@@ -34,24 +34,24 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustB
 	};
 	
 	@Override
-	public boolean dustSourceIsTypeSupported(DustBaseEntity eType) {
+	public boolean dustSourceIsTypeSupported(DustEntity eType) {
 		return true;
 	}
 
 	@Override
-	public SimpleEntity dustSourceGet(DustBaseType type, String srcId, String revId) throws Exception {
+	public SimpleEntity dustSourceGet(DustType type, String srcId, String revId) throws Exception {
 		return null;
 //		return factGlobalEntities.get(metaMgr.getType(eType)).get(srcId, revId);
 	}
 
 	@Override
-	public void dustSourceFind(DustBaseType type, DustBaseEntity expression, DustBaseEntity processor) throws Exception {
+	public void dustSourceFind(DustType type, DustEntity expression, DustEntity processor) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void dustSourceDestruct(DustBaseEntity entity) throws Exception {
+	public void dustSourceDestruct(DustEntity entity) throws Exception {
 		((SimpleEntity)entity).setState(DustEntityState.Destructed);
 	}
 	

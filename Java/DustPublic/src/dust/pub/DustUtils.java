@@ -27,4 +27,9 @@ public class DustUtils implements DustBaseComponents {
 		}
 		return sb;
 	}
+
+	@SuppressWarnings("unchecked")
+	public static <Content> Content safeGet(int idx, Object... arr ) {
+		return ((null != arr) && (0 < idx) && (idx < arr.length)) ? (Content)arr[idx] : null;
+	}
 }

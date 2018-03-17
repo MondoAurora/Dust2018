@@ -5,7 +5,7 @@ import dust.pub.metaenum.DustMetaEnum;
 
 public interface DustUtilsComponents extends DustMetaEnum, DustBaseComponents {
 	
-	enum DustUtilsIdentifiedAtt implements DustBaseAttribute {
+	enum DustUtilsIdentifiedAtt implements DustAttribute {
 		id
 	}
 	

@@ -3,9 +3,9 @@ package dust.pub.boot;
 import java.util.HashMap;
 import java.util.Map;
 
-import dust.gen.dust.base.DustBaseComponents;
+import dust.gen.dust.base.DustBaseServices;
 
-public interface DustBootComponents extends DustBaseComponents {
+public interface DustBootComponents extends DustBaseServices {
 	String CFG_KEYVALUESEP = "=";
 	String CFG_LISTFLAG = "*";
 
@@ -47,11 +47,11 @@ public interface DustBootComponents extends DustBaseComponents {
 	}
 
 	public interface DustBinaryManager extends DustShutdownAware {
-		void initLogicInstance(DustBaseEntity owner, DustBaseEntity command) throws Exception;
-		void sendMessage(DustBaseEntity msg) throws Exception;
+		void initLogicInstance(DustEntity owner, DustEntity command) throws Exception;
+		void sendMessage(DustEntity msg) throws Exception;
 
-		<LogicClass> Class<LogicClass> getEntityLogicClass(DustBaseEntity entity) throws Exception;
-		DustBaseEntity enterCustomLogic(Object logic) throws Exception;
+		<LogicClass> Class<LogicClass> getEntityLogicClass(DustEntity entity) throws Exception;
+		DustEntity enterCustomLogic(Object logic) throws Exception;
 		void leaveCustomLogic();
 	}
 	

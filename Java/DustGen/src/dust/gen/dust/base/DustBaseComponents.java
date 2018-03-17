@@ -1,52 +1,51 @@
 package dust.gen.dust.base;
 
-public interface DustBaseComponents {
+import dust.gen.dust.DustComponents;
+import dust.pub.metaenum.DustMetaEnum;
 
-	interface DustBaseEntity {
-	}
-	
-	enum DustEntityState implements DustBaseEntity {
+public interface DustBaseComponents extends DustComponents, DustMetaEnum {
+
+	enum DustEntityState implements DustEntity {
 		Temporal, InSync, RefChanged, Changed, Constructed, Destructed
 	}
 	
-	interface DustBaseType {
+	enum DustBaseLinkCommand implements DustEntity {
+		Add, Replace, Remove, ChangeKey;
 	}
 
-	interface DustBaseAttribute {
-	}
-
-	interface DustBaseLink {
-	}
-
-	enum DustBaseLinkCommand implements DustBaseEntity {
-		Set, Remove, RemoveAll, ChangeKey;
-	}
-
-	enum DustBaseVisitorResponse implements DustBaseEntity {
+	enum DustBaseVisitorResponse implements DustEntity {
 		OK, Skip, Exit, Repeat, Restart;
 	}
 
-	interface DustBaseVisitor {
-		DustBaseVisitorResponse dustDustBaseVisitorVisit(DustBaseEntity entity) throws Exception;
-	}
-
-	interface DustBaseBlockProcessor {
-		void dustBaseBlockProcessorBegin() throws Exception;
-		void dustBaseBlockProcessorEnd(DustBaseVisitorResponse lastResp, Exception optException) throws Exception;
-	}
-
-	enum DustBaseContext implements DustBaseEntity {
+	enum DustBaseContext implements DustEntity {
 		Self, Message, Block;
 	}
 	
-	interface DustRuntime extends DustBaseBlockProcessor {
-		<ValType> ValType getAttrValue(DustBaseEntity entity, DustBaseAttribute field);
-		void setAttrValue(DustBaseEntity entity, DustBaseAttribute field, Object value);
 
-		void processRefs(DustBaseVisitor proc, DustBaseEntity root, DustBaseLink... path);
-		DustBaseEntity modifyRefs(DustBaseLinkCommand refCmd, DustBaseEntity left, DustBaseEntity right, DustBaseLink linkDef,
-				Object... params);
+	enum DustBaseMessageLink implements DustLink {
+		Command, Target
+	}
+	
+	enum DustUtilsTypes implements DustMetaTypeDescriptor {
+		Message(null, DustBaseMessageLink.class);
+		
+		private final Class<? extends Enum<?>> atts;
+		private final Class<? extends Enum<?>> links;
+		
+		private DustUtilsTypes(Class<? extends Enum<?>> atts, Class<? extends Enum<?>> links) {
+			this.atts = atts;
+			this.links = links;
+		}
 
-		void send(DustBaseEntity msg);
+		@Override
+		public Class<? extends Enum<?>> getAttribEnum() {
+			return atts;
+		}
+
+		@Override
+		public Class<? extends Enum<?>> getLinkEnum() {
+			return links;
+		}
+		
 	}
 }

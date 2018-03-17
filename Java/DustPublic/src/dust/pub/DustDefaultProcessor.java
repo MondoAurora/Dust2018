@@ -1,13 +1,13 @@
 package dust.pub;
 
-import dust.gen.dust.base.DustBaseComponents;
+import dust.gen.dust.base.DustBaseServices;
 
-public abstract class DustDefaultProcessor implements DustBaseComponents.DustBaseBlockProcessor, DustBaseComponents.DustBaseVisitor, DustBaseComponents {
-	protected void doProcess(DustBaseEntity entity) throws Exception {
+public abstract class DustDefaultProcessor implements DustBaseServices.DustBaseBlockProcessor, DustBaseServices.DustBaseVisitor, DustBaseServices {
+	protected void doProcess(DustEntity entity) throws Exception {
 	};
 
 	@Override
-	public DustBaseVisitorResponse dustDustBaseVisitorVisit(DustBaseEntity entity) throws Exception {
+	public DustBaseVisitorResponse dustDustBaseVisitorVisit(DustEntity entity) throws Exception {
 		doProcess(entity);
 		return DustBaseVisitorResponse.OK;
 	}

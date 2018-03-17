@@ -4,12 +4,12 @@ import dust.gen.dust.base.DustBaseComponents;
 
 public interface DustMetaComponents extends DustBaseComponents {
 	
-	enum DustAttrType {
+	enum DustMetaAttrType {
 		fldId, fldInt, fldFloat, fldBool;
 	}
 
-	enum DustLinkType {
-		linkSingle, linkSet, linkArray;
+	enum DustMetaLinkType {
+		linkSingle, linkSet, linkArray, linkMap;
 	}
 
 }

@@ -1,5 +1,8 @@
 package dust.runtime.simple;
 
+import dust.gen.dust.DustComponents.DustEntity;
+import dust.gen.dust.base.DustBaseComponents;
+import dust.gen.dust.base.DustBaseComponents.DustBaseVisitorResponse;
 import dust.gen.dust.utils.DustUtilsComponents;
 import dust.pub.DustException;
 import dust.pub.boot.DustBootComponents;
@@ -34,7 +37,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		mgrAaa = new DustSimpleManagerAaa();
 	}
 
-	private SimpleEntity resolveEntity(DustBaseEntity entity, DustAccessMode access) {
+	private SimpleEntity resolveEntity(DustEntity entity, DustAccessMode access) {
 		SimpleEntity se = null;
 		
 		if (entity instanceof SimpleEntity) {
@@ -61,7 +64,19 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 
 	private void test() {
 		mgrMeta.registerUnit(DustUtilsComponents.DustUtilsTypes.class, null);
-		setAttrValue(DustBaseContext.Self, DustUtilsComponents.DustUtilsIdentifiedAtt.id, "HelloWorld");	
+		mgrMeta.registerUnit(DustBaseComponents.DustUtilsTypes.class, null);
+		
+		setAttrValue(DustBaseContext.Self, DustUtilsComponents.DustUtilsIdentifiedAtt.id, "HelloWorld");
+		
+		modifyRefs(DustBaseLinkCommand.Add, DustBaseContext.Self, DustBaseContext.Self, DustBaseMessageLink.Target, 1);
+		modifyRefs(DustBaseLinkCommand.Add, DustBaseContext.Self, DustBaseContext.Self, DustBaseMessageLink.Command, 1);
+		
+		processRefs(new DustBaseVisitor() {
+			@Override
+			public DustBaseVisitorResponse dustDustBaseVisitorVisit(DustEntity entity) throws Exception {
+				return null;
+			}
+		}, DustBaseContext.Self, DustBaseMessageLink.Target, DustBaseMessageLink.Target);
 	}
 
 	@Override
@@ -78,27 +93,27 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	@Override
-	public <ValType> ValType getAttrValue(DustBaseEntity entity, DustBaseAttribute field) {
+	public <ValType> ValType getAttrValue(DustEntity entity, DustAttribute field) {
 		SimpleEntity se = resolveEntity(entity, DustAccessMode.Read);
 		if (null == se) {
 			return null;
 		} else {
-			SimpleAttribute sa = mgrMeta.getAtt(field);
+			SimpleAttDef sa = mgrMeta.getSimpleAttDef(field);
 			return se.getFieldValue(sa);
 		}
 	}
 
 	@Override
-	public void setAttrValue(DustBaseEntity entity, DustBaseAttribute field, Object value) {
+	public void setAttrValue(DustEntity entity, DustAttribute field, Object value) {
 		SimpleEntity se = resolveEntity(entity, DustAccessMode.Write);
 		if (null != se) {
-			SimpleAttribute sa = mgrMeta.getAtt(field);
+			SimpleAttDef sa = mgrMeta.getSimpleAttDef(field);
 			se.setFieldValue(sa, value);
 		}
 	}
 
 	@Override
-	public void send(DustBaseEntity msg) {
+	public void send(DustEntity msg) {
 		SimpleEntity se = resolveEntity(msg, DustAccessMode.Execute);
 		
 		if (null != se) {
@@ -107,7 +122,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	@Override
-	public void processRefs(DustBaseVisitor proc, DustBaseEntity entity, DustBaseLink... path) {
+	public void processRefs(DustBaseVisitor proc, DustEntity entity, DustLink... path) {
 		SimpleEntity se = resolveEntity(entity, DustAccessMode.Read);
 		if (null != se) {
 			mgrLink.processRefs(proc, se, path, 0);
@@ -115,11 +130,12 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	@Override
-	public DustBaseEntity modifyRefs(DustBaseLinkCommand refCmd, DustBaseEntity left, DustBaseEntity right,
-			DustBaseLink linkDef, Object... params) {
+	public DustEntity modifyRefs(DustBaseLinkCommand refCmd, DustEntity left, DustEntity right,
+			DustLink linkDef, Object... params) {
 		SimpleEntity seLeft = resolveEntity(left, DustAccessMode.Write);
 		SimpleEntity seRight = resolveEntity(right, DustAccessMode.Write);
-		return mgrLink.modifyRefs(refCmd, seLeft, seRight, linkDef, params);
+		SimpleLinkDef ld = mgrMeta.getSimpleLinkDef(linkDef);
+		return mgrLink.modifyRefs(refCmd, seLeft, seRight, ld, params);
 	}
 
 }

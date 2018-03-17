@@ -5,11 +5,11 @@ import dust.pub.metaenum.DustMetaEnum;
 
 public interface DustAaaComponents extends DustMetaEnum, DustBaseComponents {
 	
-	enum DustAaaMessages implements DustBaseEntity {
+	enum DustAaaMessages implements DustEntity {
 		AccessDenied
 	}
 	
-	enum DustAccessMode implements DustBaseEntity {
+	enum DustAccessMode implements DustEntity {
 		Check, Read, Write, Execute
 	}
 	
