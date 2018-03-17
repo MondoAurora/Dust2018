@@ -9,7 +9,8 @@ public interface DustBaseComponents {
 		Temporal, InSync, RefChanged, Changed, Constructed, Destructed
 	}
 	
-
+	interface DustBaseType {
+	}
 
 	interface DustBaseAttribute {
 	}

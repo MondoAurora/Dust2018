@@ -1,8 +1,6 @@
-package dust.gen.dust.meta;
+package dust.pub.metaenum;
 
-import dust.gen.dust.base.DustBaseComponents;
-
-public interface DustMetaServices extends DustBaseComponents {
+public interface DustMetaEnum {
 	interface DustMetaTypeDescriptor {
 		Class<? extends Enum<?>> getAttribEnum();
 		Class<? extends Enum<?>> getLinkEnum();

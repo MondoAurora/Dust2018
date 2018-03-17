@@ -3,12 +3,11 @@ package dust.runtime.simple;
 import java.util.HashMap;
 import java.util.Map;
 
-import dust.gen.dust.meta.DustMetaServices;
-import dust.gen.dust.meta.DustMetaServices.DustMetaTypeDescriptor;
 import dust.pub.boot.DustBootComponents;
+import dust.pub.metaenum.DustMetaEnum;
 import dust.utils.DustUtilsFactory;
 
-public class DustSimpleMetaManager implements DustSimpleRuntimeComponents, DustMetaServices.DustMetaManager, DustBootComponents.DustConfigurable, DustBootComponents.DustShutdownAware {
+public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, DustMetaEnum.DustMetaManager, DustBootComponents.DustConfigurable, DustBootComponents.DustShutdownAware {
 	
 	private DustUtilsFactory<Enum<?>, SimpleType> factType = new DustUtilsFactory<Enum<?>, SimpleType>(true) {
 		@Override

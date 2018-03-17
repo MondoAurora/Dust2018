@@ -1,8 +1,9 @@
 package dust.gen.dust.utils;
 
-import dust.gen.dust.meta.DustMetaServices;
+import dust.gen.dust.base.DustBaseComponents;
+import dust.pub.metaenum.DustMetaEnum;
 
-public interface DustUtilsComponents extends DustMetaServices {
+public interface DustUtilsComponents extends DustMetaEnum, DustBaseComponents {
 	
 	enum DustUtilsIdentifiedAtt implements DustBaseAttribute {
 		id

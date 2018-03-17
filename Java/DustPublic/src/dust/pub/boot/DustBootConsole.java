@@ -1,20 +1,25 @@
 package dust.pub.boot;
 
 import dust.pub.Dust;
+import dust.pub.DustException;
 import dust.pub.DustUtils;
 import dust.pub.DustUtilsDev;
 
 public class DustBootConsole extends Dust implements DustBootComponents {
 	
 	public static void main(String[] args) throws Exception {
+		DustUtilsDev.dump("Launching Dust");
 		DustConfig cfg = new DustConfigConsole(args);
 		
+		DustUtilsDev.dump("Initializing components...");
 		initComps(cfg);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
+				DustUtilsDev.dump("Shutting down...");
 				shutdown();
+				DustUtilsDev.dump("Graceful shutdown completed.");
 			}
 		});
 	}
@@ -23,7 +28,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		try {
 			RUNTIME.dustBaseBlockProcessorEnd(DustBaseVisitorResponse.OK, null);
 		} catch (Exception e) {
-			DustUtils.wrapException(e, null);
+			DustException.wrapException(e, null);
 		}		
 	}
 

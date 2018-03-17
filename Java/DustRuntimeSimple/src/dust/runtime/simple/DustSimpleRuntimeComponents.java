@@ -1,20 +1,24 @@
 package dust.runtime.simple;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-import org.omg.CORBA.CTX_RESTRICT_SCOPE;
-
+import dust.gen.dust.aaa.DustAaaComponents;
 import dust.gen.dust.base.DustBaseServices;
 import dust.gen.dust.meta.DustMetaComponents;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
-public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBaseServices, DustMetaComponents {
-	
+public interface DustSimpleRuntimeComponents
+		extends DustBootComponents, DustBaseServices, DustMetaComponents, DustAaaComponents {
+	Set<SimpleRef> NO_REFS = Collections.emptySet();
+
 	class SimpleAttribute {
 		SimpleType type;
-		
+
 		DustBaseAttribute id;
 		DustAttrType fldType;
 
@@ -27,7 +31,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 		public String toString() {
 			return id.toString();
 		}
-		
+
 		public DustAttrType getAttrType() {
 			return fldType;
 		}
@@ -35,23 +39,23 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 
 	class SimpleLinkDef {
 		SimpleType type;
-		
-		DustBaseLink id;
-		DustAttrType fldType;
+
+		DustBaseLink link;
+		DustLinkType linkType;
 		SimpleLinkDef backRef;
 
-		public SimpleLinkDef(SimpleType type, DustBaseLink key) {
+		public SimpleLinkDef(SimpleType type, DustBaseLink link) {
 			this.type = type;
-			this.id = key;
+			this.link = link;
 		}
 
 		@Override
 		public String toString() {
-			return id.toString();
+			return link.toString();
 		}
-		
-		public DustAttrType getAttrType() {
-			return fldType;
+
+		public DustLinkType getLinkType() {
+			return linkType;
 		}
 	}
 
@@ -64,7 +68,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 
 			this.id = key;
 		}
-		
+
 		public SimpleEntity getEntity() {
 			return entity;
 		}
@@ -73,7 +77,15 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 		protected SimpleAttribute create(DustBaseAttribute key, Object... hints) {
 			return new SimpleAttribute(this, key);
 		}
+	}
 
+	class SimpleRef {
+		SimpleEntity eSelf;
+
+		SimpleEntity eLeft;
+		SimpleEntity eRight;
+
+		SimpleLinkDef linkDef;
 	}
 
 	class SimpleModel {
@@ -99,7 +111,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 	}
 
 	class SimpleEntity implements DustBaseEntity {
-		private DustSimpleContext ctx;
+		private DustSimpleManagerData ctx;
 		private DustEntityState state;
 
 		private SimpleType type;
@@ -110,8 +122,9 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 				return new SimpleModel(key);
 			}
 		};
+		private Set<SimpleRef> refs = NO_REFS;
 
-		public SimpleEntity(DustSimpleContext ctx, SimpleType type) {
+		public SimpleEntity(DustSimpleManagerData ctx, SimpleType type) {
 			this.ctx = ctx;
 			this.type = type;
 		}
@@ -120,7 +133,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 			this.state = state;
 		}
 
-		DustSimpleContext getCtx() {
+		DustSimpleManagerData getCtx() {
 			return ctx;
 		}
 
@@ -144,6 +157,14 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustBas
 			if (null != m) {
 				m.setFieldValue(att, value);
 			}
+		}
+
+		Iterable<SimpleRef> getRefs(boolean createIfMissing) {
+			if ((NO_REFS == refs) && (createIfMissing)) {
+				refs = new HashSet<>();
+			}
+
+			return refs;
 		}
 	}
 }

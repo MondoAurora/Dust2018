@@ -12,14 +12,6 @@ public class DustUtils implements DustBaseComponents {
 		return (null == str) ? true : str.isEmpty();
 	}
 	
-	public static void wrapException(Throwable t, DustBaseEntity errInfo) {
-		if ( t instanceof DustException ) {
-			throw (DustException) t;
-		} else {
-			throw new DustException(errInfo, t);
-		}
-	}
-
 	public static StringBuilder sbApend(StringBuilder sb, String sep, boolean strict, Object... objects) {
 		for (Object ob : objects) {
 			String str = toString(ob);
