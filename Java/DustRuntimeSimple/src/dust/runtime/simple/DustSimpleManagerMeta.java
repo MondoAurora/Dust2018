@@ -3,11 +3,12 @@ package dust.runtime.simple;
 import java.util.HashMap;
 import java.util.Map;
 
+import dust.gen.dust.meta.DustMetaServices;
+import dust.pub.DustUtils;
 import dust.pub.boot.DustBootComponents;
-import dust.pub.metaenum.DustMetaEnum;
 import dust.utils.DustUtilsFactory;
 
-public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, DustMetaEnum.DustMetaManager,
+public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, DustMetaServices.DustMetaManager,
 		DustBootComponents.DustConfigurable, DustBootComponents.DustShutdownAware {
 
 	private DustUtilsFactory<Enum<?>, SimpleType> factType = new DustUtilsFactory<Enum<?>, SimpleType>(false) {
@@ -20,13 +21,17 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, DustM
 	private Map<DustAttribute, SimpleAttDef> mapAttributes = new HashMap<>();
 	private Map<DustLink, SimpleLinkDef> mapLinkDefs = new HashMap<>();
 
-	DustUtilsFactory<Enum<?>, SimpleEntity> constants = new DustUtilsFactory<Enum<?>, SimpleEntity>(false) {
+	DustUtilsFactory<Enum<?>, SimpleEntity> factConstants = new DustUtilsFactory<Enum<?>, SimpleEntity>(false) {
 		@Override
 		protected SimpleEntity create(Enum<?> key, Object... hints) {
-			// TODO Auto-generated method stub
-			return null;
+			SimpleEntity se = new SimpleEntity(null, getSimpleType(DustBaseTypes.ConstValue));
+			return se;
 		}
 	};
+
+	SimpleType getSimpleType(Enum<?> type) {
+		return factType.get(type);
+	}
 
 	SimpleAttDef getSimpleAttDef(DustAttribute att) {
 		return mapAttributes.get(att);
@@ -37,7 +42,7 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, DustM
 	}
 
 	SimpleEntity optResolveEntity(DustEntity entity) {
-		return (entity instanceof Enum) ? constants.get((Enum<?>) entity) : null;
+		return (entity instanceof Enum) ? factConstants.get((Enum<?>) entity) : null;
 	}
 
 	@Override
@@ -49,26 +54,35 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, DustM
 		factType.clear();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void registerUnit(Class<? extends Enum<?>> types, Class<? extends Enum<?>> services) {
-		for (Enum<?> t : types.getEnumConstants()) {
-			DustMetaTypeDescriptor md = (DustMetaTypeDescriptor) t;
-			SimpleType st = factType.get(t, md);
+	public void registerUnit(String typeClass, String serviceClass) throws Exception {
+		if (!DustUtils.isEmpty(typeClass)) {
+			Class<? extends Enum<?>> types = (Class<? extends Enum<?>>) Class.forName(typeClass);
+			for (Enum<?> t : types.getEnumConstants()) {
+				DustMetaTypeDescriptor md = (DustMetaTypeDescriptor) t;
+				SimpleType st = factType.get(t, md);
 
-			Class<? extends Enum<?>> ae = md.getAttribEnum();
-			if (null != ae) {
-				for (Enum<?> a : ae.getEnumConstants()) {
-					DustAttribute att = (DustAttribute) a;
-					mapAttributes.put(att, st.getAttDef(att));
+				Class<? extends Enum<?>> ae = md.getAttribEnum();
+				if (null != ae) {
+					for (Enum<?> a : ae.getEnumConstants()) {
+						DustAttribute att = (DustAttribute) a;
+						mapAttributes.put(att, st.getAttDef(att));
+					}
+				}
+
+				Class<? extends Enum<?>> le = md.getLinkEnum();
+				if (null != le) {
+					for (Enum<?> l : le.getEnumConstants()) {
+						DustLink link = (DustLink) l;
+						mapLinkDefs.put(link, st.getLinkDef(link));
+					}
 				}
 			}
-
-			Class<? extends Enum<?>> le = md.getLinkEnum();
-			if (null != le) {
-				for (Enum<?> l : le.getEnumConstants()) {
-					DustLink link = (DustLink) l;
-					mapLinkDefs.put(link, st.getLinkDef(link));
-				}
+		}
+		if (!DustUtils.isEmpty(serviceClass)) {
+			Class<? extends Enum<?>> services = (Class<? extends Enum<?>>) Class.forName(serviceClass);
+			for (Enum<?> t : services.getEnumConstants()) {
 			}
 		}
 	}

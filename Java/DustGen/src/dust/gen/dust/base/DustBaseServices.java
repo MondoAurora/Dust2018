@@ -15,6 +15,7 @@ public interface DustBaseServices extends DustBaseComponents {
 		<ValType> ValType getAttrValue(DustEntity entity, DustAttribute field);
 		void setAttrValue(DustEntity entity, DustAttribute field, Object value);
 
+		DustEntity getRefEntity(DustEntity entity, boolean createIfMissing, DustLink linkDef, Object key);
 		void processRefs(DustBaseVisitor proc, DustEntity root, DustLink... path);
 		DustEntity modifyRefs(DustBaseLinkCommand refCmd, DustEntity left, DustEntity right, DustLink linkDef,
 				Object... params);

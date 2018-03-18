@@ -18,6 +18,10 @@ public class Dust implements DustBaseServices {
 		RUNTIME.processRefs(proc, root, path);
 	}
 
+	public static DustEntity getRefEntity(DustEntity entity, boolean createIfMissing, DustLink linkDef, Object key) {
+		return RUNTIME.getRefEntity(entity, createIfMissing, linkDef, key);
+	}
+
 	public static DustEntity modifyRefs(DustBaseLinkCommand refCmd, DustEntity left, DustEntity right, DustLink linkDef, Object... params) {
 		return RUNTIME.modifyRefs(refCmd, left, right, linkDef, params);
 	}

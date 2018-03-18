@@ -10,7 +10,8 @@ public interface DustMetaEnum {
 		Class<? extends Enum<?>> getMessageEnum();
 	}
 	
-	interface DustMetaManager {
-		void registerUnit(Class<? extends Enum<?>> types, Class<? extends Enum<?>> services);
+	interface DustMetaCommandDescriptor {
+		DustMetaTypeDescriptor getParamTypeDescriptor();
 	}
+	
 }

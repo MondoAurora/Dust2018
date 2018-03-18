@@ -53,5 +53,23 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 		
 		return null;
 	}
+
+	public SimpleEntity getRefEntity(SimpleEntity se, boolean createIfMissing, SimpleLinkDef ld, Object key) throws Exception {
+		Set<SimpleRef> refs = se.getRefs(createIfMissing);
+		
+		for ( SimpleRef r : refs ) {
+			if ( r.match(ld, null, key) ) {
+				return r.eTarget;
+			}
+		}
+		
+		SimpleEntity ret = null;
+		if ( createIfMissing ) {
+			ret = se.getCtx().dustSourceGet(ld.getTargetType(), null, null);
+			SimpleRef sr = new SimpleRef(ld, ret, key);
+			refs.add(sr);
+		}
+		return ret;
+	}
 	
 }

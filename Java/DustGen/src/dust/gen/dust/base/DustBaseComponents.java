@@ -22,17 +22,19 @@ public interface DustBaseComponents extends DustComponents, DustMetaEnum {
 	}
 	
 
-	enum DustBaseMessageLink implements DustLink {
+	enum DustBaseLinkMessage implements DustLink {
 		Command, Target
 	}
 	
-	enum DustUtilsTypes implements DustMetaTypeDescriptor {
-		Message(null, DustBaseMessageLink.class);
+	enum DustBaseTypes implements DustMetaTypeDescriptor {
+		Message(null, DustBaseLinkMessage.class),
+		ConstValue(null, null),
+		;
 		
 		private final Class<? extends Enum<?>> atts;
 		private final Class<? extends Enum<?>> links;
 		
-		private DustUtilsTypes(Class<? extends Enum<?>> atts, Class<? extends Enum<?>> links) {
+		private DustBaseTypes(Class<? extends Enum<?>> atts, Class<? extends Enum<?>> links) {
 			this.atts = atts;
 			this.links = links;
 		}
@@ -45,7 +47,25 @@ public interface DustBaseComponents extends DustComponents, DustMetaEnum {
 		@Override
 		public Class<? extends Enum<?>> getLinkEnum() {
 			return links;
-		}
+		}		
+	}
+	
+	enum DustBaseMessageInitable implements DustEntity {
+		Init
+	}
+
+	enum DustBaseServices implements DustMetaServiceDescriptor {
+		Initable(DustBaseMessageInitable.class);
 		
+		private final Class<? extends Enum<?>> msgs;
+		
+		private DustBaseServices( Class<? extends Enum<?>> msgs) {
+			this.msgs = msgs;
+		}
+
+		@Override
+		public Class<? extends Enum<?>> getMessageEnum() {
+			return msgs;
+		}
 	}
 }

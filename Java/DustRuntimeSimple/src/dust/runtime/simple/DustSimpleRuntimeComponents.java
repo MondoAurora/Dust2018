@@ -38,14 +38,15 @@ public interface DustSimpleRuntimeComponents
 	}
 
 	class SimpleLinkDef {
-		SimpleType type;
+		SimpleType ownerType;
 
 		DustLink link;
 		DustMetaLinkType linkType;
+		SimpleType targetType;
 		SimpleLinkDef backRef;
 
 		public SimpleLinkDef(SimpleType type, DustLink link) {
-			this.type = type;
+			this.ownerType = type;
 			this.link = link;
 		}
 
@@ -57,20 +58,25 @@ public interface DustSimpleRuntimeComponents
 		public DustMetaLinkType getLinkType() {
 			return linkType;
 		}
+
+		public DustType getTargetType() {
+			return (null == targetType) ? null : targetType.getType();
+		}
 	}
 
 	class SimpleType {
 		Enum<?> id;
 		SimpleEntity entity;
-		
-		DustUtilsFactory<DustAttribute, SimpleAttDef> factAtts = new DustUtilsFactory<DustAttribute, SimpleAttDef>(false){
+
+		DustUtilsFactory<DustAttribute, SimpleAttDef> factAtts = new DustUtilsFactory<DustAttribute, SimpleAttDef>(
+				false) {
 			@Override
 			protected SimpleAttDef create(DustAttribute key, Object... hints) {
 				return new SimpleAttDef(SimpleType.this, key);
 			}
 		};
 
-		DustUtilsFactory<DustLink, SimpleLinkDef> factLinks = new DustUtilsFactory<DustLink, SimpleLinkDef>(false){
+		DustUtilsFactory<DustLink, SimpleLinkDef> factLinks = new DustUtilsFactory<DustLink, SimpleLinkDef>(false) {
 			@Override
 			protected SimpleLinkDef create(DustLink key, Object... hints) {
 				return new SimpleLinkDef(SimpleType.this, key);
@@ -81,14 +87,18 @@ public interface DustSimpleRuntimeComponents
 			this.id = key;
 		}
 
+		DustType getType() {
+			return (DustType) id;
+		}
+
 		public SimpleEntity getEntity() {
 			return entity;
 		}
-		
+
 		SimpleAttDef getAttDef(DustAttribute att) {
 			return factAtts.get(att);
 		}
-		
+
 		SimpleLinkDef getLinkDef(DustLink link) {
 			return factLinks.get(link);
 		}
@@ -101,7 +111,7 @@ public interface DustSimpleRuntimeComponents
 
 		SimpleEntity eRef;
 		SimpleEntity eTarget;
-		
+
 		public SimpleRef(SimpleLinkDef linkDef, SimpleEntity eTarget, Object key) {
 			this.linkDef = linkDef;
 			this.eTarget = eTarget;
@@ -117,7 +127,7 @@ public interface DustSimpleRuntimeComponents
 			boolean t = (null == sld) || sld.equals(this.linkDef);
 			boolean e = (null == target) || target.equals(this.eTarget);
 			boolean k = (null == key) || key.equals(this.key);
-			
+
 			return t && e && k;
 		}
 	}

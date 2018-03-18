@@ -1,10 +1,11 @@
 package dust.runtime.simple;
 
-import dust.gen.dust.DustComponents.DustEntity;
 import dust.gen.dust.base.DustBaseComponents;
-import dust.gen.dust.base.DustBaseComponents.DustBaseVisitorResponse;
+import dust.gen.dust.runtime.DustRuntimeComponents.DustRuntimeMessages;
 import dust.gen.dust.utils.DustUtilsComponents;
+import dust.pub.Dust;
 import dust.pub.DustException;
+import dust.pub.DustUtilsDev;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
@@ -59,24 +60,24 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 
 	@Override
 	public void init(DustConfig config) throws Exception {
-		test();
 	}
 
-	private void test() {
-		mgrMeta.registerUnit(DustUtilsComponents.DustUtilsTypes.class, null);
-		mgrMeta.registerUnit(DustBaseComponents.DustUtilsTypes.class, null);
+	private void test() throws Exception {
+		mgrMeta.registerUnit(DustUtilsComponents.DustUtilsTypes.class.getName(), null);
+		mgrMeta.registerUnit(DustBaseComponents.DustBaseTypes.class.getName(), null);
 		
-		setAttrValue(DustBaseContext.Self, DustUtilsComponents.DustUtilsIdentifiedAtt.id, "HelloWorld");
+		Dust.setAttrValue(DustBaseContext.Self, DustUtilsComponents.DustUtilsIdentifiedAtt.id, "HelloWorld");
 		
-		modifyRefs(DustBaseLinkCommand.Add, DustBaseContext.Self, DustBaseContext.Self, DustBaseMessageLink.Target, 1);
-		modifyRefs(DustBaseLinkCommand.Add, DustBaseContext.Self, DustBaseContext.Self, DustBaseMessageLink.Command, 1);
+		Dust.modifyRefs(DustBaseLinkCommand.Add, DustBaseContext.Self, DustBaseContext.Self, DustBaseLinkMessage.Target, 1);
+		Dust.modifyRefs(DustBaseLinkCommand.Add, DustBaseContext.Self, DustBaseContext.Self, DustBaseLinkMessage.Command, 1);
 		
-		processRefs(new DustBaseVisitor() {
+		Dust.processRefs(new DustBaseVisitor() {
 			@Override
 			public DustBaseVisitorResponse dustDustBaseVisitorVisit(DustEntity entity) throws Exception {
+				DustUtilsDev.dump("Test visitor called!");
 				return null;
 			}
-		}, DustBaseContext.Self, DustBaseMessageLink.Target, DustBaseMessageLink.Target);
+		}, DustBaseContext.Self, DustBaseLinkMessage.Target, DustBaseLinkMessage.Target);
 	}
 
 	@Override
@@ -86,6 +87,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 
 	@Override
 	public void dustBaseBlockProcessorBegin() throws Exception {
+		test();
 	}
 
 	@Override
@@ -118,6 +120,19 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		
 		if (null != se) {
 			// 
+		}
+	}
+	
+	@Override
+	public DustEntity getRefEntity(DustEntity entity, boolean createIfMissing, DustLink linkDef, Object key) {
+		SimpleEntity se = resolveEntity(entity, DustAccessMode.Read);
+		SimpleLinkDef ld = mgrMeta.getSimpleLinkDef(linkDef);
+
+		try {
+			return (null == se) ? null : mgrLink.getRefEntity(se, createIfMissing, ld, key);
+		} catch (Exception e) {
+			DustException.wrapException(e, DustRuntimeMessages.LinkCreationError);
+			return null;
 		}
 	}
 
