@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import dust.gen.dust.base.DustBaseServices;
+import dust.pub.DustUtils;
 import dust.utils.DustUtilsFactory;
 
 public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustBaseServices, DustBaseServices.DustBaseSource {
@@ -40,8 +41,14 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustB
 
 	@Override
 	public SimpleEntity dustSourceGet(DustType type, String srcId, String revId) throws Exception {
-		return null;
-//		return factGlobalEntities.get(metaMgr.getType(eType)).get(srcId, revId);
+		SimpleEntity ret = null;
+		if ( (null == type) || DustUtils.isEmpty(srcId) ) {
+			ret = new SimpleEntity(this, null);
+			allKnownEntities.add(ret);
+		} else {
+//			ret = factGlobalEntities.get(mgrMeta.getType(type)).get(srcId, revId);
+		}
+		return ret;
 	}
 
 	@Override

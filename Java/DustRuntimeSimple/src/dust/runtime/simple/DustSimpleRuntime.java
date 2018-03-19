@@ -1,6 +1,7 @@
 package dust.runtime.simple;
 
 import dust.gen.dust.base.DustBaseComponents;
+import dust.gen.dust.runtime.DustRuntimeComponents;
 import dust.gen.dust.runtime.DustRuntimeComponents.DustRuntimeMessages;
 import dust.gen.dust.utils.DustUtilsComponents;
 import dust.pub.Dust;
@@ -65,11 +66,14 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	private void test() throws Exception {
 		mgrMeta.registerUnit(DustUtilsComponents.DustUtilsTypes.class.getName(), null);
 		mgrMeta.registerUnit(DustBaseComponents.DustBaseTypes.class.getName(), null);
+		mgrMeta.registerUnit(DustRuntimeComponents.DustRuntimeTypes.class.getName(), null);
 		
-		Dust.setAttrValue(DustBaseContext.Self, DustUtilsComponents.DustUtilsIdentifiedAtt.id, "HelloWorld");
+		DustEntity msg = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustRuntimeLinkRuntime.InitMessage, null);
 		
-		Dust.modifyRefs(DustBaseLinkCommand.Add, DustBaseContext.Self, DustBaseContext.Self, DustBaseLinkMessage.Target, 1);
-		Dust.modifyRefs(DustBaseLinkCommand.Add, DustBaseContext.Self, DustBaseContext.Self, DustBaseLinkMessage.Command, 1);
+		Dust.setAttrValue(msg, DustUtilsComponents.DustUtilsIdentifiedAtt.id, "HelloWorld");
+		
+		Dust.modifyRefs(DustBaseLinkCommand.Add, msg, DustBaseContext.Self, DustBaseLinkMessage.Target, 1);
+		Dust.modifyRefs(DustBaseLinkCommand.Add, msg, DustRuntimeComponents.DustRuntimeMessageMetaManager.RegisterUnit, DustBaseLinkMessage.Command, 1);
 		
 		Dust.processRefs(new DustBaseVisitor() {
 			@Override
@@ -77,7 +81,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 				DustUtilsDev.dump("Test visitor called!");
 				return null;
 			}
-		}, DustBaseContext.Self, DustBaseLinkMessage.Target, DustBaseLinkMessage.Target);
+		}, DustBaseContext.Self, DustRuntimeComponents.DustRuntimeLinkRuntime.InitMessage);
 	}
 
 	@Override

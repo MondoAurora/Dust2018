@@ -9,14 +9,13 @@ public interface DustRuntimeComponents extends DustComponents, DustMetaEnum {
 		LinkCreationError
 	}
 
-
-	enum DustRuntimeLinkMessage implements DustLink {
-		Command, Target
+	enum DustRuntimeLinkRuntime implements DustLink {
+		InitMessage, BinaryManager, MetaManager
 	}
 	
 	enum DustRuntimeTypes implements DustMetaTypeDescriptor {
-		MetaManager(null, DustRuntimeLinkMessage.class),
-		Runtime(null, null),
+		Runtime(null, DustRuntimeLinkRuntime.class),
+		MetaManager(null, null),
 		;
 		
 		private final Class<? extends Enum<?>> atts;
