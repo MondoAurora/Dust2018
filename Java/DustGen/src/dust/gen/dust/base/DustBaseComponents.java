@@ -22,12 +22,21 @@ public interface DustBaseComponents extends DustComponents, DustMetaEnum {
 	}
 	
 
-	enum DustBaseLinkMessage implements DustLink {
+	enum DustLinkBaseMessage implements DustLink {
 		Command, Target
 	}
 	
+	enum DustLinkBaseEntity implements DustLink {
+		Services
+	}
+	
+	enum DustAttributeBaseEntity implements DustAttribute {
+		svcImpl
+	}
+	
 	enum DustBaseTypes implements DustMetaTypeDescriptor {
-		Message(null, DustBaseLinkMessage.class),
+		Entity(DustAttributeBaseEntity.class, DustLinkBaseEntity.class),
+		Message(null, DustLinkBaseMessage.class),
 		ConstValue(null, null),
 		;
 		

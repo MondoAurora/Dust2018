@@ -8,12 +8,6 @@ import dust.pub.DustUtilsDev;
 public class DustBootConsole extends Dust implements DustBootComponents {
 	
 	public static void main(String[] args) throws Exception {
-		DustUtilsDev.dump("Launching Dust");
-		DustConfig cfg = new DustConfigConsole(args);
-		
-		DustUtilsDev.dump("Initializing components...");
-		initComps(cfg);
-		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
@@ -22,6 +16,12 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 				DustUtilsDev.dump("Graceful shutdown completed.");
 			}
 		});
+
+		DustUtilsDev.dump("Launching Dust");
+		DustConfig cfg = new DustConfigConsole(args);
+		
+		DustUtilsDev.dump("Initializing components...");
+		initComps(cfg);		
 	}
 
 	protected static void shutdown() {

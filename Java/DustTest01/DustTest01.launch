@@ -11,6 +11,6 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="dust.pub.boot.DustBootConsole"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="DustMetaManager=dust.runtime.simple.DustSimpleMetaManager DustRuntime=dust.runtime.simple.DustSimpleRuntime"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="DustBinaryManager=dust.binary.reflection.DustBinaryManagerReflection  DustRuntime=dust.runtime.simple.DustSimpleRuntime"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="DustTest01"/>
 </launchConfiguration>
