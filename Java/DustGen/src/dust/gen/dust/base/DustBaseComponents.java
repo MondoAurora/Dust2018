@@ -1,6 +1,7 @@
 package dust.gen.dust.base;
 
 import dust.gen.dust.DustComponents;
+import dust.gen.dust.meta.DustMetaComponents.DustTypeMeta;
 
 public interface DustBaseComponents extends DustComponents {
 
@@ -65,25 +66,8 @@ public interface DustBaseComponents extends DustComponents {
 		}
 	}
 
-	enum DustAttributeBaseService implements DustAttribute {
-		binClass;
-		@Override
-		public DustType getType() {
-			return DustTypeBase.Service;
-		}
-	}
-
-	enum DustAttributeBaseCommand implements DustAttribute {
-		binMethod;
-		@Override
-		public DustType getType() {
-			return DustTypeBase.Command;
-		}
-	}
-
 	enum DustTypeBase implements DustType {
-		Entity, Message, ConstValue, StatusInfo, Service, Command;
-
+		Entity, Message, ConstValue, StatusInfo;
 	}
 
 	enum DustCommandBaseInitable implements DustCommand {
@@ -103,7 +87,7 @@ public interface DustBaseComponents extends DustComponents {
 		;
 		@Override
 		public DustType getType() {
-			return DustTypeBase.Service;
+			return DustTypeMeta.Service;
 		}
 	}
 }

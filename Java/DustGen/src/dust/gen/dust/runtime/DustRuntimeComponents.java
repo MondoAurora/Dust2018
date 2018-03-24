@@ -1,8 +1,9 @@
 package dust.gen.dust.runtime;
 
 import dust.gen.dust.base.DustBaseComponents;
+import dust.gen.dust.meta.DustMetaComponents;
 
-public interface DustRuntimeComponents extends DustBaseComponents {
+public interface DustRuntimeComponents extends DustBaseComponents, DustMetaComponents {
 
 	enum DustStatusInfoRuntime implements DustEntity {
 		LinkCreationError, MessageSendError;
@@ -51,7 +52,7 @@ public interface DustRuntimeComponents extends DustBaseComponents {
 		;
 		@Override
 		public DustType getType() {
-			return DustTypeBase.Service;
+			return DustTypeMeta.Service;
 		}
 	}
 }

@@ -1,0 +1,33 @@
+{
+	"streamInfo": {
+		"handler": "dustJsonReader",
+		"storeId": "dustBoot",
+		"version": 1
+	},
+	"entities": [
+		{
+			"dustEntity": {
+				"primaryType": "dustType"
+			},
+			"dustStoreInfo": {
+				"storeId": "Dust:Dust:Meta:Type",
+				"storeAlias": "dustType"
+			},
+			"dustIdentified": {
+				"id": "Type"
+			}
+		},
+		{
+			"dustEntity": {
+				"primaryType": "dustEntity"
+			},
+			"dustStoreInfo": {
+				"storeId": "Dust:Dust:Base:Entity",
+				"storeAlias": "dustEntity"
+			},
+			"dustIdentified": {
+				"id": "Entity"
+			}
+		}
+	]
+}

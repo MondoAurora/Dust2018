@@ -6,6 +6,7 @@ import java.util.Map;
 
 import dust.gen.dust.base.DustBaseServices;
 import dust.gen.dust.binary.DustBinaryComponents;
+import dust.gen.dust.meta.DustMetaServices;
 import dust.gen.dust.utils.DustUtilsComponents;
 import dust.pub.Dust;
 import dust.pub.DustException;
@@ -17,7 +18,7 @@ import dust.pub.boot.DustBootComponents.DustConfig;
 import dust.utils.DustUtilsFactory;
 
 public class DustBinaryManagerReflection implements DustBootComponents.DustBinaryManager,
-		DustBootComponents.DustConfigurable, DustPubComponents, DustUtilsComponents, DustBaseServices {
+		DustBootComponents.DustConfigurable, DustPubComponents, DustUtilsComponents, DustBaseServices, DustMetaServices {
 
 
 	private Creator<Class<?>> cBinClass = new Creator<Class<?>>() {
@@ -51,7 +52,7 @@ public class DustBinaryManagerReflection implements DustBootComponents.DustBinar
 		DustUtilsFactory<DustEntity, Object> factSvcImpl = new DustUtilsFactory<DustEntity, Object>(false) {
 			@Override
 			protected Object create(DustEntity key, Object... hints) {
-				Class<?> logic = DustUtils.getAttrValueSafe(key, DustAttributeBaseService.binClass, cBinClass, key);
+				Class<?> logic = DustUtils.getAttrValueSafe(key, DustAttributeMetaService.binClass, cBinClass, key);
 				return DustUtils.instantiate(logic);
 			}
 		};
