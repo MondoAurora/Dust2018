@@ -4,6 +4,7 @@ import dust.pub.Dust;
 import dust.pub.DustException;
 import dust.pub.DustUtils;
 import dust.pub.DustUtilsDev;
+import dust.pub.DustPubComponents.DustStatusInfoPub;
 
 public class DustBootConsole extends Dust implements DustBootComponents {
 	
@@ -28,7 +29,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		try {
 			RUNTIME.dustBaseBlockProcessorEnd(DustBaseVisitorResponse.OK, null);
 		} catch (Exception e) {
-			DustException.wrapException(e);
+			DustException.wrapException(e, DustStatusInfoPub.ErrorShutdownFailure);
 		}		
 	}
 

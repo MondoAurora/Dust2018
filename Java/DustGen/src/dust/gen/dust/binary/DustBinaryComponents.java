@@ -6,6 +6,7 @@ import dust.gen.dust.base.DustBaseComponents;
 public interface DustBinaryComponents extends DustComponents, DustBaseComponents {
 	
 	enum DustStatusInfoBinary implements DustEntity {
+		ErrorMethodAccess
 		;
 		@Override
 		public DustType getType() {

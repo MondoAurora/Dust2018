@@ -3,6 +3,7 @@ package dust.runtime.simple;
 import java.util.Set;
 
 import dust.pub.DustException;
+import dust.pub.DustPubComponents;
 import dust.pub.DustUtils;
 
 public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
@@ -19,7 +20,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 					try {
 						proc.dustDustBaseVisitorVisit(ref.eTarget);
 					} catch (Exception e) {
-						DustException.wrapException(e);
+						DustException.wrapException(e, DustPubComponents.DustStatusInfoPub.ErrorVistorExecution);
 					}
 				} else {
 					processRefs(proc, ref.eTarget, path, idx + 1);
@@ -31,7 +32,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 	DustEntity modifyRefs(DustBaseLinkCommand refCmd, SimpleEntity seLeft, SimpleEntity seRight,
 			SimpleLinkDef sld, Object[] params) {
 		
-		DustMetaLinkType lt = (null == sld) ? null : sld.linkType;
+//		DustMetaLinkType lt = (null == sld) ? null : sld.linkType;
 		
 		Object key = DustUtils.safeGet(0, params);
 		

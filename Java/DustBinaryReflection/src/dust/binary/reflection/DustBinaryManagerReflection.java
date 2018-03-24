@@ -94,15 +94,15 @@ public class DustBinaryManagerReflection implements DustBootComponents.DustBinar
 			try {
 				return hints[0].getClass().getMethod(name);
 			} catch (Exception e) {
-				DustException.wrapException(e);
+				DustException.wrapException(e, DustBinaryComponents.DustStatusInfoBinary.ErrorMethodAccess, name);
 				return null;
 			}
 		}
 	};
 
-	DustUtilsFactory<DustEntity, Class> factClasses = new DustUtilsFactory<DustEntity, Class>(false) {
+	DustUtilsFactory<DustEntity, Class<?>> factClasses = new DustUtilsFactory<DustEntity, Class<?>>(false) {
 		@Override
-		protected Class create(DustEntity key, Object... hints) {
+		protected Class<?> create(DustEntity key, Object... hints) {
 			return null;
 		}
 	};

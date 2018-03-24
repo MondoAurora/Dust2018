@@ -12,7 +12,7 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustB
 	private Set<DustBaseSource> parentSources = new HashSet<>();
 	
 	private Set<SimpleEntity> allKnownEntities = new HashSet<>();
-	private DustUtilsFactory<SimpleType, DustUtilsFactory<String, SimpleEntity>> factGlobalEntities = new DustUtilsFactory<SimpleType, DustUtilsFactory<String, SimpleEntity>>(true) {
+	DustUtilsFactory<SimpleType, DustUtilsFactory<String, SimpleEntity>> factGlobalEntities = new DustUtilsFactory<SimpleType, DustUtilsFactory<String, SimpleEntity>>(true) {
 		@Override
 		protected DustUtilsFactory<String, SimpleEntity> create(SimpleType typeKey, Object... hints) {
 			return new DustUtilsFactory<String, SimpleEntity>(true) {

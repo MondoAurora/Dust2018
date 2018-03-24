@@ -17,7 +17,7 @@ public class DustUtils extends DustUtilsJava implements DustPubComponents {
 		try {
 			return (Content) instantiate(Class.forName(className), arr);
 		} catch (ClassNotFoundException e) {
-			DustException.wrapException(e);
+			DustException.wrapException(e, DustStatusInfoPub.ErrorClassNotFound);
 			return null;
 		}
 	}
@@ -26,7 +26,7 @@ public class DustUtils extends DustUtilsJava implements DustPubComponents {
 		try {
 			return cc.newInstance();
 		} catch (Exception e) {
-			DustException.wrapException(e);
+			DustException.wrapException(e, DustStatusInfoPub.ErrorClassInstantiation);
 			return null;
 		}
 	}
