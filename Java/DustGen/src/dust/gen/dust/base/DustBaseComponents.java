@@ -9,7 +9,7 @@ public interface DustBaseComponents extends DustComponents {
 
 		@Override
 		public DustType getType() {
-			return DustBaseComponents.DustBaseTypes.StatusInfo;
+			return DustBaseComponents.DustTypeBase.ConstValue;
 		}
 	}
 
@@ -17,7 +17,7 @@ public interface DustBaseComponents extends DustComponents {
 		Add, Replace, Remove, ChangeKey;
 		@Override
 		public DustType getType() {
-			return DustBaseComponents.DustBaseTypes.ConstValue;
+			return DustBaseComponents.DustTypeBase.ConstValue;
 		}
 	}
 
@@ -25,7 +25,7 @@ public interface DustBaseComponents extends DustComponents {
 		OK, Skip, Exit, Repeat, Restart;
 		@Override
 		public DustType getType() {
-			return DustBaseComponents.DustBaseTypes.ConstValue;
+			return DustBaseComponents.DustTypeBase.ConstValue;
 		}
 	}
 
@@ -33,7 +33,7 @@ public interface DustBaseComponents extends DustComponents {
 		Self, Message, Block;
 		@Override
 		public DustType getType() {
-			return DustBaseComponents.DustBaseTypes.ConstValue;
+			return DustBaseComponents.DustTypeBase.ConstValue;
 		}
 	}
 	
@@ -45,7 +45,7 @@ public interface DustBaseComponents extends DustComponents {
 		Command, Target;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.Message;
+			return DustTypeBase.Message;
 		}
 	}
 
@@ -53,7 +53,7 @@ public interface DustBaseComponents extends DustComponents {
 		Services;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.Entity;
+			return DustTypeBase.Entity;
 		}
 	}
 
@@ -61,7 +61,7 @@ public interface DustBaseComponents extends DustComponents {
 		svcImpl;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.Entity;
+			return DustTypeBase.Entity;
 		}
 	}
 
@@ -69,7 +69,7 @@ public interface DustBaseComponents extends DustComponents {
 		binClass;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.Service;
+			return DustTypeBase.Service;
 		}
 	}
 
@@ -77,16 +77,16 @@ public interface DustBaseComponents extends DustComponents {
 		binMethod;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.Command;
+			return DustTypeBase.Command;
 		}
 	}
 
-	enum DustBaseTypes implements DustType {
+	enum DustTypeBase implements DustType {
 		Entity, Message, ConstValue, StatusInfo, Service, Command;
 
 	}
 
-	enum DustBaseMessageInitable implements DustCommand {
+	enum DustCommandBaseInitable implements DustCommand {
 		Init;
 		@Override
 		public DustType getType() {
@@ -94,16 +94,16 @@ public interface DustBaseComponents extends DustComponents {
 		}
 		@Override
 		public DustService getService() {
-			return DustBaseServices.Initable;
+			return DustServiceBase.Initable;
 		}
 	}
 
-	enum DustBaseServices implements DustService {
+	enum DustServiceBase implements DustService {
 		Initable,
 		;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.Service;
+			return DustTypeBase.Service;
 		}
 	}
 }

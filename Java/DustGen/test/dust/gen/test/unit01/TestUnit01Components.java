@@ -34,7 +34,7 @@ public interface TestUnit01Components extends DustBaseComponents {
 		}
 	}
 
-	enum TestUnit01MessageTestSimple implements DustCommand {
+	enum DustCommandTestUnit01TestSimple implements DustCommand {
 		Msg01;
 		@Override
 		public DustType getType() {

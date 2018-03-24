@@ -9,7 +9,7 @@ public interface DustUtilsComponents extends DustBaseComponents {
 		
 		@Override
 		public DustType getType() {
-			return DustUtilsTypes.Identified;
+			return DustTypeUtils.Identified;
 		}
 	}
 	
@@ -18,12 +18,12 @@ public interface DustUtilsComponents extends DustBaseComponents {
 		
 		@Override
 		public DustType getType() {
-			return DustUtilsTypes.Owned;
+			return DustTypeUtils.Owned;
 		}
 	}
 
 	
-	enum DustUtilsTypes implements DustType {
+	enum DustTypeUtils implements DustType {
 		Identified, Owned
 		
 		;

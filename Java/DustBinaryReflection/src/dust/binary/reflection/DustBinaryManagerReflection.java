@@ -89,7 +89,7 @@ public class DustBinaryManagerReflection implements DustBootComponents.DustBinar
 			String name = Dust.getAttrValue(key, DustAttributeUtilsIdentified.idLocal);
 			
 			// ugly name magic for now...			
-			name = name.replace("Message", "").replace(":", "");
+			name = name.replace("DustCommand", "").replace(":", "");
 			name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
 			try {
 				return hints[0].getClass().getMethod(name);

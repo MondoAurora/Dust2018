@@ -2,7 +2,7 @@ package dust.runtime.simple;
 
 import dust.gen.dust.binary.DustBinaryComponents;
 import dust.gen.dust.runtime.DustRuntimeComponents;
-import dust.gen.dust.runtime.DustRuntimeComponents.DustMessageRuntime;
+import dust.gen.dust.runtime.DustRuntimeComponents.DustStatusInfoRuntime;
 import dust.gen.dust.utils.DustUtilsComponents;
 import dust.gen.test.unit01.TestUnit01Components;
 import dust.pub.Dust;
@@ -54,7 +54,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		}
 		
 		if ( (null != se ) && !mgrAaa.verifyAccess(se, access) ) {
-			DustException.throwException(DustAaaMessages.AccessDenied, se, access);
+			DustException.throwException(DustStatusInfoAaa.AccessDenied, se, access);
 		}
 		
 		return se;
@@ -66,7 +66,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 
 	private void test() throws Exception {
 		DustEntity msg = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustLinkRuntimeRuntime.InitMessage, null);
-		Dust.modifyRefs(DustBaseLinkCommand.Add, msg, TestUnit01Components.TestUnit01MessageTestSimple.Msg01, DustLinkBaseMessage.Command);
+		Dust.modifyRefs(DustBaseLinkCommand.Add, msg, TestUnit01Components.DustCommandTestUnit01TestSimple.Msg01, DustLinkBaseMessage.Command);
 
 		DustEntity target = Dust.getRefEntity(msg, true, DustLinkBaseMessage.Target, null);
 		Dust.modifyRefs(DustBaseLinkCommand.Add, target, TestUnit01Components.DustServiceTestUnit01.TestSimple, DustLinkBaseEntity.Services);
@@ -88,12 +88,12 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		DustEntity eMeta = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustLinkRuntimeRuntime.MetaManager, null);
 		
 		Dust.setAttrValue(eMeta, DustUtilsComponents.DustAttributeUtilsIdentified.idLocal, "na?");
-		Dust.modifyRefs(DustBaseLinkCommand.Add, eMeta, DustRuntimeComponents.DustRuntimeServices.MetaManager, DustLinkBaseEntity.Services);
+		Dust.modifyRefs(DustBaseLinkCommand.Add, eMeta, DustRuntimeComponents.DustServiceRuntime.MetaManager, DustLinkBaseEntity.Services);
 		
 		DustEntity msg = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustLinkRuntimeRuntime.InitMessage, null);
 		
 		Dust.modifyRefs(DustBaseLinkCommand.Add, msg, eMeta, DustLinkBaseMessage.Target);
-		Dust.modifyRefs(DustBaseLinkCommand.Add, msg, DustRuntimeComponents.DustRuntimeMessageMetaManager.RegisterUnit, DustLinkBaseMessage.Command);
+		Dust.modifyRefs(DustBaseLinkCommand.Add, msg, DustRuntimeComponents.DustCommandRuntimeMetaManager.RegisterUnit, DustLinkBaseMessage.Command);
 		
 		Dust.processRefs(new DustBaseVisitor() {
 			@Override
@@ -152,7 +152,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 			try {
 				binMgr.sendMessage(se);
 			} catch (Exception e) {
-				DustException.wrapException(e, DustMessageRuntime.MessageSendError);
+				DustException.wrapException(e, DustStatusInfoRuntime.MessageSendError);
 			}
 		}
 	}
@@ -165,7 +165,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		try {
 			return (null == se) ? null : mgrLink.getRefEntity(se, createIfMissing, ld, key);
 		} catch (Exception e) {
-			DustException.wrapException(e, DustMessageRuntime.LinkCreationError);
+			DustException.wrapException(e, DustStatusInfoRuntime.LinkCreationError);
 			return null;
 		}
 	}

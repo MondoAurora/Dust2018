@@ -4,11 +4,11 @@ import dust.gen.dust.base.DustBaseComponents;
 
 public interface DustAaaComponents extends DustBaseComponents {
 	
-	enum DustAaaMessages implements DustEntity {
+	enum DustStatusInfoAaa implements DustEntity {
 		AccessDenied;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.StatusInfo;
+			return DustTypeBase.StatusInfo;
 		}
 	}
 	
@@ -16,7 +16,7 @@ public interface DustAaaComponents extends DustBaseComponents {
 		Check, Read, Write, Execute;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.ConstValue;
+			return DustTypeBase.ConstValue;
 		}
 	}
 	

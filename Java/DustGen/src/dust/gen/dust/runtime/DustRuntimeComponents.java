@@ -4,12 +4,12 @@ import dust.gen.dust.base.DustBaseComponents;
 
 public interface DustRuntimeComponents extends DustBaseComponents {
 
-	enum DustMessageRuntime implements DustEntity {
+	enum DustStatusInfoRuntime implements DustEntity {
 		LinkCreationError, MessageSendError;
 
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.StatusInfo;
+			return DustTypeBase.StatusInfo;
 		}
 	}
 
@@ -26,18 +26,18 @@ public interface DustRuntimeComponents extends DustBaseComponents {
 		Runtime, MetaManager
 	}
 
-	enum DustRuntimeMessageMetaManager implements DustCommand {
+	enum DustCommandRuntimeMetaManager implements DustCommand {
 		RegisterUnit(null);
 
 		private final DustType paramType;
 
-		private DustRuntimeMessageMetaManager(DustType paramType) {
+		private DustCommandRuntimeMetaManager(DustType paramType) {
 			this.paramType = paramType;
 		}
 
 		@Override
 		public DustService getService() {
-			return DustRuntimeServices.MetaManager;
+			return DustServiceRuntime.MetaManager;
 		}
 
 		@Override
@@ -46,12 +46,12 @@ public interface DustRuntimeComponents extends DustBaseComponents {
 		}
 	}
 
-	enum DustRuntimeServices implements DustService {
+	enum DustServiceRuntime implements DustService {
 		MetaManager,
 		;
 		@Override
 		public DustType getType() {
-			return DustBaseTypes.Service;
+			return DustTypeBase.Service;
 		}
 	}
 }
