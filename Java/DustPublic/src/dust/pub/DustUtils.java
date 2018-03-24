@@ -1,35 +1,15 @@
 package dust.pub;
 
-import dust.gen.dust.base.DustBaseComponents;
+public class DustUtils extends DustUtilsJava implements DustPubComponents {
 
-public class DustUtils implements DustBaseComponents {
-
-	public static String toString(Object ob) {
-		return (null == ob) ? "" : ob.toString();
-	}
-
-	public static boolean isEmpty(String str) {
-		return (null == str) ? true : str.isEmpty();
-	}
-	
-	public static StringBuilder sbApend(StringBuilder sb, String sep, boolean strict, Object... objects) {
-		for (Object ob : objects) {
-			String str = toString(ob);
-
-			if (null == sb) {
-				sb = new StringBuilder(str);
-			} else {
-				if (strict || (0 < sb.length())) {
-					sb.append(sep);
-				}
-				sb.append(str);
-			}
+	public static <RetType> RetType getAttrValueSafe(DustEntity entity, DustAttribute field,
+			Creator<RetType> creator, Object ...params ) {
+		RetType ret = Dust.getAttrValue(entity, field);
+		if ( null == ret ) {
+			ret = creator.create(params);
+			Dust.setAttrValue(entity, field, ret);
 		}
-		return sb;
+		return ret;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <Content> Content safeGet(int idx, Object... arr ) {
-		return ((null != arr) && (0 < idx) && (idx < arr.length)) ? (Content)arr[idx] : null;
-	}
 }

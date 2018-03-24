@@ -42,11 +42,15 @@ public interface DustBootComponents extends DustBaseServices {
 		void init(DustConfig config) throws Exception;
 	}
 
+	interface DustEntityOwner {
+		void setEntity(DustEntity entity);
+	}
+
 	interface DustShutdownAware {
 		void shutdown() throws Exception;
 	}
 
-	public interface DustBinaryManager extends DustShutdownAware {
+	public interface DustBinaryManager extends DustShutdownAware, DustEntityOwner {
 		void sendMessage(DustEntity msg) throws Exception;
 //		void initLogicInstance(DustEntity owner, DustEntity command) throws Exception;
 

@@ -1,6 +1,5 @@
 package dust.runtime.simple;
 
-import dust.gen.dust.base.DustBaseComponents;
 import dust.gen.dust.runtime.DustRuntimeComponents;
 import dust.gen.dust.runtime.DustRuntimeComponents.DustMessageRuntime;
 import dust.gen.dust.utils.DustUtilsComponents;
@@ -64,11 +63,13 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	private void test() throws Exception {
-		mgrMeta.registerUnit(DustUtilsComponents.DustUtilsTypes.class.getName(), null);
-		mgrMeta.registerUnit(DustBaseComponents.DustBaseTypes.class.getName(), null);
-		mgrMeta.registerUnit(DustRuntimeComponents.DustTypeRuntime.class.getName(), null);
+//		mgrMeta.registerUnit(DustUtilsComponents.DustUtilsTypes.class.getName(), null);
+//		mgrMeta.registerUnit(DustBaseComponents.DustBaseTypes.class.getName(), null);
+//		mgrMeta.registerUnit(DustRuntimeComponents.DustTypeRuntime.class.getName(), null);
 		
 		DustEntity eMeta = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustLinkRuntimeRuntime.MetaManager, null);
+		
+		Dust.setAttrValue(eMeta, DustUtilsComponents.DustAttributeUtilsIdentified.idLocal, "na?");
 		Dust.modifyRefs(DustBaseLinkCommand.Add, eMeta, DustRuntimeComponents.DustRuntimeServices.MetaManager, DustLinkBaseEntity.Services);
 		
 		DustEntity msg = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustLinkRuntimeRuntime.InitMessage, null);

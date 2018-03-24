@@ -1,34 +1,32 @@
 package dust.gen.dust.utils;
 
 import dust.gen.dust.base.DustBaseComponents;
-import dust.pub.metaenum.DustMetaEnum;
 
-public interface DustUtilsComponents extends DustMetaEnum, DustBaseComponents {
+public interface DustUtilsComponents extends DustBaseComponents {
 	
 	enum DustAttributeUtilsIdentified implements DustAttribute {
-		id
+		idLocal, idCombined;
+		
+		@Override
+		public DustType getType() {
+			return DustUtilsTypes.Identified;
+		}
 	}
 	
-	enum DustUtilsTypes implements DustMetaTypeDescriptor {
-		Identified(DustAttributeUtilsIdentified.class,null);
+	enum DustLinkUtilsOwned implements DustLink {
+		Owner;
 		
-		private final Class<? extends Enum<?>> atts;
-		private final Class<? extends Enum<?>> links;
+		@Override
+		public DustType getType() {
+			return DustUtilsTypes.Owned;
+		}
+	}
+
+	
+	enum DustUtilsTypes implements DustType {
+		Identified, Owned
 		
-		private DustUtilsTypes(Class<? extends Enum<?>> atts, Class<? extends Enum<?>> links) {
-			this.atts = atts;
-			this.links = links;
-		}
-
-		@Override
-		public Class<? extends Enum<?>> getAttribEnum() {
-			return atts;
-		}
-
-		@Override
-		public Class<? extends Enum<?>> getLinkEnum() {
-			return links;
-		}
+		;
 	}
 
 }

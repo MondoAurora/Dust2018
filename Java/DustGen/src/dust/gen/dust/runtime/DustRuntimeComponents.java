@@ -1,58 +1,57 @@
 package dust.gen.dust.runtime;
 
-import dust.gen.dust.DustComponents;
-import dust.pub.metaenum.DustMetaEnum;
+import dust.gen.dust.base.DustBaseComponents;
 
-public interface DustRuntimeComponents extends DustComponents, DustMetaEnum {
-	
+public interface DustRuntimeComponents extends DustBaseComponents {
+
 	enum DustMessageRuntime implements DustEntity {
-		LinkCreationError, MessageSendError
+		LinkCreationError, MessageSendError;
+
+		@Override
+		public DustType getType() {
+			return DustBaseTypes.StatusInfo;
+		}
 	}
 
 	enum DustLinkRuntimeRuntime implements DustLink {
-		InitMessage, BinaryManager, MetaManager
+		InitMessage, BinaryManager, MetaManager;
+
+		@Override
+		public DustType getType() {
+			return DustTypeRuntime.Runtime;
+		}
 	}
-	
-	enum DustTypeRuntime implements DustMetaTypeDescriptor, DustEntity {
-		Runtime(null, DustLinkRuntimeRuntime.class),
-		MetaManager(null, null),
+
+	enum DustTypeRuntime implements DustType {
+		Runtime, MetaManager
+	}
+
+	enum DustRuntimeMessageMetaManager implements DustMessage {
+		RegisterUnit(null);
+
+		private final DustType paramType;
+
+		private DustRuntimeMessageMetaManager(DustType paramType) {
+			this.paramType = paramType;
+		}
+
+		@Override
+		public DustService getService() {
+			return DustRuntimeServices.MetaManager;
+		}
+
+		@Override
+		public DustType getType() {
+			return paramType;
+		}
+	}
+
+	enum DustRuntimeServices implements DustService {
+		MetaManager,
 		;
-		
-		private final Class<? extends Enum<?>> atts;
-		private final Class<? extends Enum<?>> links;
-		
-		private DustTypeRuntime(Class<? extends Enum<?>> atts, Class<? extends Enum<?>> links) {
-			this.atts = atts;
-			this.links = links;
-		}
-
 		@Override
-		public Class<? extends Enum<?>> getAttribEnum() {
-			return atts;
-		}
-
-		@Override
-		public Class<? extends Enum<?>> getLinkEnum() {
-			return links;
-		}		
-	}
-	
-	enum DustRuntimeMessageMetaManager implements DustEntity {
-		RegisterUnit
-	}
-
-	enum DustRuntimeServices implements DustMetaServiceDescriptor, DustEntity {
-		MetaManager(DustRuntimeMessageMetaManager.class);
-		
-		private final Class<? extends Enum<?>> msgs;
-		
-		private DustRuntimeServices( Class<? extends Enum<?>> msgs) {
-			this.msgs = msgs;
-		}
-
-		@Override
-		public Class<? extends Enum<?>> getMessageEnum() {
-			return msgs;
+		public DustType getType() {
+			return DustBaseTypes.Service;
 		}
 	}
 }

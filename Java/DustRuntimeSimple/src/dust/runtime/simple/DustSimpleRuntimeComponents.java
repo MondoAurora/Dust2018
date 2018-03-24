@@ -65,7 +65,7 @@ public interface DustSimpleRuntimeComponents
 	}
 
 	class SimpleType {
-		Enum<?> id;
+		DustType id;
 		SimpleEntity entity;
 
 		DustUtilsFactory<DustAttribute, SimpleAttDef> factAtts = new DustUtilsFactory<DustAttribute, SimpleAttDef>(
@@ -83,7 +83,7 @@ public interface DustSimpleRuntimeComponents
 			}
 		};
 
-		public SimpleType(Enum<?> key) {
+		public SimpleType(DustType key) {
 			this.id = key;
 		}
 
@@ -171,6 +171,11 @@ public interface DustSimpleRuntimeComponents
 		public SimpleEntity(DustSimpleManagerData ctx, SimpleType type) {
 			this.ctx = ctx;
 			this.type = type;
+		}
+		
+		@Override
+		public DustType getType() {
+			return type.getType();
 		}
 
 		void setState(DustEntityState state) {

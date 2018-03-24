@@ -1,80 +1,90 @@
 package dust.gen.dust.base;
 
 import dust.gen.dust.DustComponents;
-import dust.pub.metaenum.DustMetaEnum;
 
-public interface DustBaseComponents extends DustComponents, DustMetaEnum {
+public interface DustBaseComponents extends DustComponents {
 
 	enum DustEntityState implements DustEntity {
-		Temporal, InSync, RefChanged, Changed, Constructed, Destructed
+		Temporal, InSync, RefChanged, Changed, Constructed, Destructed;
+
+		@Override
+		public DustType getType() {
+			return DustBaseComponents.DustBaseTypes.StatusInfo;
+		}
 	}
-	
+
 	enum DustBaseLinkCommand implements DustEntity {
 		Add, Replace, Remove, ChangeKey;
+		@Override
+		public DustType getType() {
+			return DustBaseComponents.DustBaseTypes.ConstValue;
+		}
 	}
 
 	enum DustBaseVisitorResponse implements DustEntity {
 		OK, Skip, Exit, Repeat, Restart;
+		@Override
+		public DustType getType() {
+			return DustBaseComponents.DustBaseTypes.ConstValue;
+		}
 	}
 
 	enum DustBaseContext implements DustEntity {
 		Self, Message, Block;
+		@Override
+		public DustType getType() {
+			return DustBaseComponents.DustBaseTypes.ConstValue;
+		}
 	}
-	
 
 	enum DustLinkBaseMessage implements DustLink {
-		Command, Target
+		Command, Target;
+		@Override
+		public DustType getType() {
+			return DustBaseTypes.Message;
+		}
+
 	}
-	
+
 	enum DustLinkBaseEntity implements DustLink {
-		Services
+		Services;
+		@Override
+		public DustType getType() {
+			return DustBaseTypes.Entity;
+		}
 	}
-	
+
 	enum DustAttributeBaseEntity implements DustAttribute {
-		svcImpl
+		svcImpl;
+		@Override
+		public DustType getType() {
+			return DustBaseTypes.Entity;
+		}
 	}
-	
-	enum DustBaseTypes implements DustMetaTypeDescriptor {
-		Entity(DustAttributeBaseEntity.class, DustLinkBaseEntity.class),
-		Message(null, DustLinkBaseMessage.class),
-		ConstValue(null, null),
+
+	enum DustBaseTypes implements DustType {
+		Entity, Message, ConstValue, StatusInfo, Service;
+
+	}
+
+	enum DustBaseMessageInitable implements DustMessage {
+		Init;
+		@Override
+		public DustType getType() {
+			return null;
+		}
+		@Override
+		public DustService getService() {
+			return DustBaseServices.Initable;
+		}
+	}
+
+	enum DustBaseServices implements DustService {
+		Initable,
 		;
-		
-		private final Class<? extends Enum<?>> atts;
-		private final Class<? extends Enum<?>> links;
-		
-		private DustBaseTypes(Class<? extends Enum<?>> atts, Class<? extends Enum<?>> links) {
-			this.atts = atts;
-			this.links = links;
-		}
-
 		@Override
-		public Class<? extends Enum<?>> getAttribEnum() {
-			return atts;
-		}
-
-		@Override
-		public Class<? extends Enum<?>> getLinkEnum() {
-			return links;
-		}		
-	}
-	
-	enum DustBaseMessageInitable implements DustEntity {
-		Init
-	}
-
-	enum DustBaseServices implements DustMetaServiceDescriptor {
-		Initable(DustBaseMessageInitable.class);
-		
-		private final Class<? extends Enum<?>> msgs;
-		
-		private DustBaseServices( Class<? extends Enum<?>> msgs) {
-			this.msgs = msgs;
-		}
-
-		@Override
-		public Class<? extends Enum<?>> getMessageEnum() {
-			return msgs;
+		public DustType getType() {
+			return DustBaseTypes.Service;
 		}
 	}
 }
