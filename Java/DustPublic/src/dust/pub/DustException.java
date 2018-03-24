@@ -5,7 +5,7 @@ import dust.gen.dust.base.DustBaseComponents;
 public class DustException extends RuntimeException implements DustBaseComponents {
 	private static final long serialVersionUID = 1L;
 
-	public DustException(DustEntity errInfo, Throwable wrapped) {
+	public DustException(DustEntity errInfo, Throwable wrapped, Object... context) {
 		super(DustUtils.toString(errInfo), wrapped);
 	}
 	
@@ -13,11 +13,20 @@ public class DustException extends RuntimeException implements DustBaseComponent
 		throw new DustException(errInfo, null);
 	}
 	
-	public static void wrapException(Throwable t, DustEntity errInfo) {
+	@Deprecated
+	public static void wrapException(Throwable t) {
 		if ( t instanceof DustException ) {
 			throw (DustException) t;
 		} else {
-			throw new DustException(errInfo, t);
+			throw new DustException(null, t);
+		}
+	}
+	
+	public static void wrapException(Throwable t, DustEntity errInfo, Object... context) {
+		if ( t instanceof DustException ) {
+			throw (DustException) t;
+		} else {
+			throw new DustException(errInfo, t, context);
 		}
 	}
 

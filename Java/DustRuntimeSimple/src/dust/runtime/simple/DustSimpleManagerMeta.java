@@ -1,9 +1,12 @@
 package dust.runtime.simple;
 
+import dust.gen.dust.utils.DustUtilsComponents;
+import dust.pub.Dust;
+import dust.pub.DustUtils;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
-public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, //DustMetaServices.DustMetaManager,
+public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // DustMetaServices.DustMetaManager,
 		DustBootComponents.DustConfigurable, DustBootComponents.DustShutdownAware {
 
 	private DustUtilsFactory<DustType, SimpleType> factType = new DustUtilsFactory<DustType, SimpleType>(false) {
@@ -13,7 +16,8 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, //Dus
 		}
 	};
 
-	DustUtilsFactory<DustAttribute, SimpleAttDef> factAttDefs = new DustUtilsFactory<DustAttribute, SimpleAttDef>(false) {
+	DustUtilsFactory<DustAttribute, SimpleAttDef> factAttDefs = new DustUtilsFactory<DustAttribute, SimpleAttDef>(
+			false) {
 		@Override
 		protected SimpleAttDef create(DustAttribute key, Object... hints) {
 			return new SimpleAttDef(getSimpleType(key.getType()), key);
@@ -31,9 +35,27 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, //Dus
 		@Override
 		protected SimpleEntity create(Enum<?> key, Object... hints) {
 			SimpleEntity se = new SimpleEntity(null, getSimpleType(DustBaseTypes.ConstValue));
+			setFieldValue(se, DustUtilsComponents.DustAttributeUtilsIdentified.idLocal, DustUtils.toLocalId(key));
+
+			if (key instanceof DustCommand) {
+				DustService svc = ((DustCommand) key).getService();
+				Dust.modifyRefs(DustBaseLinkCommand.Add, se, svc, DustUtilsComponents.DustLinkUtilsOwned.Owner);
+				setFieldValue(se, DustUtilsComponents.DustAttributeUtilsIdentified.idCombined, DustUtils.toEnumId((Enum<?>) svc));
+			}
+
 			return se;
 		}
 	};
+
+	void setFieldValue(SimpleEntity se, DustAttribute att, Object value) {
+		SimpleAttDef ad = factAttDefs.get(att);
+		se.setFieldValue(ad, value);
+	};
+	//
+	// void addRef(SimpleEntity left, DustLink link, DustEntity right) {
+	// SimpleLinkDef ld = factLinkDefs.get(link);
+	// se.setFieldValue(ad, value);
+	// };
 
 	SimpleType getSimpleType(DustType type) {
 		return factType.get(type);
@@ -59,38 +81,4 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, //Dus
 	public void shutdown() throws Exception {
 		factType.clear();
 	}
-
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public void registerUnit(String typeClass, String serviceClass) throws Exception {
-//		if (!DustUtils.isEmpty(typeClass)) {
-//			Class<? extends Enum<?>> types = (Class<? extends Enum<?>>) Class.forName(typeClass);
-//			for (Enum<?> t : types.getEnumConstants()) {
-//				DustMetaTypeDescriptor md = (DustMetaTypeDescriptor) t;
-//				SimpleType st = factType.get(t, md);
-//
-//				Class<? extends Enum<?>> ae = md.getAttribEnum();
-//				if (null != ae) {
-//					for (Enum<?> a : ae.getEnumConstants()) {
-//						DustAttribute att = (DustAttribute) a;
-//						mapAttributes.put(att, st.getAttDef(att));
-//					}
-//				}
-//
-//				Class<? extends Enum<?>> le = md.getLinkEnum();
-//				if (null != le) {
-//					for (Enum<?> l : le.getEnumConstants()) {
-//						DustLink link = (DustLink) l;
-//						mapLinkDefs.put(link, st.getLinkDef(link));
-//					}
-//				}
-//			}
-//		}
-//		if (!DustUtils.isEmpty(serviceClass)) {
-//			Class<? extends Enum<?>> services = (Class<? extends Enum<?>>) Class.forName(serviceClass);
-//			for (Enum<?> t : services.getEnumConstants()) {
-//			}
-//		}
-//	}
-
 }

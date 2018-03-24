@@ -26,7 +26,7 @@ public interface DustRuntimeComponents extends DustBaseComponents {
 		Runtime, MetaManager
 	}
 
-	enum DustRuntimeMessageMetaManager implements DustMessage {
+	enum DustRuntimeMessageMetaManager implements DustCommand {
 		RegisterUnit(null);
 
 		private final DustType paramType;

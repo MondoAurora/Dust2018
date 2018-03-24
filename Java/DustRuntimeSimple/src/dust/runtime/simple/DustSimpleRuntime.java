@@ -1,8 +1,10 @@
 package dust.runtime.simple;
 
+import dust.gen.dust.binary.DustBinaryComponents;
 import dust.gen.dust.runtime.DustRuntimeComponents;
 import dust.gen.dust.runtime.DustRuntimeComponents.DustMessageRuntime;
 import dust.gen.dust.utils.DustUtilsComponents;
+import dust.gen.test.unit01.TestUnit01Components;
 import dust.pub.Dust;
 import dust.pub.DustException;
 import dust.pub.DustUtilsDev;
@@ -63,6 +65,22 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	private void test() throws Exception {
+		DustEntity msg = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustLinkRuntimeRuntime.InitMessage, null);
+		Dust.modifyRefs(DustBaseLinkCommand.Add, msg, TestUnit01Components.TestUnit01MessageTestSimple.Msg01, DustLinkBaseMessage.Command);
+
+		DustEntity target = Dust.getRefEntity(msg, true, DustLinkBaseMessage.Target, null);
+		Dust.modifyRefs(DustBaseLinkCommand.Add, target, TestUnit01Components.DustServiceTestUnit01.TestSimple, DustLinkBaseEntity.Services);
+
+		DustEntity bm = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustLinkRuntimeRuntime.BinaryManager, null);
+		DustEntity la = Dust.getRefEntity(bm, true, DustBinaryComponents.DustLinkBinaryManager.LogicAssignments, null);
+		
+		Dust.setAttrValue(la, DustBinaryComponents.DustAttributeBinaryLogicAssignment.javaClass, "dust.test.unit01.TestSimple");
+		Dust.modifyRefs(DustBaseLinkCommand.Add, la, TestUnit01Components.DustServiceTestUnit01.TestSimple, DustBinaryComponents.DustLinkBinaryLogicAssignment.Service);
+
+		Dust.send(msg);
+	}
+
+	void test01() throws Exception {
 //		mgrMeta.registerUnit(DustUtilsComponents.DustUtilsTypes.class.getName(), null);
 //		mgrMeta.registerUnit(DustBaseComponents.DustBaseTypes.class.getName(), null);
 //		mgrMeta.registerUnit(DustRuntimeComponents.DustTypeRuntime.class.getName(), null);
@@ -87,7 +105,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		
 		Dust.send(msg);
 	}
-
+	
 	@Override
 	public void setBinaryManager(DustBinaryManager binMgr) {
 		this.binMgr = binMgr;
@@ -95,6 +113,10 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 
 	@Override
 	public void dustBaseBlockProcessorBegin() throws Exception {
+		
+		DustEntity bm = Dust.getRefEntity(DustBaseContext.Self, true, DustRuntimeComponents.DustLinkRuntimeRuntime.BinaryManager, null);
+		binMgr.setEntity(bm);
+		
 		test();
 	}
 

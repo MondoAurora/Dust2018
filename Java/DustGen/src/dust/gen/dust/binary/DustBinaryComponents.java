@@ -11,11 +11,18 @@ public interface DustBinaryComponents extends DustComponents, DustBaseComponents
 		public DustType getType() {
 			return DustBaseTypes.StatusInfo;
 		}
-
 	}
 	
 	enum DustAttributeBinaryLogicAssignment implements DustAttribute {
 		javaClass;
+		@Override
+		public DustType getType() {
+			return DustTypeBinary.LogicAssignment;
+		}
+	}
+
+	enum DustLinkBinaryLogicAssignment implements DustLink {
+		Service;
 		@Override
 		public DustType getType() {
 			return DustTypeBinary.LogicAssignment;

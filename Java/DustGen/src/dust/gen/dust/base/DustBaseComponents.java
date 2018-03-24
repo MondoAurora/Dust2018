@@ -36,6 +36,10 @@ public interface DustBaseComponents extends DustComponents {
 			return DustBaseComponents.DustBaseTypes.ConstValue;
 		}
 	}
+	
+	
+	
+	
 
 	enum DustLinkBaseMessage implements DustLink {
 		Command, Target;
@@ -43,7 +47,6 @@ public interface DustBaseComponents extends DustComponents {
 		public DustType getType() {
 			return DustBaseTypes.Message;
 		}
-
 	}
 
 	enum DustLinkBaseEntity implements DustLink {
@@ -62,12 +65,28 @@ public interface DustBaseComponents extends DustComponents {
 		}
 	}
 
+	enum DustAttributeBaseService implements DustAttribute {
+		binClass;
+		@Override
+		public DustType getType() {
+			return DustBaseTypes.Service;
+		}
+	}
+
+	enum DustAttributeBaseCommand implements DustAttribute {
+		binMethod;
+		@Override
+		public DustType getType() {
+			return DustBaseTypes.Command;
+		}
+	}
+
 	enum DustBaseTypes implements DustType {
-		Entity, Message, ConstValue, StatusInfo, Service;
+		Entity, Message, ConstValue, StatusInfo, Service, Command;
 
 	}
 
-	enum DustBaseMessageInitable implements DustMessage {
+	enum DustBaseMessageInitable implements DustCommand {
 		Init;
 		@Override
 		public DustType getType() {

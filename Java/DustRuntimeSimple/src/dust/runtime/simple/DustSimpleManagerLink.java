@@ -19,7 +19,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 					try {
 						proc.dustDustBaseVisitorVisit(ref.eTarget);
 					} catch (Exception e) {
-						DustException.wrapException(e, null);
+						DustException.wrapException(e);
 					}
 				} else {
 					processRefs(proc, ref.eTarget, path, idx + 1);

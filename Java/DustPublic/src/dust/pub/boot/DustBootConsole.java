@@ -28,7 +28,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		try {
 			RUNTIME.dustBaseBlockProcessorEnd(DustBaseVisitorResponse.OK, null);
 		} catch (Exception e) {
-			DustException.wrapException(e, null);
+			DustException.wrapException(e);
 		}		
 	}
 

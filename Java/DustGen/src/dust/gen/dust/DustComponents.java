@@ -17,7 +17,7 @@ public interface DustComponents {
 	interface DustService extends DustEntity {
 	}
 	
-	interface DustMessage extends DustEntity {
+	interface DustCommand extends DustEntity {
 		DustService getService();
 	}
 

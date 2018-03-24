@@ -1,11 +1,29 @@
 package dust.pub;
 
-import dust.gen.dust.base.DustBaseComponents;
-
-public class DustUtilsJava implements DustBaseComponents {
+public class DustUtilsJava implements DustPubComponents {
 
 	public static String toString(Object ob) {
 		return (null == ob) ? "" : ob.toString();
+	}
+
+	public static String toLocalId(Enum<?> e) {
+		return new StringBuilder(e.getClass().getSimpleName()).append(ID_SEP).append(e.name()).toString();
+	}
+
+	public static String toEnumId(Enum<?> e) {
+		return new StringBuilder(e.getClass().getName()).append(ID_SEP).append(e.name()).toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Enum<?> fromEnumId(String s) throws ClassNotFoundException {
+		String[] ee = s.split(ID_SEP);
+		for ( Enum<?> ec : ((Class<? extends Enum<?>>) Class.forName(ee[0])).getEnumConstants() ) {
+			if ( ec.name().equals(ee[1])) {
+				return ec;
+			}
+		}
+			
+		return null;
 	}
 
 	public static boolean isEmpty(String str) {
