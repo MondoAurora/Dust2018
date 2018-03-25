@@ -3,14 +3,15 @@ package dust.pub.boot;
 import java.util.HashMap;
 import java.util.Map;
 
-import dust.gen.dust.base.DustBaseServices;
+import dust.gen.dust.core.data.DustCoreDataServices;
+import dust.gen.dust.core.runtime.DustCoreRuntimeServices;
 
-public interface DustBootComponents extends DustBaseServices {
+public interface DustBootComponents extends DustCoreDataServices, DustCoreRuntimeServices {
 	String CFG_KEYVALUESEP = "=";
 	String CFG_LISTFLAG = "*";
 
 	enum DustConfigKeys {
-		DustBinaryManager, DustRuntime, DustNodeInit
+		DustBinding, DustRuntime, DustNodeInit
 	}
 
 	abstract class DustConfig {
@@ -50,7 +51,7 @@ public interface DustBootComponents extends DustBaseServices {
 		void shutdown() throws Exception;
 	}
 
-	public interface DustBinaryManager extends DustShutdownAware, DustEntityOwner {
+	public interface DustBindingManager extends DustShutdownAware, DustEntityOwner {
 		void sendMessage(DustEntity msg) throws Exception;
 //		void initLogicInstance(DustEntity owner, DustEntity command) throws Exception;
 
@@ -59,8 +60,8 @@ public interface DustBootComponents extends DustBaseServices {
 //		void leaveCustomLogic();
 	}
 	
-	interface DustRuntimeBootable extends DustRuntime, DustConfigurable {
-		void setBinaryManager(DustBinaryManager binMgr);
+	interface DustRuntimeBootable extends DustCoreRuntimeManager, DustConfigurable {
+		void setBinaryManager(DustBindingManager binMgr);
 	}
 
 	class DustConfigStd extends DustConfig {

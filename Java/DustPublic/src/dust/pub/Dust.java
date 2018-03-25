@@ -1,32 +1,34 @@
 package dust.pub;
 
-import dust.gen.dust.base.DustBaseServices;
+import dust.gen.dust.core.data.DustCoreDataServices;
+import dust.gen.dust.core.exec.DustCoreExecServices;
+import dust.gen.dust.core.runtime.DustCoreRuntimeServices;
 
-public class Dust implements DustBaseServices {
+public class Dust implements DustCoreDataServices, DustCoreRuntimeServices, DustCoreExecServices {
 	
-	protected static DustRuntime RUNTIME;
+	protected static DustCoreRuntimeManager RUNTIME;
 
 	public static <ValType> ValType getAttrValue(DustEntity entity, DustAttribute field) {
-		return RUNTIME.getAttrValue(entity, field);
+		return RUNTIME.dustCoreRuntimeManagerGetAttrValue(entity, field);
 	}
 
 	public static void setAttrValue(DustEntity entity, DustAttribute field, Object value) {
-		RUNTIME.setAttrValue(entity, field, value);
+		RUNTIME.dustCoreRuntimeManagerSetAttrValue(entity, field, value);
 	}
 	
-	public static void processRefs(DustBaseVisitor proc, DustEntity root, DustLink... path) {
-		RUNTIME.processRefs(proc, root, path);
+	public static void processRefs(DustCoreExecVisitor proc, DustEntity root, DustLink... path) {
+		RUNTIME.dustCoreRuntimeManagerProcessRefs(proc, root, path);
 	}
 
 	public static DustEntity getRefEntity(DustEntity entity, boolean createIfMissing, DustLink linkDef, Object key) {
-		return RUNTIME.getRefEntity(entity, createIfMissing, linkDef, key);
+		return RUNTIME.dustCoreRuntimeManagerGetRefEntity(entity, createIfMissing, linkDef, key);
 	}
 
-	public static DustEntity modifyRefs(DustBaseLinkCommand refCmd, DustEntity left, DustEntity right, DustLink linkDef, Object... params) {
-		return RUNTIME.modifyRefs(refCmd, left, right, linkDef, params);
+	public static DustEntity modifyRefs(DustConstCoreDataLinkCommand refCmd, DustEntity left, DustEntity right, DustLink linkDef, Object... params) {
+		return RUNTIME.dustCoreRuntimeManagerModifyRefs(refCmd, left, right, linkDef, params);
 	}
 	
 	public static void send(DustEntity msg) {
-		RUNTIME.send(msg);
+		RUNTIME.dustCoreRuntimeManagerSend(msg);
 	}
 }

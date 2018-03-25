@@ -1,8 +1,9 @@
 package dust.pub;
 
-import dust.gen.dust.base.DustBaseComponents;
+import dust.gen.dust.core.data.DustCoreDataComponents;
+import dust.gen.dust.core.exec.DustCoreExecComponents;
 
-public interface DustPubComponents extends DustBaseComponents {
+public interface DustPubComponents extends DustCoreDataComponents, DustCoreExecComponents {
 	String ID_SEP = ":";
 	
 	interface Creator<RetType> {
@@ -13,7 +14,7 @@ public interface DustPubComponents extends DustBaseComponents {
 		ErrorClassNotFound, ErrorClassInstantiation, ErrorShutdownFailure, ErrorVistorExecution;
 		@Override
 		public DustType getType() {
-			return DustTypeBase.StatusInfo;
+			return DustTypeCoreExec.Status;
 		}
 	}
 

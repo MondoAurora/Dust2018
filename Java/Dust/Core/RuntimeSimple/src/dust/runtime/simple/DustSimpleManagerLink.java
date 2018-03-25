@@ -1,0 +1,76 @@
+package dust.runtime.simple;
+
+import java.util.Set;
+
+import dust.pub.DustException;
+import dust.pub.DustPubComponents;
+import dust.pub.DustUtils;
+
+public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
+	
+	DustConstCoreDataLinkCommand[] REFCMD_SINGLE = {};
+
+	void processRefs(DustCoreExecVisitor proc, SimpleEntity entity, DustLink[] path, int idx) {
+		DustLink bl = path[idx];
+		boolean last = idx == path.length-1;
+		
+		for ( SimpleRef ref : entity.getRefs(false) ) {
+			if ( ref.linkDef.link == bl ) {
+				if ( last ) {
+					try {
+						proc.dustDustCoreExecVisitorVisit(ref.eTarget);
+					} catch (Exception e) {
+						DustException.wrapException(e, DustPubComponents.DustStatusInfoPub.ErrorVistorExecution);
+					}
+				} else {
+					processRefs(proc, ref.eTarget, path, idx + 1);
+				}
+			}
+		}
+	}
+
+	DustEntity modifyRefs(DustConstCoreDataLinkCommand refCmd, SimpleEntity seLeft, SimpleEntity seRight,
+			SimpleLinkDef sld, Object[] params) {
+		
+//		DustMetaLinkType lt = (null == sld) ? null : sld.linkType;
+		
+		Object key = DustUtils.safeGet(0, params);
+		
+		Set<SimpleRef> refSet = seLeft.getRefs(DustConstCoreDataLinkCommand.Add == refCmd);
+		SimpleRef sr;
+		
+		switch ( refCmd ) {
+		case Add:
+			sr = new SimpleRef(sld, seRight, key);
+			refSet.add(sr);
+			break;
+		case ChangeKey:
+			break;
+		case Remove:
+			break;
+		case Replace:
+			break;
+		}
+		
+		return null;
+	}
+
+	public SimpleEntity getRefEntity(SimpleEntity se, boolean createIfMissing, SimpleLinkDef ld, Object key) throws Exception {
+		Set<SimpleRef> refs = se.getRefs(createIfMissing);
+		
+		for ( SimpleRef r : refs ) {
+			if ( r.match(ld, null, key) ) {
+				return r.eTarget;
+			}
+		}
+		
+		SimpleEntity ret = null;
+		if ( createIfMissing ) {
+			ret = se.getCtx().dustCoreDataSourceGet(ld.getTargetType(), null, null);
+			SimpleRef sr = new SimpleRef(ld, ret, key);
+			refs.add(sr);
+		}
+		return ret;
+	}
+	
+}
