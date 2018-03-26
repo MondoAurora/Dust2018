@@ -30,4 +30,9 @@ public class DustException extends RuntimeException implements DustCoreDataCompo
 		}
 	}
 
+	@Deprecated
+	public static void throwException() {
+		throw new DustException(null, null);
+	}
+
 }

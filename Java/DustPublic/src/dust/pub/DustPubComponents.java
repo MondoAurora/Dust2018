@@ -5,6 +5,8 @@ import dust.gen.dust.core.exec.DustCoreExecComponents;
 
 public interface DustPubComponents extends DustCoreDataComponents, DustCoreExecComponents {
 	String ID_SEP = ":";
+	String DEFAULT_SEPARATOR = ",";
+	String MULTI_FLAG = "*";
 	
 	interface Creator<RetType> {
 		RetType create(Object ... params);

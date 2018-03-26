@@ -1,32 +1,46 @@
 {
-	"streamInfo": {
-		"handler": "dustJsonReader",
-		"storeId": "dustBoot",
-		"version": 1
+	"DustStreamInfo": {
+		"idStore": "dustBoot",
+		"handler": "DustJsonReader",
+		"version": "1"
 	},
-	"entities": [
+	"Entities": [
 		{
-			"dustEntity": {
-				"primaryType": "dustType"
+			"MetaExt": [
+				{
+					"globalId": "Dust:Tools:Persistence:StoreInfo",
+					"alias": "ToolsPersistenceStoreInfo"
+				},
+				{
+					"globalId": "Dust:Tools:Persistence:StoreInfo:idGlobal",
+					"alias": "idGlobal",
+					"ownerType": "ToolsPersistenceStoreInfo"
+				},
+				{
+					"globalId": "Dust:Tools:Persistence:StoreInfo:idLocal",
+					"alias": "idLocal",
+					"ownerType": "ToolsPersistenceStoreInfo"
+				},
+				{
+					"globalId": "Dust:Core:Data:Entity",
+					"alias": "CoreDataEntity"
+				},
+				{
+					"globalId": "Dust:Tools:Generic:Identified",
+					"alias": "ToolsGenericIdentified"
+				}
+			],
+			"StoreInfo": {
+				"idGlobal": "Dust:Dust:Meta:Type",
+				"idLocal": "dustType"
 			},
-			"dustStoreInfo": {
-				"storeId": "Dust:Dust:Meta:Type",
-				"storeAlias": "dustType"
-			},
-			"dustIdentified": {
-				"id": "Type"
-			}
-		},
-		{
-			"dustEntity": {
-				"primaryType": "dustEntity"
-			},
-			"dustStoreInfo": {
-				"storeId": "Dust:Dust:Base:Entity",
-				"storeAlias": "dustEntity"
-			},
-			"dustIdentified": {
-				"id": "Entity"
+			"Models":{
+				"CoreDataEntity": {
+					"primaryType": "dustType"
+				},
+				"ToolsGenericIdentified": {
+					"id": "Type"
+				}
 			}
 		}
 	]

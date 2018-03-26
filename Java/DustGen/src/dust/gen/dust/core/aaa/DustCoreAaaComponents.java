@@ -13,7 +13,7 @@ public interface DustCoreAaaComponents extends DustCoreDataComponents, DustCoreE
 		}
 	}
 	
-	enum DustConstAaaAccessMode implements DustEntity {
+	enum DustConstCoreAaaAccessMode implements DustEntity {
 		Check, Read, Write, Execute;
 		@Override
 		public DustType getType() {

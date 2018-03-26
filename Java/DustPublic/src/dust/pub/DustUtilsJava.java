@@ -17,9 +17,20 @@ public class DustUtilsJava implements DustPubComponents {
 	@SuppressWarnings("unchecked")
 	public static Enum<?> fromEnumId(String s) throws ClassNotFoundException {
 		String[] ee = s.split(ID_SEP);
-		for ( Enum<?> ec : ((Class<? extends Enum<?>>) Class.forName(ee[0])).getEnumConstants() ) {
-			if ( ec.name().equals(ee[1])) {
-				return ec;
+		return parseEnum(ee[1], (Class<? extends Enum<?>>) Class.forName(ee[0]));
+//		for ( Enum<?> ec : ((Class<? extends Enum<?>>) Class.forName(ee[0])).getEnumConstants() ) {
+//			if ( ec.name().equals(ee[1])) {
+//				return ec;
+//			}
+//		}
+//			
+//		return null;
+	}
+
+	public static Enum<?> parseEnum(String name, Class<? extends Enum<?>> ec) {
+		for ( Enum<?> e : ec.getEnumConstants() ) {
+			if ( e.name().equals(name)) {
+				return e;
 			}
 		}
 			
@@ -49,5 +60,9 @@ public class DustUtilsJava implements DustPubComponents {
 	@SuppressWarnings("unchecked")
 	public static <Content> Content safeGet(int idx, Object... arr ) {
 		return ((null != arr) && (0 < idx) && (idx < arr.length)) ? (Content)arr[idx] : null;
+	}
+
+	public static boolean isEqual(Object o1, Object o2) {
+		return (null == o1) ? (null == o2) : (null == o2) ? false : (o1 == o2) ? true : o1.equals(o2);
 	}
 }
