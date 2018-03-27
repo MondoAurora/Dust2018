@@ -26,8 +26,18 @@
 					"alias": "CoreDataEntity"
 				},
 				{
+					"globalId": "Dust:Core:Data:Entity:primaryType",
+					"alias": "primaryType",
+					"ownerType": "CoreDataEntity"
+				},
+				{
 					"globalId": "Dust:Tools:Generic:Identified",
 					"alias": "ToolsGenericIdentified"
+				},
+				{
+					"globalId": "Dust:Tools:Generic:Identified:idLocal",
+					"alias": "idLocal",
+					"ownerType": "ToolsGenericIdentified"
 				}
 			],
 			"StoreInfo": {
@@ -39,7 +49,29 @@
 					"primaryType": "dustType"
 				},
 				"ToolsGenericIdentified": {
-					"id": "Type"
+					"idLocal": "Type"
+				}
+			}
+		},
+		{
+			"MetaExt": [
+				{
+					"globalId": "Dust:Tools:Generic:Identified:idCombined",
+					"alias": "idCombined",
+					"ownerType": "ToolsGenericIdentified"
+				}
+			],
+			"StoreInfo": {
+				"idGlobal": "Dust:Dust:Meta:Attribute",
+				"idLocal": "dustAtt"
+			},
+			"Models":{
+				"CoreDataEntity": {
+					"primaryType": "dustType"
+				},
+				"ToolsGenericIdentified": {
+					"idLocal": "Attribute",
+					"idCombined": "Dust:Dust:Meta:Attribute"
 				}
 			}
 		}
