@@ -1,8 +1,8 @@
 package dust.gen.dust.core.meta;
 
-import dust.gen.dust.core.data.DustCoreDataComponents;
+import dust.gen.dust.DustComponents;
 
-public interface DustCoreMetaComponents extends DustCoreDataComponents {
+public interface DustCoreMetaComponents extends DustComponents {
 	
 	enum DustConstCoreMetaAttrType {
 		fldId, fldInt, fldFloat, fldBool, fldRaw;

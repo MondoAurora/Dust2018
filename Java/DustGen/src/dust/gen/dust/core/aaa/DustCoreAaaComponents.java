@@ -17,7 +17,7 @@ public interface DustCoreAaaComponents extends DustCoreDataComponents, DustCoreE
 		Check, Read, Write, Execute;
 		@Override
 		public DustType getType() {
-			return DustTypeCoreData.Const;
+			return DustTypeCoreMeta.Const;
 		}
 	}
 	

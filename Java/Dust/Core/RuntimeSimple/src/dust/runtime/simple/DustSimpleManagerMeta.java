@@ -34,7 +34,7 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // Du
 	DustUtilsFactory<Enum<?>, SimpleEntity> factConstants = new DustUtilsFactory<Enum<?>, SimpleEntity>(false) {
 		@Override
 		protected SimpleEntity create(Enum<?> key, Object... hints) {
-			SimpleEntity se = new SimpleEntity(null, getSimpleType(DustTypeCoreData.Const));
+			SimpleEntity se = new SimpleEntity(null, getSimpleType(DustTypeCoreMeta.Const));
 			setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idLocal, DustUtils.toLocalId(key));
 
 			if (key instanceof DustCommand) {

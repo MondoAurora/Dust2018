@@ -1,15 +1,16 @@
 package dust.gen.dust.core.data;
 
+import dust.gen.dust.core.meta.DustCoreMetaComponents;
 import dust.gen.dust.tools.generic.DustToolsGenericComponents;
 
-public interface DustCoreDataComponents extends DustToolsGenericComponents {
+public interface DustCoreDataComponents extends DustToolsGenericComponents, DustCoreMetaComponents {
 
 	enum DustConstCoreDataEntityState implements DustEntity {
 		Temporal, InSync, RefChanged, Changed, Constructed, Destructed;
 
 		@Override
 		public DustType getType() {
-			return DustCoreDataComponents.DustTypeCoreData.Const;
+			return DustTypeCoreMeta.Const;
 		}
 	}
 
@@ -17,7 +18,7 @@ public interface DustCoreDataComponents extends DustToolsGenericComponents {
 		Add, Replace, Remove, ChangeKey;
 		@Override
 		public DustType getType() {
-			return DustCoreDataComponents.DustTypeCoreData.Const;
+			return DustTypeCoreMeta.Const;
 		}
 	}
 
@@ -25,7 +26,7 @@ public interface DustCoreDataComponents extends DustToolsGenericComponents {
 		OK, Skip, Exit, Repeat, Restart;
 		@Override
 		public DustType getType() {
-			return DustCoreDataComponents.DustTypeCoreData.Const;
+			return DustTypeCoreMeta.Const;
 		}
 	}
 
@@ -33,7 +34,7 @@ public interface DustCoreDataComponents extends DustToolsGenericComponents {
 		Self, Message, Block;
 		@Override
 		public DustType getType() {
-			return DustCoreDataComponents.DustTypeCoreData.Const;
+			return DustTypeCoreMeta.Const;
 		}
 	}
 	
@@ -55,6 +56,6 @@ public interface DustCoreDataComponents extends DustToolsGenericComponents {
 	}
 
 	enum DustTypeCoreData implements DustType {
-		Entity, Link, Const;
+		Entity, Link, Tag, Tagged, Variant;
 	}
 }

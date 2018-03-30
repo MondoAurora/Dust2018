@@ -1,0 +1,71 @@
+[
+	{
+		"DustToolsStreamInfo": {
+			"handler": "DustJsonReader",
+			"version": "2"
+		},
+		"DustToolsStoreInfo": {
+			"idGlobal": "dustBoot",
+			"idLocal": "storeRoot"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idGlobal": "Dust:Meta:Type:DustToolsStoreInfo",
+			"idLocal": "DustToolsStoreInfo"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idGlobal": "Dust:Meta:Type:DustToolsStreamInfo",
+			"idLocal": "DustToolsStreamInfo"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idGlobal": "Dust:Meta:Type:DustCoreMetaType",
+			"idLocal": "DustCoreMetaType"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idGlobal": "Dust:Meta:Type:DustCoreMetaAttDef",
+			"idLocal": "DustCoreMetaAttDef"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idGlobal": "Dust:Meta:Type:DustCoreMetaLinkDef",
+			"idLocal": "DustCoreMetaLinkDef"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idGlobal": "Dust:Meta:Type:DustCoreDataEntity",
+			"idLocal": "DustCoreDataEntity"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idGlobal": "Dust:Meta:Type:DustCoreDataLink",
+			"idLocal": "DustCoreDataLink"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idLocal": "DustToolsStreamInfo.handler"
+		}
+	},
+	{
+		"DustToolsStoreInfo": {
+			"idLocal": "DustToolsStreamInfo.handler"
+		}
+	},
+	{
+		"DustCoreDataLink": {
+			"storeIdFrom": "DustToolsStreamInfo.handler",
+			"storeIdTarget": "DustToolsStreamInfo",
+			"storeIdLinkDef": "DustToolsStreamInfo.handler"
+		}
+	}
+]

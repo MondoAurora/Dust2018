@@ -15,7 +15,7 @@ public interface DustToolsGenericComponents extends DustComponents {
 	}
 
 	enum DustLinkToolsGenericConnected implements DustLink {
-		Owner, Requires;
+		Owner, Requires, Extends;
 
 		@Override
 		public DustType getType() {
