@@ -5,7 +5,7 @@
 	},
 	"Body": [
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreMetaType",
 				"idLocal 201": "DustCoreMetaType 1"
 			},
@@ -17,7 +17,7 @@
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreMetaAttDef",
 				"idLocal 201": "DustCoreMetaAttDef 2"
 			},
@@ -29,7 +29,7 @@
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreMetaLinkDef",
 				"idLocal 201": "DustCoreMetaLinkDef 3"
 			},
@@ -41,7 +41,7 @@
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreDataEntity",
 				"idLocal 201": "DustCoreDataEntity 4"
 			},
@@ -53,7 +53,7 @@
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreDataLink",
 				"idLocal 201": "DustCoreDataLink 5"
 			},
@@ -65,7 +65,7 @@
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:Type:DustToolsGenericIdentified",
 				"idLocal 201": "DustToolsGenericIdentified 6"
 			},
@@ -77,9 +77,9 @@
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustToolsStoreInfo",
-				"idLocal 201": "DustToolsStoreInfo 7"
+			"DustCoreCommTerm 7": {
+				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreCommTerm",
+				"idLocal 201": "DustCoreCommTerm 7"
 			},
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "Info"
@@ -89,7 +89,7 @@
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:Type:DustToolsGenericConnected",
 				"idLocal 201": "DustToolsGenericConnected 8"
 			},
@@ -103,7 +103,7 @@
 		
 		
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:LinkDef:DustToolsGenericConnected.Owner",
 				"idLocal 201": "Owner 100"
 			},
@@ -118,7 +118,7 @@
 			}
 		},	
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:LinkDef:DustCoreDataEntity.PrimaryType",
 				"idLocal 201": "PrimaryType 108"
 			},
@@ -135,8 +135,8 @@
 		
 		
 		{
-			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:AttDef:DustToolsStoreInfo.idGlobal",
+			"DustCoreCommTerm 7": {
+				"idGlobal 200": "Dust:Core:Meta:AttDef:DustCoreCommTerm.idGlobal",
 				"idLocal 201": "idGlobal 200"
 			},
 			"DustToolsGenericIdentified 6": {
@@ -146,12 +146,12 @@
 				"PrimaryType 108": "DustCoreMetaAttDef 2"
 			},
 			"DustToolsGenericConnected 8": {
-				"Owner 100": "DustToolsStoreInfo 7"
+				"Owner 100": "DustCoreCommTerm 7"
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:AttDef:DustToolsStoreInfo.idLocal",
+			"DustCoreCommTerm 7": {
+				"idGlobal 200": "Dust:Core:Meta:AttDef:DustCoreCommTerm.idLocal",
 				"idLocal 201": "idLocal 201"
 			},
 			"DustToolsGenericIdentified 6": {
@@ -161,11 +161,11 @@
 				"PrimaryType 108": "DustCoreMetaAttDef 2"
 			},
 			"DustToolsGenericConnected 8": {
-				"Owner 100": "DustToolsStoreInfo 7"
+				"Owner 100": "DustCoreCommTerm 7"
 			}
 		},
 		{
-			"DustToolsStoreInfo 7": {
+			"DustCoreCommTerm 7": {
 				"idGlobal 200": "Dust:Core:Meta:AttDef:DustToolsGenericIdentified.idLocal",
 				"idLocal 201": "idLocal 202"
 			},

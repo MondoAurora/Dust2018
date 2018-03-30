@@ -2,23 +2,12 @@ package dust.persistence.stream.jsonsimple;
 
 import java.io.IOException;
 
-import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 
 import dust.pub.DustUtilsDev;
 
-class DustJsonDumpHandler implements ContentHandler {
-
+class DustJsonDumpHandler extends DustJsonComponents.ContentHandlerDefault {
 	StringBuilder prefix = new StringBuilder();
-
-	@Override
-	public void startJSON() throws ParseException, IOException {
-		// mapEntities.clear();
-	}
-
-	@Override
-	public void endJSON() throws ParseException, IOException {
-	}
 
 	@Override
 	public boolean startObject() throws ParseException, IOException {
