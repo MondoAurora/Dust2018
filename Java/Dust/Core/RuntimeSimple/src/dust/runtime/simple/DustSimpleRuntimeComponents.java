@@ -42,7 +42,7 @@ public interface DustSimpleRuntimeComponents
 		SimpleType ownerType;
 
 		DustLink link;
-		DustConstCoreMetaLinkType linkType;
+		DustConstCoreMetaCardinality cardinality;
 		SimpleType targetType;
 		SimpleLinkDef backRef;
 
@@ -56,8 +56,8 @@ public interface DustSimpleRuntimeComponents
 			return link.toString();
 		}
 
-		public DustConstCoreMetaLinkType getLinkType() {
-			return linkType;
+		public DustConstCoreMetaCardinality getCardinality() {
+			return cardinality;
 		}
 
 		public DustType getTargetType() {

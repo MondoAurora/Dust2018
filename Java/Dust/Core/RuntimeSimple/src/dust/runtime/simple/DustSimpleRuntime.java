@@ -73,7 +73,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		DustEntity bm = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustCoreRuntimeComponents.DustLinkCoreRuntimeManager.BinaryManager, null);
 		DustEntity la = Dust.getRefEntity(bm, true, DustCoreBindingComponents.DustLinkCoreBindingManager.LogicAssignments, null);
 		
-		Dust.setAttrValue(la, DustCoreBindingComponents.DustAttributeCoreBindingLogicAssignment.javaClass, "dust.persistence.stream.jsonsimple.DustJsonReader");
+		Dust.setAttrValue(la, DustCoreBindingComponents.DustAttributeCoreBindingLogicAssignment.javaClass, "dust.persistence.jsonsimple.DustJsonReader");
 		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, la, DustToolsGenericComponents.DustServiceToolsGeneric.Initable, DustCoreBindingComponents.DustLinkCoreBindingLogicAssignment.Service);
 
 		Dust.send(msg);

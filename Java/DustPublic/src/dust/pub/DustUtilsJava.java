@@ -15,20 +15,13 @@ public class DustUtilsJava implements DustPubComponents {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Enum<?> fromEnumId(String s) throws ClassNotFoundException {
+	public static <RetType extends Enum<RetType>> RetType fromEnumId(String s) throws ClassNotFoundException {
 		String[] ee = s.split(ID_SEP);
-		return parseEnum(ee[1], (Class<? extends Enum<?>>) Class.forName(ee[0]));
-//		for ( Enum<?> ec : ((Class<? extends Enum<?>>) Class.forName(ee[0])).getEnumConstants() ) {
-//			if ( ec.name().equals(ee[1])) {
-//				return ec;
-//			}
-//		}
-//			
-//		return null;
+		return parseEnum(ee[1], (Class<RetType>) Class.forName(ee[0]));
 	}
 
-	public static Enum<?> parseEnum(String name, Class<? extends Enum<?>> ec) {
-		for ( Enum<?> e : ec.getEnumConstants() ) {
+	public static <RetType extends Enum<RetType>> RetType parseEnum(String name, Class<RetType> ec) {
+		for ( RetType e : ec.getEnumConstants() ) {
 			if ( e.name().equals(name)) {
 				return e;
 			}

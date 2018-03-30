@@ -1,4 +1,4 @@
-package dust.persistence.stream.jsonsimple;
+package dust.persistence.jsonsimple;
 
 import java.io.IOException;
 

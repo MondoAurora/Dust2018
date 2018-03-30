@@ -5,11 +5,11 @@ import dust.gen.dust.DustComponents;
 public interface DustCoreMetaComponents extends DustComponents {
 	
 	enum DustConstCoreMetaAttrType {
-		fldId, fldInt, fldFloat, fldBool, fldRaw;
+		Id, Int, Float, Bool, Raw;
 	}
 
-	enum DustConstCoreMetaLinkType {
-		linkSingle, linkSet, linkArray, linkMap;
+	enum DustConstCoreMetaCardinality {
+		Single, Set, Array, Map;
 	}
 
 	enum DustTypeCoreMeta implements DustType {

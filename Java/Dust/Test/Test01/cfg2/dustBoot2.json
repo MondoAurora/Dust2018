@@ -1,7 +1,7 @@
 {
 	"Head": {
-		"handler": "DustJsonReader",
-		"version": "2"
+		"handler": "DustJsonTalkReader",
+		"version": "1"
 	},
 	"Body": [
 		{

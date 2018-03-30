@@ -55,7 +55,25 @@ public interface DustCoreDataComponents extends DustToolsGenericComponents, Dust
 		}
 	}
 
+	enum DustAttributeCoreDataIterator implements DustAttribute {
+		cardinality, index, identifier;
+		@Override
+		public DustType getType() {
+			return DustTypeCoreData.Iterator;
+		}
+	}
+	
+	enum DustAttributeCoreDataVariant implements DustAttribute {
+		varType, value;
+		@Override
+		public DustType getType() {
+			return DustTypeCoreData.Variant;
+		}
+	}
+	
+	
+
 	enum DustTypeCoreData implements DustType {
-		Entity, Link, Tag, Tagged, Variant;
+		Entity, Link, Tag, Tagged, Variant, Iterator;
 	}
 }
