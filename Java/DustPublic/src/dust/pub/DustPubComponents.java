@@ -1,9 +1,9 @@
 package dust.pub;
 
-import dust.gen.dust.core.data.DustCoreDataComponents;
-import dust.gen.dust.core.exec.DustCoreExecComponents;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
+import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 
-public interface DustPubComponents extends DustCoreDataComponents, DustCoreExecComponents {
+public interface DustPubComponents extends DustKnowledgeInfoComponents, DustKnowledgeProcComponents {
 	String ID_SEP = ":";
 	String DEFAULT_SEPARATOR = ",";
 	String MULTI_FLAG = "*";
@@ -16,7 +16,7 @@ public interface DustPubComponents extends DustCoreDataComponents, DustCoreExecC
 		ErrorClassNotFound, ErrorClassInstantiation, ErrorShutdownFailure, ErrorVistorExecution;
 		@Override
 		public DustType getType() {
-			return DustTypeCoreExec.Status;
+			return DustTypeKnowledgeProc.Status;
 		}
 	}
 

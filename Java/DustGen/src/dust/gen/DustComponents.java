@@ -1,4 +1,4 @@
-package dust.gen.dust;
+package dust.gen;
 
 public interface DustComponents {
 	interface DustType {

@@ -23,12 +23,12 @@
 				},
 				{
 					"globalId": "Dust:Core:Data:Entity",
-					"alias": "CoreDataEntity"
+					"alias": "KnowledgeInfoEntity"
 				},
 				{
 					"globalId": "Dust:Core:Data:Entity:primaryType",
 					"alias": "primaryType",
-					"ownerType": "CoreDataEntity"
+					"ownerType": "KnowledgeInfoEntity"
 				},
 				{
 					"globalId": "Dust:Tools:Generic:Identified",
@@ -45,7 +45,7 @@
 				"idLocal": "dustType"
 			},
 			"Models":{
-				"CoreDataEntity": {
+				"KnowledgeInfoEntity": {
 					"primaryType": "dustType"
 				},
 				"ToolsGenericIdentified": {
@@ -66,7 +66,7 @@
 				"idLocal": "dustAtt"
 			},
 			"Models":{
-				"CoreDataEntity": {
+				"KnowledgeInfoEntity": {
 					"primaryType": "dustType"
 				},
 				"ToolsGenericIdentified": {

@@ -1,4 +1,4 @@
-package dust.gen.dust.tools.generic;
+package dust.gen.tools.generic;
 
 public interface DustToolsGenericServices extends DustToolsGenericComponents {
 	

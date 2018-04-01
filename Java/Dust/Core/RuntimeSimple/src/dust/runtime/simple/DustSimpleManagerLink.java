@@ -8,9 +8,9 @@ import dust.pub.DustUtils;
 
 public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 	
-	DustConstCoreDataLinkCommand[] REFCMD_SINGLE = {};
+	DustConstKnowledgeInfoLinkCommand[] REFCMD_SINGLE = {};
 
-	void processRefs(DustCoreExecVisitor proc, SimpleEntity entity, DustLink[] path, int idx) {
+	void processRefs(DustKnowledgeProcVisitor proc, SimpleEntity entity, DustLink[] path, int idx) {
 		DustLink bl = path[idx];
 		boolean last = idx == path.length-1;
 		
@@ -18,7 +18,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 			if ( ref.linkDef.link == bl ) {
 				if ( last ) {
 					try {
-						proc.dustDustCoreExecVisitorVisit(ref.eTarget);
+						proc.dustDustKnowledgeProcVisitorVisit(ref.eTarget);
 					} catch (Exception e) {
 						DustException.wrapException(e, DustPubComponents.DustStatusInfoPub.ErrorVistorExecution);
 					}
@@ -29,14 +29,14 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 		}
 	}
 
-	DustEntity modifyRefs(DustConstCoreDataLinkCommand refCmd, SimpleEntity seLeft, SimpleEntity seRight,
+	DustEntity modifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, SimpleEntity seLeft, SimpleEntity seRight,
 			SimpleLinkDef sld, Object[] params) {
 		
 //		DustMetaLinkType lt = (null == sld) ? null : sld.linkType;
 		
 		Object key = DustUtils.safeGet(0, params);
 		
-		Set<SimpleRef> refSet = seLeft.getRefs(DustConstCoreDataLinkCommand.Add == refCmd);
+		Set<SimpleRef> refSet = seLeft.getRefs(DustConstKnowledgeInfoLinkCommand.Add == refCmd);
 		SimpleRef sr;
 		
 		switch ( refCmd ) {
@@ -66,7 +66,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 		
 		SimpleEntity ret = null;
 		if ( createIfMissing ) {
-			ret = se.getCtx().dustCoreDataSourceGet(ld.getTargetType(), null, null);
+			ret = se.getCtx().dustKnowledgeInfoSourceGet(ld.getTargetType(), null, null);
 			SimpleRef sr = new SimpleRef(ld, ret, key);
 			refs.add(sr);
 		}

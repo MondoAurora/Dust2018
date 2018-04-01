@@ -9,9 +9,9 @@ import java.util.TreeMap;
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 
-import dust.gen.dust.DustComponents.DustEntity;
-import dust.gen.dust.core.data.DustCoreDataComponents.DustAttributeCoreDataEntity;
-import dust.gen.dust.tools.persistence.DustToolsPersistenceComponents.DustStatusToolsPersistence;
+import dust.gen.DustComponents.DustEntity;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents.DustAttributeKnowledgeInfoEntity;
+import dust.gen.tools.persistence.DustToolsPersistenceComponents.DustStatusToolsPersistence;
 import dust.pub.DustException;
 import dust.pub.DustUtilsDev;
 import dust.pub.DustUtilsJava;
@@ -204,7 +204,7 @@ class DustJsonHandler1 implements ContentHandler {
 		
 		DustEntity accessEntity(String idGlobal) {
 			DustUtilsDev.dump("accessing entity", idGlobal);
-			return DustAttributeCoreDataEntity.svcImpl;
+			return DustAttributeKnowledgeInfoEntity.svcImpl;
 		}
 
 		void setField(DustEntity e, MetaInfo mi, Object value) {

@@ -1,6 +1,6 @@
-package dust.gen.dust.core.meta;
+package dust.gen.knowledge.meta;
 
-public interface DustCoreMetaServices extends DustCoreMetaComponents {
+public interface DustKnowledgeMetaServices extends DustKnowledgeMetaComponents {
 	
 //	interface DustMetaManager {
 //		void registerUnit(String typeClass, String serviceClass) throws Exception;

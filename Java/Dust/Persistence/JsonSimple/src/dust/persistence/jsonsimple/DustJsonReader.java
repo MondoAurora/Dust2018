@@ -7,7 +7,7 @@ import java.io.Reader;
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.JSONParser;
 
-import dust.gen.dust.tools.persistence.DustToolsPersistenceServices;
+import dust.gen.tools.persistence.DustToolsPersistenceServices;
 import dust.pub.DustUtilsDev;
 import dust.pub.DustUtilsJava;
 
@@ -15,12 +15,12 @@ public class DustJsonReader implements DustJsonComponents, DustToolsPersistenceS
 	
 	@Override
 	public void dustToolsPersistenceStoreRead() throws Exception {
-		dustCoreExecProcessorBegin();
-		dustCoreExecProcessorEnd();
+		dustKnowledgeProcProcessorBegin();
+		dustKnowledgeProcProcessorEnd();
 	}
 
 	@Override
-	public void dustCoreExecProcessorBegin() throws Exception {
+	public void dustKnowledgeProcProcessorBegin() throws Exception {
 		Reader r = null; // DustUtils.getFieldValueDef(DF_STREAM_READER);
 		JSONParser jp = new JSONParser();
 
@@ -43,7 +43,7 @@ public class DustJsonReader implements DustJsonComponents, DustToolsPersistenceS
 	}
 	
 	@Override
-	public void dustCoreExecProcessorEnd() throws Exception {
+	public void dustKnowledgeProcProcessorEnd() throws Exception {
 	}
 
 	public void processFile(File f, boolean recursive, JSONParser jp) throws Exception {

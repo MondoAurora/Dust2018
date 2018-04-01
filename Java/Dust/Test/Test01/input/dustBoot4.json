@@ -6,62 +6,62 @@
 	"Body": [
 		{
 			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreMetaType",
-				"idLocal 201": "DustCoreMetaType 1"
+				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeMetaType",
+				"idLocal 201": "DustKnowledgeMetaType 1"
 			},
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "Type"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaType 1"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaType 1"
 			}
 		},
 		{
 			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreMetaAttDef",
-				"idLocal 201": "DustCoreMetaAttDef 2"
+				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeMetaAttDef",
+				"idLocal 201": "DustKnowledgeMetaAttDef 2"
 			},
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "AttDef"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaType 1"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaType 1"
 			}
 		},
 		{
 			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreMetaLinkDef",
-				"idLocal 201": "DustCoreMetaLinkDef 3"
+				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeMetaLinkDef",
+				"idLocal 201": "DustKnowledgeMetaLinkDef 3"
 			},
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "LinkDef"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaType 1"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaType 1"
 			}
 		},
 		{
 			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreDataEntity",
-				"idLocal 201": "DustCoreDataEntity 4"
+				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeInfoEntity",
+				"idLocal 201": "DustKnowledgeInfoEntity 4"
 			},
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "Entity"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaType 1"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaType 1"
 			}
 		},
 		{
 			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustCoreDataLink",
-				"idLocal 201": "DustCoreDataLink 5"
+				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeInfoLink",
+				"idLocal 201": "DustKnowledgeInfoLink 5"
 			},
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "Link"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaType 1"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaType 1"
 			}
 		},
 		{
@@ -72,8 +72,8 @@
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "Identified"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaType 1"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaType 1"
 			}
 		},
 		{
@@ -84,8 +84,8 @@
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "Info"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaType 1"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaType 1"
 			}
 		},
 		{
@@ -96,8 +96,8 @@
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "Connected"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaType 1"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaType 1"
 			}
 		},
 		
@@ -110,8 +110,8 @@
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "Owner"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaLinkDef 3"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaLinkDef 3"
 			},
 			"DustToolsGenericConnected 8": {
 				"Owner 100": "DustToolsGenericConnected 8"
@@ -119,17 +119,17 @@
 		},	
 		{
 			"DustToolsStoreInfo 7": {
-				"idGlobal 200": "Dust:Core:Meta:LinkDef:DustCoreDataEntity.PrimaryType",
+				"idGlobal 200": "Dust:Core:Meta:LinkDef:DustKnowledgeInfoEntity.PrimaryType",
 				"idLocal 201": "PrimaryType 108"
 			},
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "PrimaryType"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaLinkDef 3"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaLinkDef 3"
 			},
 			"DustToolsGenericConnected 8": {
-				"Owner 100": "DustCoreDataEntity 4"
+				"Owner 100": "DustKnowledgeInfoEntity 4"
 			}
 		},
 		
@@ -142,8 +142,8 @@
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "idGlobal"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaAttDef 2"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaAttDef 2"
 			},
 			"DustToolsGenericConnected 8": {
 				"Owner 100": "DustToolsStoreInfo 7"
@@ -157,8 +157,8 @@
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "idLocal"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaAttDef 2"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaAttDef 2"
 			},
 			"DustToolsGenericConnected 8": {
 				"Owner 100": "DustToolsStoreInfo 7"
@@ -172,8 +172,8 @@
 			"DustToolsGenericIdentified 6": {
 				"idLocal 202": "idLocal"
 			},
-			"DustCoreDataEntity 4": {
-				"PrimaryType 108": "DustCoreMetaAttDef 2"
+			"DustKnowledgeInfoEntity 4": {
+				"PrimaryType 108": "DustKnowledgeMetaAttDef 2"
 			},
 			"DustToolsGenericConnected 8": {
 				"Owner 100": "DustToolsGenericIdentified 6"

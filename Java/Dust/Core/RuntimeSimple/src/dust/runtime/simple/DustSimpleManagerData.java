@@ -3,13 +3,13 @@ package dust.runtime.simple;
 import java.util.HashSet;
 import java.util.Set;
 
-import dust.gen.dust.core.data.DustCoreDataServices;
+import dust.gen.knowledge.info.DustKnowledgeInfoServices;
 import dust.pub.DustUtils;
 import dust.utils.DustUtilsFactory;
 
-public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustCoreDataServices, DustCoreDataServices.DustCoreDataSource {
+public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustKnowledgeInfoServices, DustKnowledgeInfoServices.DustKnowledgeInfoSource {
 
-	private Set<DustCoreDataSource> parentSources = new HashSet<>();
+	private Set<DustKnowledgeInfoSource> parentSources = new HashSet<>();
 	
 	private Set<SimpleEntity> allKnownEntities = new HashSet<>();
 	DustUtilsFactory<SimpleType, DustUtilsFactory<String, SimpleEntity>> factGlobalEntities = new DustUtilsFactory<SimpleType, DustUtilsFactory<String, SimpleEntity>>(true) {
@@ -24,8 +24,8 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustC
 				}
 				
 				protected void initNew(SimpleEntity item, String key, Object... hints) {
-					for ( DustCoreDataSource src : parentSources ) {
-						if ( src.dustCoreDataSourceIsTypeSupported(typeKey.getEntity())) {
+					for ( DustKnowledgeInfoSource src : parentSources ) {
+						if ( src.dustKnowledgeInfoSourceIsTypeSupported(typeKey.getEntity())) {
 							// load the instance content
 						}
 					}
@@ -35,12 +35,12 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustC
 	};
 	
 	@Override
-	public boolean dustCoreDataSourceIsTypeSupported(DustEntity eType) {
+	public boolean dustKnowledgeInfoSourceIsTypeSupported(DustEntity eType) {
 		return true;
 	}
 
 	@Override
-	public SimpleEntity dustCoreDataSourceGet(DustType type, String srcId, String revId) throws Exception {
+	public SimpleEntity dustKnowledgeInfoSourceGet(DustType type, String srcId, String revId) throws Exception {
 		SimpleEntity ret = null;
 		if ( (null == type) || DustUtils.isEmpty(srcId) ) {
 			ret = new SimpleEntity(this, null);
@@ -52,14 +52,14 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustC
 	}
 
 	@Override
-	public void dustCoreDataSourceFind(DustType type, DustEntity expression, DustEntity processor) throws Exception {
+	public void dustKnowledgeInfoSourceFind(DustType type, DustEntity expression, DustEntity processor) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void dustCoreDataSourceDestruct(DustEntity entity) throws Exception {
-		((SimpleEntity)entity).setState(DustConstCoreDataEntityState.Destructed);
+	public void dustKnowledgeInfoSourceDestruct(DustEntity entity) throws Exception {
+		((SimpleEntity)entity).setState(DustConstKnowledgeInfoEntityState.Destructed);
 	}
 	
 

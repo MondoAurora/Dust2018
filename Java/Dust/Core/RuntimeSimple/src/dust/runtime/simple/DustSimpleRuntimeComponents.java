@@ -6,23 +6,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import dust.gen.dust.core.aaa.DustCoreAaaComponents;
-import dust.gen.dust.core.data.DustCoreDataServices;
-import dust.gen.dust.core.exec.DustCoreExecServices;
-import dust.gen.dust.core.meta.DustCoreMetaComponents;
+import dust.gen.knowledge.info.DustKnowledgeInfoServices;
+import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
+import dust.gen.knowledge.proc.DustKnowledgeProcServices;
+import dust.gen.runtime.access.DustRuntimeAccessComponents;
 import dust.pub.DustUtils;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
 public interface DustSimpleRuntimeComponents
-		extends DustBootComponents, DustCoreDataServices, DustCoreMetaComponents, DustCoreAaaComponents, DustCoreExecServices {
+		extends DustBootComponents, DustKnowledgeInfoServices, DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustKnowledgeProcServices {
 	Set<SimpleRef> NO_REFS = Collections.emptySet();
 
 	class SimpleAttDef {
 		SimpleType type;
 
 		DustAttribute id;
-		DustConstCoreMetaAttrType fldType;
+		DustConstKnowledgeMetaAttrType fldType;
 
 		public SimpleAttDef(SimpleType type, DustAttribute key) {
 			this.type = type;
@@ -34,7 +34,7 @@ public interface DustSimpleRuntimeComponents
 			return id.toString();
 		}
 
-		public DustConstCoreMetaAttrType getAttrType() {
+		public DustConstKnowledgeMetaAttrType getAttrType() {
 			return fldType;
 		}
 	}
@@ -43,7 +43,7 @@ public interface DustSimpleRuntimeComponents
 		SimpleType ownerType;
 
 		DustLink link;
-		DustConstCoreMetaCardinality cardinality;
+		DustConstKnowledgeMetaCardinality cardinality;
 		SimpleType targetType;
 		SimpleLinkDef backRef;
 
@@ -57,7 +57,7 @@ public interface DustSimpleRuntimeComponents
 			return link.toString();
 		}
 
-		public DustConstCoreMetaCardinality getCardinality() {
+		public DustConstKnowledgeMetaCardinality getCardinality() {
 			return cardinality;
 		}
 
@@ -158,7 +158,7 @@ public interface DustSimpleRuntimeComponents
 
 	class SimpleEntity implements DustEntity {
 		private DustSimpleManagerData ctx;
-		private DustConstCoreDataEntityState state;
+		private DustConstKnowledgeInfoEntityState state;
 
 		private SimpleType type;
 		private DustUtilsFactory<SimpleType, SimpleModel> factModels = new DustUtilsFactory<SimpleType, SimpleModel>(
@@ -180,7 +180,7 @@ public interface DustSimpleRuntimeComponents
 			return type.getType();
 		}
 
-		void setState(DustConstCoreDataEntityState state) {
+		void setState(DustConstKnowledgeInfoEntityState state) {
 			this.state = state;
 		}
 
@@ -188,7 +188,7 @@ public interface DustSimpleRuntimeComponents
 			return ctx;
 		}
 
-		public DustConstCoreDataEntityState getState() {
+		public DustConstKnowledgeInfoEntityState getState() {
 			return state;
 		}
 

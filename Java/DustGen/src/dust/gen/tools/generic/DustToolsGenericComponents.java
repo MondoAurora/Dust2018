@@ -1,7 +1,7 @@
-package dust.gen.dust.tools.generic;
+package dust.gen.tools.generic;
 
-import dust.gen.dust.DustComponents;
-import dust.gen.dust.core.meta.DustCoreMetaComponents.DustTypeCoreMeta;
+import dust.gen.DustComponents;
+import dust.gen.knowledge.meta.DustKnowledgeMetaComponents.DustTypeKnowledgeMeta;
 
 public interface DustToolsGenericComponents extends DustComponents {
 
@@ -52,7 +52,7 @@ public interface DustToolsGenericComponents extends DustComponents {
 		Initable,;
 		@Override
 		public DustType getType() {
-			return DustTypeCoreMeta.Service;
+			return DustTypeKnowledgeMeta.Service;
 		}
 	}
 

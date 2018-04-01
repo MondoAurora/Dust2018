@@ -1,8 +1,8 @@
 package dust.gen.dust.test.unit01;
 
-import dust.gen.dust.core.data.DustCoreDataComponents;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 
-public interface DustTestUnit01Components extends DustCoreDataComponents {
+public interface DustTestUnit01Components extends DustKnowledgeInfoComponents {
 
 	enum DustTypeTestUnit01 implements DustType {
 		TestSimple;

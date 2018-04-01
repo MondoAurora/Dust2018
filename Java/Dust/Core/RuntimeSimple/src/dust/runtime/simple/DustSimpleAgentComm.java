@@ -1,23 +1,23 @@
 package dust.runtime.simple;
 
-import dust.gen.dust.core.comm.DustCoreCommServices;
+import dust.gen.knowledge.comm.DustKnowledgeCommServices;
 
-public class DustSimpleAgentComm implements DustCoreCommServices, DustCoreCommServices.DustCoreCommAgent {
+public class DustSimpleAgentComm implements DustKnowledgeCommServices, DustKnowledgeCommServices.DustKnowledgeCommAgent {
 
 	@Override
-	public void dustCoreExecProcessorBegin() throws Exception {
+	public void dustKnowledgeProcProcessorBegin() throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void dustCoreExecProcessorEnd() throws Exception {
+	public void dustKnowledgeProcProcessorEnd() throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public DustConstCoreExecVisitorResponse dustDustCoreExecVisitorVisit(DustEntity entity) throws Exception {
+	public DustConstKnowledgeProcVisitorResponse dustDustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

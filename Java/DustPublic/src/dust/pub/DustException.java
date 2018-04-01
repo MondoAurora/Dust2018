@@ -1,8 +1,8 @@
 package dust.pub;
 
-import dust.gen.dust.core.data.DustCoreDataComponents;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 
-public class DustException extends RuntimeException implements DustCoreDataComponents {
+public class DustException extends RuntimeException implements DustKnowledgeInfoComponents {
 	private static final long serialVersionUID = 1L;
 
 	public DustException(DustEntity errInfo, Throwable wrapped, Object... context) {

@@ -1,6 +1,6 @@
 package dust.runtime.simple;
 
-import dust.gen.dust.tools.generic.DustToolsGenericComponents;
+import dust.gen.tools.generic.DustToolsGenericComponents;
 import dust.pub.Dust;
 import dust.pub.DustUtils;
 import dust.pub.boot.DustBootComponents;
@@ -34,12 +34,12 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // Du
 	DustUtilsFactory<Enum<?>, SimpleEntity> factConstants = new DustUtilsFactory<Enum<?>, SimpleEntity>(false) {
 		@Override
 		protected SimpleEntity create(Enum<?> key, Object... hints) {
-			SimpleEntity se = new SimpleEntity(null, getSimpleType(DustTypeCoreMeta.Const));
+			SimpleEntity se = new SimpleEntity(null, getSimpleType(DustTypeKnowledgeMeta.Const));
 			setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idLocal, DustUtils.toLocalId(key));
 
 			if (key instanceof DustCommand) {
 				DustService svc = ((DustCommand) key).getService();
-				Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, se, svc, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner);
+				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, svc, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner);
 				setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idCombined, DustUtils.toEnumId((Enum<?>) svc));
 			}
 

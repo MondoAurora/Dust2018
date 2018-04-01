@@ -23,37 +23,32 @@
 	},
 	{
 		"DustToolsStoreInfo": {
-			"idGlobal": "Dust:Meta:Type:DustCoreMetaType",
-			"idLocal": "DustCoreMetaType"
+			"idGlobal": "Dust:Meta:Type:DustKnowledgeMetaType",
+			"idLocal": "DustKnowledgeMetaType"
 		}
 	},
 	{
 		"DustToolsStoreInfo": {
-			"idGlobal": "Dust:Meta:Type:DustCoreMetaAttDef",
-			"idLocal": "DustCoreMetaAttDef"
+			"idGlobal": "Dust:Meta:Type:DustKnowledgeMetaAttDef",
+			"idLocal": "DustKnowledgeMetaAttDef"
 		}
 	},
 	{
 		"DustToolsStoreInfo": {
-			"idGlobal": "Dust:Meta:Type:DustCoreMetaLinkDef",
-			"idLocal": "DustCoreMetaLinkDef"
+			"idGlobal": "Dust:Meta:Type:DustKnowledgeMetaLinkDef",
+			"idLocal": "DustKnowledgeMetaLinkDef"
 		}
 	},
 	{
 		"DustToolsStoreInfo": {
-			"idGlobal": "Dust:Meta:Type:DustCoreDataEntity",
-			"idLocal": "DustCoreDataEntity"
+			"idGlobal": "Dust:Meta:Type:DustKnowledgeInfoEntity",
+			"idLocal": "DustKnowledgeInfoEntity"
 		}
 	},
 	{
 		"DustToolsStoreInfo": {
-			"idGlobal": "Dust:Meta:Type:DustCoreDataLink",
-			"idLocal": "DustCoreDataLink"
-		}
-	},
-	{
-		"DustToolsStoreInfo": {
-			"idLocal": "DustToolsStreamInfo.handler"
+			"idGlobal": "Dust:Meta:Type:DustKnowledgeInfoLink",
+			"idLocal": "DustKnowledgeInfoLink"
 		}
 	},
 	{
@@ -62,7 +57,12 @@
 		}
 	},
 	{
-		"DustCoreDataLink": {
+		"DustToolsStoreInfo": {
+			"idLocal": "DustToolsStreamInfo.handler"
+		}
+	},
+	{
+		"DustKnowledgeInfoLink": {
 			"storeIdFrom": "DustToolsStreamInfo.handler",
 			"storeIdTarget": "DustToolsStreamInfo",
 			"storeIdLinkDef": "DustToolsStreamInfo.handler"

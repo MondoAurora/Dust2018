@@ -4,22 +4,22 @@ import java.io.IOException;
 
 import org.json.simple.parser.ParseException;
 
-import dust.gen.dust.core.exec.DustCoreExecComponents;
-import dust.gen.dust.core.meta.DustCoreMetaComponents;
+import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
+import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.pub.Dust;
 import dust.pub.DustUtilsDev;
 import dust.pub.DustUtilsJava;
 
 class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault
-		implements DustJsonComponents, DustCoreExecComponents, DustCoreMetaComponents {
+		implements DustJsonComponents, DustKnowledgeProcComponents, DustKnowledgeMetaComponents {
 
 	enum CommState {
-		Comm(DustConstCoreMetaCardinality.Single), Entity(DustConstCoreMetaCardinality.Array), Model(
-				DustConstCoreMetaCardinality.Map), Data(DustConstCoreMetaCardinality.Single);
+		Comm(DustConstKnowledgeMetaCardinality.Single), Entity(DustConstKnowledgeMetaCardinality.Array), Model(
+				DustConstKnowledgeMetaCardinality.Map), Data(DustConstKnowledgeMetaCardinality.Single);
 
-		final DustConstCoreMetaCardinality card;
+		final DustConstKnowledgeMetaCardinality card;
 
-		private CommState(DustConstCoreMetaCardinality card) {
+		private CommState(DustConstKnowledgeMetaCardinality card) {
 			this.card = card;
 		}
 	}
@@ -34,7 +34,7 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault
 
 	void talkInit() {
 		state = CommState.Comm;
-		msg = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustLinkToolsGenericChain.DefaultMessage, null);
+		msg = Dust.getRefEntity(DustConstKnowledgeInfoContext.Self, true, DustLinkToolsGenericChain.DefaultMessage, null);
 	}
 
 	void talkRelease() {
@@ -43,14 +43,14 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault
 	}
 	
 	void msgInit(DustEntity cmd) {
-		Dust.modifyRefs(DustConstCoreDataLinkCommand.Replace, msg, cmd, DustLinkCoreExecMessage.Command);
+		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Replace, msg, cmd, DustLinkKnowledgeProcMessage.Command);
 
-		Dust.setAttrValue(msg, DustAttributeCoreDataVariant.value, null);
+		Dust.setAttrValue(msg, DustAttributeKnowledgeInfoVariant.value, null);
 		Dust.setAttrValue(msg, DustAttributeToolsGenericIdentified.idLocal, null);
 
-		Dust.setAttrValue(msg, DustAttributeCoreDataIterator.cardinality, null);
-		Dust.setAttrValue(msg, DustAttributeCoreDataIterator.index, null);
-		Dust.setAttrValue(msg, DustAttributeCoreDataIterator.key, null);
+		Dust.setAttrValue(msg, DustAttributeKnowledgeInfoIterator.cardinality, null);
+		Dust.setAttrValue(msg, DustAttributeKnowledgeInfoIterator.index, null);
+		Dust.setAttrValue(msg, DustAttributeKnowledgeInfoIterator.key, null);
 	}
 
 	void doSend() {
@@ -58,9 +58,9 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault
 	}
 
 	void sendValue() {
-		msgInit(DustCommandCoreExecVisitor.Visit);
+		msgInit(DustCommandKnowledgeProcVisitor.Visit);
 
-		Dust.setAttrValue(msg, DustAttributeCoreDataVariant.value, value);
+		Dust.setAttrValue(msg, DustAttributeKnowledgeInfoVariant.value, value);
 		Dust.setAttrValue(msg, DustAttributeToolsGenericIdentified.idLocal, key);
 
 		DustUtilsDev.dump("Sending value...", key, value);
@@ -68,12 +68,12 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault
 	}
 
 	void sendBlock(boolean begin) {
-		msgInit(begin ? DustCommandCoreExecProcessor.Begin : DustCommandCoreExecProcessor.End);
+		msgInit(begin ? DustCommandKnowledgeProcProcessor.Begin : DustCommandKnowledgeProcProcessor.End);
 
 		if ( begin ) {
-		Dust.setAttrValue(msg, DustAttributeCoreDataIterator.cardinality, state.card);
-		Dust.setAttrValue(msg, DustAttributeCoreDataIterator.index, idx);
-		Dust.setAttrValue(msg, DustAttributeCoreDataIterator.key, key);
+		Dust.setAttrValue(msg, DustAttributeKnowledgeInfoIterator.cardinality, state.card);
+		Dust.setAttrValue(msg, DustAttributeKnowledgeInfoIterator.index, idx);
+		Dust.setAttrValue(msg, DustAttributeKnowledgeInfoIterator.key, key);
 		DustUtilsDev.dump("Start block...", state, (state == CommState.Entity) ? idx : key);
 
 		} else {

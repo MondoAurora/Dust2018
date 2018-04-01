@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 
-import dust.gen.dust.tools.persistence.DustToolsPersistenceComponents.DustStatusToolsPersistence;
+import dust.gen.tools.persistence.DustToolsPersistenceComponents.DustStatusToolsPersistence;
 import dust.pub.DustException;
 import dust.pub.DustUtilsJava;
 

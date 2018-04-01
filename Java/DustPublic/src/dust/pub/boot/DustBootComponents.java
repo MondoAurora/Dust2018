@@ -3,10 +3,10 @@ package dust.pub.boot;
 import java.util.HashMap;
 import java.util.Map;
 
-import dust.gen.dust.core.data.DustCoreDataServices;
-import dust.gen.dust.core.runtime.DustCoreRuntimeServices;
+import dust.gen.knowledge.info.DustKnowledgeInfoServices;
+import dust.gen.runtime.environment.DustRuntimeEnvironmentServices;
 
-public interface DustBootComponents extends DustCoreDataServices, DustCoreRuntimeServices {
+public interface DustBootComponents extends DustKnowledgeInfoServices, DustRuntimeEnvironmentServices {
 	String CFG_KEYVALUESEP = "=";
 	String CFG_LISTFLAG = "*";
 
@@ -60,7 +60,7 @@ public interface DustBootComponents extends DustCoreDataServices, DustCoreRuntim
 //		void leaveCustomLogic();
 	}
 	
-	interface DustRuntimeBootable extends DustCoreRuntimeManager, DustConfigurable {
+	interface DustRuntimeBootable extends DustRuntimeEnvironmentManager, DustConfigurable {
 		void setBinaryManager(DustBindingManager binMgr);
 	}
 

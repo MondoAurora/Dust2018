@@ -1,15 +1,15 @@
-package dust.gen.dust.tools.persistence;
+package dust.gen.tools.persistence;
 
-import dust.gen.dust.core.exec.DustCoreExecComponents.DustTypeCoreExec;
-import dust.gen.dust.core.meta.DustCoreMetaComponents;
-import dust.gen.dust.tools.generic.DustToolsGenericComponents;
+import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
+import dust.gen.knowledge.proc.DustKnowledgeProcComponents.DustTypeKnowledgeProc;
+import dust.gen.tools.generic.DustToolsGenericComponents;
 
-public interface DustToolsPersistenceComponents extends DustToolsGenericComponents, DustCoreMetaComponents {
+public interface DustToolsPersistenceComponents extends DustToolsGenericComponents, DustKnowledgeMetaComponents {
 	enum DustStatusToolsPersistence implements DustEntity {
 		HandlerInvalid, HandlerVersionMismatch;
 		@Override
 		public DustType getType() {
-			return DustTypeCoreExec.Status;
+			return DustTypeKnowledgeProc.Status;
 		}
 	}
 	
@@ -29,7 +29,7 @@ public interface DustToolsPersistenceComponents extends DustToolsGenericComponen
 		Store,;
 		@Override
 		public DustType getType() {
-			return DustTypeCoreMeta.Service;
+			return DustTypeKnowledgeMeta.Service;
 		}
 	}
 
