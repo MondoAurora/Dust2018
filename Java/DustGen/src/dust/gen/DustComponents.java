@@ -15,10 +15,10 @@ public interface DustComponents {
 	}
 
 	interface DustService extends DustEntity {
+		DustService[] getExtends();
 	}
 	
 	interface DustCommand extends DustEntity {
 		DustService getService();
 	}
-
 }

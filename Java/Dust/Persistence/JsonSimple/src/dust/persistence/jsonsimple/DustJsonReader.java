@@ -14,6 +14,11 @@ import dust.pub.DustUtilsJava;
 public class DustJsonReader implements DustJsonComponents, DustToolsPersistenceServices.DustToolsPersistenceStore {
 	
 	@Override
+	public void dustToolsGenericInitableInit() throws Exception {
+		dustToolsPersistenceStoreRead();
+	}
+	
+	@Override
 	public void dustToolsPersistenceStoreRead() throws Exception {
 		dustKnowledgeProcProcessorBegin();
 		dustKnowledgeProcProcessorEnd();

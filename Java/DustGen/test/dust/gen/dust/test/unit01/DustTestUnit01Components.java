@@ -11,6 +11,15 @@ public interface DustTestUnit01Components extends DustKnowledgeInfoComponents {
 	enum DustServiceTestUnit01 implements DustService {
 		TestSimple,
 		;
+		final DustService[] extServices;
+		
+		private DustServiceTestUnit01(DustService... extServices) {
+			this.extServices = extServices;
+		}
+		@Override
+		public DustService[] getExtends() {
+			return extServices;
+		}
 		@Override
 		public DustType getType() {
 			return DustTypeTestUnit01.TestSimple;

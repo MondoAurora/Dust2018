@@ -55,6 +55,17 @@ public interface DustKnowledgeMetaComponents extends DustComponents {
 	enum DustServiceKnowledgeMeta implements DustService {
 		Manager,
 		;
+		
+		final DustService[] extServices;
+		
+		private DustServiceKnowledgeMeta(DustService... extServices) {
+			this.extServices = extServices;
+		}
+		@Override
+		public DustService[] getExtends() {
+			return extServices;
+		}
+		
 		@Override
 		public DustType getType() {
 			return DustTypeKnowledgeMeta.Service;

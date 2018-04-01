@@ -2,7 +2,9 @@ package dust.binding.reflection;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import dust.gen.knowledge.info.DustKnowledgeInfoServices;
 import dust.gen.knowledge.meta.DustKnowledgeMetaServices;
@@ -65,16 +67,22 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 		@Override
 		protected Object create(DustEntity key, Object... hints) {
 			DustEntity eSvc = Dust.getRefEntity(key, false, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, null);
-			return factSvcImpl.get(eSvc);
-//			String svcId = Dust.getAttrValue(key, DustUtilsComponents.DustAttributeUtilsIdentified.idCombined);
-//			try {
-//				DustService svc = (DustService) DustUtils.fromEnumId(svcId);
-//				return factSvcImpl.get(svc);
-//			} catch (ClassNotFoundException e) {
-//				DustException.wrapException(e);
-//			}
-//
-//			return null;
+			Object ret = factSvcImpl.get(eSvc);
+			Set<DustEntity> ext = new HashSet<>();
+			
+			Dust.processRefs(new DustKnowledgeProcVisitor() {
+				@Override
+				public DustConstKnowledgeProcVisitorResponse dustDustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
+					ext.add(entity);
+					return null;
+				}
+			}, eSvc, DustToolsGenericComponents.DustLinkToolsGenericConnected.Extends);
+			
+			for ( DustEntity e : ext ) {
+				put(e, ret);
+			}
+			
+			return ret;
 		}
 	};
 

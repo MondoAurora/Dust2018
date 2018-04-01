@@ -53,6 +53,15 @@ public interface DustKnowledgeProcComponents extends DustComponents, DustKnowled
 
 	enum DustServiceKnowledgeProc implements DustService {
 		Visitor, Processor;
+		final DustService[] extServices;
+		
+		private DustServiceKnowledgeProc(DustService... extServices) {
+			this.extServices = extServices;
+		}
+		@Override
+		public DustService[] getExtends() {
+			return extServices;
+		}
 		@Override
 		public DustType getType() {
 			return DustTypeKnowledgeMeta.Service;

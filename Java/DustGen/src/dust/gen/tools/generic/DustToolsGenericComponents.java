@@ -50,6 +50,15 @@ public interface DustToolsGenericComponents extends DustComponents {
 
 	enum DustServiceToolsGeneric implements DustService {
 		Initable,;
+		final DustService[] extServices;
+		
+		private DustServiceToolsGeneric(DustService... extServices) {
+			this.extServices = extServices;
+		}
+		@Override
+		public DustService[] getExtends() {
+			return extServices;
+		}
 		@Override
 		public DustType getType() {
 			return DustTypeKnowledgeMeta.Service;

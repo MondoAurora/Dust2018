@@ -26,7 +26,16 @@ public interface DustToolsPersistenceComponents extends DustToolsGenericComponen
 	}
 
 	enum DustServiceToolsPersistence implements DustService {
-		Store,;
+		Store(),;
+		final DustService[] extServices;
+		
+		private DustServiceToolsPersistence(DustService... extServices) {
+			this.extServices = extServices;
+		}
+		@Override
+		public DustService[] getExtends() {
+			return extServices;
+		}
 		@Override
 		public DustType getType() {
 			return DustTypeKnowledgeMeta.Service;

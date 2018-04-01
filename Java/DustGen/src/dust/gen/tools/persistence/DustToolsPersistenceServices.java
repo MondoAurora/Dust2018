@@ -5,7 +5,7 @@ import dust.gen.tools.generic.DustToolsGenericServices;
 
 public interface DustToolsPersistenceServices extends DustToolsPersistenceComponents, DustKnowledgeProcServices, DustToolsGenericServices {
 
-	interface DustToolsPersistenceStore extends DustKnowledgeProcProcessor {
+	interface DustToolsPersistenceStore extends DustKnowledgeProcProcessor, DustToolsGenericInitable {
 		void dustToolsPersistenceStoreRead() throws Exception;
 	}
 

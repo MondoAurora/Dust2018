@@ -43,6 +43,12 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // Du
 				setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idCombined, DustUtils.toEnumId((Enum<?>) svc));
 			}
 
+			if (key instanceof DustService) {
+				for (DustService ext : ((DustService) key).getExtends()) {
+					Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, ext, DustToolsGenericComponents.DustLinkToolsGenericConnected.Extends);
+				}
+			}
+
 			return se;
 		}
 	};
