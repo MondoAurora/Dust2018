@@ -52,7 +52,7 @@ public interface DustBootComponents extends DustKnowledgeInfoServices, DustRunti
 	}
 
 	public interface DustBindingManager extends DustShutdownAware, DustEntityOwner {
-		void sendMessage(DustEntity msg) throws Exception;
+		void sendMessage(DustEntity target, DustEntity msg) throws Exception;
 //		void initLogicInstance(DustEntity owner, DustEntity command) throws Exception;
 
 //		<LogicClass> Class<LogicClass> getEntityLogicClass(DustEntity entity) throws Exception;

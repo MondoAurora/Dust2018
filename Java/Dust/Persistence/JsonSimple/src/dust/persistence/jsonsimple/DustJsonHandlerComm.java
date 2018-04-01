@@ -54,8 +54,7 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault
 	}
 
 	void doSend() {
-		DustUtilsDev.dump();
-//		Dust.send(msg);
+		Dust.send(msg);
 	}
 
 	void sendValue() {

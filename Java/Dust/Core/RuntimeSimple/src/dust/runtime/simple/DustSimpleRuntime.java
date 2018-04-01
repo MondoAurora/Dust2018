@@ -71,8 +71,8 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 
 	void test() throws Exception {
 		DustEntity msg = Dust.getRefEntity(DustConstKnowledgeInfoContext.Self, true, DustLinkRuntimeEnvironmentManager.InitMessage, null);
-//		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, msg, DustCommandToolsGenericInitable.Init, DustLinkKnowledgeProcMessage.Command);
-		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, msg, DustCommandToolsPersistenceStore.Read, DustLinkKnowledgeProcMessage.Command);
+		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, msg, DustCommandToolsGenericInitable.Init, DustLinkKnowledgeProcMessage.Command);
+//		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, msg, DustCommandToolsPersistenceStore.Read, DustLinkKnowledgeProcMessage.Command);
 
 		DustEntity target = Dust.getRefEntity(msg, true, DustLinkKnowledgeProcMessage.Target, null);
 		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, target, DustServiceToolsPersistence.Store, DustLinkKnowledgeInfoEntity.Services);
@@ -128,7 +128,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		
 		Dust.processRefs(new DustKnowledgeProcVisitor() {
 			@Override
-			public DustConstKnowledgeProcVisitorResponse dustDustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
+			public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
 				DustUtilsDev.dump("Test visitor called!");
 				return null;
 			}
@@ -181,8 +181,9 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		if (null != se) {
 			SimpleBlock b = block;
 			try {
-				block = new SimpleBlock((SimpleEntity) Dust.getRefEntity(msg, false, DustLinkKnowledgeProcMessage.Target, null), (SimpleEntity) msg);
-				binMgr.sendMessage(se);
+				SimpleEntity target = (SimpleEntity) Dust.getRefEntity(msg, false, DustLinkKnowledgeProcMessage.Target, null);
+				block = new SimpleBlock(target, (SimpleEntity) msg);
+				binMgr.sendMessage(target, se);
 			} catch (Exception e) {
 				DustException.wrapException(e, DustStatusRuntimeEnvironment.MessageSendError);
 			} finally {

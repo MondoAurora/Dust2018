@@ -1,5 +1,9 @@
 package dust.pub;
 
+import java.util.Collection;
+
+import dust.gen.knowledge.proc.DustKnowledgeProcServices.DustKnowledgeProcVisitor;
+
 public class DustUtils extends DustUtilsJava implements DustPubComponents {
 
 	public static <RetType> RetType getAttrValueSafe(DustEntity entity, DustAttribute field, Creator<RetType> creator,
@@ -10,6 +14,19 @@ public class DustUtils extends DustUtilsJava implements DustPubComponents {
 			Dust.setAttrValue(entity, field, ret);
 		}
 		return ret;
+	}
+	
+	public static void loadRecursive(DustEntity entity, DustLink link, Collection<DustEntity> known) {
+		if ( known.add(entity) ) {
+			Dust.processRefs(new DustKnowledgeProcVisitor() {
+				@Override
+				public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity e2)
+						throws Exception {
+					loadRecursive(e2, link, known);
+					return null;
+				}
+			}, entity, link);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

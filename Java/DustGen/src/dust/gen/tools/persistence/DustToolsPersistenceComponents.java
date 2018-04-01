@@ -1,6 +1,7 @@
 package dust.gen.tools.persistence;
 
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
+import dust.gen.knowledge.proc.DustKnowledgeProcComponents.DustServiceKnowledgeProc;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents.DustTypeKnowledgeProc;
 import dust.gen.tools.generic.DustToolsGenericComponents;
 
@@ -26,7 +27,7 @@ public interface DustToolsPersistenceComponents extends DustToolsGenericComponen
 	}
 
 	enum DustServiceToolsPersistence implements DustService {
-		Store(),;
+		Store(DustServiceToolsGeneric.Initable, DustServiceKnowledgeProc.Processor),;
 		final DustService[] extServices;
 		
 		private DustServiceToolsPersistence(DustService... extServices) {

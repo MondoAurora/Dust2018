@@ -1,5 +1,6 @@
 package dust.runtime.simple;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 import dust.pub.DustException;
@@ -8,7 +9,7 @@ import dust.pub.DustUtils;
 
 public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 	
-	DustConstKnowledgeInfoLinkCommand[] REFCMD_SINGLE = {};
+	private static final EnumSet<DustConstKnowledgeInfoLinkCommand> REFCMD_CREATE = EnumSet.of(DustConstKnowledgeInfoLinkCommand.Add, DustConstKnowledgeInfoLinkCommand.Replace);
 
 	void processRefs(DustKnowledgeProcVisitor proc, SimpleEntity entity, DustLink[] path, int idx) {
 		DustLink bl = path[idx];
@@ -18,7 +19,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 			if ( ref.linkDef.link == bl ) {
 				if ( last ) {
 					try {
-						proc.dustDustKnowledgeProcVisitorVisit(ref.eTarget);
+						proc.dustKnowledgeProcVisitorVisit(ref.eTarget);
 					} catch (Exception e) {
 						DustException.wrapException(e, DustPubComponents.DustStatusInfoPub.ErrorVistorExecution);
 					}
@@ -36,8 +37,18 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 		
 		Object key = DustUtils.safeGet(0, params);
 		
-		Set<SimpleRef> refSet = seLeft.getRefs(DustConstKnowledgeInfoLinkCommand.Add == refCmd);
-		SimpleRef sr;
+		Set<SimpleRef> refSet = seLeft.getRefs(REFCMD_CREATE.contains(refCmd));
+		if ( null == refSet ) {
+			return null;
+		}
+		SimpleRef sr = null;
+		for ( SimpleRef r : refSet ) {
+			if ( r.match(sld, null, key) ) {
+				sr = r;
+				break;
+			}
+		}
+
 		
 		switch ( refCmd ) {
 		case Add:
@@ -49,6 +60,12 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 		case Remove:
 			break;
 		case Replace:
+			if ( null == sr ) {
+				sr = new SimpleRef(sld, seRight, key);
+				refSet.add(sr);
+			} else {
+				sr.setTarget(seRight);
+			}
 			break;
 		}
 		

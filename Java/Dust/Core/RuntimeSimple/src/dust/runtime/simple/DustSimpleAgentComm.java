@@ -17,7 +17,7 @@ public class DustSimpleAgentComm implements DustKnowledgeCommServices, DustKnowl
 	}
 
 	@Override
-	public DustConstKnowledgeProcVisitorResponse dustDustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
+	public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -132,6 +132,10 @@ public interface DustSimpleRuntimeComponents
 
 			return t && e && k;
 		}
+
+		public void setTarget(SimpleEntity target) {
+			this.eTarget = target;
+		}
 	}
 
 	class SimpleModel {

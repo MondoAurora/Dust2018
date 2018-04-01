@@ -9,6 +9,6 @@ public interface DustKnowledgeProcServices extends DustKnowledgeProcComponents {
 	}
 
 	interface DustKnowledgeProcVisitor {
-		DustConstKnowledgeProcVisitorResponse dustDustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception;
+		DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception;
 	}
 }
