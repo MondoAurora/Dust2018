@@ -23,8 +23,17 @@ public interface DustToolsGenericComponents extends DustComponents {
 		}
 	}
 
+	enum DustLinkToolsGenericChain implements DustLink {
+		NextEntity, DefaultMessage;
+
+		@Override
+		public DustType getType() {
+			return DustTypeToolsGeneric.Chain;
+		}
+	}
+
 	enum DustTypeToolsGeneric implements DustType {
-		Identified, Connected;
+		Identified, Connected, Chain;
 	}
 
 	enum DustCommandToolsGenericInitable implements DustCommand {

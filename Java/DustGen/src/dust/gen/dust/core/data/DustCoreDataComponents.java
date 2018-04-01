@@ -56,7 +56,7 @@ public interface DustCoreDataComponents extends DustToolsGenericComponents, Dust
 	}
 
 	enum DustAttributeCoreDataIterator implements DustAttribute {
-		cardinality, index, identifier;
+		cardinality, index, key;
 		@Override
 		public DustType getType() {
 			return DustTypeCoreData.Iterator;

@@ -27,7 +27,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 
 	protected static void shutdown() {
 		try {
-			RUNTIME.dustCoreExecBlockProcessorEnd(DustConstCoreExecVisitorResponse.OK, null);
+			RUNTIME.dustCoreExecProcessorEnd();
 		} catch (Exception e) {
 			DustException.wrapException(e, DustStatusInfoPub.ErrorShutdownFailure);
 		}		
@@ -39,7 +39,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		DustBindingManager binMgr = optLoadInit(cfg, DustConfigKeys.DustBinding);
 		((DustRuntimeBootable)RUNTIME).setBinaryManager(binMgr);
 		
-		RUNTIME.dustCoreExecBlockProcessorBegin();
+		RUNTIME.dustCoreExecProcessorBegin();
 		
 		optLoadInit(cfg, DustConfigKeys.DustNodeInit);
 	}

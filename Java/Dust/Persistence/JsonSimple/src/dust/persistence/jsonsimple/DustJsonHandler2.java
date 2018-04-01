@@ -14,7 +14,8 @@ class DustJsonHandler2 extends DustJsonComponents.ContentHandlerRelay implements
 	private static final String CONTENT_HANDLER = "DustJsonTalkReader";
 	private static final String CONTENT_VERSION = "1";
 
-	ContentHandler talkHandler = new DustJsonDumpHandler();
+	ContentHandler talkHandler = new DustJsonHandlerComm();
+//	ContentHandler talkHandler = new DustJsonHandlerDump();
 
 	JsonTag state;
 
@@ -38,14 +39,15 @@ class DustJsonHandler2 extends DustJsonComponents.ContentHandlerRelay implements
 	public boolean startArray() throws ParseException, IOException {
 		if (null == relay) {
 			setRelay(talkHandler);
-			return true;
+//			return true;
 		}
 		return super.startArray();
 	}
 	
 	@Override
 	public boolean endArray() throws ParseException, IOException {
-		relay = null;
+		super.endArray();
+		setRelay(null);
 		return true;
 	}
 

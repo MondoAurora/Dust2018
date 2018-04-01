@@ -25,4 +25,37 @@ public interface DustCoreExecComponents extends DustComponents, DustCoreDataComp
 		Message, Status;
 	}
 
+	
+	
+	enum DustCommandCoreExecVisitor implements DustCommand {
+		Visit;
+		@Override
+		public DustType getType() {
+			return null;
+		}
+		@Override
+		public DustService getService() {
+			return DustServiceCoreExec.Visitor;
+		}
+	}
+
+	enum DustCommandCoreExecProcessor implements DustCommand {
+		Begin, End;
+		@Override
+		public DustType getType() {
+			return null;
+		}
+		@Override
+		public DustService getService() {
+			return DustServiceCoreExec.Processor;
+		}
+	}
+
+	enum DustServiceCoreExec implements DustService {
+		Visitor, Processor;
+		@Override
+		public DustType getType() {
+			return DustTypeCoreMeta.Service;
+		}
+	}
 }

@@ -2,9 +2,10 @@ package dust.gen.dust.core.exec;
 
 public interface DustCoreExecServices extends DustCoreExecComponents {
 	
-	interface DustCoreExecBlockProcessor {
-		void dustCoreExecBlockProcessorBegin() throws Exception;
-		void dustCoreExecBlockProcessorEnd(DustConstCoreExecVisitorResponse lastResp, Exception optException) throws Exception;
+	interface DustCoreExecProcessor {
+		void dustCoreExecProcessorBegin() throws Exception;
+		void dustCoreExecProcessorEnd() throws Exception;
+//		void dustCoreExecProcessorEndLater(DustConstCoreExecVisitorResponse lastResp, Exception optException) throws Exception;
 	}
 
 	interface DustCoreExecVisitor {

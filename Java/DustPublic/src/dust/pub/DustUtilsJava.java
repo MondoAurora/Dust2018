@@ -58,4 +58,17 @@ public class DustUtilsJava implements DustPubComponents {
 	public static boolean isEqual(Object o1, Object o2) {
 		return (null == o1) ? (null == o2) : (null == o2) ? false : (o1 == o2) ? true : o1.equals(o2);
 	}
+
+	public static <RetType extends Enum<RetType>> RetType shiftEnum(RetType e, boolean up, boolean rot) {
+		int ord = e.ordinal();
+		@SuppressWarnings("unchecked")
+		RetType[] values = (RetType[]) e.getClass().getEnumConstants();
+		ord = up ? ++ord : --ord;
+		
+		if ( (0 <= ord) && (ord < values.length) ) {
+			return values[ord];
+		} else { 
+			return ( rot ) ? ( ( 0 > ord ) ? values[values.length-1] : values[0] ) : null;
+		}
+	}
 }

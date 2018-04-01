@@ -4,13 +4,14 @@ import dust.gen.dust.core.binding.DustCoreBindingComponents;
 import dust.gen.dust.core.runtime.DustCoreRuntimeComponents;
 import dust.gen.dust.test.unit01.DustTestUnit01Components;
 import dust.gen.dust.tools.generic.DustToolsGenericComponents;
+import dust.gen.dust.tools.persistence.DustToolsPersistenceComponents;
 import dust.pub.Dust;
 import dust.pub.DustException;
 import dust.pub.DustUtilsDev;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
-public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootComponents.DustRuntimeBootable {
+public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootComponents.DustRuntimeBootable, DustToolsPersistenceComponents {
 	class SimpleBlock extends DustUtilsFactory<DustConstCoreDataContext, SimpleEntity> {
 		public SimpleBlock() {
 			super(true);
@@ -64,29 +65,29 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	void test() throws Exception {
-		DustEntity msg = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustCoreRuntimeComponents.DustLinkCoreRuntimeManager.InitMessage, null);
-		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, msg, DustCommandToolsGenericInitable.Init, DustLinkCoreExecMessage.Command);
+		DustEntity msg = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustLinkCoreRuntimeManager.InitMessage, null);
+		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, msg, DustCommandToolsPersistenceStore.Read, DustLinkCoreExecMessage.Command);
 
 		DustEntity target = Dust.getRefEntity(msg, true, DustLinkCoreExecMessage.Target, null);
-		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, target, DustToolsGenericComponents.DustServiceToolsGeneric.Initable, DustLinkCoreDataEntity.Services);
+		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, target, DustServiceToolsPersistence.Store, DustLinkCoreDataEntity.Services);
 
-		DustEntity bm = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustCoreRuntimeComponents.DustLinkCoreRuntimeManager.BinaryManager, null);
+		DustEntity bm = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustLinkCoreRuntimeManager.BinaryManager, null);
 		DustEntity la = Dust.getRefEntity(bm, true, DustCoreBindingComponents.DustLinkCoreBindingManager.LogicAssignments, null);
 		
 		Dust.setAttrValue(la, DustCoreBindingComponents.DustAttributeCoreBindingLogicAssignment.javaClass, "dust.persistence.jsonsimple.DustJsonReader");
-		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, la, DustToolsGenericComponents.DustServiceToolsGeneric.Initable, DustCoreBindingComponents.DustLinkCoreBindingLogicAssignment.Service);
+		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, la, DustServiceToolsPersistence.Store, DustCoreBindingComponents.DustLinkCoreBindingLogicAssignment.Service);
 
 		Dust.send(msg);
 	}
 
 	void test02() throws Exception {
-		DustEntity msg = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustCoreRuntimeComponents.DustLinkCoreRuntimeManager.InitMessage, null);
+		DustEntity msg = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustLinkCoreRuntimeManager.InitMessage, null);
 		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, msg, DustTestUnit01Components.DustCommandTestUnit01TestSimple.Msg01, DustLinkCoreExecMessage.Command);
 
 		DustEntity target = Dust.getRefEntity(msg, true, DustLinkCoreExecMessage.Target, null);
 		Dust.modifyRefs(DustConstCoreDataLinkCommand.Add, target, DustTestUnit01Components.DustServiceTestUnit01.TestSimple, DustLinkCoreDataEntity.Services);
 
-		DustEntity bm = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustCoreRuntimeComponents.DustLinkCoreRuntimeManager.BinaryManager, null);
+		DustEntity bm = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustLinkCoreRuntimeManager.BinaryManager, null);
 		DustEntity la = Dust.getRefEntity(bm, true, DustCoreBindingComponents.DustLinkCoreBindingManager.LogicAssignments, null);
 		
 		Dust.setAttrValue(la, DustCoreBindingComponents.DustAttributeCoreBindingLogicAssignment.javaClass, "dust.test.unit01.TestSimple");
@@ -127,7 +128,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	@Override
-	public void dustCoreExecBlockProcessorBegin() throws Exception {
+	public void dustCoreExecProcessorBegin() throws Exception {
 		DustEntity bm = Dust.getRefEntity(DustConstCoreDataContext.Self, true, DustCoreRuntimeComponents.DustLinkCoreRuntimeManager.BinaryManager, null);
 		binMgr.setEntity(bm);
 		
@@ -135,8 +136,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	@Override
-	public void dustCoreExecBlockProcessorEnd(DustConstCoreExecVisitorResponse lastResp, Exception optException)
-			throws Exception {
+	public void dustCoreExecProcessorEnd() throws Exception {
 	}
 
 	@Override

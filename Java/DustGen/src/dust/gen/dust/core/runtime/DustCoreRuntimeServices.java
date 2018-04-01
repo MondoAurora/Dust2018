@@ -4,7 +4,7 @@ import dust.gen.dust.core.exec.DustCoreExecServices;
 
 public interface DustCoreRuntimeServices extends DustCoreRuntimeComponents, DustCoreExecServices {
 
-	interface DustCoreRuntimeManager extends DustCoreExecBlockProcessor {
+	interface DustCoreRuntimeManager extends DustCoreExecProcessor {
 		<ValType> ValType dustCoreRuntimeManagerGetAttrValue(DustEntity entity, DustAttribute field);
 		void dustCoreRuntimeManagerSetAttrValue(DustEntity entity, DustAttribute field, Object value);
 	

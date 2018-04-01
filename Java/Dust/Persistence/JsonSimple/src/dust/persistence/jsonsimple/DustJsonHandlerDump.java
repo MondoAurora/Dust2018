@@ -6,7 +6,7 @@ import org.json.simple.parser.ParseException;
 
 import dust.pub.DustUtilsDev;
 
-class DustJsonDumpHandler extends DustJsonComponents.ContentHandlerDefault {
+class DustJsonHandlerDump extends DustJsonComponents.ContentHandlerDefault {
 	StringBuilder prefix = new StringBuilder();
 
 	@Override

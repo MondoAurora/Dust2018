@@ -10,6 +10,7 @@ import dust.gen.dust.core.aaa.DustCoreAaaComponents;
 import dust.gen.dust.core.data.DustCoreDataServices;
 import dust.gen.dust.core.exec.DustCoreExecServices;
 import dust.gen.dust.core.meta.DustCoreMetaComponents;
+import dust.pub.DustUtils;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
@@ -192,7 +193,7 @@ public interface DustSimpleRuntimeComponents
 		}
 
 		public String toString() {
-			return type.toString();
+			return DustUtils.toString(type);
 		}
 
 		public <ValType> ValType getFieldValue(SimpleAttDef att) {

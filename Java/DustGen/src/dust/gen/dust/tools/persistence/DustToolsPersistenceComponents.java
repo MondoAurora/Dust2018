@@ -12,6 +12,18 @@ public interface DustToolsPersistenceComponents extends DustToolsGenericComponen
 			return DustTypeCoreExec.Status;
 		}
 	}
+	
+	enum DustCommandToolsPersistenceStore implements DustCommand {
+		Read;
+		@Override
+		public DustType getType() {
+			return null;
+		}
+		@Override
+		public DustService getService() {
+			return DustServiceToolsPersistence.Store;
+		}
+	}
 
 	enum DustServiceToolsPersistence implements DustService {
 		Store,;

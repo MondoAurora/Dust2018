@@ -29,7 +29,7 @@ public interface DustCoreCommComponents extends DustToolsGenericComponents, Dust
 	}
 	
 	enum DustServiceCoreComm implements DustService {
-		Talk,;
+		Agent,;
 		@Override
 		public DustType getType() {
 			return DustTypeCoreMeta.Service;
