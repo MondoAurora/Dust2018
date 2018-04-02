@@ -72,9 +72,7 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 				}
 			}, owner, DustLinkKnowledgeInfoEntity.Services);
 
-			DustEntity eSvc = Dust.getRefEntity(key, false,
-					DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, null);
-			return peek(eSvc);
+			return peek(key);
 		}
 		
 		@Override
@@ -145,9 +143,11 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 	@Override
 	public void sendMessage(DustEntity target, DustEntity msg) throws Exception {
 		DustEntity cmd = Dust.getRefEntity(msg, false, DustLinkKnowledgeProcMessage.Command, null);
+		DustEntity eSvc = Dust.getRefEntity(cmd, false,	DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, null);
+
 		BinFactory factImpl = DustUtils.getAttrValueSafe(target, DustAttributeKnowledgeInfoEntity.svcImpl, cBinFact,
 				target);
-		Object binOb = factImpl.get(cmd);
+		Object binOb = factImpl.get(eSvc);
 		factMethods.get(cmd, binOb).invoke(binOb);
 	}
 
