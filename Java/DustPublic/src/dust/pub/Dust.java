@@ -24,7 +24,7 @@ public class Dust implements DustKnowledgeInfoServices, DustRuntimeEnvironmentSe
 		return RUNTIME.dustRuntimeEnvironmentManagerGetRefEntity(entity, createIfMissing, linkDef, key);
 	}
 
-	public static DustEntity modifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, DustEntity left, DustEntity right, DustLink linkDef, Object... params) {
+	public static DustEntity modifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, DustEntity left, DustLink linkDef, DustEntity right, Object... params) {
 		return RUNTIME.dustRuntimeEnvironmentManagerModifyRefs(refCmd, left, right, linkDef, params);
 	}
 	

@@ -56,7 +56,15 @@ public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents,
 	}
 
 	enum DustAttributeKnowledgeInfoIterator implements DustAttribute {
-		cardinality, index, key;
+		index, key;
+		@Override
+		public DustType getType() {
+			return DustTypeKnowledgeInfo.Iterator;
+		}
+	}
+	
+	enum DustLinkKnowledgeInfoIterator implements DustLink {
+		Cardinality;
 		@Override
 		public DustType getType() {
 			return DustTypeKnowledgeInfo.Iterator;

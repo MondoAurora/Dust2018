@@ -39,13 +39,13 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // Du
 
 			if (key instanceof DustCommand) {
 				DustService svc = ((DustCommand) key).getService();
-				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, svc, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner);
+				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, svc);
 				setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idCombined, DustUtils.toEnumId((Enum<?>) svc));
 			}
 
 			if (key instanceof DustService) {
 				for (DustService ext : ((DustService) key).getExtends()) {
-					Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, ext, DustToolsGenericComponents.DustLinkToolsGenericConnected.Extends);
+					Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, DustToolsGenericComponents.DustLinkToolsGenericConnected.Extends, ext);
 				}
 			}
 

@@ -6,6 +6,15 @@ import dust.gen.tools.generic.DustToolsGenericComponents;
 
 public interface DustKnowledgeCommComponents extends DustToolsGenericComponents, DustKnowledgeMetaComponents, DustKnowledgeProcComponents {
 
+	enum DustConstKnowledgeCommStatementType implements DustEntity {
+		Comm, Entity, Model, Data;
+
+		@Override
+		public DustType getType() {
+			return DustTypeKnowledgeMeta.Const;
+		}
+	}
+
 	enum DustAttributeKnowledgeCommTerm implements DustAttribute {
 		idGlobal, idLocal;
 
@@ -15,18 +24,27 @@ public interface DustKnowledgeCommComponents extends DustToolsGenericComponents,
 		}
 	}
 	
-	enum DustLinkKnowledgeCommTalk implements DustLink {
+	enum DustLinkKnowledgeCommStatement implements DustLink {
+		Type;
+
+		@Override
+		public DustType getType() {
+			return DustTypeKnowledgeComm.Statement;
+		}
+	}
+	
+	enum DustLinkKnowledgeCommAgent implements DustLink {
 		Source;
 
 		@Override
 		public DustType getType() {
-			return DustTypeKnowledgeComm.Talk;
+			return DustTypeKnowledgeComm.Agent;
 		}
 	}
 
 
 	enum DustTypeKnowledgeComm implements DustType {
-		Term, Talk;
+		Term, Agent, Statement;
 	}
 	
 	enum DustServiceKnowledgeComm implements DustService {

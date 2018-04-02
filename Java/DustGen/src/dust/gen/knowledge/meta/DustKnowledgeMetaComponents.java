@@ -8,8 +8,13 @@ public interface DustKnowledgeMetaComponents extends DustComponents {
 		Id, Int, Float, Bool, Raw;
 	}
 
-	enum DustConstKnowledgeMetaCardinality {
+	enum DustConstKnowledgeMetaCardinality implements DustEntity {
 		Single, Set, Array, Map;
+		
+		@Override
+		public DustType getType() {
+			return DustTypeKnowledgeMeta.Const;
+		}
 	}
 
 	enum DustTypeKnowledgeMeta implements DustType {
