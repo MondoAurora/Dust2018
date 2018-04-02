@@ -1,5 +1,7 @@
 package dust.pub;
 
+import java.util.Map;
+
 public class DustUtilsJava implements DustPubComponents {
 
 	public static String toString(Object ob) {
@@ -70,5 +72,34 @@ public class DustUtilsJava implements DustPubComponents {
 		} else { 
 			return ( rot ) ? ( ( 0 > ord ) ? values[values.length-1] : values[0] ) : null;
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static StringBuilder toStringBuilder(StringBuilder target, Iterable<?> content, boolean map, String name) {
+		if (!isEmpty(name)) {
+			target = DustUtilsJava.sbApend(target, "", false, " \"", name, "\": ");
+		}
+		target = DustUtilsJava.sbApend(target, "", false, map ? "{ " : "[ ");
+		
+		boolean empty = true;
+		for ( Object r : content ) {
+			if ( empty ) {
+				empty = false;
+			} else {
+				target.append(", ");					
+			}
+			if (r instanceof Map.Entry) {
+				Map.Entry e = (Map.Entry) r;
+				Object val = e.getValue();
+				if (!(val instanceof DumpFormatter)) {
+					val = DustUtils.sbApend(null, "", false, "\"", val, "\"");
+				}
+				DustUtils.sbApend(target, "", false, " \"", e.getKey(), "\": ", val);
+			} else {
+				target.append(r);
+			}
+		}
+		target.append(map ? " }" : " ]");
+		return target;
 	}
 }

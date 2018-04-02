@@ -85,6 +85,9 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, agent, DustServiceKnowledgeComm.Agent, DustLinkKnowledgeInfoEntity.Services);
 
 		Dust.send(msg);
+		
+		DustUtilsDev.dump("Test dump ...", agent);
+
 	}
 
 	private void assignLogic(DustService svc, String javaClass) {

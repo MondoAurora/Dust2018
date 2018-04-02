@@ -2,6 +2,7 @@ package dust.binding.reflection;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import dust.gen.knowledge.info.DustKnowledgeInfoServices;
@@ -13,6 +14,7 @@ import dust.pub.Dust;
 import dust.pub.DustException;
 import dust.pub.DustPubComponents;
 import dust.pub.DustUtils;
+import dust.pub.DustUtilsJava;
 import dust.pub.boot.DustBootComponents;
 import dust.pub.boot.DustBootComponents.DustConfig;
 import dust.utils.DustUtilsFactory;
@@ -73,6 +75,24 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 			DustEntity eSvc = Dust.getRefEntity(key, false,
 					DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, null);
 			return peek(eSvc);
+		}
+		
+		@Override
+		public StringBuilder toStringBuilder(StringBuilder target) {
+			boolean empty = true;
+			for ( Map.Entry<DustEntity, Object> e : content.entrySet() ) {
+				if ( empty ) {
+					empty = false;
+					target = DustUtilsJava.sbApend(target, "", true, "{");
+				} else {
+					target.append(", ");
+				}
+				String key = Dust.getAttrValue(e.getKey(), DustAttributeToolsGenericIdentified.idLocal);
+				Object val = e.getValue();
+				target = DustUtilsJava.sbApend(target, "", true, "\"", key, "\": \"", val.getClass().getName(), ":", val.hashCode(), "\"");
+			}
+			
+			return empty ? DustUtilsJava.sbApend(target, "", true, "{}") : target.append(" }");
 		}
 	};
 

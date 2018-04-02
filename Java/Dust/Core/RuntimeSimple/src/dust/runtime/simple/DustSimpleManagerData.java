@@ -43,7 +43,8 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 	public SimpleEntity dustKnowledgeInfoSourceGet(DustType type, String srcId, String revId) throws Exception {
 		SimpleEntity ret = null;
 		if ( (null == type) || DustUtils.isEmpty(srcId) ) {
-			ret = new SimpleEntity(this, null);
+			SimpleType st = (null == type) ? null : null;
+			ret = new SimpleEntity(this, st);
 			allKnownEntities.add(ret);
 		} else {
 //			ret = factGlobalEntities.get(mgrMeta.getType(type)).get(srcId, revId);

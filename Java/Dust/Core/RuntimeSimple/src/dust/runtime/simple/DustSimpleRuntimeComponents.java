@@ -10,12 +10,14 @@ import dust.gen.knowledge.info.DustKnowledgeInfoServices;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcServices;
 import dust.gen.runtime.access.DustRuntimeAccessComponents;
+import dust.pub.DustPubComponents;
 import dust.pub.DustUtils;
+import dust.pub.DustUtilsJava;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
-public interface DustSimpleRuntimeComponents
-		extends DustBootComponents, DustKnowledgeInfoServices, DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustKnowledgeProcServices {
+public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKnowledgeInfoServices,
+		DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustKnowledgeProcServices, DustPubComponents {
 	Set<SimpleRef> NO_REFS = Collections.emptySet();
 
 	class SimpleAttDef {
@@ -104,6 +106,11 @@ public interface DustSimpleRuntimeComponents
 		SimpleLinkDef getLinkDef(DustLink link) {
 			return factLinks.get(link);
 		}
+		
+		@Override
+		public String toString() {
+			return id.toString();
+		}
 	}
 
 	class SimpleRef implements Comparable<SimpleRef> {
@@ -136,18 +143,28 @@ public interface DustSimpleRuntimeComponents
 		public void setTarget(SimpleEntity target) {
 			this.eTarget = target;
 		}
+		
+		@Override
+		public String toString() {
+			StringBuilder sb = DustUtilsJava.sbApend(null, "", false, "{ \"link\": \"", linkDef,
+					"\", \"target\":", eTarget.toString(false));
+			
+			if ( null != key ) {
+				sb.append(", \"key\":\"").append(key).append("\"");
+			}
+			
+			sb.append("}");
+
+			return sb.toString();
+		}
 	}
 
-	class SimpleModel {
+	class SimpleModel implements DumpFormatter {
 		SimpleType type;
 		Map<SimpleAttDef, Object> values = new HashMap<>();
 
 		public SimpleModel(SimpleType type) {
 			this.type = type;
-		}
-
-		public String toString() {
-			return type.toString();
 		}
 
 		@SuppressWarnings("unchecked")
@@ -158,15 +175,19 @@ public interface DustSimpleRuntimeComponents
 		public void setFieldValue(SimpleAttDef att, Object value) {
 			values.put(att, value);
 		}
+
+		public String toString() {
+			return DustUtilsJava.toStringBuilder(null, values.entrySet(), true, null).toString();
+		}
 	}
 
-	class SimpleEntity implements DustEntity {
+	class SimpleEntity implements DustEntity, DumpFormatter {
 		private DustSimpleManagerData ctx;
 		private DustConstKnowledgeInfoEntityState state;
 
 		private SimpleType type;
 		private DustUtilsFactory<SimpleType, SimpleModel> factModels = new DustUtilsFactory<SimpleType, SimpleModel>(
-				false) {
+				false, "Models") {
 			@Override
 			protected SimpleModel create(SimpleType key, Object... hints) {
 				return new SimpleModel(key);
@@ -178,7 +199,7 @@ public interface DustSimpleRuntimeComponents
 			this.ctx = ctx;
 			this.type = type;
 		}
-		
+
 		@Override
 		public DustType getType() {
 			return type.getType();
@@ -197,7 +218,22 @@ public interface DustSimpleRuntimeComponents
 		}
 
 		public String toString() {
-			return DustUtils.toString(type);
+			return toString(true);
+		}
+
+		public String toString(boolean withContent) {
+			StringBuilder sb = DustUtilsJava.sbApend(null, "", false, "{ \"Entity\": \"", hashCode(),
+					"\", \"primaryType\": \"", DustUtils.toString(type), "\"");
+
+			if (withContent) {
+				sb.append(", ");
+				factModels.toStringBuilder(sb);
+				sb.append(", ");
+				DustUtilsJava.toStringBuilder(sb, refs, false, "Refs");
+			}
+			sb.append(" }");
+
+			return sb.toString();
 		}
 
 		public <ValType> ValType getFieldValue(SimpleAttDef att) {

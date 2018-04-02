@@ -20,4 +20,7 @@ public interface DustPubComponents extends DustKnowledgeInfoComponents, DustKnow
 		}
 	}
 
+	interface DumpFormatter {
+		
+	}
 }
