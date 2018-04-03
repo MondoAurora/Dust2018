@@ -40,11 +40,10 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 	}
 
 	@Override
-	public SimpleEntity dustKnowledgeInfoSourceGet(DustType type, String srcId, String revId) throws Exception {
+	public SimpleEntity dustKnowledgeInfoSourceGet(String idGlobal) throws Exception {
 		SimpleEntity ret = null;
-		if ( (null == type) || DustUtils.isEmpty(srcId) ) {
-			SimpleType st = (null == type) ? null : null;
-			ret = new SimpleEntity(this, st);
+		if ( DustUtils.isEmpty(idGlobal) ) {
+			ret = new SimpleEntity(this, null);
 			allKnownEntities.add(ret);
 		} else {
 //			ret = factGlobalEntities.get(mgrMeta.getType(type)).get(srcId, revId);

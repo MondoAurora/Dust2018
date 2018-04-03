@@ -83,7 +83,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 		
 		SimpleEntity ret = null;
 		if ( createIfMissing ) {
-			ret = se.getCtx().dustKnowledgeInfoSourceGet(ld.getTargetType(), null, null);
+			ret = se.getCtx().dustKnowledgeInfoSourceGet(null);
 			SimpleRef sr = new SimpleRef(ld, ret, key);
 			refs.add(sr);
 		}

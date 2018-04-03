@@ -5,178 +5,178 @@
 	},
 	"Body": [
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeMetaType",
-				"idLocal 201": "DustKnowledgeMetaType 1"
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeMetaType",
+				"idLocal 201": "KnowledgeMetaType 1"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "Type"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaType 1"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeMetaAttDef",
-				"idLocal 201": "DustKnowledgeMetaAttDef 2"
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeMetaAttDef",
+				"idLocal 201": "KnowledgeMetaAttDef 2"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "AttDef"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaType 1"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeMetaLinkDef",
-				"idLocal 201": "DustKnowledgeMetaLinkDef 3"
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeMetaLinkDef",
+				"idLocal 201": "KnowledgeMetaLinkDef 3"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "LinkDef"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaType 1"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeInfoEntity",
-				"idLocal 201": "DustKnowledgeInfoEntity 4"
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeInfoEntity",
+				"idLocal 201": "KnowledgeInfoEntity 4"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "Entity"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaType 1"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeInfoLink",
-				"idLocal 201": "DustKnowledgeInfoLink 5"
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeInfoLink",
+				"idLocal 201": "KnowledgeInfoLink 5"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "Link"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaType 1"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustToolsGenericIdentified",
-				"idLocal 201": "DustToolsGenericIdentified 6"
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:Type:ToolsGenericIdentified",
+				"idLocal 201": "ToolsGenericIdentified 6"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "Identified"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaType 1"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustKnowledgeCommTerm",
-				"idLocal 201": "DustKnowledgeCommTerm 7"
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeCommTerm",
+				"idLocal 201": "KnowledgeCommTerm 7"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "Info"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaType 1"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:Type:DustToolsGenericConnected",
-				"idLocal 201": "DustToolsGenericConnected 8"
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:Type:ToolsGenericConnected",
+				"idLocal 201": "ToolsGenericConnected 8"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "Connected"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaType 1"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
 			}
 		},
 		
 		
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:LinkDef:DustToolsGenericConnected.Owner",
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:LinkDef:ToolsGenericConnected.Owner",
 				"idLocal 201": "Owner 100"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "Owner"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaLinkDef 3"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaLinkDef 3"
 			},
-			"DustToolsGenericConnected 8": {
-				"Owner 100": "DustToolsGenericConnected 8"
+			"ToolsGenericConnected 8": {
+				"Owner 100": "ToolsGenericConnected 8"
 			}
 		},	
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:LinkDef:DustKnowledgeInfoEntity.PrimaryType",
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:LinkDef:KnowledgeInfoEntity.PrimaryType",
 				"idLocal 201": "PrimaryType 108"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "PrimaryType"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaLinkDef 3"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaLinkDef 3"
 			},
-			"DustToolsGenericConnected 8": {
-				"Owner 100": "DustKnowledgeInfoEntity 4"
+			"ToolsGenericConnected 8": {
+				"Owner 100": "KnowledgeInfoEntity 4"
 			}
 		},
 		
 		
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:AttDef:DustKnowledgeCommTerm.idGlobal",
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:AttDef:KnowledgeCommTerm.idGlobal",
 				"idLocal 201": "idGlobal 200"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "idGlobal"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaAttDef 2"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaAttDef 2"
 			},
-			"DustToolsGenericConnected 8": {
-				"Owner 100": "DustKnowledgeCommTerm 7"
+			"ToolsGenericConnected 8": {
+				"Owner 100": "KnowledgeCommTerm 7"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:AttDef:DustKnowledgeCommTerm.idLocal",
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:AttDef:KnowledgeCommTerm.idLocal",
 				"idLocal 201": "idLocal 201"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "idLocal"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaAttDef 2"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaAttDef 2"
 			},
-			"DustToolsGenericConnected 8": {
-				"Owner 100": "DustKnowledgeCommTerm 7"
+			"ToolsGenericConnected 8": {
+				"Owner 100": "KnowledgeCommTerm 7"
 			}
 		},
 		{
-			"DustKnowledgeCommTerm 7": {
-				"idGlobal 200": "Dust:Core:Meta:AttDef:DustToolsGenericIdentified.idLocal",
+			"KnowledgeCommTerm 7": {
+				"idGlobal 200": "Knowledge:Meta:AttDef:ToolsGenericIdentified.idLocal",
 				"idLocal 201": "idLocal 202"
 			},
-			"DustToolsGenericIdentified 6": {
+			"ToolsGenericIdentified 6": {
 				"idLocal 202": "idLocal"
 			},
-			"DustKnowledgeInfoEntity 4": {
-				"PrimaryType 108": "DustKnowledgeMetaAttDef 2"
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaAttDef 2"
 			},
-			"DustToolsGenericConnected 8": {
-				"Owner 100": "DustToolsGenericIdentified 6"
+			"ToolsGenericConnected 8": {
+				"Owner 100": "ToolsGenericIdentified 6"
 			}
 		}	
 	]

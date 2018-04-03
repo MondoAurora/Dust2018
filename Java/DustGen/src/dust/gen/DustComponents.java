@@ -1,17 +1,20 @@
 package dust.gen;
 
 public interface DustComponents {
-	interface DustType {
+	interface IdentifiableMeta {
+	}
+	
+	interface DustType extends IdentifiableMeta {
 	}
 
 	interface DustEntity {
 		DustType getType();
 	}
 	
-	interface DustAttribute extends DustEntity {
+	interface DustAttribute extends DustEntity, IdentifiableMeta {
 	}
 
-	interface DustLink extends DustEntity {
+	interface DustLink extends DustEntity, IdentifiableMeta {
 	}
 
 	interface DustService extends DustEntity {
