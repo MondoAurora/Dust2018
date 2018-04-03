@@ -1,3 +1,8 @@
 Copyright (C) 2018 Lorand Kedves. All rights reserved.
 
-To be more precise. The sources here are just small finger excercises, making them private is not a big deal (although they are). The value is the understanding of basic concepts of informatics (NOT "information technology"), and the architecture of Dust Platform. This knowledge is "saved" in Java syntax (now by me, later generated automatically), in the DustGen project. That architecture is the intellectual property of this project, and can only be used under my individual permission.
+To be more precise. 
+The sources here are just finger excercises, making them private is not the issue (although they are private). 
+The value is the understanding of basic concepts of informatics (NOT "information technology"), and the 
+architecture of Dust Platform. This knowledge is "saved" in Java syntax (now by me, later generated automatically), 
+in the DustGen project. That architecture is the intellectual property of this project, and can only be used under 
+my individual permission.
