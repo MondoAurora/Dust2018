@@ -4,7 +4,7 @@ import dust.gen.knowledge.proc.DustKnowledgeProcServices;
 
 public interface DustKnowledgeCommServices extends DustKnowledgeCommComponents, DustKnowledgeProcServices {
 
-	interface DustKnowledgeCommAgent extends DustKnowledgeProcProcessor, DustKnowledgeProcVisitor {
+	interface DustKnowledgeCommDiscussion extends DustKnowledgeProcProcessor, DustKnowledgeProcVisitor {
 	}
 
 }

@@ -5,7 +5,7 @@ import dust.pub.Dust;
 import dust.pub.DustUtilsDev;
 import dust.pub.DustUtilsJava;
 
-public class DustSimpleAgentComm implements DustKnowledgeCommServices, DustKnowledgeCommServices.DustKnowledgeCommAgent {
+public class DustSimpleCommDiscussion implements DustKnowledgeCommServices, DustKnowledgeCommServices.DustKnowledgeCommDiscussion {
 
 	@Override
 	public void dustKnowledgeProcProcessorBegin() throws Exception {

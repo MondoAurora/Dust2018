@@ -78,11 +78,11 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, target, DustLinkKnowledgeInfoEntity.Services, DustServiceToolsPersistence.Store);
 
 		assignLogic(DustServiceToolsPersistence.Store, "dust.persistence.jsonsimple.DustJsonReader");
-		assignLogic(DustServiceKnowledgeComm.Agent, "dust.runtime.simple.DustSimpleAgentComm");
+		assignLogic(DustServiceKnowledgeComm.Discussion, "dust.runtime.simple.DustSimpleCommDiscussion");
 
 		DustEntity msgRelay = Dust.getRefEntity(target, true, DustLinkToolsGenericChain.DefaultMessage, null);
 		DustEntity agent = Dust.getRefEntity(msgRelay, true, DustLinkKnowledgeProcMessage.Target, null);
-		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, agent, DustLinkKnowledgeInfoEntity.Services, DustServiceKnowledgeComm.Agent);
+		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, agent, DustLinkKnowledgeInfoEntity.Services, DustServiceKnowledgeComm.Discussion);
 
 		Dust.send(msg);
 		

@@ -35,11 +35,13 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // Du
 		@Override
 		protected SimpleEntity create(Enum<?> key, Object... hints) {
 			SimpleEntity se = new SimpleEntity(null, getSimpleType(DustTypeKnowledgeMeta.Const));
-			setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idLocal, DustUtils.toLocalId(key));
+			setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idLocal, key.name());
+			setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idCombined, DustUtils.toEnumId(key));
 
 			if (key instanceof DustCommand) {
 				DustService svc = ((DustCommand) key).getService();
 				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, svc);
+				setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idLocal, DustUtils.toLocalId(key));
 				setFieldValue(se, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idCombined, DustUtils.toEnumId((Enum<?>) svc));
 			}
 

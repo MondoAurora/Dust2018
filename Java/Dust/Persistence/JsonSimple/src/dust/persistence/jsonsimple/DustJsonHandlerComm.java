@@ -18,7 +18,7 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 			DustConstKnowledgeCommStatementType.class);
 
 	static {
-		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Comm, DustConstKnowledgeMetaCardinality.Single);
+		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Discussion, DustConstKnowledgeMetaCardinality.Single);
 		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Entity, DustConstKnowledgeMetaCardinality.Array);
 		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Model, DustConstKnowledgeMetaCardinality.Map);
 		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Data, DustConstKnowledgeMetaCardinality.Single);
@@ -33,7 +33,7 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 	DustEntity msg;
 
 	void talkInit() {
-		state = DustConstKnowledgeCommStatementType.Comm;
+		state = DustConstKnowledgeCommStatementType.Discussion;
 		msg = Dust.getRefEntity(DustConstKnowledgeInfoContext.Self, true, DustLinkToolsGenericChain.DefaultMessage,
 				null);
 	}

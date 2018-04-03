@@ -7,7 +7,7 @@ import dust.gen.tools.generic.DustToolsGenericComponents;
 public interface DustKnowledgeCommComponents extends DustToolsGenericComponents, DustKnowledgeMetaComponents, DustKnowledgeProcComponents {
 
 	enum DustConstKnowledgeCommStatementType implements DustEntity {
-		Comm, Entity, Model, Data;
+		Discussion, Entity, Model, Data;
 
 		@Override
 		public DustType getType() {
@@ -38,17 +38,17 @@ public interface DustKnowledgeCommComponents extends DustToolsGenericComponents,
 
 		@Override
 		public DustType getType() {
-			return DustTypeKnowledgeComm.Agent;
+			return DustTypeKnowledgeComm.Discussion;
 		}
 	}
 
 
 	enum DustTypeKnowledgeComm implements DustType {
-		Term, Agent, Statement;
+		Term, Discussion, Statement;
 	}
 	
 	enum DustServiceKnowledgeComm implements DustService {
-		Agent(DustServiceKnowledgeProc.Visitor, DustServiceKnowledgeProc.Processor),;
+		Discussion(DustServiceKnowledgeProc.Visitor, DustServiceKnowledgeProc.Processor),;
 		final DustService[] extServices;
 		
 		private DustServiceKnowledgeComm(DustService... extServices) {
