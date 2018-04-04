@@ -1,10 +1,21 @@
 package dust.gen;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 
 public class DustUtilsGen implements DustComponents {
 	
-	public static <RetType extends IdentifiableMeta> RetType metaFromId(String id) {
+	private static final Map<Class<? extends IdentifiableMeta>, String> TYPE_PREFIX = new HashMap<>();
+	
+	static {
+		TYPE_PREFIX.put(DustType.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.Type) + ":");
+		TYPE_PREFIX.put(DustAttribute.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.AttDef) + ":");
+		TYPE_PREFIX.put(DustLink.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.LinkDef) + ":");
+	}
+	
+	public static String metaIdToClassName(String id) {
 		return null;
 	}
 	
@@ -44,7 +55,13 @@ public class DustUtilsGen implements DustComponents {
 		int idx = cname.lastIndexOf(prefix.toString());
 		if ( -1 != idx ) {
 			String name = cname.substring(idx + prefix.length());
-			ret = prefix.insert(0, ":").insert(0, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.AttDef)).append(name).append(".").append(meta).toString();
+			prefix.append(name).append((meta instanceof DustType) ? "" : ".").append(meta);
+			for ( Map.Entry<Class<? extends IdentifiableMeta>, String> e : TYPE_PREFIX.entrySet() ) {
+				if ( e.getKey().isInstance(meta) ) {
+					prefix.insert(0, e.getValue());
+				}
+			}
+			ret = prefix.toString();
 		}
 		
 		return ret;

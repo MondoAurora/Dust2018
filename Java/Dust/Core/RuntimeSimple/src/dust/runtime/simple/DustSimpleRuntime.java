@@ -86,7 +86,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 
 		Dust.send(msg);
 		
-		DustUtilsDev.dump("Test dump ...", agent);
+//		DustUtilsDev.dump("Test dump ...", agent);
 
 	}
 
