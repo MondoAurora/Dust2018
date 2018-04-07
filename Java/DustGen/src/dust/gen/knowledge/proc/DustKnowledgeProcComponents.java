@@ -7,18 +7,10 @@ public interface DustKnowledgeProcComponents extends DustComponents, DustKnowled
 
 	enum DustConstKnowledgeProcVisitorResponse implements DustConst {
 		OK, Skip, Exit, Repeat, Restart;
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeMeta.Const;
-		}
 	}
 
 	enum DustLinkKnowledgeProcMessage implements DustLink {
 		Command, Target;
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeProc.Message;
-		}
 	}
 
 	enum DustTypeKnowledgeProc implements DustType {
@@ -29,26 +21,10 @@ public interface DustKnowledgeProcComponents extends DustComponents, DustKnowled
 	
 	enum DustCommandKnowledgeProcVisitor implements DustCommand {
 		Visit;
-		@Override
-		public DustType getType() {
-			return null;
-		}
-		@Override
-		public DustService getService() {
-			return DustServiceKnowledgeProc.Visitor;
-		}
 	}
 
 	enum DustCommandKnowledgeProcProcessor implements DustCommand {
 		Begin, End;
-		@Override
-		public DustType getType() {
-			return null;
-		}
-		@Override
-		public DustService getService() {
-			return DustServiceKnowledgeProc.Processor;
-		}
 	}
 
 	enum DustServiceKnowledgeProc implements DustService {
@@ -57,14 +33,6 @@ public interface DustKnowledgeProcComponents extends DustComponents, DustKnowled
 		
 		private DustServiceKnowledgeProc(DustService... extServices) {
 			this.extServices = extServices;
-		}
-		@Override
-		public DustService[] getExtends() {
-			return extServices;
-		}
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeMeta.Service;
 		}
 	}
 }

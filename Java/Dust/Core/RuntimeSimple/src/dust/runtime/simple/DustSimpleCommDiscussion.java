@@ -15,10 +15,6 @@ public class DustSimpleCommDiscussion
 		implements DustKnowledgeCommServices, DustKnowledgeCommServices.DustKnowledgeCommDiscussion {
 
 	DustEntity tempFound = new DustEntity() {
-		@Override
-		public DustType getType() {
-			return null;
-		}
 	};
 
 	enum KeyType {
@@ -90,7 +86,7 @@ public class DustSimpleCommDiscussion
 	DustSimpleManagerData localData = new DustSimpleManagerData();
 	
 	public DustSimpleCommDiscussion() {
-		localData.setMeta(DustSimpleRuntime.mgrMeta);
+//		localData.setMeta(DustSimpleRuntime.mgrMeta);
 	}
 	
 	private DustConstKnowledgeCommStatementType getStatementType() {
@@ -108,9 +104,9 @@ public class DustSimpleCommDiscussion
 	}
 
 	private void identifyCoreTerms() {
+		String idTermType = DustUtilsGen.metaToId(DustTypeKnowledgeComm.Term);
 		String idGlobalId = DustUtilsGen.metaToId(DustAttributeKnowledgeCommTerm.idGlobal);
 		String idLocalId = DustUtilsGen.metaToId(DustAttributeKnowledgeCommTerm.idLocal);
-		String idTermType = DustUtilsGen.metaToId(DustTypeKnowledgeComm.Term);
 
 		for (StatementData sd : arrStatements) {
 			boolean selfId = false;

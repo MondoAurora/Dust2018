@@ -10,9 +10,12 @@ public class DustUtilsGen implements DustComponents {
 	private static final Map<Class<? extends IdentifiableMeta>, String> TYPE_PREFIX = new HashMap<>();
 	
 	static {
-		TYPE_PREFIX.put(DustType.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.Type) + ":");
-		TYPE_PREFIX.put(DustAttribute.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.AttDef) + ":");
-		TYPE_PREFIX.put(DustLink.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.LinkDef) + ":");
+		TYPE_PREFIX.put(DustType.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.Type) + "|");
+		TYPE_PREFIX.put(DustAttribute.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.AttDef) + "|");
+		TYPE_PREFIX.put(DustLink.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.LinkDef) + "|");
+		TYPE_PREFIX.put(DustService.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.Service) + "|");
+		TYPE_PREFIX.put(DustCommand.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.Command) + "|");
+		TYPE_PREFIX.put(DustConst.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.Const) + "|");
 	}
 		
 	private static String[] getTypePath(String cname) {
@@ -41,9 +44,11 @@ public class DustUtilsGen implements DustComponents {
 		String cname = meta.getClass().getName();
 		String[] pnames = getTypePath(cname);
 		StringBuilder prefix = new StringBuilder();
+		StringBuilder id = null;
 		for ( String s : pnames ) {
 			s = "" + Character.toUpperCase(s.charAt(0)) + s.substring(1);
 			prefix.append(s);
+			id = (null == id)?new StringBuilder(s) : id.append(":").append(s);
 		}
 		
 		String ret = "";
@@ -51,13 +56,18 @@ public class DustUtilsGen implements DustComponents {
 		int idx = cname.lastIndexOf(prefix.toString());
 		if ( -1 != idx ) {
 			String name = cname.substring(idx + prefix.length());
-			prefix.append(name).append((meta instanceof DustType) ? "" : ".").append(meta);
+			if ((meta instanceof DustService) || (meta instanceof DustType)) {
+				id.append(name).append(":").append(meta);				
+			} else {
+				id.append(":").append(name).append(".").append(meta);
+			}
 			for ( Map.Entry<Class<? extends IdentifiableMeta>, String> e : TYPE_PREFIX.entrySet() ) {
 				if ( e.getKey().isInstance(meta) ) {
-					prefix.insert(0, e.getValue());
+					id.insert(0, e.getValue());
+					break;
 				}
 			}
-			ret = prefix.toString();
+			ret = id.toString();
 		}
 		
 		return ret;

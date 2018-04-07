@@ -7,18 +7,10 @@ public interface DustRuntimeAccessComponents extends DustKnowledgeInfoComponents
 	
 	enum DustStatusRuntimeAccess implements DustEntity {
 		AccessDenied;
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeProc.Status;
-		}
 	}
 	
 	enum DustConstRuntimeAccessAccessMode implements DustConst {
 		Check, Read, Write, Execute;
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeMeta.Const;
-		}
 	}
 	
 }

@@ -8,38 +8,18 @@ public interface DustKnowledgeCommComponents extends DustToolsGenericComponents,
 
 	enum DustConstKnowledgeCommStatementType implements DustConst {
 		Discussion, Entity, Model, Data;
-
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeMeta.Const;
-		}
 	}
 
 	enum DustAttributeKnowledgeCommTerm implements DustAttribute {
 		idGlobal, idLocal;
-
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeComm.Term;
-		}
 	}
 	
 	enum DustLinkKnowledgeCommStatement implements DustLink {
 		Type;
-
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeComm.Statement;
-		}
 	}
 	
 	enum DustLinkKnowledgeCommAgent implements DustLink {
 		Source;
-
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeComm.Discussion;
-		}
 	}
 
 
@@ -53,14 +33,6 @@ public interface DustKnowledgeCommComponents extends DustToolsGenericComponents,
 		
 		private DustServiceKnowledgeComm(DustService... extServices) {
 			this.extServices = extServices;
-		}
-		@Override
-		public DustService[] getExtends() {
-			return extServices;
-		}
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeMeta.Service;
 		}
 	}
 

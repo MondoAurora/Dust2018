@@ -11,12 +11,12 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 	
 	private static final EnumSet<DustConstKnowledgeInfoLinkCommand> REFCMD_CREATE = EnumSet.of(DustConstKnowledgeInfoLinkCommand.Add, DustConstKnowledgeInfoLinkCommand.Replace);
 
-	void processRefs(DustKnowledgeProcVisitor proc, SimpleEntity entity, DustLink[] path, int idx) {
-		DustLink bl = path[idx];
+	void processRefs(DustKnowledgeProcVisitor proc, InfoEntity entity, DustLink[] path, int idx) {
+		SimpleLinkDef bl = entity.getCtx().optResolveMeta(path[idx]);
 		boolean last = idx == path.length-1;
 		
 		for ( SimpleRef ref : entity.getRefs(false) ) {
-			if ( ref.linkDef.link == bl ) {
+			if ( ref.linkDef == bl ) {
 				if ( last ) {
 					try {
 						proc.dustKnowledgeProcVisitorVisit(ref.eTarget);
@@ -30,7 +30,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 		}
 	}
 
-	DustEntity modifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, SimpleEntity seLeft, SimpleEntity seRight,
+	DustEntity modifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, InfoEntity seLeft, InfoEntity seRight,
 			SimpleLinkDef sld, Object[] params) {
 		
 //		DustMetaLinkType lt = (null == sld) ? null : sld.linkType;
@@ -72,7 +72,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 		return null;
 	}
 
-	public SimpleEntity getRefEntity(SimpleEntity se, boolean createIfMissing, SimpleLinkDef ld, Object key) throws Exception {
+	public InfoEntity getRefEntity(InfoEntity se, boolean createIfMissing, SimpleLinkDef ld, Object key) throws Exception {
 		Set<SimpleRef> refs = se.getRefs(createIfMissing);
 		
 		for ( SimpleRef r : refs ) {
@@ -81,7 +81,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 			}
 		}
 		
-		SimpleEntity ret = null;
+		InfoEntity ret = null;
 		if ( createIfMissing ) {
 			ret = se.getCtx().dustKnowledgeInfoSourceGet(null);
 			SimpleRef sr = new SimpleRef(ld, ret, key);

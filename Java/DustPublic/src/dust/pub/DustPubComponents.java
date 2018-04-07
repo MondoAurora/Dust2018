@@ -14,10 +14,6 @@ public interface DustPubComponents extends DustKnowledgeInfoComponents, DustKnow
 	
 	enum DustStatusInfoPub implements DustEntity {
 		ErrorClassNotFound, ErrorClassInstantiation, ErrorShutdownFailure, ErrorVistorExecution;
-		@Override
-		public DustType getType() {
-			return DustTypeKnowledgeProc.Status;
-		}
 	}
 
 	interface DumpFormatter {

@@ -6,7 +6,7 @@
 	"Body": [
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeMetaType",
+				"idGlobal 200": "Knowledge:Meta:Type|Knowledge:Meta:Type",
 				"idLocal 201": "KnowledgeMetaType 1"
 			},
 			"ToolsGenericIdentified 6": {
@@ -18,7 +18,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeMetaAttDef",
+				"idGlobal 200": "Knowledge:Meta:Type|Knowledge:Meta:AttDef",
 				"idLocal 201": "KnowledgeMetaAttDef 2"
 			},
 			"ToolsGenericIdentified 6": {
@@ -30,7 +30,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeMetaLinkDef",
+				"idGlobal 200": "Knowledge:Meta:Type|Knowledge:Meta:LinkDef",
 				"idLocal 201": "KnowledgeMetaLinkDef 3"
 			},
 			"ToolsGenericIdentified 6": {
@@ -42,7 +42,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeInfoEntity",
+				"idGlobal 200": "Knowledge:Meta:Type|Knowledge:Info:Entity",
 				"idLocal 201": "KnowledgeInfoEntity 4"
 			},
 			"ToolsGenericIdentified 6": {
@@ -54,7 +54,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeInfoLink",
+				"idGlobal 200": "Knowledge:Meta:Type|Knowledge:Info:Link",
 				"idLocal 201": "KnowledgeInfoLink 5"
 			},
 			"ToolsGenericIdentified 6": {
@@ -66,7 +66,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:Type:ToolsGenericIdentified",
+				"idGlobal 200": "Knowledge:Meta:Type|Tools:Generic:Identified",
 				"idLocal 201": "ToolsGenericIdentified 6"
 			},
 			"ToolsGenericIdentified 6": {
@@ -78,7 +78,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:Type:KnowledgeCommTerm",
+				"idGlobal 200": "Knowledge:Meta:Type|Knowledge:Comm:Term",
 				"idLocal 201": "KnowledgeCommTerm 7"
 			},
 			"ToolsGenericIdentified 6": {
@@ -90,7 +90,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:Type:ToolsGenericConnected",
+				"idGlobal 200": "Knowledge:Meta:Type|Tools:Generic:Connected",
 				"idLocal 201": "ToolsGenericConnected 8"
 			},
 			"ToolsGenericIdentified 6": {
@@ -104,7 +104,7 @@
 		
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:LinkDef:ToolsGenericConnected.Owner",
+				"idGlobal 200": "Knowledge:Meta:LinkDef|Tools:Generic:Connected->Owner",
 				"idLocal 201": "Owner 100"
 			},
 			"ToolsGenericIdentified 6": {
@@ -119,7 +119,7 @@
 		},	
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:LinkDef:KnowledgeInfoEntity.PrimaryType",
+				"idGlobal 200": "Knowledge:Meta:LinkDef|Knowledge:Info:Entity->PrimaryType",
 				"idLocal 201": "PrimaryType 108"
 			},
 			"ToolsGenericIdentified 6": {
@@ -136,7 +136,7 @@
 		
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:AttDef:KnowledgeCommTerm.idGlobal",
+				"idGlobal 200": "Knowledge:Meta:AttDef|Knowledge:Comm:Term.idGlobal",
 				"idLocal 201": "idGlobal 200"
 			},
 			"ToolsGenericIdentified 6": {
@@ -151,7 +151,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:AttDef:KnowledgeCommTerm.idLocal",
+				"idGlobal 200": "Knowledge:Meta:AttDef|Knowledge:Comm:Term.idLocal",
 				"idLocal 201": "idLocal 201"
 			},
 			"ToolsGenericIdentified 6": {
@@ -166,7 +166,7 @@
 		},
 		{
 			"KnowledgeCommTerm 7": {
-				"idGlobal 200": "Knowledge:Meta:AttDef:ToolsGenericIdentified.idLocal",
+				"idGlobal 200": "Knowledge:Meta:AttDef|Tools:Generic:Identified.idLocal",
 				"idLocal 201": "idLocal 202"
 			},
 			"ToolsGenericIdentified 6": {

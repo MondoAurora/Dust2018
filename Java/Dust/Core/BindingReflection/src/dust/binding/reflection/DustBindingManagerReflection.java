@@ -122,8 +122,8 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 			String name = Dust.getAttrValue(key, DustAttributeToolsGenericIdentified.idLocal);
 
 			// ugly name magic for now...
-			name = name.replace("Command", "").replace(":", "");
-			name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+//			name = name.replace("Command", "").replace(":", "");
+//			name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
 
 			Throwable ex = null;
 			try {

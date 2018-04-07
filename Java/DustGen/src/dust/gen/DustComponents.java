@@ -3,14 +3,14 @@ package dust.gen;
 public interface DustComponents {
 	interface IdentifiableMeta {
 	}
-	
+
 	interface DustType extends IdentifiableMeta {
 	}
 
 	interface DustEntity {
-		DustType getType();
+//		DustType getType();
 	}
-	
+
 	interface DustAttribute extends DustEntity, IdentifiableMeta {
 	}
 
@@ -20,11 +20,9 @@ public interface DustComponents {
 	interface DustConst extends DustEntity, IdentifiableMeta {
 	}
 
-	interface DustService extends DustEntity {
-		DustService[] getExtends();
+	interface DustService extends DustEntity, IdentifiableMeta {
 	}
-	
-	interface DustCommand extends DustEntity {
-		DustService getService();
+
+	interface DustCommand extends DustEntity, IdentifiableMeta {
 	}
 }
