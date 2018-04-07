@@ -5,7 +5,7 @@ import dust.gen.tools.generic.DustToolsGenericComponents;
 
 public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents, DustKnowledgeMetaComponents {
 
-	enum DustConstKnowledgeInfoEntityState implements DustEntity {
+	enum DustConstKnowledgeInfoEntityState implements DustConst {
 		Temporal, InSync, RefChanged, Changed, Constructed, Destructed;
 
 		@Override
@@ -14,7 +14,7 @@ public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents,
 		}
 	}
 
-	enum DustConstKnowledgeInfoLinkCommand implements DustEntity {
+	enum DustConstKnowledgeInfoLinkCommand implements DustConst {
 		Add, Replace, Remove, ChangeKey;
 		@Override
 		public DustType getType() {
@@ -22,7 +22,7 @@ public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents,
 		}
 	}
 
-	enum DustConstKnowledgeInfoVisitorResponse implements DustEntity {
+	enum DustConstKnowledgeInfoVisitorResponse implements DustConst {
 		OK, Skip, Exit, Repeat, Restart;
 		@Override
 		public DustType getType() {
@@ -30,7 +30,7 @@ public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents,
 		}
 	}
 
-	enum DustConstKnowledgeInfoContext implements DustEntity {
+	enum DustConstKnowledgeInfoContext implements DustConst {
 		Self, Message, Block;
 		@Override
 		public DustType getType() {

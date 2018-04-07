@@ -5,7 +5,7 @@ import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 
 public interface DustKnowledgeProcComponents extends DustComponents, DustKnowledgeInfoComponents {
 
-	enum DustConstKnowledgeProcVisitorResponse implements DustEntity {
+	enum DustConstKnowledgeProcVisitorResponse implements DustConst {
 		OK, Skip, Exit, Repeat, Restart;
 		@Override
 		public DustType getType() {

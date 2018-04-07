@@ -13,7 +13,7 @@ public interface DustRuntimeAccessComponents extends DustKnowledgeInfoComponents
 		}
 	}
 	
-	enum DustConstRuntimeAccessAccessMode implements DustEntity {
+	enum DustConstRuntimeAccessAccessMode implements DustConst {
 		Check, Read, Write, Execute;
 		@Override
 		public DustType getType() {

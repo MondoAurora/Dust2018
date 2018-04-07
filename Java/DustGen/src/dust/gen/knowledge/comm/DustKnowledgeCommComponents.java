@@ -6,7 +6,7 @@ import dust.gen.tools.generic.DustToolsGenericComponents;
 
 public interface DustKnowledgeCommComponents extends DustToolsGenericComponents, DustKnowledgeMetaComponents, DustKnowledgeProcComponents {
 
-	enum DustConstKnowledgeCommStatementType implements DustEntity {
+	enum DustConstKnowledgeCommStatementType implements DustConst {
 		Discussion, Entity, Model, Data;
 
 		@Override

@@ -14,11 +14,7 @@ public class DustUtilsGen implements DustComponents {
 		TYPE_PREFIX.put(DustAttribute.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.AttDef) + ":");
 		TYPE_PREFIX.put(DustLink.class, getTypePrefix(DustKnowledgeMetaComponents.DustTypeKnowledgeMeta.LinkDef) + ":");
 	}
-	
-	public static String metaIdToClassName(String id) {
-		return null;
-	}
-	
+		
 	private static String[] getTypePath(String cname) {
 		String genName = DustUtilsGen.class.getName();
 		cname = cname.substring(genName.lastIndexOf('.') + 1);
@@ -66,6 +62,17 @@ public class DustUtilsGen implements DustComponents {
 		
 		return ret;
 	}
+	// 3284 / 3084 94%
+	public static DustType getTypeFromId(String id) {
+		return null;
+	}
 	
+	// 3284 / 3084 94%
+	public static <RetType extends IdentifiableMeta> RetType idToMeta(String id) {
+		RetType ret = null;
+		
+		
+		return ret;
+	}
 
 }

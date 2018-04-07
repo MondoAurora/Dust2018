@@ -1,9 +1,10 @@
 package dust.gen.knowledge.meta;
 
+import dust.gen.knowledge.info.DustKnowledgeInfoServices;
+
 public interface DustKnowledgeMetaServices extends DustKnowledgeMetaComponents {
 	
-//	interface DustMetaManager {
-//		void registerUnit(String typeClass, String serviceClass) throws Exception;
-//	}
+	interface KnowledgeMetaManager extends DustKnowledgeInfoServices.DustKnowledgeInfoSource {
+	}
 
 }

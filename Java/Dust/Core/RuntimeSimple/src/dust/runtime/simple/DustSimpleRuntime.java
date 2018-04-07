@@ -8,7 +8,6 @@ import dust.gen.tools.generic.DustToolsGenericComponents;
 import dust.gen.tools.persistence.DustToolsPersistenceComponents;
 import dust.pub.Dust;
 import dust.pub.DustException;
-import dust.pub.DustUtilsDev;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
@@ -27,7 +26,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 
 	}
 
-	DustSimpleManagerMeta mgrMeta;
+	static DustSimpleManagerMeta mgrMeta;
 	DustSimpleManagerData mgrData;
 	DustSimpleManagerLink mgrLink;
 	DustSimpleManagerAaa mgrAaa;
@@ -41,6 +40,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		mgrData = new DustSimpleManagerData();
 		mgrLink = new DustSimpleManagerLink();
 		mgrAaa = new DustSimpleManagerAaa();
+		mgrData.addParentSource(mgrMeta);
 		
 		block = new SimpleBlock(new SimpleEntity(mgrData, mgrMeta.getSimpleType(DustTypeRuntimeEnvironment.Manager)), null);
 	}
@@ -124,20 +124,20 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		Dust.setAttrValue(eMeta, DustToolsGenericComponents.DustAttributeToolsGenericIdentified.idLocal, "na?");
 		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eMeta, DustLinkKnowledgeInfoEntity.Services, DustRuntimeEnvironmentComponents.DustServiceKnowledgeMeta.Manager);
 		
-		DustEntity msg = Dust.getRefEntity(DustConstKnowledgeInfoContext.Self, true, DustRuntimeEnvironmentComponents.DustLinkRuntimeEnvironmentManager.InitMessage, null);
-		
-		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, msg, DustLinkKnowledgeProcMessage.Target, eMeta);
-		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, msg, DustLinkKnowledgeProcMessage.Command, DustRuntimeEnvironmentComponents.DustCommandKnowledgeMetaManager.RegisterUnit);
-		
-		Dust.processRefs(new DustKnowledgeProcVisitor() {
-			@Override
-			public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
-				DustUtilsDev.dump("Test visitor called!");
-				return null;
-			}
-		}, DustConstKnowledgeInfoContext.Self, DustRuntimeEnvironmentComponents.DustLinkRuntimeEnvironmentManager.InitMessage);
-		
-		Dust.send(msg);
+//		DustEntity msg = Dust.getRefEntity(DustConstKnowledgeInfoContext.Self, true, DustRuntimeEnvironmentComponents.DustLinkRuntimeEnvironmentManager.InitMessage, null);
+//		
+//		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, msg, DustLinkKnowledgeProcMessage.Target, eMeta);
+//		Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, msg, DustLinkKnowledgeProcMessage.Command, DustRuntimeEnvironmentComponents.DustCommandKnowledgeMetaManager.RegisterUnit);
+//		
+//		Dust.processRefs(new DustKnowledgeProcVisitor() {
+//			@Override
+//			public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
+//				DustUtilsDev.dump("Test visitor called!");
+//				return null;
+//			}
+//		}, DustConstKnowledgeInfoContext.Self, DustRuntimeEnvironmentComponents.DustLinkRuntimeEnvironmentManager.InitMessage);
+//		
+//		Dust.send(msg);
 	}
 	
 	@Override

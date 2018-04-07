@@ -1,14 +1,20 @@
 package dust.runtime.simple;
 
+import java.util.EnumSet;
+
+import dust.gen.DustUtilsGen;
+import dust.gen.knowledge.meta.DustKnowledgeMetaServices;
 import dust.gen.tools.generic.DustToolsGenericComponents;
 import dust.pub.Dust;
 import dust.pub.DustUtils;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
-public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // DustMetaServices.DustMetaManager,
+public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, DustKnowledgeMetaServices.KnowledgeMetaManager,
 		DustBootComponents.DustConfigurable, DustBootComponents.DustShutdownAware {
-
+	
+	EnumSet<DustTypeKnowledgeMeta> my_types = EnumSet.allOf(DustTypeKnowledgeMeta.class);
+	
 	private DustUtilsFactory<DustType, SimpleType> factType = new DustUtilsFactory<DustType, SimpleType>(false) {
 		@Override
 		protected SimpleType create(DustType key, Object... hints) {
@@ -59,11 +65,6 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // Du
 		SimpleAttDef ad = factAttDefs.get(att);
 		se.setFieldValue(ad, value);
 	};
-	//
-	// void addRef(SimpleEntity left, DustLink link, DustEntity right) {
-	// SimpleLinkDef ld = factLinkDefs.get(link);
-	// se.setFieldValue(ad, value);
-	// };
 
 	SimpleType getSimpleType(DustType type) {
 		return factType.get(type);
@@ -79,6 +80,30 @@ public class DustSimpleManagerMeta implements DustSimpleRuntimeComponents, // Du
 
 	SimpleEntity optResolveEntity(DustEntity entity) {
 		return (entity instanceof Enum) ? factConstants.get((Enum<?>) entity) : null;
+	}
+	
+	
+	@Override
+	public boolean dustKnowledgeInfoSourceIsTypeSupported(DustType eType) {
+		return my_types.contains(eType);
+	}
+	
+	@Override
+	public DustEntity dustKnowledgeInfoSourceGet(String idGlobal) throws Exception {
+		Enum<?> e = DustUtilsGen.idToMeta(idGlobal);
+		return factConstants.get(e);
+	}
+	
+	@Override
+	public void dustKnowledgeInfoSourceFind(DustType type, DustEntity expression, DustEntity processor)
+			throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void dustKnowledgeInfoSourceDestruct(DustEntity entity) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

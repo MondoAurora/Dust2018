@@ -49,7 +49,7 @@ public class DustSimpleCommDiscussion
 		String gid, lid;
 		DustEntity e;
 
-		void init(String globalId, String localId) {
+		void init(String globalId, String localId) throws Exception {
 			this.gid = globalId;
 			this.lid = localId;
 
@@ -57,6 +57,8 @@ public class DustSimpleCommDiscussion
 			if (null != ki) {
 				ki.sd = this;
 			}
+			
+//			e = localData.dustKnowledgeInfoSourceGet(globalId);
 		}
 
 		@Override
@@ -85,6 +87,12 @@ public class DustSimpleCommDiscussion
 	KeyInfo keyLocal = null;
 	KeyInfo keyGlobal = null;
 
+	DustSimpleManagerData localData = new DustSimpleManagerData();
+	
+	public DustSimpleCommDiscussion() {
+		localData.setMeta(DustSimpleRuntime.mgrMeta);
+	}
+	
 	private DustConstKnowledgeCommStatementType getStatementType() {
 		DustEntity type = Dust.getRefEntity(DustConstKnowledgeInfoContext.Message, false,
 				DustLinkKnowledgeCommStatement.Type, null);
@@ -149,7 +157,7 @@ public class DustSimpleCommDiscussion
 		}
 	}
 
-	private void processStatements() {
+	private void processStatements() throws Exception {
 		for (StatementData sd : arrStatements) {
 			Map<KeyInfo, Object> termData = sd.peek(keyTerm);
 			sd.init((String) termData.get(keyGlobal), (String) termData.get(keyLocal));

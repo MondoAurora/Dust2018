@@ -17,6 +17,9 @@ public interface DustComponents {
 	interface DustLink extends DustEntity, IdentifiableMeta {
 	}
 
+	interface DustConst extends DustEntity, IdentifiableMeta {
+	}
+
 	interface DustService extends DustEntity {
 		DustService[] getExtends();
 	}
