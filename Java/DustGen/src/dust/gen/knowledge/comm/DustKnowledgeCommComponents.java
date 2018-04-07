@@ -11,7 +11,7 @@ public interface DustKnowledgeCommComponents extends DustToolsGenericComponents,
 	}
 
 	enum DustAttributeKnowledgeCommTerm implements DustAttribute {
-		idGlobal, idLocal;
+		idStore, idLocal;
 	}
 	
 	enum DustLinkKnowledgeCommStatement implements DustLink {

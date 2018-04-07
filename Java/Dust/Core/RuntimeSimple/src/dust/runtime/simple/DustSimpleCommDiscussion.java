@@ -42,12 +42,16 @@ public class DustSimpleCommDiscussion
 			super(true);
 		}
 
-		String gid, lid;
+		String idSource;
+		String idLocal;
+		String idType;
+		
 		DustEntity e;
 
-		void init(String globalId, String localId) throws Exception {
-			this.gid = globalId;
-			this.lid = localId;
+		void init(String globalId, String localId, String typeId) throws Exception {
+			this.idSource = globalId;
+			this.idLocal = localId;
+			this.idType = typeId;
 
 			KeyInfo ki = factKeyInfo.peek(localId);
 			if (null != ki) {
@@ -64,7 +68,7 @@ public class DustSimpleCommDiscussion
 
 		@Override
 		public String toString() {
-			return "Entity " + gid + " as local id " + lid;
+			return "Entity " + idType + "|" + idSource + " as local id " + idLocal;
 		}
 	}
 
@@ -81,7 +85,10 @@ public class DustSimpleCommDiscussion
 
 	String keyTerm = null;
 	KeyInfo keyLocal = null;
-	KeyInfo keyGlobal = null;
+	KeyInfo keyStore = null;
+
+	String keyEntity = null;
+	KeyInfo keyPrimaryType = null;
 
 	DustSimpleManagerData localData = new DustSimpleManagerData();
 	
@@ -103,10 +110,16 @@ public class DustSimpleCommDiscussion
 		arrStatements.add(currStatement);
 	}
 
+	private String getStoreId(IdentifiableMeta meta) {
+		String id = DustUtilsGen.metaToId(meta);
+		String[] s1 = id.split("\\|");
+		return s1[(1 == s1.length) ? 0 : 1];
+	}
+
 	private void identifyCoreTerms() {
-		String idTermType = DustUtilsGen.metaToId(DustTypeKnowledgeComm.Term);
-		String idGlobalId = DustUtilsGen.metaToId(DustAttributeKnowledgeCommTerm.idGlobal);
-		String idLocalId = DustUtilsGen.metaToId(DustAttributeKnowledgeCommTerm.idLocal);
+		String idTermType = getStoreId(DustTypeKnowledgeComm.Term);
+		String idStoreId = getStoreId(DustAttributeKnowledgeCommTerm.idStore);
+		String idLocalId = getStoreId(DustAttributeKnowledgeCommTerm.idLocal);
 
 		for (StatementData sd : arrStatements) {
 			boolean selfId = false;
@@ -130,13 +143,13 @@ public class DustSimpleCommDiscussion
 		}
 
 		for (StatementData sd : arrStatements) {
-			boolean gi = false;
+			boolean si = false;
 			boolean li = false;
 			Object val = null;
 			for (Map.Entry<KeyInfo, Object> fields : sd.peek(keyTerm).entrySet()) {
 				Object value = fields.getValue();
-				if (idGlobalId.equals(value)) {
-					gi = true;
+				if (idStoreId.equals(value)) {
+					si = true;
 				} else if (idLocalId.equals(value)) {
 					li = true;
 				} else {
@@ -147,8 +160,20 @@ public class DustSimpleCommDiscussion
 			if (li) {
 				keyLocal = factKeyInfo.get((String) val);
 			}
-			if (gi) {
-				keyGlobal = factKeyInfo.get((String) val);
+			if (si) {
+				keyStore = factKeyInfo.get((String) val);
+			}
+		}
+		
+		String idEntityType = getStoreId(DustTypeKnowledgeInfo.Entity);
+		String idPrimaryType = getStoreId(DustLinkKnowledgeInfoEntity.PrimaryType);
+
+		for (StatementData sd : arrStatements) {
+			Map<KeyInfo, Object> termData = sd.peek(keyTerm);
+			if ( idEntityType.equals(termData.get(keyStore))) {
+				keyEntity = (String) termData.get(keyLocal);
+			} else if ( idPrimaryType.equals(termData.get(keyStore))) {
+				keyPrimaryType = factKeyInfo.get((String) termData.get(keyLocal));
 			}
 		}
 	}
@@ -156,7 +181,8 @@ public class DustSimpleCommDiscussion
 	private void processStatements() throws Exception {
 		for (StatementData sd : arrStatements) {
 			Map<KeyInfo, Object> termData = sd.peek(keyTerm);
-			sd.init((String) termData.get(keyGlobal), (String) termData.get(keyLocal));
+			Map<KeyInfo, Object> entityData = sd.peek(keyEntity);
+			sd.init((String) termData.get(keyStore), (String) termData.get(keyLocal), (String) entityData.get(keyPrimaryType));
 			DustUtilsDev.dump("Reading", sd);
 			for (String tk : sd.keys()) {
 				if (!keyTerm.equals(tk)) {

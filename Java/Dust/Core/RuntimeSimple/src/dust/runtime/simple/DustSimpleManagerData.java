@@ -100,9 +100,9 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 			ret = new InfoEntityData(this, null);
 			allKnownEntities.add(ret);
 		} else {
-			// DustType t = DustUtilsGen.getTypeFromId(idGlobal);
+			// DustType t = DustUtilsGen.getTypeFromId(idStore);
 			// if (meta.dustKnowledgeInfoSourceIsTypeSupported(t)) {
-			// ret = (InfoEntity) meta.dustKnowledgeInfoSourceGet(idGlobal);
+			// ret = (InfoEntity) meta.dustKnowledgeInfoSourceGet(idStore);
 			// } else
 			{
 				ret = factGlobalEntities.get(idGlobal);

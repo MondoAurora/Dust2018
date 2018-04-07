@@ -23,7 +23,7 @@ public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents,
 	
 	
 	enum DustLinkKnowledgeInfoEntity implements DustLink {
-		Services;
+		Services, PrimaryType;
 	}
 
 	enum DustAttributeKnowledgeInfoEntity implements DustAttribute {
