@@ -111,9 +111,10 @@ public class DustSimpleCommDiscussion
 	}
 
 	private String getStoreId(IdentifiableMeta meta) {
-		String id = DustUtilsGen.metaToId(meta);
-		String[] s1 = id.split("\\|");
-		return s1[(1 == s1.length) ? 0 : 1];
+		return DustUtilsGen.metaToStoreId(meta);
+//		String id = DustUtilsGen.metaToId(meta);
+//		String[] s1 = id.split("\\|");
+//		return s1[(1 == s1.length) ? 0 : 1];
 	}
 
 	private void identifyCoreTerms() {

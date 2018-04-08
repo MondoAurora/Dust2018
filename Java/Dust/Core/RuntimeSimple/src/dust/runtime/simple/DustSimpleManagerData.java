@@ -15,73 +15,111 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 
 	// private DustSimpleManagerMeta meta;
 	private Set<DustKnowledgeInfoSource> parentSources = new HashSet<>();
+	private final SimpleType typeType;
 
 	private Set<InfoEntity> allKnownEntities = new HashSet<>();
-	DustUtilsFactory<String, InfoEntity> factGlobalEntities = new DustUtilsFactory<String, InfoEntity>(true) {
+	private DustUtilsFactory<SimpleType, DustUtilsFactory<String, ? extends InfoEntity>> factGlobalEntities = new DustUtilsFactory<SimpleType, DustUtilsFactory<String, ? extends InfoEntity>>(
+			false) {
 		@Override
-		protected InfoEntity create(String key, Object... hints) {
-			String[] ss = key.split("\\|");
-			InfoEntity se;
-
-			String[] s2;
-			SimpleType pt;
-			SimpleService ps;
-
-			switch (ss[0]) {
-			case "Knowledge:Meta:Type":
-				se = new SimpleType(DustSimpleManagerData.this, ss[1]);
-				break;
-			case "Knowledge:Meta:Service":
-				se = new SimpleService(DustSimpleManagerData.this, ss[1]);
-				break;
-			case "Knowledge:Meta:LinkDef":
-				s2 = ss[1].split("\\.");
-				pt = (SimpleType) get("Knowledge:Meta:Type|" + s2[0]);
-				se = pt.getLinkDef(s2[1]);
-				break;
-			case "Knowledge:Meta:AttDef":
-				s2 = ss[1].split("\\.");
-				pt = (SimpleType) get("Knowledge:Meta:Type|" + s2[0]);
-				se = pt.getAttDef(s2[1]);
-				break;
-			case "Knowledge:Meta:Command":
-				s2 = ss[1].split("\\.");
-				ps = (SimpleService) get("Knowledge:Meta:Service|" + s2[0]);
-				se = ps.getCommand(s2[1]);
-				String cmdId = "dust" + ss[1].replace(":", "").replace(".", "");
-				se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), cmdId);
-				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, ps);
-				break;
-			default:
-				se = new InfoEntityData(DustSimpleManagerData.this, null);
-				s2 = ss[1].split("\\.");
-				se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), s2[(1==s2.length) ? 0 : 1]);
-				break;
-			}
-			allKnownEntities.add(se);
-			return se;
-		}
-
-		@Override
-		protected void initNew(InfoEntity item, String key, Object... hints) {
-			// perhaps here come the external loading, but not for now and for meta
+		protected DustUtilsFactory<String, InfoEntity> create(SimpleType typeKey, Object... hints) {
+			return new DustUtilsFactory<String, InfoEntity>(true) {
+				@Override
+				protected InfoEntity create(String key, Object... hints) {
+					InfoEntity se = new InfoEntityData(DustSimpleManagerData.this, typeKey);
+					String[] s2 = key.split("\\.");
+					se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), s2[(1 == s2.length) ? 0 : 1]);
+					return se;
+				}
+			};
 		}
 	};
+
+	abstract class MetaFactory<MetaParent extends InfoEntity, MetaType extends InfoEntity>
+			extends DustUtilsFactory<String, MetaType> {
+		protected DustUtilsFactory<String, MetaParent> factMetaParent;
+
+		public MetaFactory() {
+			super(true);
+		}
+		
+		@Override
+		protected MetaType create(String key, Object... hints) {
+			String[] s2 = key.split("\\.");
+			MetaParent mp = factMetaParent.get(s2[0]);
+			return getItem(mp, s2[1]);
+		}
+		
+		protected abstract MetaType getItem(MetaParent mp, String id);
+	};
+
+	public DustSimpleManagerData() {
+		typeType = new SimpleType(this, "Knowledge:Meta:Type");
+		final DustUtilsFactory<String, SimpleType> tf = new DustUtilsFactory<String, SimpleType>(true) {
+			@Override
+			protected SimpleType create(String key, Object... hints) {
+				SimpleType se = new SimpleType(DustSimpleManagerData.this, key);
+				return se;
+			}
+		};
+
+		tf.put("Knowledge:Meta:Type", typeType);
+		tf.put("", typeType);
+
+		factGlobalEntities.put(typeType, tf);
+		factGlobalEntities.put(null, tf);
+
+		final DustUtilsFactory<String, SimpleService> sf = new DustUtilsFactory<String, SimpleService>(true) {
+			@Override
+			protected SimpleService create(String key, Object... hints) {
+				return new SimpleService(DustSimpleManagerData.this, key);
+			}
+		};
+
+		factGlobalEntities.put(tf.get("Knowledge:Meta:Service"), sf);
+
+		addMetaFactory(tf, tf, "Knowledge:Meta:AttDef", new MetaFactory<SimpleType, SimpleAttDef>() {
+			@Override
+			protected SimpleAttDef getItem(SimpleType mp, String id) {
+				return mp.getAttDef(id);
+			}
+		});
+		addMetaFactory(tf, tf, "Knowledge:Meta:LinkDef", new MetaFactory<SimpleType, SimpleLinkDef>() {
+			@Override
+			protected SimpleLinkDef getItem(SimpleType mp, String id) {
+				return mp.getLinkDef(id);
+			}
+		});
+		addMetaFactory(tf, sf, "Knowledge:Meta:Command", new MetaFactory<SimpleService, SimpleCommand>() {
+			@Override
+			protected SimpleCommand getItem(SimpleService mp, String id) {
+				SimpleCommand se = mp.getCommand(id);
+				String cmdId = ("dust" + mp.id + id).replace(":", "").replace(".", "");
+				se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), cmdId);
+				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, mp);
+				return se;
+			}
+		});
+	}
+
+	private <MetaParent extends InfoEntity> void addMetaFactory(DustUtilsFactory<String, SimpleType> tf, DustUtilsFactory<String, MetaParent> mf, String typeName, MetaFactory<MetaParent, ?> fact) {
+		SimpleType mt = tf.get(typeName);
+		factGlobalEntities.put(mt, fact);
+		fact.factMetaParent = mf;
+	}
+
 
 	@SuppressWarnings("unchecked")
 	<RetType> RetType optResolveMeta(Object entity) {
 		if (entity instanceof IdentifiableMeta) {
-			String idGlobalId = DustUtilsGen.metaToId((IdentifiableMeta)entity);
-			return (RetType) factGlobalEntities.get(idGlobalId);
+			IdentifiableMeta meta = (IdentifiableMeta) entity;
+			String idType = DustUtilsGen.getMetaType(meta);
+			SimpleType type = (SimpleType) factGlobalEntities.get(null).get(idType);
+			String idStore = DustUtilsGen.metaToStoreId(meta);
+			return (RetType) factGlobalEntities.get(type).get(idStore);
 		} else {
 			return (RetType) entity;
 		}
 	}
-
-	// public void setMeta(DustSimpleManagerMeta meta) {
-	// this.meta = meta;
-	// addParentSource(meta);
-	// }
 
 	void addParentSource(DustKnowledgeInfoSource src) {
 		parentSources.add(src);
@@ -93,20 +131,15 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 	}
 
 	@Override
-	public InfoEntity dustKnowledgeInfoSourceGet(String idGlobal) throws Exception {
+	public InfoEntity dustKnowledgeInfoSourceGet(DustType type, String idStore) throws Exception {
 		InfoEntity ret = null;
 
-		if (DustUtils.isEmpty(idGlobal)) {
+		if (DustUtils.isEmpty(idStore)) {
 			ret = new InfoEntityData(this, null);
 			allKnownEntities.add(ret);
 		} else {
-			// DustType t = DustUtilsGen.getTypeFromId(idStore);
-			// if (meta.dustKnowledgeInfoSourceIsTypeSupported(t)) {
-			// ret = (InfoEntity) meta.dustKnowledgeInfoSourceGet(idStore);
-			// } else
-			{
-				ret = factGlobalEntities.get(idGlobal);
-			}
+			SimpleType st = (null == type) ? typeType : optResolveMeta(type);
+			ret = factGlobalEntities.get(st).get(idStore);
 		}
 		return ret;
 	}
