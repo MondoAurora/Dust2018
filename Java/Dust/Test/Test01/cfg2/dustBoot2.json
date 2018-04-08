@@ -119,6 +119,21 @@
 		},	
 		{
 			"KnowledgeCommTerm 7": {
+				"idStore 200": "Tools:Generic:Connected.Extends",
+				"idLocal 201": "Extends 101"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Extends"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaLinkDef 3"
+			},
+			"ToolsGenericConnected 8": {
+				"Owner 100": "ToolsGenericConnected 8"
+			}
+		},	
+		{
+			"KnowledgeCommTerm 7": {
 				"idStore 200": "Knowledge:Info:Entity.PrimaryType",
 				"idLocal 201": "PrimaryType 108"
 			},
@@ -161,7 +176,11 @@
 				"PrimaryType 108": "KnowledgeMetaAttDef 2"
 			},
 			"ToolsGenericConnected 8": {
-				"Owner 100": "KnowledgeCommTerm 7"
+				"Owner 100": "KnowledgeCommTerm 7",
+				"Extends 101": { 
+					"key1": "ToolsGenericIdentified 6", 
+					"key2": "KnowledgeCommTerm 7" 
+				}
 			}
 		},
 		{
@@ -176,7 +195,11 @@
 				"PrimaryType 108": "KnowledgeMetaAttDef 2"
 			},
 			"ToolsGenericConnected 8": {
-				"Owner 100": "ToolsGenericIdentified 6"
+				"Owner 100": "ToolsGenericIdentified 6",
+				"Extends 101": [ 
+					"ToolsGenericIdentified 6", 
+					"KnowledgeCommTerm 7" 
+				]
 			}
 		}	
 	]

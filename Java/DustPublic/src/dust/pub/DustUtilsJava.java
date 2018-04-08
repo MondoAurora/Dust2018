@@ -61,7 +61,7 @@ public class DustUtilsJava implements DustPubComponents {
 		return (null == o1) ? (null == o2) : (null == o2) ? false : (o1 == o2) ? true : o1.equals(o2);
 	}
 
-	public static <RetType extends Enum<RetType>> RetType shiftEnum(RetType e, boolean up, boolean rot) {
+	public static <RetType extends Enum<RetType>> RetType shiftEnum(RetType e, boolean up, boolean rotate) {
 		int ord = e.ordinal();
 		@SuppressWarnings("unchecked")
 		RetType[] values = (RetType[]) e.getClass().getEnumConstants();
@@ -70,7 +70,11 @@ public class DustUtilsJava implements DustPubComponents {
 		if ( (0 <= ord) && (ord < values.length) ) {
 			return values[ord];
 		} else { 
-			return ( rot ) ? ( ( 0 > ord ) ? values[values.length-1] : values[0] ) : null;
+			if ( rotate ) {
+				return ( ( 0 > ord ) ? values[values.length-1] : values[0] );
+			} else {
+				return null;
+			}
 		}
 	}
 

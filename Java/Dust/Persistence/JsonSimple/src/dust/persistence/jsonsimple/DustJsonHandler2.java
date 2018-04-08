@@ -2,7 +2,6 @@ package dust.persistence.jsonsimple;
 
 import java.io.IOException;
 
-import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 
 import dust.gen.tools.persistence.DustToolsPersistenceComponents.DustStatusToolsPersistence;
@@ -14,7 +13,7 @@ class DustJsonHandler2 extends DustJsonComponents.ContentHandlerRelay implements
 	private static final String CONTENT_HANDLER = "DustJsonTalkReader";
 	private static final String CONTENT_VERSION = "1";
 
-	ContentHandler talkHandler = new DustJsonHandlerComm();
+	DustJsonHandlerComm talkHandler = new DustJsonHandlerComm();
 //	ContentHandler talkHandler = new DustJsonHandlerDump();
 
 	JsonTag state;
@@ -39,7 +38,6 @@ class DustJsonHandler2 extends DustJsonComponents.ContentHandlerRelay implements
 	public boolean startArray() throws ParseException, IOException {
 		if (null == relay) {
 			setRelay(talkHandler);
-//			return true;
 		}
 		return super.startArray();
 	}
@@ -47,7 +45,9 @@ class DustJsonHandler2 extends DustJsonComponents.ContentHandlerRelay implements
 	@Override
 	public boolean endArray() throws ParseException, IOException {
 		super.endArray();
-		setRelay(null);
+		if ( null == talkHandler.state ) {
+			setRelay(null);
+		}
 		return true;
 	}
 

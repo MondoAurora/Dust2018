@@ -1,7 +1,6 @@
 package dust.persistence.jsonsimple;
 
 import java.io.IOException;
-import java.util.EnumMap;
 
 import org.json.simple.parser.ParseException;
 
@@ -13,16 +12,6 @@ import dust.pub.DustUtilsJava;
 
 class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault implements DustJsonComponents,
 		DustKnowledgeProcComponents, DustKnowledgeMetaComponents, DustKnowledgeCommComponents {
-
-	private static final EnumMap<DustConstKnowledgeCommStatementType, DustConstKnowledgeMetaCardinality> TYPE_CARD_MAP = new EnumMap<>(
-			DustConstKnowledgeCommStatementType.class);
-
-	static {
-		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Discussion, DustConstKnowledgeMetaCardinality.Single);
-		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Entity, DustConstKnowledgeMetaCardinality.Array);
-		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Model, DustConstKnowledgeMetaCardinality.Map);
-		TYPE_CARD_MAP.put(DustConstKnowledgeCommStatementType.Data, DustConstKnowledgeMetaCardinality.Single);
-	}
 
 	DustConstKnowledgeCommStatementType state = null;
 
@@ -69,32 +58,36 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 		doSend();
 	}
 
-	void sendBlock(boolean begin) {
+	void sendBlock(boolean begin, DustConstKnowledgeMetaCardinality card) {
 		msgInit(begin ? DustCommandKnowledgeProcProcessor.Begin : DustCommandKnowledgeProcProcessor.End);
 
 		if (begin) {
-			Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Replace, msg, DustLinkKnowledgeInfoIterator.Cardinality, TYPE_CARD_MAP.get(state));
+			Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Replace, msg, DustLinkKnowledgeInfoIterator.Cardinality, card);
 			Dust.setAttrValue(msg, DustAttributeKnowledgeInfoIterator.index, idx);
 			Dust.setAttrValue(msg, DustAttributeKnowledgeInfoIterator.key, key);
-//			DustUtilsDev.dump("Start block...", state,
-//					(state == DustConstKnowledgeCommStatementType.Entity) ? idx : key);
-//		} else {
-//			DustUtilsDev.dump("End block...", state);
 		}
 		doSend();
 	}
 
 	@Override
 	public boolean startArray() throws ParseException, IOException {
-		talkInit();
-		sendBlock(true);
+		if (null == state) {
+			talkInit();
+		} else {
+			state = DustUtilsJava.shiftEnum(state, true, false);
+		}
+		sendBlock(true, DustConstKnowledgeMetaCardinality.Array);
 		return true;
 	}
 
 	@Override
 	public boolean endArray() throws ParseException, IOException {
-		sendBlock(false);
-		talkRelease();
+		sendBlock(false, DustConstKnowledgeMetaCardinality.Array);
+		if (state == DustConstKnowledgeCommStatementType.Discussion) {
+			talkRelease();
+		} else {
+			state = DustUtilsJava.shiftEnum(state, false, false);
+		}
 		return true;
 	}
 
@@ -104,14 +97,14 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 		if (state == DustConstKnowledgeCommStatementType.Entity) {
 			++idx;
 		}
-		sendBlock(true);
+		sendBlock(true, DustConstKnowledgeMetaCardinality.Map);
 
 		return true;
 	}
 
 	@Override
 	public boolean endObject() throws ParseException, IOException {
-		sendBlock(false);
+		sendBlock(false, DustConstKnowledgeMetaCardinality.Map);
 		state = DustUtilsJava.shiftEnum(state, false, false);
 		return true;
 	}
@@ -131,11 +124,7 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 	@Override
 	public boolean primitive(Object value) throws ParseException, IOException {
 		this.value = value;
-		state = DustConstKnowledgeCommStatementType.Data;
-
 		sendValue();
-		state = DustConstKnowledgeCommStatementType.Model;
-
 		return true;
 	}
 }

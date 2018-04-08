@@ -1,7 +1,9 @@
 package dust.runtime.simple;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import dust.gen.DustUtilsGen;
@@ -45,7 +47,7 @@ public class DustSimpleCommDiscussion
 		String idSource;
 		String idLocal;
 		String idType;
-		
+
 		DustEntity e;
 
 		void init(String globalId, String localId, String typeId) throws Exception {
@@ -57,13 +59,19 @@ public class DustSimpleCommDiscussion
 			if (null != ki) {
 				ki.sd = this;
 			}
-			
-//			e = localData.dustKnowledgeInfoSourceGet(globalId);
+
+			// e = localData.dustKnowledgeInfoSourceGet(globalId);
 		}
 
 		@Override
 		protected HashMap<KeyInfo, Object> create(String key, Object... hints) {
 			return new HashMap<>();
+		}
+		
+		void setValue(String key, Object value) {
+			HashMap<KeyInfo, Object> valMap = get(modelKey);
+			KeyInfo ki = factKeyInfo.get(key);
+			valMap.put(ki, value);
 		}
 
 		@Override
@@ -80,8 +88,10 @@ public class DustSimpleCommDiscussion
 	};
 
 	ArrayList<StatementData> arrStatements = new ArrayList<>();
-	String modelKey;
 	StatementData currStatement;
+	String modelKey;
+	Object dataColl;
+	DustConstKnowledgeMetaCardinality dataCard = DustConstKnowledgeMetaCardinality.Single;
 
 	String keyTerm = null;
 	KeyInfo keyLocal = null;
@@ -91,17 +101,103 @@ public class DustSimpleCommDiscussion
 	KeyInfo keyPrimaryType = null;
 
 	DustSimpleManagerData localData = new DustSimpleManagerData();
-	
-	public DustSimpleCommDiscussion() {
-//		localData.setMeta(DustSimpleRuntime.mgrMeta);
+
+	@Override
+	public void dustKnowledgeProcProcessorBegin() throws Exception {
+		DustConstKnowledgeCommStatementType st = getStatementType();
+		String key = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message, DustAttributeKnowledgeInfoIterator.key);
+
+		switch (st) {
+		case Entity:
+			currStatement = new StatementData();
+			break;
+		case Model:
+			modelKey = key;
+			break;
+		case Data:
+			dataCard = getMsgConst(DustLinkKnowledgeInfoIterator.Cardinality, DustConstKnowledgeMetaCardinality.class);
+			switch (dataCard) {
+			case Array:
+				dataColl = new ArrayList<Object>();
+				break;
+			case Map:
+				dataColl = new HashMap<String, Object>();
+				break;
+			case Set:
+				dataColl = new HashSet<Object>();
+				break;
+			case Single:
+				break;
+			}
+			currStatement.setValue(key, dataColl);
+			break;
+		default:
+			break;
+		}
 	}
-	
+
+	@Override
+	public void dustKnowledgeProcProcessorEnd() throws Exception {
+		DustConstKnowledgeCommStatementType st = getStatementType();
+
+		switch (st) {
+		case Data:
+			dataColl = null;
+			dataCard = DustConstKnowledgeMetaCardinality.Single;
+			break;
+		case Model:
+			modelKey = null;
+			break;
+		case Entity:
+			acceptStatement();
+			break;
+		case Discussion:
+			identifyCoreTerms();
+			processStatements();
+			break;
+		default:
+			break;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
+		String key = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message,
+				DustAttributeToolsGenericIdentified.idLocal);
+		Object value = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message,
+				DustAttributeKnowledgeInfoVariant.value);
+		
+		switch ( dataCard ) {
+		case Map:
+			((Map<String, Object>)dataColl).put(key, value);
+			break;
+		case Array:
+		case Set:
+			((Collection<Object>)dataColl).add(value);
+			break;
+		case Single:
+			currStatement.setValue(key, value);
+			break;
+		}
+
+		return null;
+	}
+
 	private DustConstKnowledgeCommStatementType getStatementType() {
 		DustEntity type = Dust.getRefEntity(DustConstKnowledgeInfoContext.Message, false,
 				DustLinkKnowledgeCommStatement.Type, null);
 		String state = Dust.getAttrValue(type, DustAttributeToolsGenericIdentified.idLocal);
 		DustConstKnowledgeCommStatementType st = DustUtilsJava.parseEnum(state,
 				DustConstKnowledgeCommStatementType.class);
+
+		return st;
+	}
+	
+	private <RetType extends Enum<RetType>> RetType getMsgConst(DustLink link, Class<RetType> rc) {
+		DustEntity type = Dust.getRefEntity(DustConstKnowledgeInfoContext.Message, false, link, null);
+		String str = Dust.getAttrValue(type, DustAttributeToolsGenericIdentified.idLocal);
+		RetType st = DustUtilsJava.parseEnum(str, rc);
 
 		return st;
 	}
@@ -112,9 +208,6 @@ public class DustSimpleCommDiscussion
 
 	private String getStoreId(IdentifiableMeta meta) {
 		return DustUtilsGen.metaToStoreId(meta);
-//		String id = DustUtilsGen.metaToId(meta);
-//		String[] s1 = id.split("\\|");
-//		return s1[(1 == s1.length) ? 0 : 1];
 	}
 
 	private void identifyCoreTerms() {
@@ -165,15 +258,15 @@ public class DustSimpleCommDiscussion
 				keyStore = factKeyInfo.get((String) val);
 			}
 		}
-		
+
 		String idEntityType = getStoreId(DustTypeKnowledgeInfo.Entity);
 		String idPrimaryType = getStoreId(DustLinkKnowledgeInfoEntity.PrimaryType);
 
 		for (StatementData sd : arrStatements) {
 			Map<KeyInfo, Object> termData = sd.peek(keyTerm);
-			if ( idEntityType.equals(termData.get(keyStore))) {
+			if (idEntityType.equals(termData.get(keyStore))) {
 				keyEntity = (String) termData.get(keyLocal);
-			} else if ( idPrimaryType.equals(termData.get(keyStore))) {
+			} else if (idPrimaryType.equals(termData.get(keyStore))) {
 				keyPrimaryType = factKeyInfo.get((String) termData.get(keyLocal));
 			}
 		}
@@ -183,7 +276,8 @@ public class DustSimpleCommDiscussion
 		for (StatementData sd : arrStatements) {
 			Map<KeyInfo, Object> termData = sd.peek(keyTerm);
 			Map<KeyInfo, Object> entityData = sd.peek(keyEntity);
-			sd.init((String) termData.get(keyStore), (String) termData.get(keyLocal), (String) entityData.get(keyPrimaryType));
+			sd.init((String) termData.get(keyStore), (String) termData.get(keyLocal),
+					(String) entityData.get(keyPrimaryType));
 			DustUtilsDev.dump("Reading", sd);
 			for (String tk : sd.keys()) {
 				if (!keyTerm.equals(tk)) {
@@ -194,65 +288,4 @@ public class DustSimpleCommDiscussion
 			}
 		}
 	}
-
-	@Override
-	public void dustKnowledgeProcProcessorBegin() throws Exception {
-		DustConstKnowledgeCommStatementType st = getStatementType();
-		String key = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message, DustAttributeKnowledgeInfoIterator.key);
-
-		switch (st) {
-		case Entity:
-			currStatement = new StatementData();
-			break;
-		case Model:
-			modelKey = key;
-			break;
-		default:
-			break;
-		}
-
-//		Integer idx = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message,
-//				DustAttributeKnowledgeInfoIterator.index);
-//
-//		DustUtilsDev.dump("Receiving Start block...", st,
-//				(DustConstKnowledgeCommStatementType.Entity == st) ? idx : key);
-	}
-
-	@Override
-	public void dustKnowledgeProcProcessorEnd() throws Exception {
-		DustConstKnowledgeCommStatementType st = getStatementType();
-
-		switch (st) {
-		case Model:
-			modelKey = null;
-			break;
-		case Entity:
-			acceptStatement();
-			break;
-		case Discussion:
-			identifyCoreTerms();
-			processStatements();
-			break;
-		default:
-			break;
-		}
-
-//		DustUtilsDev.dump("Receiving End block...", st);
-	}
-
-	@Override
-	public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
-		String key = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message,
-				DustAttributeToolsGenericIdentified.idLocal);
-		Object value = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message,
-				DustAttributeKnowledgeInfoVariant.value);
-
-		KeyInfo ki = factKeyInfo.get(key);
-		currStatement.get(modelKey).put(ki, value);
-
-//		DustUtilsDev.dump("Receiving value...", key, value);
-
-		return null;
-	}
-
 }
