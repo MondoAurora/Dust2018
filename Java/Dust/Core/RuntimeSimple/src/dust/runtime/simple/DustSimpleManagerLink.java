@@ -31,7 +31,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 	}
 
 	DustEntity modifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, InfoEntity seLeft, InfoEntity seRight,
-			SimpleLinkDef sld, Object[] params) {
+			SimpleLinkDef sld, Object... params) {
 		
 //		DustMetaLinkType lt = (null == sld) ? null : sld.linkType;
 		

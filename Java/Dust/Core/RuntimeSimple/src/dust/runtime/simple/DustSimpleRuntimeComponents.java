@@ -130,7 +130,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		}
 	}
 	
-	class SimpleType extends InfoEntity {
+	class SimpleType extends InfoEntity implements DustType {
 		String id;
 
 		DustUtilsFactory<String, SimpleAttDef> factAtts = new DustUtilsFactory<String, SimpleAttDef>(
@@ -167,7 +167,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		}
 	}
 	
-	class SimpleService extends InfoEntity {
+	class SimpleService extends InfoEntity implements DustService {
 		String id;
 
 		DustUtilsFactory<String, SimpleCommand> factCommands = new DustUtilsFactory<String, SimpleCommand>(
@@ -208,7 +208,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		}
 	}
 	
-	class SimpleAttDef extends MetaEntity<SimpleType> {
+	class SimpleAttDef extends MetaEntity<SimpleType> implements DustAttribute {
 		DustConstKnowledgeMetaAttrType fldType;		
 	
 		public SimpleAttDef(DustSimpleManagerData ctx, SimpleType owner, String defId) {
@@ -225,7 +225,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		}
 	}	
 	
-	class SimpleCommand extends MetaEntity<SimpleService> {
+	class SimpleCommand extends MetaEntity<SimpleService> implements DustCommand {
 		public SimpleCommand(DustSimpleManagerData ctx, SimpleService owner, String defId) {
 			super(ctx, owner, defId);
 		}
@@ -237,7 +237,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		
 	}
 
-	class SimpleLinkDef extends MetaEntity<SimpleType> {
+	class SimpleLinkDef extends MetaEntity<SimpleType> implements DustLink {
 		DustConstKnowledgeMetaCardinality cardinality;
 		SimpleType targetType;
 		SimpleLinkDef backRef;

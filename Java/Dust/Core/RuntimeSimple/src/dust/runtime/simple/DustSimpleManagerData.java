@@ -110,7 +110,9 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 
 	@SuppressWarnings("unchecked")
 	<RetType> RetType optResolveMeta(Object entity) {
-		if (entity instanceof IdentifiableMeta) {
+		if (entity instanceof InfoEntity) {
+			return (RetType) entity;
+		} else if (entity instanceof IdentifiableMeta) {
 			IdentifiableMeta meta = (IdentifiableMeta) entity;
 			String idType = DustUtilsGen.getMetaType(meta);
 			SimpleType type = (SimpleType) factGlobalEntities.get(null).get(idType);
