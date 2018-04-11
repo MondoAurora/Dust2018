@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import dust.gen.DustUtilsGen;
-import dust.gen.knowledge.comm.DustKnowledgeCommServices;
+import dust.gen.knowledge.comm.DustKnowledgeCommComponents;
 import dust.pub.Dust;
 import dust.pub.DustUtilsDev;
 import dust.pub.DustUtilsJava;
 import dust.utils.DustUtilsFactory;
 
 public class DustSimpleCommDiscussion
-		implements DustKnowledgeCommServices, DustKnowledgeCommServices.DustKnowledgeCommDiscussion, DustSimpleRuntimeComponents {
+		implements DustKnowledgeCommComponents, DustKnowledgeCommComponents.DustKnowledgeCommDiscussion, DustSimpleRuntimeComponents {
 
 	DustEntity tempFound = new DustEntity() {
 	};

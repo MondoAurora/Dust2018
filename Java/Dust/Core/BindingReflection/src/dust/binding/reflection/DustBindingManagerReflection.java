@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import dust.gen.knowledge.info.DustKnowledgeInfoServices;
-import dust.gen.knowledge.meta.DustKnowledgeMetaServices;
-import dust.gen.knowledge.proc.DustKnowledgeProcServices;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
+import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
+import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.gen.runtime.binding.DustRuntimeBindingComponents;
 import dust.gen.tools.generic.DustToolsGenericComponents;
 import dust.pub.Dust;
@@ -20,8 +20,8 @@ import dust.pub.boot.DustBootComponents.DustConfig;
 import dust.utils.DustUtilsFactory;
 
 public class DustBindingManagerReflection implements DustBootComponents.DustBindingManager,
-		DustBootComponents.DustConfigurable, DustPubComponents, DustToolsGenericComponents, DustKnowledgeInfoServices,
-		DustKnowledgeMetaServices, DustKnowledgeProcServices, DustRuntimeBindingComponents {
+		DustBootComponents.DustConfigurable, DustPubComponents, DustToolsGenericComponents, DustKnowledgeInfoComponents,
+		DustKnowledgeMetaComponents, DustKnowledgeProcComponents, DustRuntimeBindingComponents {
 
 	DustEntity eSelf;
 

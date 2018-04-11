@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import dust.gen.knowledge.info.DustKnowledgeInfoServices;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
-import dust.gen.knowledge.proc.DustKnowledgeProcServices;
+import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.gen.runtime.access.DustRuntimeAccessComponents;
 import dust.pub.DustPubComponents;
 import dust.pub.DustUtils;
@@ -16,8 +16,8 @@ import dust.pub.DustUtilsJava;
 import dust.pub.boot.DustBootComponents;
 import dust.utils.DustUtilsFactory;
 
-public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKnowledgeInfoServices,
-		DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustKnowledgeProcServices, DustPubComponents {
+public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKnowledgeInfoComponents,
+		DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustKnowledgeProcComponents, DustPubComponents {
 	Set<SimpleRef> NO_REFS = Collections.emptySet();
 
 	class InfoModel implements DumpFormatter {

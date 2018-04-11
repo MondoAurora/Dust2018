@@ -4,14 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import dust.gen.DustUtilsGen;
-import dust.gen.knowledge.info.DustKnowledgeInfoServices;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 import dust.gen.tools.generic.DustToolsGenericComponents;
 import dust.pub.Dust;
 import dust.pub.DustUtils;
 import dust.utils.DustUtilsFactory;
 
-public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustKnowledgeInfoServices,
-		DustKnowledgeInfoServices.DustKnowledgeInfoSource {
+public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustKnowledgeInfoComponents,
+		DustKnowledgeInfoComponents.DustKnowledgeInfoSource {
 
 	// private DustSimpleManagerMeta meta;
 	private Set<DustKnowledgeInfoSource> parentSources = new HashSet<>();

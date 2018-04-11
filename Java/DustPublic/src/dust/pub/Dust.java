@@ -1,10 +1,10 @@
 package dust.pub;
 
-import dust.gen.knowledge.info.DustKnowledgeInfoServices;
-import dust.gen.knowledge.proc.DustKnowledgeProcServices;
-import dust.gen.runtime.environment.DustRuntimeEnvironmentServices;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
+import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
+import dust.gen.runtime.environment.DustRuntimeEnvironmentComponents;
 
-public class Dust implements DustKnowledgeInfoServices, DustRuntimeEnvironmentServices, DustKnowledgeProcServices {
+public class Dust implements DustKnowledgeInfoComponents, DustRuntimeEnvironmentComponents, DustKnowledgeProcComponents {
 	
 	protected static DustRuntimeEnvironmentManager RUNTIME;
 

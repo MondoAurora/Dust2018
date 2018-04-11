@@ -7,11 +7,11 @@ import java.io.Reader;
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.JSONParser;
 
-import dust.gen.tools.persistence.DustToolsPersistenceServices;
+import dust.gen.tools.persistence.DustToolsPersistenceComponents;
 import dust.pub.DustUtilsDev;
 import dust.pub.DustUtilsJava;
 
-public class DustJsonReader implements DustJsonComponents, DustToolsPersistenceServices.DustToolsPersistenceStore {
+public class DustJsonReader implements DustJsonComponents, DustToolsPersistenceComponents.DustToolsPersistenceStore {
 	
 	@Override
 	public void dustToolsGenericInitableInit() throws Exception {

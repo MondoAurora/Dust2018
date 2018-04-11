@@ -34,8 +34,4 @@ public interface DustToolsGenericComponents extends DustComponents {
 		}
 	}
 
-	interface DustToolsGenericInitable {
-		void dustToolsGenericInitableInit() throws Exception;
-	}
-
 }

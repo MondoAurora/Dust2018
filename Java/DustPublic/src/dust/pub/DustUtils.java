@@ -2,8 +2,6 @@ package dust.pub;
 
 import java.util.Collection;
 
-import dust.gen.knowledge.proc.DustKnowledgeProcServices.DustKnowledgeProcVisitor;
-
 public class DustUtils extends DustUtilsJava implements DustPubComponents {
 
 	public static <RetType> RetType getAttrValueSafe(DustEntity entity, DustAttribute field, Creator<RetType> creator,

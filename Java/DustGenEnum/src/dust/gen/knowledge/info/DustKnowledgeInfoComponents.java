@@ -45,12 +45,4 @@ public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents,
 	enum DustTypeKnowledgeInfo implements DustType {
 		Entity, Link, Tag, Tagged, Variant, Iterator;
 	}
-
-	interface DustKnowledgeInfoSource {
-		boolean dustKnowledgeInfoSourceIsTypeSupported(DustType eType);
-		
-		DustEntity dustKnowledgeInfoSourceGet(DustType type, String idStore) throws Exception;
-		void dustKnowledgeInfoSourceFind(DustType type, DustEntity expression, DustEntity processor) throws Exception;
-		void dustKnowledgeInfoSourceDestruct(DustEntity entity) throws Exception;
-	}
 }

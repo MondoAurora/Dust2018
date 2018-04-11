@@ -3,10 +3,10 @@ package dust.pub.boot;
 import java.util.HashMap;
 import java.util.Map;
 
-import dust.gen.knowledge.info.DustKnowledgeInfoServices;
-import dust.gen.runtime.environment.DustRuntimeEnvironmentServices;
+import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
+import dust.gen.runtime.environment.DustRuntimeEnvironmentComponents;
 
-public interface DustBootComponents extends DustKnowledgeInfoServices, DustRuntimeEnvironmentServices {
+public interface DustBootComponents extends DustKnowledgeInfoComponents, DustRuntimeEnvironmentComponents {
 	String CFG_KEYVALUESEP = "=";
 	String CFG_LISTFLAG = "*";
 

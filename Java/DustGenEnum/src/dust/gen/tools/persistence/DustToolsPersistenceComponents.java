@@ -1,10 +1,10 @@
 package dust.gen.tools.persistence;
 
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
-import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
+import dust.gen.knowledge.proc.DustKnowledgeProcComponents.DustServiceKnowledgeProc;
 import dust.gen.tools.generic.DustToolsGenericComponents;
 
-public interface DustToolsPersistenceComponents extends DustToolsGenericComponents, DustKnowledgeProcComponents, DustKnowledgeMetaComponents {
+public interface DustToolsPersistenceComponents extends DustToolsGenericComponents, DustKnowledgeMetaComponents {
 	enum DustStatusToolsPersistence implements DustEntity {
 		HandlerInvalid, HandlerVersionMismatch;
 	}
@@ -20,10 +20,6 @@ public interface DustToolsPersistenceComponents extends DustToolsGenericComponen
 		private DustServiceToolsPersistence(DustService... extServices) {
 			this.extServices = extServices;
 		}
-	}
-
-	interface DustToolsPersistenceStore extends DustKnowledgeProcProcessor, DustToolsGenericInitable {
-		void dustToolsPersistenceStoreRead() throws Exception;
 	}
 
 }

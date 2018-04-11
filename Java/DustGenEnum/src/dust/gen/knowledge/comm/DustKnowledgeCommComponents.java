@@ -36,7 +36,4 @@ public interface DustKnowledgeCommComponents extends DustToolsGenericComponents,
 		}
 	}
 
-	interface DustKnowledgeCommDiscussion extends DustKnowledgeProcProcessor, DustKnowledgeProcVisitor {
-	}
-
 }
