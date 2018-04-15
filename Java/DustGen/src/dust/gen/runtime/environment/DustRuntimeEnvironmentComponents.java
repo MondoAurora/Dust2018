@@ -8,26 +8,28 @@ public interface DustRuntimeEnvironmentComponents
 		extends DustKnowledgeInfoComponents, DustKnowledgeMetaComponents, DustKnowledgeProcComponents {
 
 	enum DustStatusRuntimeEnvironment implements DustEntity {
-		LinkCreationError, MessageSendError;
+		LinkCreationError, MessageSendError, GetEntityError;
 
 	}
 
-	enum DustLinkRuntimeEnvironmentManager implements DustLink {
+	enum DustLinkRuntimeEnvironmentManager {
 		InitMessage, BinaryManager, MetaManager;
 
 	}
 
-	enum DustTypeRuntimeEnvironment implements DustType {
+	enum DustTypeRuntimeEnvironment {
 		Manager
 	}
 
 	interface DustRuntimeEnvironmentManager extends DustKnowledgeProcProcessor {
-		<ValType> ValType dustRuntimeEnvironmentManagerGetAttrValue(DustEntity entity, DustAttribute field);
-		void dustRuntimeEnvironmentManagerSetAttrValue(DustEntity entity, DustAttribute field, Object value);
+		DustEntity dustRuntimeEnvironmentManagerGetEntity(DustEntity type, String storeId, String revision);
+
+		<ValType> ValType dustRuntimeEnvironmentManagerGetAttrValue(DustEntity entity, DustEntity field);
+		void dustRuntimeEnvironmentManagerSetAttrValue(DustEntity entity, DustEntity field, Object value);
 	
-		DustEntity dustRuntimeEnvironmentManagerGetRefEntity(DustEntity entity, boolean createIfMissing, DustLink linkDef, Object key);
-		void dustRuntimeEnvironmentManagerProcessRefs(DustKnowledgeProcVisitor proc, DustEntity root, DustLink... path);
-		DustEntity dustRuntimeEnvironmentManagerModifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, DustEntity left, DustEntity right, DustLink linkDef,
+		DustEntity dustRuntimeEnvironmentManagerGetRefEntity(DustEntity entity, boolean createIfMissing, DustEntity linkDef, Object key);
+		void dustRuntimeEnvironmentManagerProcessRefs(DustKnowledgeProcVisitor proc, DustEntity root, DustEntity... path);
+		DustEntity dustRuntimeEnvironmentManagerModifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, DustEntity left, DustEntity right, DustEntity linkDef,
 				Object... params);
 	
 		void dustRuntimeEnvironmentManagerSend(DustEntity msg);

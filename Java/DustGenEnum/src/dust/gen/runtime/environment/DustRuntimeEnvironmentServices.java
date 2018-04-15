@@ -5,12 +5,12 @@ import dust.gen.knowledge.proc.DustKnowledgeProcServices;
 public interface DustRuntimeEnvironmentServices extends DustRuntimeEnvironmentComponents, DustKnowledgeProcServices {
 
 	interface DustRuntimeEnvironmentManager extends DustKnowledgeProcProcessor {
-		<ValType> ValType dustRuntimeEnvironmentManagerGetAttrValue(DustEntity entity, DustAttribute field);
-		void dustRuntimeEnvironmentManagerSetAttrValue(DustEntity entity, DustAttribute field, Object value);
+		<ValType> ValType dustRuntimeEnvironmentManagerGetAttrValue(DustEntity entity, DustEntity field);
+		void dustRuntimeEnvironmentManagerSetAttrValue(DustEntity entity, DustEntity field, Object value);
 	
-		DustEntity dustRuntimeEnvironmentManagerGetRefEntity(DustEntity entity, boolean createIfMissing, DustLink linkDef, Object key);
+		DustEntity dustRuntimeEnvironmentManagerGetRefEntity(DustEntity entity, boolean createIfMissing, DustEntity linkDef, Object key);
 		void dustRuntimeEnvironmentManagerProcessRefs(DustKnowledgeProcVisitor proc, DustEntity root, DustLink... path);
-		DustEntity dustRuntimeEnvironmentManagerModifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, DustEntity left, DustEntity right, DustLink linkDef,
+		DustEntity dustRuntimeEnvironmentManagerModifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, DustEntity left, DustEntity right, DustEntity linkDef,
 				Object... params);
 	
 		void dustRuntimeEnvironmentManagerSend(DustEntity msg);

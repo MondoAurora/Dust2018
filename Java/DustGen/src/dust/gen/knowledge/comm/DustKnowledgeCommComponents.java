@@ -6,34 +6,29 @@ import dust.gen.tools.generic.DustToolsGenericComponents;
 
 public interface DustKnowledgeCommComponents extends DustToolsGenericComponents, DustKnowledgeMetaComponents, DustKnowledgeProcComponents {
 
-	enum DustConstKnowledgeCommStatementType implements DustConst {
+	enum DustConstKnowledgeCommStatementType {
 		Discussion, Entity, Model, Data;
 	}
 
-	enum DustAttributeKnowledgeCommTerm implements DustAttribute {
+	enum DustAttributeKnowledgeCommTerm {
 		idStore, idLocal;
 	}
 	
-	enum DustLinkKnowledgeCommStatement implements DustLink {
+	enum DustLinkKnowledgeCommStatement {
 		Type;
 	}
 	
-	enum DustLinkKnowledgeCommAgent implements DustLink {
+	enum DustLinkKnowledgeCommAgent {
 		Source;
 	}
 
 
-	enum DustTypeKnowledgeComm implements DustType {
+	enum DustTypeKnowledgeComm {
 		Term, Discussion, Statement;
 	}
 	
-	enum DustServiceKnowledgeComm implements DustService {
-		Discussion(DustServiceKnowledgeProc.Visitor, DustServiceKnowledgeProc.Processor),;
-		final DustService[] extServices;
-		
-		private DustServiceKnowledgeComm(DustService... extServices) {
-			this.extServices = extServices;
-		}
+	enum DustServiceKnowledgeComm {
+		Discussion;
 	}
 
 	interface DustKnowledgeCommDiscussion extends DustKnowledgeProcProcessor, DustKnowledgeProcVisitor {

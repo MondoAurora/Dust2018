@@ -10,14 +10,15 @@ import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.gen.runtime.access.DustRuntimeAccessComponents;
-import dust.pub.DustPubComponents;
+import dust.pub.DustComponents;
 import dust.pub.DustUtils;
-import dust.pub.DustUtilsJava;
 import dust.pub.boot.DustBootComponents;
+import dust.utils.DustUtilsComponents.DumpFormatter;
 import dust.utils.DustUtilsFactory;
+import dust.utils.DustUtilsJava;
 
 public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKnowledgeInfoComponents,
-		DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustKnowledgeProcComponents, DustPubComponents {
+		DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustKnowledgeProcComponents, DustComponents {
 	Set<SimpleRef> NO_REFS = Collections.emptySet();
 
 	class InfoModel implements DumpFormatter {
@@ -46,8 +47,8 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		private DustSimpleManagerData ctx;
 		private DustConstKnowledgeInfoEntityState state;
 
-		private DustUtilsFactory<SimpleType, InfoModel> factModels = new DustUtilsFactory<SimpleType, InfoModel>(
-				false, "Models") {
+		private DustUtilsFactory<SimpleType, InfoModel> factModels = new DustUtilsFactory<SimpleType, InfoModel>(false,
+				"Models") {
 			@Override
 			protected InfoModel create(SimpleType key, Object... hints) {
 				return new InfoModel(key);
@@ -74,7 +75,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		public SimpleType getType() {
 			return null;
 		}
-		
+
 		public String toString() {
 			return toString(true);
 		}
@@ -116,7 +117,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 			return refs;
 		}
 	}
-	
+
 	class InfoEntityData extends InfoEntity {
 		SimpleType type;
 
@@ -124,17 +125,16 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 			super(ctx);
 			this.type = type;
 		}
-		
+
 		public SimpleType getType() {
 			return type;
 		}
 	}
-	
-	class SimpleType extends InfoEntity implements DustType {
+
+	class SimpleType extends InfoEntity implements DustEntity {
 		String id;
 
-		DustUtilsFactory<String, SimpleAttDef> factAtts = new DustUtilsFactory<String, SimpleAttDef>(
-				false) {
+		DustUtilsFactory<String, SimpleAttDef> factAtts = new DustUtilsFactory<String, SimpleAttDef>(false) {
 			@Override
 			protected SimpleAttDef create(String key, Object... hints) {
 				return new SimpleAttDef(getCtx(), SimpleType.this, key);
@@ -160,18 +160,17 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		SimpleLinkDef getLinkDef(String link) {
 			return factLinks.get(link);
 		}
-		
+
 		@Override
 		public String toString() {
 			return id;
 		}
 	}
-	
-	class SimpleService extends InfoEntity implements DustService {
+
+	class SimpleService extends InfoEntity {
 		String id;
 
-		DustUtilsFactory<String, SimpleCommand> factCommands = new DustUtilsFactory<String, SimpleCommand>(
-				false) {
+		DustUtilsFactory<String, SimpleCommand> factCommands = new DustUtilsFactory<String, SimpleCommand>(false) {
 			@Override
 			protected SimpleCommand create(String key, Object... hints) {
 				return new SimpleCommand(getCtx(), SimpleService.this, key);
@@ -192,7 +191,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 			return id;
 		}
 	}
-	
+
 	abstract class MetaEntity<OwnerType> extends InfoEntity {
 		OwnerType owner;
 		String defId;
@@ -202,15 +201,15 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 			this.owner = owner;
 			this.defId = defId;
 		}
-		
+
 		public OwnerType getOwner() {
 			return owner;
 		}
 	}
-	
-	class SimpleAttDef extends MetaEntity<SimpleType> implements DustAttribute {
-		DustConstKnowledgeMetaAttrType fldType;		
-	
+
+	class SimpleAttDef extends MetaEntity<SimpleType> implements DustEntity {
+		DustConstKnowledgeMetaAttrType fldType;
+
 		public SimpleAttDef(DustSimpleManagerData ctx, SimpleType owner, String defId) {
 			super(ctx, owner, defId);
 		}
@@ -219,13 +218,13 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		public String toString() {
 			return defId;
 		}
-		
+
 		public DustConstKnowledgeMetaAttrType getAttrType() {
 			return fldType;
 		}
-	}	
-	
-	class SimpleCommand extends MetaEntity<SimpleService> implements DustCommand {
+	}
+
+	class SimpleCommand extends MetaEntity<SimpleService> {
 		public SimpleCommand(DustSimpleManagerData ctx, SimpleService owner, String defId) {
 			super(ctx, owner, defId);
 		}
@@ -234,10 +233,10 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		public String toString() {
 			return defId;
 		}
-		
+
 	}
 
-	class SimpleLinkDef extends MetaEntity<SimpleType> implements DustLink {
+	class SimpleLinkDef extends MetaEntity<SimpleType> implements DustEntity {
 		DustConstKnowledgeMetaCardinality cardinality;
 		SimpleType targetType;
 		SimpleLinkDef backRef;
@@ -245,7 +244,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		public SimpleLinkDef(DustSimpleManagerData ctx, SimpleType owner, String defId) {
 			super(ctx, owner, defId);
 		}
-		
+
 		@Override
 		public String toString() {
 			return defId;
@@ -290,21 +289,20 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		public void setTarget(InfoEntity target) {
 			this.eTarget = target;
 		}
-		
+
 		@Override
 		public String toString() {
-			StringBuilder sb = DustUtilsJava.sbApend(null, "", false, "{ \"link\": \"", linkDef,
-					"\", \"target\":", eTarget.toString(false));
-			
-			if ( null != key ) {
+			StringBuilder sb = DustUtilsJava.sbApend(null, "", false, "{ \"link\": \"", linkDef, "\", \"target\":",
+					eTarget.toString(false));
+
+			if (null != key) {
 				sb.append(", \"key\":\"").append(key).append("\"");
 			}
-			
+
 			sb.append("}");
 
 			return sb.toString();
 		}
 	}
 
-	
 }

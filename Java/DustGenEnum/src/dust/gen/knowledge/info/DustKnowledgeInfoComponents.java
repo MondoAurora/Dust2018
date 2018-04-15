@@ -22,27 +22,27 @@ public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents,
 	}
 	
 	
-	enum DustLinkKnowledgeInfoEntity implements DustLink {
+	enum DustLinkKnowledgeInfoEntity implements DustEntity {
 		Services, PrimaryType;
 	}
 
-	enum DustAttributeKnowledgeInfoEntity implements DustAttribute {
+	enum DustAttributeKnowledgeInfoEntity implements DustEntity {
 		svcImpl;
 	}
 
-	enum DustAttributeKnowledgeInfoIterator implements DustAttribute {
+	enum DustAttributeKnowledgeInfoIterator implements DustEntity {
 		index, key;
 	}
 	
-	enum DustLinkKnowledgeInfoIterator implements DustLink {
+	enum DustLinkKnowledgeInfoIterator implements DustEntity {
 		Cardinality;
 	}
 	
-	enum DustAttributeKnowledgeInfoVariant implements DustAttribute {
+	enum DustAttributeKnowledgeInfoVariant implements DustEntity {
 		varType, value;
 	}
 
-	enum DustTypeKnowledgeInfo implements DustType {
+	enum DustTypeKnowledgeInfo implements DustEntity {
 		Entity, Link, Tag, Tagged, Variant, Iterator;
 	}
 }

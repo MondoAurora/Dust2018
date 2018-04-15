@@ -4,20 +4,20 @@ import dust.gen.DustComponents;
 
 public interface DustToolsGenericComponents extends DustComponents {
 
-	enum DustAttributeToolsGenericIdentified implements DustAttribute {
+	enum DustAttributeToolsGenericIdentified implements DustEntity {
 		idLocal, idCombined;
 
 	}
 
-	enum DustLinkToolsGenericConnected implements DustLink {
+	enum DustLinkToolsGenericConnected implements DustEntity {
 		Owner, Requires, Extends;
 	}
 
-	enum DustLinkToolsGenericChain implements DustLink {
+	enum DustLinkToolsGenericChain implements DustEntity {
 		NextEntity, DefaultMessage;
 	}
 
-	enum DustTypeToolsGeneric implements DustType {
+	enum DustTypeToolsGeneric implements DustEntity {
 		Identified, Connected, Chain;
 	}
 

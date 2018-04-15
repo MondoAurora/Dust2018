@@ -9,7 +9,7 @@ public interface DustRuntimeAccessComponents extends DustKnowledgeInfoComponents
 		AccessDenied;
 	}
 	
-	enum DustConstRuntimeAccessAccessMode implements DustConst {
+	enum DustConstRuntimeAccessAccessMode {
 		Check, Read, Write, Execute;
 	}
 	

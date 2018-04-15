@@ -9,11 +9,11 @@ public interface DustKnowledgeProcComponents extends DustComponents, DustKnowled
 		OK, Skip, Exit, Repeat, Restart;
 	}
 
-	enum DustLinkKnowledgeProcMessage implements DustLink {
+	enum DustLinkKnowledgeProcMessage implements DustEntity {
 		Command, Target;
 	}
 
-	enum DustTypeKnowledgeProc implements DustType {
+	enum DustTypeKnowledgeProc implements DustEntity {
 		Message, Status;
 	}
 

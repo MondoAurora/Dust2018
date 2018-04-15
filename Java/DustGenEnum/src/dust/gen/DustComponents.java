@@ -4,17 +4,17 @@ public interface DustComponents {
 	interface IdentifiableMeta {
 	}
 
-	interface DustType extends IdentifiableMeta {
+	interface DustEntity extends IdentifiableMeta {
 	}
 
 	interface DustEntity {
-//		DustType getType();
+//		DustEntity getType();
 	}
 
-	interface DustAttribute extends DustEntity, IdentifiableMeta {
+	interface DustEntity extends DustEntity, IdentifiableMeta {
 	}
 
-	interface DustLink extends DustEntity, IdentifiableMeta {
+	interface DustEntity extends DustEntity, IdentifiableMeta {
 	}
 
 	interface DustConst extends DustEntity, IdentifiableMeta {

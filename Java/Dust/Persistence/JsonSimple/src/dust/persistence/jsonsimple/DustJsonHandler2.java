@@ -6,7 +6,7 @@ import org.json.simple.parser.ParseException;
 
 import dust.gen.tools.persistence.DustToolsPersistenceComponents.DustStatusToolsPersistence;
 import dust.pub.DustException;
-import dust.pub.DustUtilsJava;
+import dust.utils.DustUtilsJava;
 
 class DustJsonHandler2 extends DustJsonComponents.ContentHandlerRelay implements DustJsonComponents {
 

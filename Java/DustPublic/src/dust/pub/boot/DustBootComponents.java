@@ -3,10 +3,10 @@ package dust.pub.boot;
 import java.util.HashMap;
 import java.util.Map;
 
-import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
-import dust.gen.runtime.environment.DustRuntimeEnvironmentComponents;
+import dust.pub.Dust;
+import dust.pub.DustComponents;
 
-public interface DustBootComponents extends DustKnowledgeInfoComponents, DustRuntimeEnvironmentComponents {
+public interface DustBootComponents extends DustComponents {
 	String CFG_KEYVALUESEP = "=";
 	String CFG_LISTFLAG = "*";
 
@@ -53,14 +53,16 @@ public interface DustBootComponents extends DustKnowledgeInfoComponents, DustRun
 
 	public interface DustBindingManager extends DustShutdownAware, DustEntityOwner {
 		void sendMessage(DustEntity target, DustEntity msg) throws Exception;
-//		void initLogicInstance(DustEntity owner, DustEntity command) throws Exception;
+		// void initLogicInstance(DustEntity owner, DustEntity command) throws
+		// Exception;
 
-//		<LogicClass> Class<LogicClass> getEntityLogicClass(DustEntity entity) throws Exception;
-//		DustEntity enterCustomLogic(Object logic) throws Exception;
-//		void leaveCustomLogic();
+		// <LogicClass> Class<LogicClass> getEntityLogicClass(DustEntity entity) throws
+		// Exception;
+		// DustEntity enterCustomLogic(Object logic) throws Exception;
+		// void leaveCustomLogic();
 	}
-	
-	interface DustRuntimeBootable extends DustRuntimeEnvironmentManager, DustConfigurable {
+
+	interface DustRuntimeBootable extends Dust.DustEnvironment, DustConfigurable {
 		void setBinaryManager(DustBindingManager binMgr);
 	}
 

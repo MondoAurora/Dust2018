@@ -10,12 +10,12 @@ import java.util.Map;
 import dust.gen.DustUtilsGen;
 import dust.gen.knowledge.comm.DustKnowledgeCommComponents;
 import dust.pub.Dust;
-import dust.pub.DustUtilsDev;
-import dust.pub.DustUtilsJava;
+import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
+import dust.utils.DustUtilsJava;
 
-public class DustSimpleCommDiscussion
-		implements DustKnowledgeCommComponents, DustKnowledgeCommComponents.DustKnowledgeCommDiscussion, DustSimpleRuntimeComponents {
+public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
+		DustKnowledgeCommComponents.DustKnowledgeCommDiscussion, DustSimpleRuntimeComponents {
 
 	DustEntity tempFound = new DustEntity() {
 	};
@@ -57,29 +57,29 @@ public class DustSimpleCommDiscussion
 			this.idLocal = localId;
 			this.idType = typeId;
 		}
-		
+
 		DustEntity getEntity() throws Exception {
-			if ( null == e ) {
-				DustType eType = idType.equals(idLocal) ? null : (DustType) factKeyInfo.get(idType).sd.getEntity();
+			if (null == e) {
+				DustEntity eType = idType.equals(idLocal) ? null : (DustType) factKeyInfo.get(idType).sd.getEntity();
 				e = localData.dustKnowledgeInfoSourceGet(eType, idSource);
 			}
-			
+
 			return e;
 		}
-		
+
 		DustTypeKnowledgeMeta getMetaType() {
-			if ( null == mt ) {
+			if (null == mt) {
 				String ts = factKeyInfo.get(idType).sd.idSource;
-				if ( getStoreId(DustTypeKnowledgeMeta.AttDef).equals(ts) ) {
+				if (getStoreId(DustTypeKnowledgeMeta.AttDef).equals(ts)) {
 					mt = DustTypeKnowledgeMeta.AttDef;
-				} else if ( getStoreId(DustTypeKnowledgeMeta.LinkDef).equals(ts) ) {
+				} else if (getStoreId(DustTypeKnowledgeMeta.LinkDef).equals(ts)) {
 					mt = DustTypeKnowledgeMeta.LinkDef;
 				}
 			}
-			
+
 			return mt;
 		}
-		
+
 		boolean isMatched() {
 			return null != e;
 		}
@@ -88,7 +88,7 @@ public class DustSimpleCommDiscussion
 		protected HashMap<KeyInfo, Object> create(String key, Object... hints) {
 			return new HashMap<>();
 		}
-		
+
 		void setValue(String key, Object value) {
 			HashMap<KeyInfo, Object> valMap = get(modelKey);
 			KeyInfo ki = factKeyInfo.get(key);
@@ -189,14 +189,14 @@ public class DustSimpleCommDiscussion
 				DustAttributeToolsGenericIdentified.idLocal);
 		Object value = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message,
 				DustAttributeKnowledgeInfoVariant.value);
-		
-		switch ( dataCard ) {
+
+		switch (dataCard) {
 		case Map:
-			((Map<String, Object>)dataColl).put(key, value);
+			((Map<String, Object>) dataColl).put(key, value);
 			break;
 		case Array:
 		case Set:
-			((Collection<Object>)dataColl).add(value);
+			((Collection<Object>) dataColl).add(value);
 			break;
 		case Single:
 			currStatement.setValue(key, value);
@@ -215,8 +215,8 @@ public class DustSimpleCommDiscussion
 
 		return st;
 	}
-	
-	private <RetType extends Enum<RetType>> RetType getMsgConst(DustLink link, Class<RetType> rc) {
+
+	private <RetType extends Enum<RetType>> RetType getMsgConst(DustEntity link, Class<RetType> rc) {
 		DustEntity type = Dust.getRefEntity(DustConstKnowledgeInfoContext.Message, false, link, null);
 		String str = Dust.getAttrValue(type, DustAttributeToolsGenericIdentified.idLocal);
 		RetType st = DustUtilsJava.parseEnum(str, rc);
@@ -249,7 +249,7 @@ public class DustSimpleCommDiscussion
 				}
 
 				if (selfId && term) {
-//					sd.e = tempFound;
+					// sd.e = tempFound;
 					keyTerm = tk;
 					break;
 				}
@@ -282,7 +282,8 @@ public class DustSimpleCommDiscussion
 			}
 		}
 
-		// Register all statements with their loclId and find what is the localID for Entity and PrimaryType?
+		// Register all statements with their loclId and find what is the localID for
+		// Entity and PrimaryType?
 		String idEntityType = getStoreId(DustTypeKnowledgeInfo.Entity);
 		String idPrimaryType = getStoreId(DustLinkKnowledgeInfoEntity.PrimaryType);
 		for (StatementData sd : arrStatements) {
@@ -296,11 +297,12 @@ public class DustSimpleCommDiscussion
 			}
 			factKeyInfo.get(li).sd = sd;
 		}
-		
+
 		for (StatementData sd : arrStatements) {
 			Map<KeyInfo, Object> termData = sd.peek(keyTerm);
 			Map<KeyInfo, Object> entityData = sd.peek(keyEntity);
-			sd.init((String) termData.get(keyStore), (String) termData.get(keyLocal), (String) entityData.get(keyPrimaryType));
+			sd.init((String) termData.get(keyStore), (String) termData.get(keyLocal),
+					(String) entityData.get(keyPrimaryType));
 		}
 
 	}
@@ -316,8 +318,8 @@ public class DustSimpleCommDiscussion
 						Object value = fields.getValue();
 						InfoEntity refTarget;
 						int idx;
-						
-						switch ( sdKey.getMetaType() ) {
+
+						switch (sdKey.getMetaType()) {
 						case AttDef:
 							SimpleAttDef att = (SimpleAttDef) sdKey.getEntity();
 							DustUtilsDev.dump("set field", att, "to", value);
@@ -326,27 +328,29 @@ public class DustSimpleCommDiscussion
 						case LinkDef:
 							SimpleLinkDef link = (SimpleLinkDef) sdKey.getEntity();
 							if (value instanceof String) {
-								refTarget = (InfoEntity) factKeyInfo.get((String)value).sd.getEntity();
+								refTarget = (InfoEntity) factKeyInfo.get((String) value).sd.getEntity();
 								DustUtilsDev.dump("set ref", link, "to", refTarget);
 								localRefs.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eTarget, refTarget, link);
 							} else if (value instanceof List<?>) {
 								idx = 0;
 								for (Object v : (List<?>) value) {
-									refTarget = (InfoEntity) factKeyInfo.get((String)v).sd.getEntity();
-									DustUtilsDev.dump("add array ref", link, "to", refTarget );
-									localRefs.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eTarget, refTarget, link, ++idx);
+									refTarget = (InfoEntity) factKeyInfo.get((String) v).sd.getEntity();
+									DustUtilsDev.dump("add array ref", link, "to", refTarget);
+									localRefs.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eTarget, refTarget,
+											link, ++idx);
 								}
-							} else if (value instanceof Map<?,?>) {
-								for (Map.Entry<?,?> e : ((Map<?,?>) value).entrySet()) {
-									refTarget = (InfoEntity) factKeyInfo.get((String)e.getValue()).sd.getEntity();
+							} else if (value instanceof Map<?, ?>) {
+								for (Map.Entry<?, ?> e : ((Map<?, ?>) value).entrySet()) {
+									refTarget = (InfoEntity) factKeyInfo.get((String) e.getValue()).sd.getEntity();
 									Object key = e.getKey();
 									DustUtilsDev.dump("set map ref", link, key, "=", refTarget);
-									localRefs.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eTarget, refTarget, link, key);
+									localRefs.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eTarget, refTarget,
+											link, key);
 								}
 							}
 							break;
 						default:
-							break;						
+							break;
 						}
 					}
 				}

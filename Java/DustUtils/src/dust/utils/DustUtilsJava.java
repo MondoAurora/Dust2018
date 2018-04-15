@@ -1,8 +1,8 @@
-package dust.pub;
+package dust.utils;
 
 import java.util.Map;
 
-public class DustUtilsJava implements DustPubComponents {
+public class DustUtilsJava implements DustUtilsComponents {
 
 	public static String toString(Object ob) {
 		return (null == ob) ? "" : ob.toString();
@@ -23,38 +23,40 @@ public class DustUtilsJava implements DustPubComponents {
 	}
 
 	public static <RetType extends Enum<RetType>> RetType parseEnum(String name, Class<RetType> ec) {
-		for ( RetType e : ec.getEnumConstants() ) {
-			if ( e.name().equals(name)) {
+		for (RetType e : ec.getEnumConstants()) {
+			if (e.name().equals(name)) {
 				return e;
 			}
 		}
-			
+
 		return null;
 	}
 
 	public static boolean isEmpty(String str) {
 		return (null == str) ? true : str.isEmpty();
 	}
-	
-	public static StringBuilder sbApend(StringBuilder sb, String sep, boolean strict, Object... objects) {
+
+	public static StringBuilder sbApend(StringBuilder sb, Object sep, boolean strict, Object... objects) {
 		for (Object ob : objects) {
 			String str = toString(ob);
 
-			if (null == sb) {
-				sb = new StringBuilder(str);
-			} else {
-				if (strict || (0 < sb.length())) {
-					sb.append(sep);
+			if (strict || (0 < str.length())) {
+				if (null == sb) {
+					sb = new StringBuilder(str);
+				} else {
+					if (0 < sb.length()) {
+						sb.append(sep);
+					}
+					sb.append(str);
 				}
-				sb.append(str);
 			}
 		}
 		return sb;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <Content> Content safeGet(int idx, Object... arr ) {
-		return ((null != arr) && (0 < idx) && (idx < arr.length)) ? (Content)arr[idx] : null;
+	public static <Content> Content safeGet(int idx, Object... arr) {
+		return ((null != arr) && (0 < idx) && (idx < arr.length)) ? (Content) arr[idx] : null;
 	}
 
 	public static boolean isEqual(Object o1, Object o2) {
@@ -66,12 +68,12 @@ public class DustUtilsJava implements DustPubComponents {
 		@SuppressWarnings("unchecked")
 		RetType[] values = (RetType[]) e.getClass().getEnumConstants();
 		ord = up ? ++ord : --ord;
-		
-		if ( (0 <= ord) && (ord < values.length) ) {
+
+		if ((0 <= ord) && (ord < values.length)) {
 			return values[ord];
-		} else { 
-			if ( rotate ) {
-				return ( ( 0 > ord ) ? values[values.length-1] : values[0] );
+		} else {
+			if (rotate) {
+				return ((0 > ord) ? values[values.length - 1] : values[0]);
 			} else {
 				return null;
 			}
@@ -84,21 +86,21 @@ public class DustUtilsJava implements DustPubComponents {
 			target = DustUtilsJava.sbApend(target, "", false, " \"", name, "\": ");
 		}
 		target = DustUtilsJava.sbApend(target, "", false, map ? "{ " : "[ ");
-		
+
 		boolean empty = true;
-		for ( Object r : content ) {
-			if ( empty ) {
+		for (Object r : content) {
+			if (empty) {
 				empty = false;
 			} else {
-				target.append(", ");					
+				target.append(", ");
 			}
 			if (r instanceof Map.Entry) {
 				Map.Entry e = (Map.Entry) r;
 				Object val = e.getValue();
 				if (!(val instanceof DumpFormatter)) {
-					val = DustUtils.sbApend(null, "", false, "\"", val, "\"");
+					val = sbApend(null, "", false, "\"", val, "\"");
 				}
-				DustUtils.sbApend(target, "", false, " \"", e.getKey(), "\": ", val);
+				sbApend(target, "", false, " \"", e.getKey(), "\": ", val);
 			} else {
 				target.append(r);
 			}

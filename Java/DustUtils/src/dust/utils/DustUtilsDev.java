@@ -1,8 +1,8 @@
-package dust.pub;
+package dust.utils;
 
 import java.io.PrintStream;
 
-public class DustUtilsDev extends DustUtils {
+public class DustUtilsDev {
 	private static PrintStream out = System.out;
 
 	public static void dump(Object... stuff) {

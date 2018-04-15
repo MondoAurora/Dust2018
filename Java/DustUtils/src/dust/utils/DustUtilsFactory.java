@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import dust.pub.DustPubComponents;
-import dust.pub.DustUtilsJava;
-
-public abstract class DustUtilsFactory<KeyType, ValType> implements DustPubComponents.DumpFormatter {
+public abstract class DustUtilsFactory<KeyType, ValType> implements DustUtilsComponents.DumpFormatter {
 	String name;
 	protected final Map<KeyType, ValType> content;
 

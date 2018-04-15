@@ -11,16 +11,16 @@ import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.gen.runtime.binding.DustRuntimeBindingComponents;
 import dust.gen.tools.generic.DustToolsGenericComponents;
 import dust.pub.Dust;
+import dust.pub.DustComponents;
 import dust.pub.DustException;
-import dust.pub.DustPubComponents;
 import dust.pub.DustUtils;
-import dust.pub.DustUtilsJava;
 import dust.pub.boot.DustBootComponents;
 import dust.pub.boot.DustBootComponents.DustConfig;
 import dust.utils.DustUtilsFactory;
+import dust.utils.DustUtilsJava;
 
 public class DustBindingManagerReflection implements DustBootComponents.DustBindingManager,
-		DustBootComponents.DustConfigurable, DustPubComponents, DustToolsGenericComponents, DustKnowledgeInfoComponents,
+		DustBootComponents.DustConfigurable, DustComponents, DustToolsGenericComponents, DustKnowledgeInfoComponents,
 		DustKnowledgeMetaComponents, DustKnowledgeProcComponents, DustRuntimeBindingComponents {
 
 	DustEntity eSelf;
@@ -38,7 +38,7 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 					put(refSvc, Class.forName(className));
 					return null;
 				}
-			}, eSelf, DustRuntimeBindingComponents.DustLinkRuntimeBindingManager.LogicAssignments);
+			}, eSelf, DustLinkRuntimeBindingManager.LogicAssignments);
 
 			return peek(key);
 		}

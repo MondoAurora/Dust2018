@@ -1,34 +1,50 @@
 package dust.pub;
 
-import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
-import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
-import dust.gen.runtime.environment.DustRuntimeEnvironmentComponents;
-
-public class Dust implements DustKnowledgeInfoComponents, DustRuntimeEnvironmentComponents, DustKnowledgeProcComponents {
+public class Dust implements DustComponents {
 	
-	protected static DustRuntimeEnvironmentManager RUNTIME;
-
-	public static <ValType> ValType getAttrValue(DustEntity entity, DustAttribute field) {
-		return RUNTIME.dustRuntimeEnvironmentManagerGetAttrValue(entity, field);
+	public interface DustEnvironment {
+		void launch();
+		void shutdown();
+		
+		DustEntity getEntity(DustEntity type, String storeId, String revision);
+		<ValType> ValType getAttrValue(DustEntity entity, DustEntity field);
+		void setAttrValue(DustEntity entity, DustEntity field, Object value);
+		void processRefs(DustRefVisitor proc, DustEntity root, DustEntity ref);
+		DustEntity getRefEntity(DustEntity entity, boolean createIfMissing, DustEntity linkDef, Object key);
+		DustEntity modifyRefs(DustRefCommand refCmd, DustEntity left, DustEntity linkDef, DustEntity right, Object key);
+		void send(DustEntity msg);
 	}
 
-	public static void setAttrValue(DustEntity entity, DustAttribute field, Object value) {
-		RUNTIME.dustRuntimeEnvironmentManagerSetAttrValue(entity, field, value);
+	
+	protected static DustEnvironment RUNTIME;
+	
+
+	public static DustEntity getEntity(DustEntity type, String storeId, String revision) {
+		return RUNTIME.getEntity(type, storeId, revision);
+	}
+
+
+	public static <ValType> ValType getAttrValue(DustEntity entity, DustEntity field) {
+		return RUNTIME.getAttrValue(entity, field);
+	}
+
+	public static void setAttrValue(DustEntity entity, DustEntity field, Object value) {
+		RUNTIME.setAttrValue(entity, field, value);
 	}
 	
-	public static void processRefs(DustKnowledgeProcVisitor proc, DustEntity root, DustLink... path) {
-		RUNTIME.dustRuntimeEnvironmentManagerProcessRefs(proc, root, path);
+	public static void processRefs(DustRefVisitor proc, DustEntity root, DustEntity ref) {
+		RUNTIME.processRefs(proc, root, ref);
 	}
 
-	public static DustEntity getRefEntity(DustEntity entity, boolean createIfMissing, DustLink linkDef, Object key) {
-		return RUNTIME.dustRuntimeEnvironmentManagerGetRefEntity(entity, createIfMissing, linkDef, key);
+	public static DustEntity getRefEntity(DustEntity entity, boolean createIfMissing, DustEntity linkDef, Object key) {
+		return RUNTIME.getRefEntity(entity, createIfMissing, linkDef, key);
 	}
 
-	public static DustEntity modifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, DustEntity left, DustLink linkDef, DustEntity right, Object... params) {
-		return RUNTIME.dustRuntimeEnvironmentManagerModifyRefs(refCmd, left, right, linkDef, params);
+	public static DustEntity modifyRefs(DustRefCommand refCmd, DustEntity left, DustEntity linkDef, DustEntity right, Object... params) {
+		return RUNTIME.modifyRefs(refCmd, left, right, linkDef, params);
 	}
 	
 	public static void send(DustEntity msg) {
-		RUNTIME.dustRuntimeEnvironmentManagerSend(msg);
+		RUNTIME.send(msg);
 	}
 }

@@ -1,39 +1,34 @@
 package dust.gen.knowledge.proc;
 
-import dust.gen.DustComponents;
+import dust.gen.DustGenComponents;
 import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 
-public interface DustKnowledgeProcComponents extends DustComponents, DustKnowledgeInfoComponents {
+public interface DustKnowledgeProcComponents extends DustGenComponents, DustKnowledgeInfoComponents {
 
-	enum DustConstKnowledgeProcVisitorResponse implements DustConst {
+	enum DustConstKnowledgeProcVisitorResponse {
 		OK, Skip, Exit, Repeat, Restart;
 	}
 
-	enum DustLinkKnowledgeProcMessage implements DustLink {
+	enum DustLinkKnowledgeProcMessage {
 		Command, Target;
 	}
 
-	enum DustTypeKnowledgeProc implements DustType {
+	enum DustTypeKnowledgeProc {
 		Message, Status;
 	}
 
 	
 	
-	enum DustCommandKnowledgeProcVisitor implements DustCommand {
+	enum DustCommandKnowledgeProcVisitor {
 		Visit;
 	}
 
-	enum DustCommandKnowledgeProcProcessor implements DustCommand {
+	enum DustCommandKnowledgeProcProcessor {
 		Begin, End;
 	}
 
-	enum DustServiceKnowledgeProc implements DustService {
+	enum DustServiceKnowledgeProc {
 		Visitor, Processor;
-		final DustService[] extServices;
-		
-		private DustServiceKnowledgeProc(DustService... extServices) {
-			this.extServices = extServices;
-		}
 	}
 
 	interface DustKnowledgeProcProcessor {

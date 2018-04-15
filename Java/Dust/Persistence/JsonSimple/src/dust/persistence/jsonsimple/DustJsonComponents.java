@@ -5,10 +5,14 @@ import java.io.IOException;
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 
-import dust.pub.DustPubComponents;
+import dust.pub.DustComponents;
 
-public interface DustJsonComponents extends DustPubComponents {
-	String EXT_JSON = ".json";	
+public interface DustJsonComponents extends DustComponents {
+	String EXT_JSON = ".json";
+	
+	String DEFAULT_SEPARATOR = ",";
+	String MULTI_FLAG = "*";
+
 	
 	class ContentHandlerDefault implements ContentHandler {
 		@Override

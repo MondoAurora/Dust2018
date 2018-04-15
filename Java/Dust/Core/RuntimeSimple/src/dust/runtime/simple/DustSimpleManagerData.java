@@ -27,7 +27,8 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 				protected InfoEntity create(String key, Object... hints) {
 					InfoEntity se = new InfoEntityData(DustSimpleManagerData.this, typeKey);
 					String[] s2 = key.split("\\.");
-					se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), s2[(1 == s2.length) ? 0 : 1]);
+					se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal),
+							s2[(1 == s2.length) ? 0 : 1]);
 					return se;
 				}
 			};
@@ -41,14 +42,14 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 		public MetaFactory() {
 			super(true);
 		}
-		
+
 		@Override
 		protected MetaType create(String key, Object... hints) {
 			String[] s2 = key.split("\\.");
 			MetaParent mp = factMetaParent.get(s2[0]);
 			return getItem(mp, s2[1]);
 		}
-		
+
 		protected abstract MetaType getItem(MetaParent mp, String id);
 	};
 
@@ -95,59 +96,60 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 				SimpleCommand se = mp.getCommand(id);
 				String cmdId = ("dust" + mp.id + id).replace(":", "").replace(".", "");
 				se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), cmdId);
-				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, mp);
+				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se,
+						DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, mp);
 				return se;
 			}
 		});
 	}
 
-	private <MetaParent extends InfoEntity> void addMetaFactory(DustUtilsFactory<String, SimpleType> tf, DustUtilsFactory<String, MetaParent> mf, String typeName, MetaFactory<MetaParent, ?> fact) {
+	private <MetaParent extends InfoEntity> void addMetaFactory(DustUtilsFactory<String, SimpleType> tf,
+			DustUtilsFactory<String, MetaParent> mf, String typeName, MetaFactory<MetaParent, ?> fact) {
 		SimpleType mt = tf.get(typeName);
 		factGlobalEntities.put(mt, fact);
 		fact.factMetaParent = mf;
 	}
 
-
-	@SuppressWarnings("unchecked")
-	<RetType> RetType optResolveMeta(Object entity) {
-		if (entity instanceof InfoEntity) {
-			return (RetType) entity;
-		} else if (entity instanceof IdentifiableMeta) {
-			IdentifiableMeta meta = (IdentifiableMeta) entity;
-			String idType = DustUtilsGen.getMetaType(meta);
-			SimpleType type = (SimpleType) factGlobalEntities.get(null).get(idType);
-			String idStore = DustUtilsGen.metaToStoreId(meta);
-			return (RetType) factGlobalEntities.get(type).get(idStore);
-		} else {
-			return (RetType) entity;
-		}
-	}
+//	@SuppressWarnings("unchecked")
+//	<RetType> RetType optResolveMeta(Object entity) {
+//		if (entity instanceof InfoEntity) {
+//			return (RetType) entity;
+//		} else if (entity instanceof IdentifiableMeta) {
+//			IdentifiableMeta meta = (IdentifiableMeta) entity;
+//			String idType = DustUtilsGen.getMetaType(meta);
+//			SimpleType type = (SimpleType) factGlobalEntities.get(null).get(idType);
+//			String idStore = DustUtilsGen.metaToStoreId(meta);
+//			return (RetType) factGlobalEntities.get(type).get(idStore);
+//		} else {
+//			return (RetType) entity;
+//		}
+//	}
 
 	void addParentSource(DustKnowledgeInfoSource src) {
 		parentSources.add(src);
 	}
 
 	@Override
-	public boolean dustKnowledgeInfoSourceIsTypeSupported(DustType eType) {
+	public boolean dustKnowledgeInfoSourceIsTypeSupported(DustEntity eType) {
 		return true;
 	}
 
 	@Override
-	public InfoEntity dustKnowledgeInfoSourceGet(DustType type, String idStore) throws Exception {
+	public InfoEntity dustKnowledgeInfoSourceGet(DustEntity type, String idStore) throws Exception {
 		InfoEntity ret = null;
 
 		if (DustUtils.isEmpty(idStore)) {
 			ret = new InfoEntityData(this, null);
 			allKnownEntities.add(ret);
 		} else {
-			SimpleType st = (null == type) ? typeType : optResolveMeta(type);
+			SimpleType st = (null == type) ? typeType : (SimpleType)type;
 			ret = factGlobalEntities.get(st).get(idStore);
 		}
 		return ret;
 	}
 
 	@Override
-	public void dustKnowledgeInfoSourceFind(DustType type, DustEntity expression, DustEntity processor)
+	public void dustKnowledgeInfoSourceFind(DustEntity type, DustEntity expression, DustEntity processor)
 			throws Exception {
 		// TODO Auto-generated method stub
 

@@ -1,7 +1,7 @@
 package dust.test.unit01;
 
 import dust.gen.dust.test.unit01.DustTestUnit01Services;
-import dust.pub.DustUtilsDev;
+import dust.utils.DustUtilsDev;
 
 public class TestSimple implements DustTestUnit01Services.DustTestUnit01TestSimple {
 

@@ -1,28 +1,26 @@
 package dust.gen.knowledge.meta;
 
-import dust.gen.DustComponents;
+import dust.gen.DustGenComponents;
 
-public interface DustKnowledgeMetaComponents extends DustComponents {
+public interface DustKnowledgeMetaComponents extends DustGenComponents {
 	
-	enum DustConstKnowledgeMetaAttrType implements DustConst {
+	enum DustConstKnowledgeMetaAttrType {
 		Id, Int, Float, Bool, Raw;
-		
 	}
 
-	enum DustConstKnowledgeMetaCardinality implements DustConst {
+	enum DustConstKnowledgeMetaCardinality {
 		Single, Set, Array, Map;
-		
 	}
 
-	enum DustTypeKnowledgeMeta implements DustType {
+	enum DustTypeKnowledgeMeta {
 		Unit, Type, AttDef, LinkDef, Service, Command, Const
 	}
 
-	enum DustAttributeKnowledgeMetaCommand implements DustAttribute {
+	enum DustAttributeKnowledgeMetaCommand {
 		boundMethod;
 	}
 
-	enum DustAttributeKnowledgeMetaService implements DustAttribute {
+	enum DustAttributeKnowledgeMetaService {
 		boundClass;
 	}
 

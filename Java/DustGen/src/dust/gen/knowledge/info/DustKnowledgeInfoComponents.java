@@ -5,52 +5,52 @@ import dust.gen.tools.generic.DustToolsGenericComponents;
 
 public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents, DustKnowledgeMetaComponents {
 
-	enum DustConstKnowledgeInfoEntityState implements DustConst {
+	enum DustConstKnowledgeInfoEntityState {
 		Temporal, InSync, RefChanged, Changed, Constructed, Destructed;
 	}
 
-	enum DustConstKnowledgeInfoLinkCommand implements DustConst {
+	enum DustConstKnowledgeInfoLinkCommand {
 		Add, Replace, Remove, ChangeKey;
 	}
 
-	enum DustConstKnowledgeInfoVisitorResponse implements DustConst {
+	enum DustConstKnowledgeInfoVisitorResponse {
 		OK, Skip, Exit, Repeat, Restart;
 	}
 
-	enum DustConstKnowledgeInfoContext implements DustConst {
+	enum DustConstKnowledgeInfoContext {
 		Self, Message, Block;
 	}
 	
 	
-	enum DustLinkKnowledgeInfoEntity implements DustLink {
+	enum DustLinkKnowledgeInfoEntity {
 		Services, PrimaryType;
 	}
 
-	enum DustAttributeKnowledgeInfoEntity implements DustAttribute {
+	enum DustAttributeKnowledgeInfoEntity {
 		svcImpl;
 	}
 
-	enum DustAttributeKnowledgeInfoIterator implements DustAttribute {
+	enum DustAttributeKnowledgeInfoIterator {
 		index, key;
 	}
 	
-	enum DustLinkKnowledgeInfoIterator implements DustLink {
+	enum DustLinkKnowledgeInfoIterator {
 		Cardinality;
 	}
 	
-	enum DustAttributeKnowledgeInfoVariant implements DustAttribute {
+	enum DustAttributeKnowledgeInfoVariant {
 		varType, value;
 	}
 
-	enum DustTypeKnowledgeInfo implements DustType {
+	enum DustTypeKnowledgeInfo {
 		Entity, Link, Tag, Tagged, Variant, Iterator;
 	}
 
 	interface DustKnowledgeInfoSource {
-		boolean dustKnowledgeInfoSourceIsTypeSupported(DustType eType);
+		boolean dustKnowledgeInfoSourceIsTypeSupported(DustEntity eType);
 		
-		DustEntity dustKnowledgeInfoSourceGet(DustType type, String idStore) throws Exception;
-		void dustKnowledgeInfoSourceFind(DustType type, DustEntity expression, DustEntity processor) throws Exception;
+		DustEntity dustKnowledgeInfoSourceGet(DustEntity type, String idStore) throws Exception;
+		void dustKnowledgeInfoSourceFind(DustEntity type, DustEntity expression, DustEntity processor) throws Exception;
 		void dustKnowledgeInfoSourceDestruct(DustEntity entity) throws Exception;
 	}
 }

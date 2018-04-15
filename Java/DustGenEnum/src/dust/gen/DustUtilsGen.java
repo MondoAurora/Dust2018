@@ -77,7 +77,7 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		return ret;
 	}
 
-	public static DustType getTypeFromId(String id) {
+	public static DustEntity getTypeFromId(String id) {
 		return null;
 	}
 

@@ -9,17 +9,12 @@ public interface DustToolsPersistenceComponents extends DustToolsGenericComponen
 		HandlerInvalid, HandlerVersionMismatch;
 	}
 	
-	enum DustCommandToolsPersistenceStore implements DustCommand {
+	enum DustCommandToolsPersistenceStore {
 		Read;
 	}
 
-	enum DustServiceToolsPersistence implements DustService {
-		Store(DustServiceToolsGeneric.Initable, DustServiceKnowledgeProc.Processor),;
-		final DustService[] extServices;
-		
-		private DustServiceToolsPersistence(DustService... extServices) {
-			this.extServices = extServices;
-		}
+	enum DustServiceToolsPersistence {
+		Store(),;
 	}
 
 	interface DustToolsPersistenceStore extends DustKnowledgeProcProcessor, DustToolsGenericInitable {

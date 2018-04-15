@@ -10,19 +10,19 @@ public interface DustRuntimeBindingComponents extends DustKnowledgeInfoComponent
 		;
 	}
 	
-	enum DustAttributeRuntimeBindingLogicAssignment implements DustAttribute {
+	enum DustAttributeRuntimeBindingLogicAssignment implements DustEntity {
 		javaClass;
 	}
 
-	enum DustLinkRuntimeBindingLogicAssignment implements DustLink {
+	enum DustLinkRuntimeBindingLogicAssignment implements DustEntity {
 		Service;
 	}
 
-	enum DustLinkRuntimeBindingManager implements DustLink {
+	enum DustLinkRuntimeBindingManager implements DustEntity {
 		LogicAssignments;
 	}
 	
-	enum DustTypeRuntimeBinding implements DustType {
+	enum DustTypeRuntimeBinding implements DustEntity {
 		LogicAssignment,
 		Manager,
 		;

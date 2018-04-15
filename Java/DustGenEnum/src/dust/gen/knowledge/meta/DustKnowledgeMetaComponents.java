@@ -14,15 +14,15 @@ public interface DustKnowledgeMetaComponents extends DustComponents {
 		
 	}
 
-	enum DustTypeKnowledgeMeta implements DustType {
+	enum DustTypeKnowledgeMeta implements DustEntity {
 		Unit, Type, AttDef, LinkDef, Service, Command, Const
 	}
 
-	enum DustAttributeKnowledgeMetaCommand implements DustAttribute {
+	enum DustAttributeKnowledgeMetaCommand implements DustEntity {
 		boundMethod;
 	}
 
-	enum DustAttributeKnowledgeMetaService implements DustAttribute {
+	enum DustAttributeKnowledgeMetaService implements DustEntity {
 		boundClass;
 	}
 

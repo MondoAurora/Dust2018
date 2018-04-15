@@ -12,12 +12,12 @@ public interface DustRuntimeEnvironmentComponents
 
 	}
 
-	enum DustLinkRuntimeEnvironmentManager implements DustLink {
+	enum DustLinkRuntimeEnvironmentManager implements DustEntity {
 		InitMessage, BinaryManager, MetaManager;
 
 	}
 
-	enum DustTypeRuntimeEnvironment implements DustType {
+	enum DustTypeRuntimeEnvironment implements DustEntity {
 		Manager
 	}
 }

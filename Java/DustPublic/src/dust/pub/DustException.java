@@ -1,12 +1,10 @@
 package dust.pub;
 
-import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
-
-public class DustException extends RuntimeException implements DustKnowledgeInfoComponents {
+public class DustException extends RuntimeException implements DustComponents {
 	private static final long serialVersionUID = 1L;
 
 	public DustException(DustEntity errInfo, Throwable wrapped, Object... context) {
-		super(DustUtils.toString(errInfo), wrapped);
+		super(errInfo.toString(), wrapped);
 	}
 	
 	public static void throwException(DustEntity errInfo, Object... context) {

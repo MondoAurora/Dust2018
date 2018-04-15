@@ -8,8 +8,8 @@ import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.JSONParser;
 
 import dust.gen.tools.persistence.DustToolsPersistenceComponents;
-import dust.pub.DustUtilsDev;
-import dust.pub.DustUtilsJava;
+import dust.utils.DustUtilsDev;
+import dust.utils.DustUtilsJava;
 
 public class DustJsonReader implements DustJsonComponents, DustToolsPersistenceComponents.DustToolsPersistenceStore {
 	

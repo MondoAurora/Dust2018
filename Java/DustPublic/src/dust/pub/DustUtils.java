@@ -2,9 +2,11 @@ package dust.pub;
 
 import java.util.Collection;
 
-public class DustUtils extends DustUtilsJava implements DustPubComponents {
+import dust.utils.DustUtilsJava;
 
-	public static <RetType> RetType getAttrValueSafe(DustEntity entity, DustAttribute field, Creator<RetType> creator,
+public class DustUtils extends DustUtilsJava implements DustComponents {
+
+	public static <RetType> RetType getAttrValueSafe(DustEntity entity, DustEntity field, Creator<RetType> creator,
 			Object... params) {
 		RetType ret = Dust.getAttrValue(entity, field);
 		if (null == ret) {
@@ -14,14 +16,13 @@ public class DustUtils extends DustUtilsJava implements DustPubComponents {
 		return ret;
 	}
 	
-	public static void loadRecursive(DustEntity entity, DustLink link, Collection<DustEntity> known) {
+	public static void loadRecursive(DustEntity entity, DustEntity link, Collection<DustEntity> known) {
 		if ( known.add(entity) ) {
-			Dust.processRefs(new DustKnowledgeProcVisitor() {
+			Dust.processRefs(new DustRefVisitor() {
 				@Override
-				public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity e2)
-						throws Exception {
+				public boolean dustRefVisit(DustEntity e2) throws Exception {
 					loadRecursive(e2, link, known);
-					return null;
+					return true;
 				}
 			}, entity, link);
 		}

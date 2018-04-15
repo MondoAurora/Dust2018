@@ -4,7 +4,7 @@ import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 
 public interface DustTestUnit01Components extends DustKnowledgeInfoComponents {
 
-	enum DustTypeTestUnit01 implements DustType {
+	enum DustTypeTestUnit01 implements DustEntity {
 		TestSimple;
 	}
 
@@ -19,11 +19,11 @@ public interface DustTestUnit01Components extends DustKnowledgeInfoComponents {
 	}
 
 
-	enum DustLinkTestSimple implements DustLink {
+	enum DustLinkTestSimple implements DustEntity {
 		LinkSingle;
 	}
 
-	enum DustAttributeTestSimple implements DustAttribute {
+	enum DustAttributeTestSimple implements DustEntity {
 		attr01;
 	}
 

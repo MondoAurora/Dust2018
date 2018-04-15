@@ -1,90 +1,172 @@
 package dust.gen;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.regex.Matcher;
 
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
+import dust.pub.Dust;
+import dust.pub.DustComponents;
+import dust.utils.DustUtilsFactory;
+import dust.utils.DustUtilsJava;
 
 public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents {
+	
+	public class EntityWrapper implements DustEntityWrapper, DustEntityAttribute, DustEntityLink {
+		private final Enum<?> wrappedEnum;
+		private DustEntity entity;
 
-	private static final Map<Class<? extends IdentifiableMeta>, String> TYPE_PREFIX = new HashMap<>();
+		public EntityWrapper(Enum<?> wrappedEnum) {
+			this.wrappedEnum = wrappedEnum;
+		}
+		
+		@Override
+		public DustEntity entity() {
+			if ( null == entity ) {
+				IdResolverResult idr = FACT_ENUM_RESOLVER.get(wrappedEnum);
+				DustEntity eType = Dust.getEntity(null, idr.getTypeId(), null);
+				entity = Dust.getEntity(eType, idr.getStoreId(), null);
+			}
+			
+			return entity;
+		}
+
+		@Override
+		public void process(DustEntity entity, DustRefVisitor proc) {
+			Dust.processRefs(proc, entity, entity());
+		}
+
+		@Override
+		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
+			return Dust.getRefEntity(entity, createIfMissing, entity(), key);
+		}
+
+		@Override
+		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
+			return Dust.modifyRefs(cmd, entity, entity(), target, key);
+		}
+
+		@Override
+		public <ValType> ValType getValue(DustEntity entity) {
+			return Dust.getAttrValue(entity, entity());
+		}
+
+		@Override
+		public void setValue(DustEntity entity, Object value) {
+			Dust.setAttrValue(entity, entity(), value);
+		}
+		
+		
+	}
+	
+	public interface IdResolverResult {
+		public String getStoreId();
+		public String getTypeId();
+	}
+	
+	private enum MetaPrefix {
+		DustType(DustTypeKnowledgeMeta.Type), 
+		DustAttribute(DustTypeKnowledgeMeta.AttDef, true), 
+		DustLink(DustTypeKnowledgeMeta.LinkDef, true), 
+		DustService(DustTypeKnowledgeMeta.Service), 
+		DustCommand(DustTypeKnowledgeMeta.Command, true), 
+		DustConst(DustTypeKnowledgeMeta.Const), 
+		unknown(null);
+
+		private final boolean child;
+		private final Enum<?> metaEnum;
+		
+		
+		private MetaPrefix(Enum<?> metaEnum, boolean child) {
+			this.child = child;
+			this.metaEnum = metaEnum;
+		}
+
+		private MetaPrefix(Enum<?> metaEnum) {
+			this(metaEnum, false);
+		}
+
+		public static MetaPrefix fromName(String name) {
+			for ( MetaPrefix mp : values() ) {
+				if ( name.startsWith(mp.name())) {
+					return mp;
+				}
+			}
+			return unknown;
+		}
+		
+		public String chopFrom(String name) {
+			return name.substring(name().length());
+		}
+		
+		public boolean isChild() {
+			return child;
+		}
+		
+		public Enum<?> getMetaEnum() {
+			return metaEnum;
+		}
+	}
+	
+	private static final class EnumNames implements IdResolverResult {
+		private final String typeId;
+		private final String storeId;
+		
+		private EnumNames(Enum<?> e, boolean typeType) {
+			Class<?> ec = e.getClass();
+			
+			String cName = ec.getSimpleName();
+			MetaPrefix mp = MetaPrefix.fromName(cName);
+			cName = mp.chopFrom(cName);
+			
+			String n = ec.getEnclosingClass().getSimpleName();
+			String envName = "";
+			Matcher m = PTRN_OWNER_FINDER.matcher(n);
+			StringBuilder sb = null;
+			if (m.matches()) {
+				envName = m.group(1);
+				Matcher rm = PTRN_OWNER_SPLITTER.matcher(envName);
+				while (rm.find()) {
+					sb = DustUtilsJava.sbApend(sb, SEP_PATH, false, rm.group());
+				} 
+			}
+			sb = DustUtilsJava.sbApend(sb, SEP_PATH, false, cName.substring(envName.length()));
+			sb = DustUtilsJava.sbApend(sb, mp.isChild() ? SEP_ATT : SEP_PATH, false, e.name());
+			
+			storeId = sb.toString();
+			typeId = typeType ? storeId : FACT_ENUM_RESOLVER.get(mp.getMetaEnum()).storeId;
+		}
+		
+		public String getStoreId() {
+			return storeId;
+		}
+		public String getTypeId() {
+			return typeId;
+		}
+		
+		@Override
+		public String toString() {
+			return "{ " + typeId + ": " + storeId + " }";
+		}
+	}
+	
+	private static final DustUtilsFactory<Enum<?>, EnumNames> FACT_ENUM_RESOLVER = new DustUtilsFactory<Enum<?>, DustUtilsGen.EnumNames>(false) {
+		@Override
+		protected EnumNames create(Enum<?> key, Object... hints) {
+			return new EnumNames(key, false);
+		}
+	};
+	
+	public static IdResolverResult resolveEnum(Enum<?> e) {
+		return FACT_ENUM_RESOLVER.get(e);
+	}
 	
 	static {
-		TYPE_PREFIX.put(DustType.class, getTypePrefix(DustTypeKnowledgeMeta.Type));
-		TYPE_PREFIX.put(DustAttribute.class, getTypePrefix(DustTypeKnowledgeMeta.AttDef));
-		TYPE_PREFIX.put(DustLink.class, getTypePrefix(DustTypeKnowledgeMeta.LinkDef));
-		TYPE_PREFIX.put(DustService.class, getTypePrefix(DustTypeKnowledgeMeta.Service));
-		TYPE_PREFIX.put(DustCommand.class, getTypePrefix(DustTypeKnowledgeMeta.Command));
-		TYPE_PREFIX.put(DustConst.class, getTypePrefix(DustTypeKnowledgeMeta.Const));
+		FACT_ENUM_RESOLVER.put(DustTypeKnowledgeMeta.Type, new EnumNames(DustTypeKnowledgeMeta.Type, true));
 	}
-		
-	private static String[] getTypePath(String cname) {
-		String genName = DustUtilsGen.class.getName();
-		cname = cname.substring(genName.lastIndexOf('.') + 1);
-		
-		String[] pnames = cname.substring(0, cname.lastIndexOf('.')).split("\\.");
-		
-		return pnames;
-	}
-
-	public static String getMetaType(IdentifiableMeta meta) {
-		for (Map.Entry<Class<? extends IdentifiableMeta>, String> e : TYPE_PREFIX.entrySet()) {
-			if (e.getKey().isInstance(meta)) {
-				return e.getValue();
-			}
+	
+	public static void main(String[] args) {
+		IdResolverResult r = resolveEnum(DustConstKnowledgeMetaAttrType.Bool);
+		if ( r.getStoreId().isEmpty() ) {
+			return;
 		}
-
-		throw new RuntimeException("hmm...");
 	}
-
-	private static String getTypePrefix(IdentifiableMeta type) {
-		String cname = type.getClass().getName();
-		String[] pnames = getTypePath(cname);
-
-		StringBuilder id = new StringBuilder();
-		for (String s : pnames) {
-			s = "" + Character.toUpperCase(s.charAt(0)) + s.substring(1);
-			id.append(s).append(":");
-		}
-
-		return id.append(type).toString();
-	}
-
-	public static String metaToStoreId(IdentifiableMeta meta) {
-		String cname = meta.getClass().getName();
-		String[] pnames = getTypePath(cname);
-		StringBuilder prefix = new StringBuilder();
-		StringBuilder id = null;
-		for (String s : pnames) {
-			s = "" + Character.toUpperCase(s.charAt(0)) + s.substring(1);
-			prefix.append(s);
-			id = (null == id) ? new StringBuilder(s) : id.append(":").append(s);
-		}
-
-		String ret = "";
-
-		int idx = cname.lastIndexOf(prefix.toString());
-		if (-1 != idx) {
-			String name = cname.substring(idx + prefix.length());
-			if ((meta instanceof DustService) || (meta instanceof DustType)) {
-				id.append(name).append(":").append(meta);
-			} else {
-				id.append(":").append(name).append(".").append(meta);
-			}
-			ret = id.toString();
-		}
-
-		return ret;
-	}
-
-	public static DustType getTypeFromId(String id) {
-		return null;
-	}
-
-	public static <RetType extends IdentifiableMeta> RetType idToMeta(String id) {
-		RetType ret = null;
-
-		return ret;
-	}
-
 }

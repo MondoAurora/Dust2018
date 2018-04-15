@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.json.simple.parser.ParseException;
 
-import dust.pub.DustUtilsDev;
+import dust.utils.DustUtilsDev;
 
 class DustJsonHandlerDump extends DustJsonComponents.ContentHandlerDefault {
 	StringBuilder prefix = new StringBuilder();

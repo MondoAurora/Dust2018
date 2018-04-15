@@ -2,9 +2,8 @@ package dust.pub.boot;
 
 import dust.pub.Dust;
 import dust.pub.DustException;
-import dust.pub.DustUtils;
-import dust.pub.DustUtilsDev;
-import dust.pub.DustPubComponents.DustStatusInfoPub;
+import dust.utils.DustUtilsDev;
+import dust.utils.DustUtilsJava;
 
 public class DustBootConsole extends Dust implements DustBootComponents {
 	
@@ -27,7 +26,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 
 	protected static void shutdown() {
 		try {
-			RUNTIME.dustKnowledgeProcProcessorEnd();
+			RUNTIME.shutdown();
 		} catch (Exception e) {
 			DustException.wrapException(e, DustStatusInfoPub.ErrorShutdownFailure);
 		}		
@@ -39,7 +38,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		DustBindingManager binMgr = optLoadInit(cfg, DustConfigKeys.DustBinding);
 		((DustRuntimeBootable)RUNTIME).setBinaryManager(binMgr);
 		
-		RUNTIME.dustKnowledgeProcProcessorBegin();
+		RUNTIME.launch();
 		
 		optLoadInit(cfg, DustConfigKeys.DustNodeInit);
 	}
@@ -49,7 +48,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		RetType ret = null;
 		
 		String cName = cfg.getCfg(key);
-		if ( !DustUtils.isEmpty(cName) ) {
+		if ( !DustUtilsJava.isEmpty(cName) ) {
 			ret = (RetType) Class.forName(cName).newInstance();
 			DustUtilsDev.dump("Initializing", cName);
 			ret.init(cfg);

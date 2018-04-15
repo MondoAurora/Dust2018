@@ -10,20 +10,20 @@ public interface DustKnowledgeCommComponents extends DustToolsGenericComponents,
 		Discussion, Entity, Model, Data;
 	}
 
-	enum DustAttributeKnowledgeCommTerm implements DustAttribute {
+	enum DustAttributeKnowledgeCommTerm implements DustEntity {
 		idStore, idLocal;
 	}
 	
-	enum DustLinkKnowledgeCommStatement implements DustLink {
+	enum DustLinkKnowledgeCommStatement implements DustEntity {
 		Type;
 	}
 	
-	enum DustLinkKnowledgeCommAgent implements DustLink {
+	enum DustLinkKnowledgeCommAgent implements DustEntity {
 		Source;
 	}
 
 
-	enum DustTypeKnowledgeComm implements DustType {
+	enum DustTypeKnowledgeComm implements DustEntity {
 		Term, Discussion, Statement;
 	}
 	

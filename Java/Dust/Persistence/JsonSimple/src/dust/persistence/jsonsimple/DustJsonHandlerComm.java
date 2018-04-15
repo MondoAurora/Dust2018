@@ -8,7 +8,7 @@ import dust.gen.knowledge.comm.DustKnowledgeCommComponents;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.pub.Dust;
-import dust.pub.DustUtilsJava;
+import dust.utils.DustUtilsJava;
 
 class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault implements DustJsonComponents,
 		DustKnowledgeProcComponents, DustKnowledgeMetaComponents, DustKnowledgeCommComponents {

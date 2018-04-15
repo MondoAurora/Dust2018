@@ -1,37 +1,33 @@
 package dust.gen.tools.generic;
 
-import dust.gen.DustComponents;
+import dust.gen.DustGenComponents;
 
-public interface DustToolsGenericComponents extends DustComponents {
+public interface DustToolsGenericComponents extends DustGenComponents {
 
-	enum DustAttributeToolsGenericIdentified implements DustAttribute {
+	enum DustAttributeToolsGenericIdentified {
 		idLocal, idCombined;
 
 	}
 
-	enum DustLinkToolsGenericConnected implements DustLink {
+	enum DustLinkToolsGenericConnected {
 		Owner, Requires, Extends;
 	}
 
-	enum DustLinkToolsGenericChain implements DustLink {
+	enum DustLinkToolsGenericChain {
 		NextEntity, DefaultMessage;
 	}
 
-	enum DustTypeToolsGeneric implements DustType {
+	enum DustTypeToolsGeneric {
 		Identified, Connected, Chain;
 	}
 
-	enum DustCommandToolsGenericInitable implements DustCommand {
+	enum DustCommandToolsGenericInitable {
 		Init;
 	}
 
-	enum DustServiceToolsGeneric implements DustService {
+	enum DustServiceToolsGeneric {
 		Initable,;
-		final DustService[] extServices;
 		
-		private DustServiceToolsGeneric(DustService... extServices) {
-			this.extServices = extServices;
-		}
 	}
 
 	interface DustToolsGenericInitable {
