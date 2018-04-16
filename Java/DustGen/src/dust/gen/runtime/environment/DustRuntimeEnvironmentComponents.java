@@ -1,5 +1,6 @@
 package dust.gen.runtime.environment;
 
+import dust.gen.DustUtilsGen.EntityWrapper;
 import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
@@ -7,18 +8,53 @@ import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 public interface DustRuntimeEnvironmentComponents
 		extends DustKnowledgeInfoComponents, DustKnowledgeMetaComponents, DustKnowledgeProcComponents {
 
-	enum DustStatusRuntimeEnvironment implements DustEntity {
+	enum DustStatusRuntimeEnvironment implements DustEntityWrapper {
 		LinkCreationError, MessageSendError, GetEntityError;
 
+		private final EntityWrapper ew = new EntityWrapper(this);
+
+		@Override
+		public DustEntity entity() {
+			return ew.entity();
+		}
 	}
 
-	enum DustLinkRuntimeEnvironmentManager {
+	enum DustLinkRuntimeEnvironmentManager implements DustEntityLink {
 		InitMessage, BinaryManager, MetaManager;
 
+		private final EntityWrapper ew = new EntityWrapper(this);
+
+		@Override
+		public DustEntity entity() {
+			return ew.entity();
+		}
+
+		@Override
+		public void process(DustEntity entity, DustRefVisitor proc) {
+			ew.process(entity, proc);
+		}
+
+		@Override
+		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
+			return ew.get(entity, createIfMissing, key);
+		}
+
+		@Override
+		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
+			return modify(entity, cmd, target, key);
+		}
 	}
 
-	enum DustTypeRuntimeEnvironment {
-		Manager
+	enum DustTypeRuntimeEnvironment implements DustEntityWrapper {
+		Manager;
+
+		private final EntityWrapper ew = new EntityWrapper(this);
+
+		@Override
+		public DustEntity entity() {
+			return ew.entity();
+		}
+
 	}
 
 	interface DustRuntimeEnvironmentManager extends DustKnowledgeProcProcessor {

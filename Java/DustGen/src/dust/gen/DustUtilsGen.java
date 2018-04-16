@@ -10,7 +10,7 @@ import dust.utils.DustUtilsJava;
 
 public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents {
 	
-	public class EntityWrapper implements DustEntityWrapper, DustEntityAttribute, DustEntityLink {
+	public static class EntityWrapper implements DustEntityWrapper, DustEntityAttribute, DustEntityLink {
 		private final Enum<?> wrappedEnum;
 		private DustEntity entity;
 

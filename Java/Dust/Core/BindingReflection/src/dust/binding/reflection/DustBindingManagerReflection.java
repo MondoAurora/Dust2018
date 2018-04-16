@@ -10,7 +10,6 @@ import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.gen.runtime.binding.DustRuntimeBindingComponents;
 import dust.gen.tools.generic.DustToolsGenericComponents;
-import dust.pub.Dust;
 import dust.pub.DustComponents;
 import dust.pub.DustException;
 import dust.pub.DustUtils;
@@ -28,17 +27,15 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 	DustUtilsFactory<DustEntity, Class<?>> factBindings = new DustUtilsFactory<DustEntity, Class<?>>(false) {
 		@Override
 		protected Class<?> create(DustEntity key, Object... hints) {
-			Dust.processRefs(new DustKnowledgeProcVisitor() {
+			DustLinkRuntimeBindingManager.LogicAssignments.process(eSelf, new DustRefVisitor() {
 				@Override
-				public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity)
-						throws Exception {
-					DustEntity refSvc = Dust.getRefEntity(entity, false, DustLinkRuntimeBindingLogicAssignment.Service,
-							null);
-					String className = Dust.getAttrValue(entity, DustAttributeRuntimeBindingLogicAssignment.javaClass);
+				public boolean dustRefVisit(DustEntity entity) throws Exception {
+					DustEntity refSvc = DustLinkRuntimeBindingLogicAssignment.Service.get(entity, false, null);
+					String className = DustAttributeRuntimeBindingLogicAssignment.javaClass.getValue(entity);
 					put(refSvc, Class.forName(className));
-					return null;
+					return true;
 				}
-			}, eSelf, DustLinkRuntimeBindingManager.LogicAssignments);
+			});
 
 			return peek(key);
 		}
@@ -54,42 +51,41 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 
 		@Override
 		protected Object create(DustEntity key, Object... hints) {
-			Dust.processRefs(new DustKnowledgeProcVisitor() {
+			DustLinkKnowledgeInfoEntity.Services.process(owner, new DustRefVisitor() {
 				@Override
-				public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity)
-						throws Exception {
+				public boolean dustRefVisit(DustEntity entity) throws Exception {
 					Class<?> svcClass = factBindings.get(entity);
 					if (null != svcClass) {
 						Set<DustEntity> ext = new HashSet<>();
-						DustUtils.loadRecursive(entity,
-								DustToolsGenericComponents.DustLinkToolsGenericConnected.Extends, ext);
+						DustUtils.loadRecursive(entity, DustLinkToolsGenericConnected.Extends.entity(), ext);
 						Object logic = DustUtils.instantiate(svcClass);
 						for (DustEntity svc : ext) {
 							put(svc, logic);
 						}
 					}
-					return null;
+					return true;
 				}
-			}, owner, DustLinkKnowledgeInfoEntity.Services);
+			});
 
 			return peek(key);
 		}
-		
+
 		@Override
 		public StringBuilder toStringBuilder(StringBuilder target) {
 			boolean empty = true;
-			for ( Map.Entry<DustEntity, Object> e : content.entrySet() ) {
-				if ( empty ) {
+			for (Map.Entry<DustEntity, Object> e : content.entrySet()) {
+				if (empty) {
 					empty = false;
 					target = DustUtilsJava.sbApend(target, "", true, "{");
 				} else {
 					target.append(", ");
 				}
-				String key = Dust.getAttrValue(e.getKey(), DustAttributeToolsGenericIdentified.idLocal);
+				String key = DustAttributeToolsGenericIdentified.idLocal.getValue(e.getKey());
 				Object val = e.getValue();
-				target = DustUtilsJava.sbApend(target, "", true, "\"", key, "\": \"", val.getClass().getName(), ":", val.hashCode(), "\"");
+				target = DustUtilsJava.sbApend(target, "", true, "\"", key, "\": \"", val.getClass().getName(), ":",
+						val.hashCode(), "\"");
 			}
-			
+
 			return empty ? DustUtilsJava.sbApend(target, "", true, "{}") : target.append(" }");
 		}
 	};
@@ -112,18 +108,18 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 		}
 
 		Object invoke(Object target) throws Exception {
-			return ( null == params ) ? m.invoke(target) : m.invoke(target, params);
+			return (null == params) ? m.invoke(target) : m.invoke(target, params);
 		}
 	}
 
 	DustUtilsFactory<DustEntity, MethodInfo> factMethods = new DustUtilsFactory<DustEntity, MethodInfo>(false) {
 		@Override
 		protected MethodInfo create(DustEntity key, Object... hints) {
-			String name = Dust.getAttrValue(key, DustAttributeToolsGenericIdentified.idLocal);
+			String name = DustAttributeToolsGenericIdentified.idLocal.getValue(key);
 
 			// ugly name magic for now...
-//			name = name.replace("Command", "").replace(":", "");
-//			name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+			// name = name.replace("Command", "").replace(":", "");
+			// name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
 
 			Throwable ex = null;
 			try {
@@ -135,18 +131,18 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 			} catch (Throwable e) {
 				ex = e;
 			}
-			DustException.wrapException(ex, DustStatusRuntimeBinding.ErrorMethodAccess, name);
+			DustException.wrapException(ex, DustStatusRuntimeBinding.ErrorMethodAccess.entity(), name);
 			return null;
 		}
 	};
 
 	@Override
 	public void sendMessage(DustEntity target, DustEntity msg) throws Exception {
-		DustEntity cmd = Dust.getRefEntity(msg, false, DustLinkKnowledgeProcMessage.Command, null);
-		DustEntity eSvc = Dust.getRefEntity(cmd, false,	DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, null);
+		DustEntity cmd = DustLinkKnowledgeProcMessage.Command.get(msg, false, null);
+		DustEntity eSvc = DustLinkToolsGenericConnected.Owner.get(cmd, false, null);
 
-		BinFactory factImpl = DustUtils.getAttrValueSafe(target, DustAttributeKnowledgeInfoEntity.svcImpl, cBinFact,
-				target);
+		BinFactory factImpl = DustUtils.getAttrValueSafe(target, DustAttributeKnowledgeInfoEntity.svcImpl.entity(),
+				cBinFact, target);
 		Object binOb = factImpl.get(eSvc);
 		factMethods.get(cmd, binOb).invoke(binOb);
 	}

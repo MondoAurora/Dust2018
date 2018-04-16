@@ -1,6 +1,7 @@
 package dust.gen.knowledge.proc;
 
 import dust.gen.DustGenComponents;
+import dust.gen.DustUtilsGen.EntityWrapper;
 import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 
 public interface DustKnowledgeProcComponents extends DustGenComponents, DustKnowledgeInfoComponents {
@@ -9,8 +10,30 @@ public interface DustKnowledgeProcComponents extends DustGenComponents, DustKnow
 		OK, Skip, Exit, Repeat, Restart;
 	}
 
-	enum DustLinkKnowledgeProcMessage {
+	enum DustLinkKnowledgeProcMessage implements DustEntityLink {
 		Command, Target;
+		
+		private final EntityWrapper ew = new EntityWrapper(this);
+
+		@Override
+		public DustEntity entity() {
+			return ew.entity();
+		}
+
+		@Override
+		public void process(DustEntity entity, DustRefVisitor proc) {
+			ew.process(entity, proc);
+		}
+
+		@Override
+		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
+			return ew.get(entity, createIfMissing, key);
+		}
+
+		@Override
+		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
+			return modify(entity, cmd, target, key);
+		}
 	}
 
 	enum DustTypeKnowledgeProc {
@@ -19,16 +42,37 @@ public interface DustKnowledgeProcComponents extends DustGenComponents, DustKnow
 
 	
 	
-	enum DustCommandKnowledgeProcVisitor {
+	enum DustCommandKnowledgeProcVisitor implements DustEntityWrapper {
 		Visit;
+		
+		private final EntityWrapper ew = new EntityWrapper(this);
+
+		@Override
+		public DustEntity entity() {
+			return ew.entity();
+		}
 	}
 
-	enum DustCommandKnowledgeProcProcessor {
+	enum DustCommandKnowledgeProcProcessor implements DustEntityWrapper {
 		Begin, End;
+		
+		private final EntityWrapper ew = new EntityWrapper(this);
+
+		@Override
+		public DustEntity entity() {
+			return ew.entity();
+		}
 	}
 
-	enum DustServiceKnowledgeProc {
+	enum DustServiceKnowledgeProc implements DustEntityWrapper {
 		Visitor, Processor;
+		
+		private final EntityWrapper ew = new EntityWrapper(this);
+
+		@Override
+		public DustEntity entity() {
+			return ew.entity();
+		}
 	}
 
 	interface DustKnowledgeProcProcessor {

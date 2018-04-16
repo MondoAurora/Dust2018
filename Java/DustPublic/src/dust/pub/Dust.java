@@ -3,8 +3,8 @@ package dust.pub;
 public class Dust implements DustComponents {
 	
 	public interface DustEnvironment {
-		void launch();
-		void shutdown();
+		void launch() throws Exception;
+		void shutdown() throws Exception;
 		
 		DustEntity getEntity(DustEntity type, String storeId, String revision);
 		<ValType> ValType getAttrValue(DustEntity entity, DustEntity field);

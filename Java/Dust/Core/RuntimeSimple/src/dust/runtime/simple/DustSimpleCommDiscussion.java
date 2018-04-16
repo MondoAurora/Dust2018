@@ -9,7 +9,6 @@ import java.util.Map;
 
 import dust.gen.DustUtilsGen;
 import dust.gen.knowledge.comm.DustKnowledgeCommComponents;
-import dust.pub.Dust;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
@@ -60,7 +59,7 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 
 		DustEntity getEntity() throws Exception {
 			if (null == e) {
-				DustEntity eType = idType.equals(idLocal) ? null : (DustType) factKeyInfo.get(idType).sd.getEntity();
+				DustEntity eType = idType.equals(idLocal) ? null : factKeyInfo.get(idType).sd.getEntity();
 				e = localData.dustKnowledgeInfoSourceGet(eType, idSource);
 			}
 
@@ -127,7 +126,7 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 	@Override
 	public void dustKnowledgeProcProcessorBegin() throws Exception {
 		DustConstKnowledgeCommStatementType st = getStatementType();
-		String key = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message, DustAttributeKnowledgeInfoIterator.key);
+		String key = DustAttributeKnowledgeInfoIterator.key.getValue(DustConstKnowledgeInfoContext.Message.entity());
 
 		switch (st) {
 		case Entity:
@@ -185,10 +184,9 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 	@SuppressWarnings("unchecked")
 	@Override
 	public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
-		String key = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message,
-				DustAttributeToolsGenericIdentified.idLocal);
-		Object value = Dust.getAttrValue(DustConstKnowledgeInfoContext.Message,
-				DustAttributeKnowledgeInfoVariant.value);
+		String key = DustAttributeToolsGenericIdentified.idLocal
+				.getValue(DustConstKnowledgeInfoContext.Message.entity());
+		Object value = DustAttributeKnowledgeInfoVariant.value.getValue(DustConstKnowledgeInfoContext.Message.entity());
 
 		switch (dataCard) {
 		case Map:
@@ -207,18 +205,18 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 	}
 
 	private DustConstKnowledgeCommStatementType getStatementType() {
-		DustEntity type = Dust.getRefEntity(DustConstKnowledgeInfoContext.Message, false,
-				DustLinkKnowledgeCommStatement.Type, null);
-		String state = Dust.getAttrValue(type, DustAttributeToolsGenericIdentified.idLocal);
+		DustEntity type = DustLinkKnowledgeCommStatement.Type.get(DustConstKnowledgeInfoContext.Message.entity(), false,
+				null);
+		String state = DustAttributeToolsGenericIdentified.idLocal.getValue(type);
 		DustConstKnowledgeCommStatementType st = DustUtilsJava.parseEnum(state,
 				DustConstKnowledgeCommStatementType.class);
 
 		return st;
 	}
 
-	private <RetType extends Enum<RetType>> RetType getMsgConst(DustEntity link, Class<RetType> rc) {
-		DustEntity type = Dust.getRefEntity(DustConstKnowledgeInfoContext.Message, false, link, null);
-		String str = Dust.getAttrValue(type, DustAttributeToolsGenericIdentified.idLocal);
+	private <RetType extends Enum<RetType>> RetType getMsgConst(DustEntityLink link, Class<RetType> rc) {
+		DustEntity type = link.get(DustConstKnowledgeInfoContext.Message.entity(), false, null);
+		String str = DustAttributeToolsGenericIdentified.idLocal.getValue(type);
 		RetType st = DustUtilsJava.parseEnum(str, rc);
 
 		return st;
@@ -228,8 +226,11 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 		arrStatements.add(currStatement);
 	}
 
-	private String getStoreId(IdentifiableMeta meta) {
-		return DustUtilsGen.metaToStoreId(meta);
+	private String getStoreId(Enum<?> e) {
+		return DustUtilsGen.resolveEnum(e).getStoreId();
+		// return
+		// DustAttributeKnowledgeCommTerm.idStore.getValue(meta.entity());
+		// return DustUtilsGen.metaToStoreId(meta);
 	}
 
 	private void identifyCoreTerms() {
@@ -282,7 +283,8 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 			}
 		}
 
-		// Register all statements with their loclId and find what is the localID for
+		// Register all statements with their loclId and find what is the
+		// localID for
 		// Entity and PrimaryType?
 		String idEntityType = getStoreId(DustTypeKnowledgeInfo.Entity);
 		String idPrimaryType = getStoreId(DustLinkKnowledgeInfoEntity.PrimaryType);
@@ -330,22 +332,20 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 							if (value instanceof String) {
 								refTarget = (InfoEntity) factKeyInfo.get((String) value).sd.getEntity();
 								DustUtilsDev.dump("set ref", link, "to", refTarget);
-								localRefs.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eTarget, refTarget, link);
+								localRefs.modifyRefs(DustRefCommand.Add, eTarget, refTarget, link);
 							} else if (value instanceof List<?>) {
 								idx = 0;
 								for (Object v : (List<?>) value) {
 									refTarget = (InfoEntity) factKeyInfo.get((String) v).sd.getEntity();
 									DustUtilsDev.dump("add array ref", link, "to", refTarget);
-									localRefs.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eTarget, refTarget,
-											link, ++idx);
+									localRefs.modifyRefs(DustRefCommand.Add, eTarget, refTarget, link, ++idx);
 								}
 							} else if (value instanceof Map<?, ?>) {
 								for (Map.Entry<?, ?> e : ((Map<?, ?>) value).entrySet()) {
 									refTarget = (InfoEntity) factKeyInfo.get((String) e.getValue()).sd.getEntity();
 									Object key = e.getKey();
 									DustUtilsDev.dump("set map ref", link, key, "=", refTarget);
-									localRefs.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, eTarget, refTarget,
-											link, key);
+									localRefs.modifyRefs(DustRefCommand.Add, eTarget, refTarget, link, key);
 								}
 							}
 							break;

@@ -10,6 +10,7 @@ import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.gen.runtime.access.DustRuntimeAccessComponents;
+import dust.gen.runtime.environment.DustRuntimeEnvironmentComponents;
 import dust.pub.DustComponents;
 import dust.pub.DustUtils;
 import dust.pub.boot.DustBootComponents;
@@ -18,7 +19,7 @@ import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKnowledgeInfoComponents,
-		DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustKnowledgeProcComponents, DustComponents {
+		DustKnowledgeMetaComponents, DustRuntimeAccessComponents, DustRuntimeEnvironmentComponents, DustKnowledgeProcComponents, DustComponents {
 	Set<SimpleRef> NO_REFS = Collections.emptySet();
 
 	class InfoModel implements DumpFormatter {

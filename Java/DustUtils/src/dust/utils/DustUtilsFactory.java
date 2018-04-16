@@ -1,7 +1,10 @@
 package dust.utils;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 public abstract class DustUtilsFactory<KeyType, ValType> implements DustUtilsComponents.DumpFormatter {
@@ -69,5 +72,24 @@ public abstract class DustUtilsFactory<KeyType, ValType> implements DustUtilsCom
 		// DustUtils.sbApend(sb, "", true, "}");
 
 		return toStringBuilder(null).toString();
+	}
+	
+	public static abstract class Filtered<KeyType, ValType> extends DustUtilsFactory<KeyType, ValType> {
+		Set<KeyType> validKeys;
+
+		public Filtered(boolean sorted, Collection<KeyType> keys) {
+			super(sorted);
+			validKeys = new HashSet<>(keys);
+		}
+
+		public Filtered(boolean sorted, String name, Collection<KeyType> keys) {
+			super(sorted, name);
+			validKeys = new HashSet<>(keys);
+		}
+		
+		@Override
+		public synchronized ValType get(KeyType key, Object... hints) {
+			return validKeys.contains(key) ? super.get(key, hints) : null;
+		}
 	}
 }

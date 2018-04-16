@@ -3,10 +3,7 @@ package dust.runtime.simple;
 import java.util.HashSet;
 import java.util.Set;
 
-import dust.gen.DustUtilsGen;
 import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
-import dust.gen.tools.generic.DustToolsGenericComponents;
-import dust.pub.Dust;
 import dust.pub.DustUtils;
 import dust.utils.DustUtilsFactory;
 
@@ -27,8 +24,8 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 				protected InfoEntity create(String key, Object... hints) {
 					InfoEntity se = new InfoEntityData(DustSimpleManagerData.this, typeKey);
 					String[] s2 = key.split("\\.");
-					se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal),
-							s2[(1 == s2.length) ? 0 : 1]);
+					DustAttributeToolsGenericIdentified.idLocal.setValue(se, s2[(1 == s2.length) ? 0 : 1]);
+//					se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), s2[(1 == s2.length) ? 0 : 1]);
 					return se;
 				}
 			};
@@ -95,9 +92,10 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 			protected SimpleCommand getItem(SimpleService mp, String id) {
 				SimpleCommand se = mp.getCommand(id);
 				String cmdId = ("dust" + mp.id + id).replace(":", "").replace(".", "");
-				se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), cmdId);
-				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se,
-						DustToolsGenericComponents.DustLinkToolsGenericConnected.Owner, mp);
+//				se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), cmdId);
+				DustAttributeToolsGenericIdentified.idLocal.setValue(se, cmdId);
+//				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, DustLinkToolsGenericConnected.Owner, mp);
+				DustLinkToolsGenericConnected.Owner.modify(se, DustRefCommand.Add, mp, null);
 				return se;
 			}
 		});

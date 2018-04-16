@@ -1,5 +1,6 @@
 package dust.gen.tools.persistence;
 
+import dust.gen.DustUtilsGen.EntityWrapper;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.gen.tools.generic.DustToolsGenericComponents;
@@ -13,8 +14,15 @@ public interface DustToolsPersistenceComponents extends DustToolsGenericComponen
 		Read;
 	}
 
-	enum DustServiceToolsPersistence {
-		Store(),;
+	enum DustServiceToolsPersistence implements DustEntityWrapper {
+		Store;
+		
+		private final EntityWrapper ew = new EntityWrapper(this);
+
+		@Override
+		public DustEntity entity() {
+			return ew.entity();
+		}
 	}
 
 	interface DustToolsPersistenceStore extends DustKnowledgeProcProcessor, DustToolsGenericInitable {

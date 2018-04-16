@@ -11,27 +11,22 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 	private static final EnumSet<DustConstKnowledgeInfoLinkCommand> REFCMD_CREATE = EnumSet
 			.of(DustConstKnowledgeInfoLinkCommand.Add, DustConstKnowledgeInfoLinkCommand.Replace);
 
-	void processRefs(DustKnowledgeProcVisitor proc, InfoEntity entity, DustEntity[] path, int idx) {
-		SimpleLinkDef bl = (SimpleLinkDef)path[idx];
-		boolean last = idx == path.length - 1;
+	void processRefs(DustRefVisitor proc, InfoEntity entity, DustEntity eRef) {
+		SimpleLinkDef bl = (SimpleLinkDef) eRef;
 
 		for (SimpleRef ref : entity.getRefs(false)) {
 			if (ref.linkDef == bl) {
-				if (last) {
-					try {
-						proc.dustKnowledgeProcVisitorVisit(ref.eTarget);
-					} catch (Exception e) {
-						DustException.wrapException(e, DustStatusInfoPub.ErrorVistorExecution);
-					}
-				} else {
-					processRefs(proc, ref.eTarget, path, idx + 1);
+				try {
+					proc.dustRefVisit(ref.eTarget);
+				} catch (Exception e) {
+					DustException.wrapException(e, DustStatusInfoPub.ErrorVistorExecution);
 				}
 			}
 		}
 	}
 
-	DustEntity modifyRefs(DustConstKnowledgeInfoLinkCommand refCmd, InfoEntity seLeft, InfoEntity seRight,
-			SimpleLinkDef sld, Object... params) {
+	DustEntity modifyRefs(DustRefCommand refCmd, InfoEntity seLeft, InfoEntity seRight, SimpleLinkDef sld,
+			Object... params) {
 
 		// DustMetaLinkType lt = (null == sld) ? null : sld.linkType;
 
