@@ -2,27 +2,24 @@ package dust.pub;
 
 public class Dust implements DustComponents {
 	
-	public interface DustEnvironment {
-		void launch() throws Exception;
-		void shutdown() throws Exception;
-		
+	public interface DustInterface {
 		DustEntity getEntity(DustEntity type, String storeId, String revision);
+		
 		<ValType> ValType getAttrValue(DustEntity entity, DustEntity field);
 		void setAttrValue(DustEntity entity, DustEntity field, Object value);
+		
 		void processRefs(DustRefVisitor proc, DustEntity root, DustEntity ref);
 		DustEntity getRefEntity(DustEntity entity, boolean createIfMissing, DustEntity linkDef, Object key);
 		DustEntity modifyRefs(DustRefCommand refCmd, DustEntity left, DustEntity linkDef, DustEntity right, Object key);
+		
 		void send(DustEntity msg);
 	}
 
-	
-	protected static DustEnvironment RUNTIME;
-	
+	protected static DustInterface RUNTIME;
 
 	public static DustEntity getEntity(DustEntity type, String storeId, String revision) {
 		return RUNTIME.getEntity(type, storeId, revision);
 	}
-
 
 	public static <ValType> ValType getAttrValue(DustEntity entity, DustEntity field) {
 		return RUNTIME.getAttrValue(entity, field);

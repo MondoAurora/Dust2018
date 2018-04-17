@@ -157,6 +157,10 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 	}
 
 	@Override
+	public void launch() throws Exception {
+	}
+	
+	@Override
 	public void shutdown() throws Exception {
 	}
 
