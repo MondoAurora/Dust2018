@@ -10,7 +10,6 @@ import dust.utils.DustUtilsFactory;
 public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustKnowledgeInfoComponents,
 		DustKnowledgeInfoComponents.DustKnowledgeInfoSource {
 
-	// private DustSimpleManagerMeta meta;
 	private Set<DustKnowledgeInfoSource> parentSources = new HashSet<>();
 	private final SimpleType typeType;
 
@@ -24,8 +23,7 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 				protected InfoEntity create(String key, Object... hints) {
 					InfoEntity se = new InfoEntityData(DustSimpleManagerData.this, typeKey);
 					String[] s2 = key.split("\\.");
-					DustAttributeToolsGenericIdentified.idLocal.setValue(se, s2[(1 == s2.length) ? 0 : 1]);
-//					se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), s2[(1 == s2.length) ? 0 : 1]);
+					DustAttributeToolsGenericIdentified.idLocal.attribute().setValue(se, s2[(1 == s2.length) ? 0 : 1]);
 					return se;
 				}
 			};
@@ -92,10 +90,8 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 			protected SimpleCommand getItem(SimpleService mp, String id) {
 				SimpleCommand se = mp.getCommand(id);
 				String cmdId = ("dust" + mp.id + id).replace(":", "").replace(".", "");
-//				se.setFieldValue(optResolveMeta(DustAttributeToolsGenericIdentified.idLocal), cmdId);
-				DustAttributeToolsGenericIdentified.idLocal.setValue(se, cmdId);
-//				Dust.modifyRefs(DustConstKnowledgeInfoLinkCommand.Add, se, DustLinkToolsGenericConnected.Owner, mp);
-				DustLinkToolsGenericConnected.Owner.modify(se, DustRefCommand.Add, mp, null);
+				DustAttributeToolsGenericIdentified.idLocal.attribute().setValue(se, cmdId);
+				DustLinkToolsGenericConnected.Owner.link().modify(se, DustRefCommand.Add, mp, null);
 				return se;
 			}
 		});
@@ -107,21 +103,6 @@ public class DustSimpleManagerData implements DustSimpleRuntimeComponents, DustK
 		factGlobalEntities.put(mt, fact);
 		fact.factMetaParent = mf;
 	}
-
-//	@SuppressWarnings("unchecked")
-//	<RetType> RetType optResolveMeta(Object entity) {
-//		if (entity instanceof InfoEntity) {
-//			return (RetType) entity;
-//		} else if (entity instanceof IdentifiableMeta) {
-//			IdentifiableMeta meta = (IdentifiableMeta) entity;
-//			String idType = DustUtilsGen.getMetaType(meta);
-//			SimpleType type = (SimpleType) factGlobalEntities.get(null).get(idType);
-//			String idStore = DustUtilsGen.metaToStoreId(meta);
-//			return (RetType) factGlobalEntities.get(type).get(idStore);
-//		} else {
-//			return (RetType) entity;
-//		}
-//	}
 
 	void addParentSource(DustKnowledgeInfoSource src) {
 		parentSources.add(src);

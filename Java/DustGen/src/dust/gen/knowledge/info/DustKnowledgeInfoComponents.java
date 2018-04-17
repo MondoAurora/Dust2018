@@ -1,6 +1,8 @@
 package dust.gen.knowledge.info;
 
+import dust.gen.DustUtilsGen.AttributeWrapper;
 import dust.gen.DustUtilsGen.EntityWrapper;
+import dust.gen.DustUtilsGen.LinkWrapper;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.tools.generic.DustToolsGenericComponents;
 
@@ -30,118 +32,83 @@ public interface DustKnowledgeInfoComponents extends DustToolsGenericComponents,
 	}
 	
 	
-	enum DustLinkKnowledgeInfoEntity implements DustEntityLink {
+	enum DustLinkKnowledgeInfoEntity implements DustLinkWrapper {
 		Services, PrimaryType;
 		
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final LinkWrapper lw = new LinkWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return lw.entity();
 		}
 
 		@Override
-		public void process(DustEntity entity, DustRefVisitor proc) {
-			ew.process(entity, proc);
-		}
-
-		@Override
-		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
-			return ew.get(entity, createIfMissing, key);
-		}
-
-		@Override
-		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return ew.modify(entity, cmd, target, key);
+		public DustLink link() {
+			return lw;
 		}
 	}
 
-	enum DustAttributeKnowledgeInfoEntity implements DustEntityAttribute {
+	enum DustAttributeKnowledgeInfoEntity implements DustAttributeWrapper {
 		svcImpl;
 		
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final AttributeWrapper aw = new AttributeWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return aw.entity();
 		}
 
 		@Override
-		public <ValType> ValType getValue(DustEntity entity) {
-			return ew.getValue(entity);
-		}
-
-		@Override
-		public void setValue(DustEntity entity, Object value) {
-			ew.setValue(entity, value);
+		public DustAttribute attribute() {
+			return aw;
 		}
 	}
 
-	enum DustAttributeKnowledgeInfoIterator implements DustEntityAttribute {
+	enum DustAttributeKnowledgeInfoIterator implements DustAttributeWrapper {
 		index, key;
 		
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final AttributeWrapper aw = new AttributeWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return aw.entity();
 		}
 
 		@Override
-		public <ValType> ValType getValue(DustEntity entity) {
-			return ew.getValue(entity);
-		}
-
-		@Override
-		public void setValue(DustEntity entity, Object value) {
-			ew.setValue(entity, value);
+		public DustAttribute attribute() {
+			return aw;
 		}
 	}
 	
-	enum DustLinkKnowledgeInfoIterator implements DustEntityLink {
+	enum DustLinkKnowledgeInfoIterator implements DustLinkWrapper {
 		Cardinality;
 		
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final LinkWrapper lw = new LinkWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return lw.entity();
 		}
 
 		@Override
-		public void process(DustEntity entity, DustRefVisitor proc) {
-			ew.process(entity, proc);
-		}
-
-		@Override
-		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
-			return ew.get(entity, createIfMissing, key);
-		}
-
-		@Override
-		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return ew.modify(entity, cmd, target, key);
+		public DustLink link() {
+			return lw;
 		}
 	}
 	
-	enum DustAttributeKnowledgeInfoVariant implements DustEntityAttribute {
+	enum DustAttributeKnowledgeInfoVariant implements DustAttributeWrapper {
 		varType, value;
 		
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final AttributeWrapper aw = new AttributeWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return aw.entity();
 		}
 
 		@Override
-		public <ValType> ValType getValue(DustEntity entity) {
-			return ew.getValue(entity);
-		}
-
-		@Override
-		public void setValue(DustEntity entity, Object value) {
-			ew.setValue(entity, value);
+		public DustAttribute attribute() {
+			return aw;
 		}
 	}
 

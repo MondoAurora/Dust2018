@@ -125,7 +125,7 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 	@Override
 	public void dustKnowledgeProcProcessorBegin() throws Exception {
 		DustConstKnowledgeCommStatementType st = getMsgConst(DustLinkKnowledgeCommStatement.Type, DustConstKnowledgeCommStatementType.class);
-		String key = DustAttributeKnowledgeInfoIterator.key.getValue(DustConstKnowledgeInfoContext.Message.entity());
+		String key = DustAttributeKnowledgeInfoIterator.key.attribute().getValue(DustConstKnowledgeInfoContext.Message.entity());
 
 		switch (st) {
 		case Entity:
@@ -184,8 +184,8 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 	@Override
 	public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
 		String key = DustAttributeToolsGenericIdentified.idLocal
-				.getValue(DustConstKnowledgeInfoContext.Message.entity());
-		Object value = DustAttributeKnowledgeInfoVariant.value.getValue(DustConstKnowledgeInfoContext.Message.entity());
+				.attribute().getValue(DustConstKnowledgeInfoContext.Message.entity());
+		Object value = DustAttributeKnowledgeInfoVariant.value.attribute().getValue(DustConstKnowledgeInfoContext.Message.entity());
 
 		switch (dataCard) {
 		case Map:
@@ -203,8 +203,8 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 		return null;
 	}
 
-	private <RetType extends Enum<RetType>> RetType getMsgConst(DustEntityLink link, Class<RetType> rc) {
-		DustEntity e = link.get(DustConstKnowledgeInfoContext.Message.entity(), false, null);
+	private <RetType extends Enum<RetType>> RetType getMsgConst(DustLinkWrapper link, Class<RetType> rc) {
+		DustEntity e = link.link().get(DustConstKnowledgeInfoContext.Message.entity(), false, null);
 		RetType st = DustUtilsGen.enumFromEntity(e, rc);
 
 		return st;

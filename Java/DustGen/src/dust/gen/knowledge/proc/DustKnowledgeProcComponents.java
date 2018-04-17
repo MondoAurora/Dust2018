@@ -2,6 +2,7 @@ package dust.gen.knowledge.proc;
 
 import dust.gen.DustGenComponents;
 import dust.gen.DustUtilsGen.EntityWrapper;
+import dust.gen.DustUtilsGen.LinkWrapper;
 import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 
 public interface DustKnowledgeProcComponents extends DustGenComponents, DustKnowledgeInfoComponents {
@@ -10,29 +11,19 @@ public interface DustKnowledgeProcComponents extends DustGenComponents, DustKnow
 		OK, Skip, Exit, Repeat, Restart;
 	}
 
-	enum DustLinkKnowledgeProcMessage implements DustEntityLink {
+	enum DustLinkKnowledgeProcMessage implements DustLinkWrapper {
 		Command, Target;
 		
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final LinkWrapper lw = new LinkWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return lw.entity();
 		}
 
 		@Override
-		public void process(DustEntity entity, DustRefVisitor proc) {
-			ew.process(entity, proc);
-		}
-
-		@Override
-		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
-			return ew.get(entity, createIfMissing, key);
-		}
-
-		@Override
-		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return ew.modify(entity, cmd, target, key);
+		public DustLink link() {
+			return lw;
 		}
 	}
 

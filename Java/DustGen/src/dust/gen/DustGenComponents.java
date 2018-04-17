@@ -19,12 +19,20 @@ public interface DustGenComponents extends DustComponents {
 		DustEntity entity();
 	}
 	
-	interface DustEntityAttribute extends DustEntityWrapper {
+	interface DustAttributeWrapper extends DustEntityWrapper {
+		DustAttribute attribute();
+	}
+	
+	interface DustLinkWrapper extends DustEntityWrapper {
+		DustLink link();
+	}
+	
+	interface DustAttribute {
 		<ValType> ValType getValue(DustEntity entity);
 		void setValue(DustEntity entity, Object value);
 	}
 	
-	interface DustEntityLink extends DustEntityWrapper {
+	interface DustLink {
 		void process(DustEntity entity, DustRefVisitor proc);
 		DustEntity get(DustEntity entity, boolean createIfMissing, Object key);
 		DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key);

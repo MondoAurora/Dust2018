@@ -23,7 +23,7 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 
 	void talkInit() {
 		state = DustConstKnowledgeCommStatementType.Discussion;
-		msg = DustLinkToolsGenericChain.DefaultMessage.get(DustConstKnowledgeInfoContext.Self.entity(), true, null);
+		msg = DustLinkToolsGenericChain.DefaultMessage.link().get(DustConstKnowledgeInfoContext.Self.entity(), true, null);
 	}
 
 	void talkRelease() {
@@ -32,16 +32,16 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 	}
 
 	void msgInit(DustEntity cmd) {
-		DustLinkKnowledgeProcMessage.Command.modify(msg, DustRefCommand.Replace, cmd, null);
+		DustLinkKnowledgeProcMessage.Command.link().modify(msg, DustRefCommand.Replace, cmd, null);
 
-		DustLinkKnowledgeCommStatement.Type.modify(msg, DustRefCommand.Replace, state.entity(), null);
+		DustLinkKnowledgeCommStatement.Type.link().modify(msg, DustRefCommand.Replace, state.entity(), null);
 
-		DustAttributeKnowledgeInfoVariant.value.setValue(msg, null);
-		DustAttributeToolsGenericIdentified.idLocal.setValue(msg, null);
+		DustAttributeKnowledgeInfoVariant.value.attribute().setValue(msg, null);
+		DustAttributeToolsGenericIdentified.idLocal.attribute().setValue(msg, null);
 
-		DustLinkKnowledgeInfoIterator.Cardinality.modify(msg, DustRefCommand.Remove, null, null);
-		DustAttributeKnowledgeInfoIterator.index.setValue(msg, null);
-		DustAttributeKnowledgeInfoIterator.key.setValue(msg, null);
+		DustLinkKnowledgeInfoIterator.Cardinality.link().modify(msg, DustRefCommand.Remove, null, null);
+		DustAttributeKnowledgeInfoIterator.index.attribute().setValue(msg, null);
+		DustAttributeKnowledgeInfoIterator.key.attribute().setValue(msg, null);
 	}
 
 	void doSend() {
@@ -51,8 +51,8 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 	void sendValue() {
 		msgInit(DustCommandKnowledgeProcVisitor.Visit.entity());
 
-		DustAttributeKnowledgeInfoVariant.value.setValue(msg, value);
-		DustAttributeToolsGenericIdentified.idLocal.setValue(msg, key);
+		DustAttributeKnowledgeInfoVariant.value.attribute().setValue(msg, value);
+		DustAttributeToolsGenericIdentified.idLocal.attribute().setValue(msg, key);
 
 		doSend();
 	}
@@ -61,9 +61,9 @@ class DustJsonHandlerComm extends DustJsonComponents.ContentHandlerDefault imple
 		msgInit(begin ? DustCommandKnowledgeProcProcessor.Begin.entity() : DustCommandKnowledgeProcProcessor.End.entity());
 
 		if (begin) {
-			DustLinkKnowledgeInfoIterator.Cardinality.modify(msg, DustRefCommand.Replace, card.entity(), null);
-			DustAttributeKnowledgeInfoIterator.index.setValue(msg, idx);
-			DustAttributeKnowledgeInfoIterator.key.setValue(msg, key);
+			DustLinkKnowledgeInfoIterator.Cardinality.link().modify(msg, DustRefCommand.Replace, card.entity(), null);
+			DustAttributeKnowledgeInfoIterator.index.attribute().setValue(msg, idx);
+			DustAttributeKnowledgeInfoIterator.key.attribute().setValue(msg, key);
 		}
 		
 		doSend();

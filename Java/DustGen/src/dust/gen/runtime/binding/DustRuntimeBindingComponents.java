@@ -1,6 +1,8 @@
 package dust.gen.runtime.binding;
 
+import dust.gen.DustUtilsGen.AttributeWrapper;
 import dust.gen.DustUtilsGen.EntityWrapper;
+import dust.gen.DustUtilsGen.LinkWrapper;
 import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 
@@ -17,75 +19,50 @@ public interface DustRuntimeBindingComponents extends DustKnowledgeInfoComponent
 		}
 	}
 	
-	enum DustAttributeRuntimeBindingLogicAssignment implements DustEntityAttribute {
+	enum DustAttributeRuntimeBindingLogicAssignment implements DustAttributeWrapper {
 		javaClass;
 		
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final AttributeWrapper aw = new AttributeWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return aw.entity();
 		}
 
 		@Override
-		public <ValType> ValType getValue(DustEntity entity) {
-			return ew.getValue(entity);
-		}
-
-		@Override
-		public void setValue(DustEntity entity, Object value) {
-			ew.setValue(entity, value);
+		public DustAttribute attribute() {
+			return aw;
 		}
 	}
 
-	enum DustLinkRuntimeBindingLogicAssignment implements DustEntityLink {
+	enum DustLinkRuntimeBindingLogicAssignment implements DustLinkWrapper {
 		Service;
 		
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final LinkWrapper lw = new LinkWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return lw.entity();
 		}
 
 		@Override
-		public void process(DustEntity entity, DustRefVisitor proc) {
-			ew.process(entity, proc);
-		}
-
-		@Override
-		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
-			return ew.get(entity, createIfMissing, key);
-		}
-
-		@Override
-		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return ew.modify(entity, cmd, target, key);
+		public DustLink link() {
+			return lw;
 		}
 	}
 
-	enum DustLinkRuntimeBindingManager implements DustEntityLink {
+	enum DustLinkRuntimeBindingManager implements DustLinkWrapper {
 		LogicAssignments;
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final LinkWrapper lw = new LinkWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return lw.entity();
 		}
 
 		@Override
-		public void process(DustEntity entity, DustRefVisitor proc) {
-			ew.process(entity, proc);
-		}
-
-		@Override
-		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
-			return ew.get(entity, createIfMissing, key);
-		}
-
-		@Override
-		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return ew.modify(entity, cmd, target, key);
+		public DustLink link() {
+			return lw;
 		}
 	}
 	

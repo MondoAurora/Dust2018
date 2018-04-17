@@ -68,34 +68,34 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	void test() throws Exception {
-		DustEntity msg = DustLinkRuntimeEnvironmentManager.InitMessage.get(DustConstKnowledgeInfoContext.Self.entity(), true, null);
-		DustLinkKnowledgeProcMessage.Command.modify(msg, DustRefCommand.Add, DustCommandToolsGenericInitable.Init.entity(), null);
+		DustEntity msg = DustLinkRuntimeEnvironmentManager.InitMessage.link().get(DustConstKnowledgeInfoContext.Self.entity(), true, null);
+		DustLinkKnowledgeProcMessage.Command.link().modify(msg, DustRefCommand.Add, DustCommandToolsGenericInitable.Init.entity(), null);
 
-		DustEntity target = DustLinkKnowledgeProcMessage.Target.get(msg, true, null);
-		DustLinkKnowledgeInfoEntity.Services.modify(target, DustRefCommand.Add, DustServiceToolsPersistence.Store.entity(), null);
+		DustEntity target = DustLinkKnowledgeProcMessage.Target.link().get(msg, true, null);
+		DustLinkKnowledgeInfoEntity.Services.link().modify(target, DustRefCommand.Add, DustServiceToolsPersistence.Store.entity(), null);
 
-		DustLinkToolsGenericConnected.Extends.modify(DustServiceToolsPersistence.Store.entity(), DustRefCommand.Add, DustServiceToolsGeneric.Initable.entity(), null);
-		DustLinkToolsGenericConnected.Extends.modify(DustServiceToolsPersistence.Store.entity(), DustRefCommand.Add, DustServiceKnowledgeProc.Processor.entity(), null);
-		DustLinkToolsGenericConnected.Extends.modify(DustServiceKnowledgeComm.Discussion.entity(), DustRefCommand.Add, DustServiceKnowledgeProc.Processor.entity(), null);
-		DustLinkToolsGenericConnected.Extends.modify(DustServiceKnowledgeComm.Discussion.entity(), DustRefCommand.Add, DustServiceKnowledgeProc.Visitor.entity(), null);
+		DustLinkToolsGenericConnected.Extends.link().modify(DustServiceToolsPersistence.Store.entity(), DustRefCommand.Add, DustServiceToolsGeneric.Initable.entity(), null);
+		DustLinkToolsGenericConnected.Extends.link().modify(DustServiceToolsPersistence.Store.entity(), DustRefCommand.Add, DustServiceKnowledgeProc.Processor.entity(), null);
+		DustLinkToolsGenericConnected.Extends.link().modify(DustServiceKnowledgeComm.Discussion.entity(), DustRefCommand.Add, DustServiceKnowledgeProc.Processor.entity(), null);
+		DustLinkToolsGenericConnected.Extends.link().modify(DustServiceKnowledgeComm.Discussion.entity(), DustRefCommand.Add, DustServiceKnowledgeProc.Visitor.entity(), null);
 
 		assignLogic(DustServiceToolsPersistence.Store.entity(), "dust.persistence.jsonsimple.DustJsonReader");
 		assignLogic(DustServiceKnowledgeComm.Discussion.entity(), "dust.runtime.simple.DustSimpleCommDiscussion");
 
-		DustEntity msgRelay = DustLinkToolsGenericChain.DefaultMessage.get(target, true, null);
-		DustEntity agent = DustLinkKnowledgeProcMessage.Target.get(msgRelay, true, null);
-		DustLinkKnowledgeInfoEntity.Services.modify(agent, DustRefCommand.Add, DustServiceKnowledgeComm.Discussion.entity(), null);
+		DustEntity msgRelay = DustLinkToolsGenericChain.DefaultMessage.link().get(target, true, null);
+		DustEntity agent = DustLinkKnowledgeProcMessage.Target.link().get(msgRelay, true, null);
+		DustLinkKnowledgeInfoEntity.Services.link().modify(agent, DustRefCommand.Add, DustServiceKnowledgeComm.Discussion.entity(), null);
 
 		Dust.send(msg);
 	}
 
 	private void assignLogic(DustEntity svc, String javaClass) {
-		DustEntity bm = DustLinkRuntimeEnvironmentManager.BinaryManager.get(DustConstKnowledgeInfoContext.Self.entity(), true,
+		DustEntity bm = DustLinkRuntimeEnvironmentManager.BinaryManager.link().get(DustConstKnowledgeInfoContext.Self.entity(), true,
 				null);
 
-		DustEntity la = DustLinkRuntimeBindingManager.LogicAssignments.get(bm, true, svc);
-		DustAttributeRuntimeBindingLogicAssignment.javaClass.setValue(la, javaClass);
-		DustLinkRuntimeBindingLogicAssignment.Service.modify(la, DustRefCommand.Add, svc, null);
+		DustEntity la = DustLinkRuntimeBindingManager.LogicAssignments.link().get(bm, true, svc);
+		DustAttributeRuntimeBindingLogicAssignment.javaClass.attribute().setValue(la, javaClass);
+		DustLinkRuntimeBindingLogicAssignment.Service.link().modify(la, DustRefCommand.Add, svc, null);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		block = new SimpleBlock(
 				new InfoEntityData(mgrData, (SimpleType) DustTypeRuntimeEnvironment.Manager.entity()), null);
 		
-		DustEntity bm = DustLinkRuntimeEnvironmentManager.BinaryManager.get(DustConstKnowledgeInfoContext.Self.entity(), true,
+		DustEntity bm = DustLinkRuntimeEnvironmentManager.BinaryManager.link().get(DustConstKnowledgeInfoContext.Self.entity(), true,
 				null);
 		binMgr.setEntity(bm);
 
@@ -158,7 +158,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 		if (null != se) {
 			SimpleBlock b = block;
 			try {
-				InfoEntity target = (InfoEntity) DustLinkKnowledgeProcMessage.Target.get(msg, false, null);
+				InfoEntity target = (InfoEntity) DustLinkKnowledgeProcMessage.Target.link().get(msg, false, null);
 				block = new SimpleBlock(target, (InfoEntity) msg);
 				binMgr.sendMessage(target, se);
 			} catch (Exception e) {

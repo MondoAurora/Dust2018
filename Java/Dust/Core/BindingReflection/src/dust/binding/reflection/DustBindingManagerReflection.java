@@ -27,11 +27,11 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 	DustUtilsFactory<DustEntity, Class<?>> factBindings = new DustUtilsFactory<DustEntity, Class<?>>(false) {
 		@Override
 		protected Class<?> create(DustEntity key, Object... hints) {
-			DustLinkRuntimeBindingManager.LogicAssignments.process(eSelf, new DustRefVisitor() {
+			DustLinkRuntimeBindingManager.LogicAssignments.link().process(eSelf, new DustRefVisitor() {
 				@Override
 				public boolean dustRefVisit(DustEntity entity) throws Exception {
-					DustEntity refSvc = DustLinkRuntimeBindingLogicAssignment.Service.get(entity, false, null);
-					String className = DustAttributeRuntimeBindingLogicAssignment.javaClass.getValue(entity);
+					DustEntity refSvc = DustLinkRuntimeBindingLogicAssignment.Service.link().get(entity, false, null);
+					String className = DustAttributeRuntimeBindingLogicAssignment.javaClass.attribute().getValue(entity);
 					put(refSvc, Class.forName(className));
 					return true;
 				}
@@ -51,7 +51,7 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 
 		@Override
 		protected Object create(DustEntity key, Object... hints) {
-			DustLinkKnowledgeInfoEntity.Services.process(owner, new DustRefVisitor() {
+			DustLinkKnowledgeInfoEntity.Services.link().process(owner, new DustRefVisitor() {
 				@Override
 				public boolean dustRefVisit(DustEntity entity) throws Exception {
 					Class<?> svcClass = factBindings.get(entity);
@@ -80,7 +80,7 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 				} else {
 					target.append(", ");
 				}
-				String key = DustAttributeToolsGenericIdentified.idLocal.getValue(e.getKey());
+				String key = DustAttributeToolsGenericIdentified.idLocal.attribute().getValue(e.getKey());
 				Object val = e.getValue();
 				target = DustUtilsJava.sbApend(target, "", true, "\"", key, "\": \"", val.getClass().getName(), ":",
 						val.hashCode(), "\"");
@@ -115,7 +115,7 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 	DustUtilsFactory<DustEntity, MethodInfo> factMethods = new DustUtilsFactory<DustEntity, MethodInfo>(false) {
 		@Override
 		protected MethodInfo create(DustEntity key, Object... hints) {
-			String name = DustAttributeToolsGenericIdentified.idLocal.getValue(key);
+			String name = DustAttributeToolsGenericIdentified.idLocal.attribute().getValue(key);
 
 			// ugly name magic for now...
 			// name = name.replace("Command", "").replace(":", "");
@@ -138,8 +138,8 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 
 	@Override
 	public void sendMessage(DustEntity target, DustEntity msg) throws Exception {
-		DustEntity cmd = DustLinkKnowledgeProcMessage.Command.get(msg, false, null);
-		DustEntity eSvc = DustLinkToolsGenericConnected.Owner.get(cmd, false, null);
+		DustEntity cmd = DustLinkKnowledgeProcMessage.Command.link().get(msg, false, null);
+		DustEntity eSvc = DustLinkToolsGenericConnected.Owner.link().get(cmd, false, null);
 
 		BinFactory factImpl = DustUtils.getAttrValueSafe(target, DustAttributeKnowledgeInfoEntity.svcImpl.entity(),
 				cBinFact, target);

@@ -10,7 +10,7 @@ import dust.utils.DustUtilsJava;
 
 public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents {
 	
-	public static class EntityWrapper implements DustEntityWrapper, DustEntityAttribute, DustEntityLink {
+	public static class EntityWrapper implements DustEntityWrapper {
 		private final Enum<?> wrappedEnum;
 		private DustEntity entity;
 
@@ -28,6 +28,12 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 			
 			return entity;
 		}
+	}
+	
+	public static class LinkWrapper extends EntityWrapper implements DustLink {
+		public LinkWrapper(Enum<?> wrappedEnum) {
+			super(wrappedEnum);
+		}
 
 		@Override
 		public void process(DustEntity entity, DustRefVisitor proc) {
@@ -43,6 +49,13 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
 			return Dust.modifyRefs(cmd, entity, entity(), target, key);
 		}
+	}
+	
+	public static class AttributeWrapper extends EntityWrapper implements DustAttribute {
+
+		public AttributeWrapper(Enum<?> wrappedEnum) {
+			super(wrappedEnum);
+		}
 
 		@Override
 		public <ValType> ValType getValue(DustEntity entity) {
@@ -53,8 +66,6 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		public void setValue(DustEntity entity, Object value) {
 			Dust.setAttrValue(entity, entity(), value);
 		}
-		
-		
 	}
 	
 	public interface IdResolverResult {
