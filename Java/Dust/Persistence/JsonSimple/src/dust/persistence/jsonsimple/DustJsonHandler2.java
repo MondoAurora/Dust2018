@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.json.simple.parser.ParseException;
 
-import dust.gen.tools.persistence.DustToolsPersistenceComponents.DustStatusToolsPersistence;
+import dust.gen.tools.persistence.DustToolsPersistenceComponents.DustConstToolsPersistence;
 import dust.pub.DustException;
 import dust.utils.DustUtilsJava;
 
@@ -67,12 +67,12 @@ class DustJsonHandler2 extends DustJsonComponents.ContentHandlerRelay implements
 			switch (state) {
 			case handler:
 				if (!DustUtilsJava.isEqual(CONTENT_HANDLER, value)) {
-					DustException.throwException(DustStatusToolsPersistence.HandlerInvalid, CONTENT_HANDLER, value);
+					DustException.throwException(DustConstToolsPersistence.HandlerInvalid, CONTENT_HANDLER, value);
 				}
 				break;
 			case version:
 				if (!DustUtilsJava.isEqual(CONTENT_VERSION, value)) {
-					DustException.throwException(DustStatusToolsPersistence.HandlerVersionMismatch, CONTENT_VERSION,
+					DustException.throwException(DustConstToolsPersistence.HandlerVersionMismatch, CONTENT_VERSION,
 							value);
 				}
 				break;

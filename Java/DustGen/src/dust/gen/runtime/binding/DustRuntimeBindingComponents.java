@@ -6,7 +6,7 @@ import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 
 public interface DustRuntimeBindingComponents extends DustKnowledgeInfoComponents, DustKnowledgeProcComponents {
 	
-	enum DustStatusRuntimeBinding implements DustEntityWrapper {
+	enum DustConstRuntimeBinding implements DustEntityWrapper {
 		ErrorMethodAccess;
 		
 		private final EntityWrapper ew = new EntityWrapper(this);
@@ -60,7 +60,7 @@ public interface DustRuntimeBindingComponents extends DustKnowledgeInfoComponent
 
 		@Override
 		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+			return ew.modify(entity, cmd, target, key);
 		}
 	}
 
@@ -85,7 +85,7 @@ public interface DustRuntimeBindingComponents extends DustKnowledgeInfoComponent
 
 		@Override
 		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+			return ew.modify(entity, cmd, target, key);
 		}
 	}
 	

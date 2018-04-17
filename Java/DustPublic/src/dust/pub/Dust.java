@@ -41,7 +41,7 @@ public class Dust implements DustComponents {
 	}
 
 	public static DustEntity modifyRefs(DustRefCommand refCmd, DustEntity left, DustEntity linkDef, DustEntity right, Object... params) {
-		return RUNTIME.modifyRefs(refCmd, left, right, linkDef, params);
+		return RUNTIME.modifyRefs(refCmd, left, linkDef, right, params);
 	}
 	
 	public static void send(DustEntity msg) {

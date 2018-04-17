@@ -28,7 +28,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		try {
 			RUNTIME.shutdown();
 		} catch (Exception e) {
-			DustException.wrapException(e, DustStatusInfoPub.ErrorShutdownFailure);
+			DustException.wrapException(e, DustConstInfoPub.ErrorShutdownFailure);
 		}		
 	}
 

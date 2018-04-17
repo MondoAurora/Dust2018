@@ -8,8 +8,8 @@ import dust.pub.DustUtils;
 
 public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 
-	private static final EnumSet<DustConstKnowledgeInfoLinkCommand> REFCMD_CREATE = EnumSet
-			.of(DustConstKnowledgeInfoLinkCommand.Add, DustConstKnowledgeInfoLinkCommand.Replace);
+	private static final EnumSet<DustRefCommand> REFCMD_CREATE = EnumSet
+			.of(DustRefCommand.Add, DustRefCommand.Replace);
 
 	void processRefs(DustRefVisitor proc, InfoEntity entity, DustEntity eRef) {
 		SimpleLinkDef bl = (SimpleLinkDef) eRef;
@@ -19,7 +19,7 @@ public class DustSimpleManagerLink implements DustSimpleRuntimeComponents {
 				try {
 					proc.dustRefVisit(ref.eTarget);
 				} catch (Exception e) {
-					DustException.wrapException(e, DustStatusInfoPub.ErrorVistorExecution);
+					DustException.wrapException(e, DustConstInfoPub.ErrorVistorExecution);
 				}
 			}
 		}

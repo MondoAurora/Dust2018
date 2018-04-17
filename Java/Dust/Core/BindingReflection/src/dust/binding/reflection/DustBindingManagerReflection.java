@@ -131,7 +131,7 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 			} catch (Throwable e) {
 				ex = e;
 			}
-			DustException.wrapException(ex, DustStatusRuntimeBinding.ErrorMethodAccess.entity(), name);
+			DustException.wrapException(ex, DustConstRuntimeBinding.ErrorMethodAccess.entity(), name);
 			return null;
 		}
 	};

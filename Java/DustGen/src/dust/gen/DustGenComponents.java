@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 import dust.pub.DustComponents;
 
 public interface DustGenComponents extends DustComponents {
-	char SEP_PATH = '.';
+	char SEP_PATH = ':';
 	
-	char SEP_ATT = ':';
+	char SEP_ATT = '.';
 	
 	String INTERFACE_NAME_PREFIX = "Dust";
 	String INTERFACE_NAME_POSTFIX = "Components";

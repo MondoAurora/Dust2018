@@ -48,7 +48,7 @@ public interface DustToolsGenericComponents extends DustGenComponents {
 
 		@Override
 		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+			return ew.modify(entity, cmd, target, key);
 		}
 
 	}
@@ -75,7 +75,7 @@ public interface DustToolsGenericComponents extends DustGenComponents {
 
 		@Override
 		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+			return ew.modify(entity, cmd, target, key);
 		}
 	}
 

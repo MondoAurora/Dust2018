@@ -17,7 +17,7 @@ public interface DustComponents {
 		RetType create(Object... params);
 	}
 
-	enum DustStatusInfoPub implements DustEntity {
+	enum DustConstInfoPub implements DustEntity {
 		ErrorClassNotFound, ErrorClassInstantiation, ErrorShutdownFailure, ErrorVistorExecution;
 	}
 }

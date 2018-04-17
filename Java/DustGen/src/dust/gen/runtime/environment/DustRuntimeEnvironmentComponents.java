@@ -8,7 +8,7 @@ import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 public interface DustRuntimeEnvironmentComponents
 		extends DustKnowledgeInfoComponents, DustKnowledgeMetaComponents, DustKnowledgeProcComponents {
 
-	enum DustStatusRuntimeEnvironment implements DustEntityWrapper {
+	enum DustConstRuntimeEnvironment implements DustEntityWrapper {
 		LinkCreationError, MessageSendError, GetEntityError;
 
 		private final EntityWrapper ew = new EntityWrapper(this);
@@ -41,7 +41,7 @@ public interface DustRuntimeEnvironmentComponents
 
 		@Override
 		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+			return ew.modify(entity, cmd, target, key);
 		}
 	}
 

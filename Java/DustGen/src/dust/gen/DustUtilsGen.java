@@ -69,7 +69,8 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		DustService(DustTypeKnowledgeMeta.Service), 
 		DustCommand(DustTypeKnowledgeMeta.Command, true), 
 		DustConst(DustTypeKnowledgeMeta.Const), 
-		unknown(null);
+//		unknown(null)
+		;
 
 		private final boolean child;
 		private final Enum<?> metaEnum;
@@ -90,7 +91,7 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 					return mp;
 				}
 			}
-			return unknown;
+			return null;
 		}
 		
 		public String chopFrom(String name) {
@@ -163,6 +164,16 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		FACT_ENUM_RESOLVER.put(DustTypeKnowledgeMeta.Type, new EnumNames(DustTypeKnowledgeMeta.Type, true));
 	}
 	
+	public static <RetType extends Enum<RetType>> RetType enumFromEntity(DustEntity entity, Class<RetType> ec) {
+		for (RetType e : ec.getEnumConstants()) {
+			if (entity == ((DustEntityWrapper)e).entity()) {
+				return e;
+			}
+		}
+
+		return null;
+	}
+
 	public static void main(String[] args) {
 		IdResolverResult r = resolveEnum(DustConstKnowledgeMetaAttrType.Bool);
 		if ( r.getStoreId().isEmpty() ) {

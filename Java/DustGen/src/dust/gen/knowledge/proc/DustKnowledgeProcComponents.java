@@ -32,7 +32,7 @@ public interface DustKnowledgeProcComponents extends DustGenComponents, DustKnow
 
 		@Override
 		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+			return ew.modify(entity, cmd, target, key);
 		}
 	}
 
