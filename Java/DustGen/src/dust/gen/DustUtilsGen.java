@@ -10,7 +10,7 @@ import dust.utils.DustUtilsJava;
 
 public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents {
 	
-	public static class EntityWrapper implements DustEntityWrapper, DustEntityAttribute, DustEntityLink {
+	public static class EntityWrapper implements DustEntityWrapper {
 		private final Enum<?> wrappedEnum;
 		private DustEntity entity;
 
@@ -28,6 +28,12 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 			
 			return entity;
 		}
+	}
+	
+	public static class LinkWrapper extends EntityWrapper implements DustLink {
+		public LinkWrapper(Enum<?> wrappedEnum) {
+			super(wrappedEnum);
+		}
 
 		@Override
 		public void process(DustEntity entity, DustRefVisitor proc) {
@@ -43,6 +49,13 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
 			return Dust.modifyRefs(cmd, entity, entity(), target, key);
 		}
+	}
+	
+	public static class AttributeWrapper extends EntityWrapper implements DustAttribute {
+
+		public AttributeWrapper(Enum<?> wrappedEnum) {
+			super(wrappedEnum);
+		}
 
 		@Override
 		public <ValType> ValType getValue(DustEntity entity) {
@@ -53,8 +66,6 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		public void setValue(DustEntity entity, Object value) {
 			Dust.setAttrValue(entity, entity(), value);
 		}
-		
-		
 	}
 	
 	public interface IdResolverResult {
@@ -69,7 +80,8 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		DustService(DustTypeKnowledgeMeta.Service), 
 		DustCommand(DustTypeKnowledgeMeta.Command, true), 
 		DustConst(DustTypeKnowledgeMeta.Const), 
-		unknown(null);
+//		unknown(null)
+		;
 
 		private final boolean child;
 		private final Enum<?> metaEnum;
@@ -90,7 +102,7 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 					return mp;
 				}
 			}
-			return unknown;
+			return null;
 		}
 		
 		public String chopFrom(String name) {
@@ -163,6 +175,16 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 		FACT_ENUM_RESOLVER.put(DustTypeKnowledgeMeta.Type, new EnumNames(DustTypeKnowledgeMeta.Type, true));
 	}
 	
+	public static <RetType extends Enum<RetType>> RetType enumFromEntity(DustEntity entity, Class<RetType> ec) {
+		for (RetType e : ec.getEnumConstants()) {
+			if (entity == ((DustEntityWrapper)e).entity()) {
+				return e;
+			}
+		}
+
+		return null;
+	}
+
 	public static void main(String[] args) {
 		IdResolverResult r = resolveEnum(DustConstKnowledgeMetaAttrType.Bool);
 		if ( r.getStoreId().isEmpty() ) {

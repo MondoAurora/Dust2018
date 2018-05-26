@@ -1,6 +1,7 @@
 package dust.gen.runtime.environment;
 
 import dust.gen.DustUtilsGen.EntityWrapper;
+import dust.gen.DustUtilsGen.LinkWrapper;
 import dust.gen.knowledge.info.DustKnowledgeInfoComponents;
 import dust.gen.knowledge.meta.DustKnowledgeMetaComponents;
 import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
@@ -8,7 +9,7 @@ import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 public interface DustRuntimeEnvironmentComponents
 		extends DustKnowledgeInfoComponents, DustKnowledgeMetaComponents, DustKnowledgeProcComponents {
 
-	enum DustStatusRuntimeEnvironment implements DustEntityWrapper {
+	enum DustConstRuntimeEnvironment implements DustEntityWrapper {
 		LinkCreationError, MessageSendError, GetEntityError;
 
 		private final EntityWrapper ew = new EntityWrapper(this);
@@ -19,29 +20,19 @@ public interface DustRuntimeEnvironmentComponents
 		}
 	}
 
-	enum DustLinkRuntimeEnvironmentManager implements DustEntityLink {
+	enum DustLinkRuntimeEnvironmentManager implements DustLinkWrapper {
 		InitMessage, BinaryManager, MetaManager;
 
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final LinkWrapper lw = new LinkWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return lw.entity();
 		}
 
 		@Override
-		public void process(DustEntity entity, DustRefVisitor proc) {
-			ew.process(entity, proc);
-		}
-
-		@Override
-		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
-			return ew.get(entity, createIfMissing, key);
-		}
-
-		@Override
-		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+		public DustLink link() {
+			return lw;
 		}
 	}
 

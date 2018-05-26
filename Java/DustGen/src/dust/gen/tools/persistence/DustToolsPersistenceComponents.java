@@ -6,7 +6,7 @@ import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 import dust.gen.tools.generic.DustToolsGenericComponents;
 
 public interface DustToolsPersistenceComponents extends DustToolsGenericComponents, DustKnowledgeProcComponents, DustKnowledgeMetaComponents {
-	enum DustStatusToolsPersistence implements DustEntity {
+	enum DustConstToolsPersistence implements DustEntity {
 		HandlerInvalid, HandlerVersionMismatch;
 	}
 	

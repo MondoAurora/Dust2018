@@ -1,81 +1,58 @@
 package dust.gen.tools.generic;
 
 import dust.gen.DustGenComponents;
+import dust.gen.DustUtilsGen.AttributeWrapper;
 import dust.gen.DustUtilsGen.EntityWrapper;
+import dust.gen.DustUtilsGen.LinkWrapper;
 
 public interface DustToolsGenericComponents extends DustGenComponents {
 
-	enum DustAttributeToolsGenericIdentified implements DustEntityAttribute {
+	enum DustAttributeToolsGenericIdentified implements DustAttributeWrapper {
 		idLocal, idCombined;
 
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final AttributeWrapper aw = new AttributeWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return aw.entity();
 		}
 
 		@Override
-		public <ValType> ValType getValue(DustEntity entity) {
-			return ew.getValue(entity);
-		}
-
-		@Override
-		public void setValue(DustEntity entity, Object value) {
-			ew.setValue(entity, value);
+		public DustAttribute attribute() {
+			return aw;
 		}
 	}
 
-	enum DustLinkToolsGenericConnected implements DustEntityLink {
+	enum DustLinkToolsGenericConnected implements DustLinkWrapper {
 		Owner, Requires, Extends;
 
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final LinkWrapper lw = new LinkWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return lw.entity();
 		}
 
 		@Override
-		public void process(DustEntity entity, DustRefVisitor proc) {
-			ew.process(entity, proc);
-		}
-
-		@Override
-		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
-			return ew.get(entity, createIfMissing, key);
-		}
-
-		@Override
-		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+		public DustLink link() {
+			return lw;
 		}
 
 	}
 
-	enum DustLinkToolsGenericChain implements DustEntityLink {
+	enum DustLinkToolsGenericChain implements DustLinkWrapper {
 		NextEntity, DefaultMessage;
 
-		private final EntityWrapper ew = new EntityWrapper(this);
+		private final LinkWrapper lw = new LinkWrapper(this);
 
 		@Override
 		public DustEntity entity() {
-			return ew.entity();
+			return lw.entity();
 		}
 
 		@Override
-		public void process(DustEntity entity, DustRefVisitor proc) {
-			ew.process(entity, proc);
-		}
-
-		@Override
-		public DustEntity get(DustEntity entity, boolean createIfMissing, Object key) {
-			return ew.get(entity, createIfMissing, key);
-		}
-
-		@Override
-		public DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key) {
-			return modify(entity, cmd, target, key);
+		public DustLink link() {
+			return lw;
 		}
 	}
 

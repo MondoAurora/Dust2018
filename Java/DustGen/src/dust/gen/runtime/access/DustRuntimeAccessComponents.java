@@ -5,7 +5,7 @@ import dust.gen.knowledge.proc.DustKnowledgeProcComponents;
 
 public interface DustRuntimeAccessComponents extends DustKnowledgeInfoComponents, DustKnowledgeProcComponents {
 	
-	enum DustStatusRuntimeAccess implements DustEntity {
+	enum DustConstRuntimeAccess implements DustEntity {
 		AccessDenied;
 	}
 	

@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 import dust.pub.DustComponents;
 
 public interface DustGenComponents extends DustComponents {
-	char SEP_PATH = '.';
+	char SEP_PATH = ':';
 	
-	char SEP_ATT = ':';
+	char SEP_ATT = '.';
 	
 	String INTERFACE_NAME_PREFIX = "Dust";
 	String INTERFACE_NAME_POSTFIX = "Components";
@@ -19,12 +19,20 @@ public interface DustGenComponents extends DustComponents {
 		DustEntity entity();
 	}
 	
-	interface DustEntityAttribute extends DustEntityWrapper {
+	interface DustAttributeWrapper extends DustEntityWrapper {
+		DustAttribute attribute();
+	}
+	
+	interface DustLinkWrapper extends DustEntityWrapper {
+		DustLink link();
+	}
+	
+	interface DustAttribute {
 		<ValType> ValType getValue(DustEntity entity);
 		void setValue(DustEntity entity, Object value);
 	}
 	
-	interface DustEntityLink extends DustEntityWrapper {
+	interface DustLink {
 		void process(DustEntity entity, DustRefVisitor proc);
 		DustEntity get(DustEntity entity, boolean createIfMissing, Object key);
 		DustEntity modify(DustEntity entity, DustRefCommand cmd, DustEntity target, Object key);

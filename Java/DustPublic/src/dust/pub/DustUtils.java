@@ -33,7 +33,7 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 		try {
 			return (Content) instantiate(Class.forName(className), arr);
 		} catch (ClassNotFoundException e) {
-			DustException.wrapException(e, DustStatusInfoPub.ErrorClassNotFound);
+			DustException.wrapException(e, DustConstInfoPub.ErrorClassNotFound);
 			return null;
 		}
 	}
@@ -42,7 +42,7 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 		try {
 			return cc.newInstance();
 		} catch (Exception e) {
-			DustException.wrapException(e, DustStatusInfoPub.ErrorClassInstantiation);
+			DustException.wrapException(e, DustConstInfoPub.ErrorClassInstantiation);
 			return null;
 		}
 	}

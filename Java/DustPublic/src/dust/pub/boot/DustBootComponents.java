@@ -47,11 +47,12 @@ public interface DustBootComponents extends DustComponents {
 		void setEntity(DustEntity entity);
 	}
 
-	interface DustShutdownAware {
+	interface DustEnvironmentService {
+		void launch() throws Exception;
 		void shutdown() throws Exception;
 	}
 
-	public interface DustBindingManager extends DustShutdownAware, DustEntityOwner {
+	public interface DustBindingManager extends DustEnvironmentService, DustEntityOwner {
 		void sendMessage(DustEntity target, DustEntity msg) throws Exception;
 		// void initLogicInstance(DustEntity owner, DustEntity command) throws
 		// Exception;
@@ -62,7 +63,7 @@ public interface DustBootComponents extends DustComponents {
 		// void leaveCustomLogic();
 	}
 
-	interface DustRuntimeBootable extends Dust.DustEnvironment, DustConfigurable {
+	interface DustRuntimeBootable extends Dust.DustInterface, DustConfigurable, DustEnvironmentService {
 		void setBinaryManager(DustBindingManager binMgr);
 	}
 

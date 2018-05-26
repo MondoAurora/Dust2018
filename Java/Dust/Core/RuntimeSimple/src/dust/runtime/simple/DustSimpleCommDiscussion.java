@@ -11,7 +11,6 @@ import dust.gen.DustUtilsGen;
 import dust.gen.knowledge.comm.DustKnowledgeCommComponents;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
-import dust.utils.DustUtilsJava;
 
 public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 		DustKnowledgeCommComponents.DustKnowledgeCommDiscussion, DustSimpleRuntimeComponents {
@@ -125,8 +124,8 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 
 	@Override
 	public void dustKnowledgeProcProcessorBegin() throws Exception {
-		DustConstKnowledgeCommStatementType st = getStatementType();
-		String key = DustAttributeKnowledgeInfoIterator.key.getValue(DustConstKnowledgeInfoContext.Message.entity());
+		DustConstKnowledgeCommStatementType st = getMsgConst(DustLinkKnowledgeCommStatement.Type, DustConstKnowledgeCommStatementType.class);
+		String key = DustAttributeKnowledgeInfoIterator.key.attribute().getValue(DustConstKnowledgeInfoContext.Message.entity());
 
 		switch (st) {
 		case Entity:
@@ -159,7 +158,7 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 
 	@Override
 	public void dustKnowledgeProcProcessorEnd() throws Exception {
-		DustConstKnowledgeCommStatementType st = getStatementType();
+		DustConstKnowledgeCommStatementType st = getMsgConst(DustLinkKnowledgeCommStatement.Type, DustConstKnowledgeCommStatementType.class);
 
 		switch (st) {
 		case Data:
@@ -185,8 +184,8 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 	@Override
 	public DustConstKnowledgeProcVisitorResponse dustKnowledgeProcVisitorVisit(DustEntity entity) throws Exception {
 		String key = DustAttributeToolsGenericIdentified.idLocal
-				.getValue(DustConstKnowledgeInfoContext.Message.entity());
-		Object value = DustAttributeKnowledgeInfoVariant.value.getValue(DustConstKnowledgeInfoContext.Message.entity());
+				.attribute().getValue(DustConstKnowledgeInfoContext.Message.entity());
+		Object value = DustAttributeKnowledgeInfoVariant.value.attribute().getValue(DustConstKnowledgeInfoContext.Message.entity());
 
 		switch (dataCard) {
 		case Map:
@@ -204,20 +203,9 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 		return null;
 	}
 
-	private DustConstKnowledgeCommStatementType getStatementType() {
-		DustEntity type = DustLinkKnowledgeCommStatement.Type.get(DustConstKnowledgeInfoContext.Message.entity(), false,
-				null);
-		String state = DustAttributeToolsGenericIdentified.idLocal.getValue(type);
-		DustConstKnowledgeCommStatementType st = DustUtilsJava.parseEnum(state,
-				DustConstKnowledgeCommStatementType.class);
-
-		return st;
-	}
-
-	private <RetType extends Enum<RetType>> RetType getMsgConst(DustEntityLink link, Class<RetType> rc) {
-		DustEntity type = link.get(DustConstKnowledgeInfoContext.Message.entity(), false, null);
-		String str = DustAttributeToolsGenericIdentified.idLocal.getValue(type);
-		RetType st = DustUtilsJava.parseEnum(str, rc);
+	private <RetType extends Enum<RetType>> RetType getMsgConst(DustLinkWrapper link, Class<RetType> rc) {
+		DustEntity e = link.link().get(DustConstKnowledgeInfoContext.Message.entity(), false, null);
+		RetType st = DustUtilsGen.enumFromEntity(e, rc);
 
 		return st;
 	}
@@ -228,9 +216,6 @@ public class DustSimpleCommDiscussion implements DustKnowledgeCommComponents,
 
 	private String getStoreId(Enum<?> e) {
 		return DustUtilsGen.resolveEnum(e).getStoreId();
-		// return
-		// DustAttributeKnowledgeCommTerm.idStore.getValue(meta.entity());
-		// return DustUtilsGen.metaToStoreId(meta);
 	}
 
 	private void identifyCoreTerms() {
