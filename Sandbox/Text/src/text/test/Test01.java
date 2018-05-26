@@ -17,7 +17,7 @@ import dust.qnd.core.QnDDCore;
 public class Test01 implements Test01Constants {
 	
 	public static void main(String[] args) throws IOException {
-//		String fname = "input/61_2009_IRM.html";
+//		String fname = "input/JogszabSzerk.html";
 		String fname = "input/Ptk.html";
 //		String fname = "input/61_2009_IRM.html";
 //		String fname = "input/61_2009_IRM.html";
