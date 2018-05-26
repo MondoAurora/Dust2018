@@ -3,7 +3,13 @@ package text.test;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public interface Test01Constants {
+import dust.qnd.pub.QnDDComponents;
+
+public interface Test01Constants extends QnDDComponents {
+	enum Text {
+		dataId, text
+	}
+	
 	enum PGrp {
 		para, text, date,
 		year, month, day,

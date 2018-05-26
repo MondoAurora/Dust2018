@@ -9,6 +9,7 @@ import dust.gen.tools.persistence.DustToolsPersistenceComponents;
 import dust.pub.Dust;
 import dust.pub.DustException;
 import dust.pub.boot.DustBootComponents;
+import dust.utils.DustUtilsConfig;
 import dust.utils.DustUtilsFactory;
 
 public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootComponents.DustRuntimeBootable,
@@ -64,7 +65,7 @@ public class DustSimpleRuntime implements DustSimpleRuntimeComponents, DustBootC
 	}
 
 	@Override
-	public void init(DustConfig config) throws Exception {
+	public void init(DustUtilsConfig config) throws Exception {
 	}
 
 	void test() throws Exception {

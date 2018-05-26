@@ -12,13 +12,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import dust.qnd.core.QnDDCore;
+
 public class Test01 implements Test01Constants {
 	
 	public static void main(String[] args) throws IOException {
-//		String fname = "input/61_2009_IRM.html.txt";
-		String fname = "input/Ptk.html.txt";
-//		String fname = "input/61_2009_IRM.html.txt";
-//		String fname = "input/61_2009_IRM.html.txt";
+//		String fname = "input/61_2009_IRM.html";
+		String fname = "input/Ptk.html";
+//		String fname = "input/61_2009_IRM.html";
+//		String fname = "input/61_2009_IRM.html";
+		QnDDEnvironment env = QnDDCore.getKernel();
+		QnDDEntity entity;
 		
 		Document doc = Jsoup.parse(new File(fname), "UTF-8");
 		Elements list;
@@ -36,6 +40,12 @@ public class Test01 implements Test01Constants {
 			e = list.get(i);
 			if (!printElementHeader(e)) {
 				txt = e.text();
+				String id = e.attr("data-tid");
+				
+				entity = env.getEntity("Text", id);
+				entity.setAttValue(Text.dataId, id);
+				entity.setAttValue(Text.text, txt);
+				
 				m = PT_PARA.matcher(txt);
 				if ( m.matches() ) {
 					dump(">>>", PGrp.para.get(m), "paragrafus", PGrp.text.get(m));

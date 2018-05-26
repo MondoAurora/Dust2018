@@ -2,6 +2,8 @@ package dust.pub.boot;
 
 import dust.pub.Dust;
 import dust.pub.DustException;
+import dust.utils.DustUtilsConfig;
+import dust.utils.DustUtilsConfig.DustConfigConsole;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsJava;
 
@@ -18,7 +20,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		});
 
 		DustUtilsDev.dump("Launching Dust");
-		DustConfig cfg = new DustConfigConsole(args);
+		DustUtilsConfig cfg = new DustConfigConsole(args);
 		
 		DustUtilsDev.dump("Initializing components...");
 		initComps(cfg);		
@@ -32,7 +34,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 		}		
 	}
 
-	protected static void initComps(DustConfig cfg) throws Exception {
+	protected static void initComps(DustUtilsConfig cfg) throws Exception {
 		RUNTIME = optLoadInit(cfg, DustConfigKeys.DustRuntime);
 
 		DustBindingManager binMgr = optLoadInit(cfg, DustConfigKeys.DustBinding);
@@ -44,7 +46,7 @@ public class DustBootConsole extends Dust implements DustBootComponents {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <RetType extends DustConfigurable> RetType optLoadInit(DustConfig cfg, DustConfigKeys key) throws Exception {
+	protected static <RetType extends DustUtilsConfig.Configurable> RetType optLoadInit(DustUtilsConfig cfg, DustConfigKeys key) throws Exception {
 		RetType ret = null;
 		
 		String cName = cfg.getCfg(key);

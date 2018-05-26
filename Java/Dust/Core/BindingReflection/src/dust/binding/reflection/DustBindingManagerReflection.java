@@ -14,12 +14,12 @@ import dust.pub.DustComponents;
 import dust.pub.DustException;
 import dust.pub.DustUtils;
 import dust.pub.boot.DustBootComponents;
-import dust.pub.boot.DustBootComponents.DustConfig;
+import dust.utils.DustUtilsConfig;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 public class DustBindingManagerReflection implements DustBootComponents.DustBindingManager,
-		DustBootComponents.DustConfigurable, DustComponents, DustToolsGenericComponents, DustKnowledgeInfoComponents,
+        DustUtilsConfig.Configurable, DustComponents, DustToolsGenericComponents, DustKnowledgeInfoComponents,
 		DustKnowledgeMetaComponents, DustKnowledgeProcComponents, DustRuntimeBindingComponents {
 
 	DustEntity eSelf;
@@ -153,7 +153,7 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 	}
 
 	@Override
-	public void init(DustConfig config) throws Exception {
+	public void init(DustUtilsConfig config) throws Exception {
 	}
 
 	@Override
