@@ -4,9 +4,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dust.qnd.pub.QnDDComponents;
+import dust.utils.DustUtilsComponents;
 
-public interface Test01Constants extends QnDDComponents {
-	enum Text {
+public interface Test01Constants extends QnDDComponents, DustUtilsComponents {
+	enum Text implements QnDDAttDef {
 		dataId, text
 	}
 	
@@ -25,7 +26,8 @@ public interface Test01Constants extends QnDDComponents {
 	}
 	
 	enum Change {
-		Create("Megállapította: "), Change("Módosította: "), Remove("Hatályon kívül helyezte: "), Insert("Beiktatta: "), 
+		Create("Megállapította: "), Change("Módosította: "), 
+		Remove("Hatályon kívül helyezte: "), Insert("Beiktatta: "), 
 		;
 		
 		private final String header;
@@ -51,7 +53,7 @@ public interface Test01Constants extends QnDDComponents {
 		return "";
 	}
 	
-	Pattern PT_PARA = Pattern.compile("^(" + PGrp.para + "(\\d*\\.)*)\\s*§\\s*(" + PGrp.text + ".*)");
+	Pattern PT_PARA = Pattern.compile("^(" + PGrp.para + "(\\d*[\\.:])*)\\s*§\\s*(" + PGrp.text + ".*)");
 	Pattern PT_DATE = Pattern.compile("(" + PGrp.year + "\\d{4})\\.\\s*(" + PGrp.month + "[XIV]*).\\s*(" + PGrp.day + "\\d*)\\.*");
 	Pattern PT_REF = Pattern.compile("(" + PGrp.refLaw + ".*)\\s+(" + PGrp.refLoc + "(\\d+\\.)+\\s*§\\s*.*)");
 	

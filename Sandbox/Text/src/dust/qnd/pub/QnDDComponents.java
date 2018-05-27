@@ -1,6 +1,29 @@
 package dust.qnd.pub;
 
 public interface QnDDComponents {
+	interface QnDDAttDef {
+	}
+	
+	interface QnDDLinkDef {
+	}
+
+	interface QnDDLink {
+		QnDDLinkDef getDef(); 
+		<KeyType> KeyType getKey();
+		
+		QnDDEntity getSource();
+		QnDDEntity getTarget();
+		
+		boolean match(QnDDEntity eSource, QnDDEntity eTarget, QnDDLinkDef link, Object key);
+	}
+
+	interface QnDDLinkVisitor {
+		void processLink(QnDDLink link);
+	}
+	
+	abstract class QnDDLinkFinder implements QnDDLinkVisitor {
+		public QnDDLink found = null;
+	}
 
 	interface QnDDEntity {
 		String getType(); 
@@ -9,31 +32,9 @@ public interface QnDDComponents {
 		<AttType> AttType getAttValue(Enum<?> key);
 		<AttType> AttType setAttValue(Enum<?> key, AttType value);
 		
-		<Logic extends QnDDLogic> Logic getLogic(Class<Logic> lc);
+		void processRefs(QnDDLinkVisitor lv);
+		
+		<Logic> Logic getLogic(Class<Logic> lc);
 	}
 	
-	abstract class QnDDEnvironment {
-		public abstract QnDDEntity getEntity(String type, String key);
-		
-		protected void connect(QnDDLogic logic, QnDDEntity entity) throws Exception {
-			logic.setSelf(entity);
-		}
-	}
-	
-	abstract class QnDDLogic {
-		private QnDDEntity self;
-		
-		void setSelf(QnDDEntity s) throws Exception {
-			release(self);
-			this.self = s;
-			init(self);
-		}
-		
-		protected void init(QnDDEntity self) throws Exception {
-			
-		}
-		protected void release(QnDDEntity self) throws Exception {
-			
-		}
-	}
 }

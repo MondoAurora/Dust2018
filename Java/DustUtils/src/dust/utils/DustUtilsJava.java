@@ -63,6 +63,10 @@ public class DustUtilsJava implements DustUtilsComponents {
 		return (null == o1) ? (null == o2) : (null == o2) ? false : (o1 == o2) ? true : o1.equals(o2);
 	}
 
+	public static boolean isEqualLenient(Object ob, Object opt) {
+		return (null == opt) || ((null != ob) && opt.equals(ob));
+	}
+
 	public static <RetType extends Enum<RetType>> RetType shiftEnum(RetType e, boolean up, boolean rotate) {
 		int ord = e.ordinal();
 		@SuppressWarnings("unchecked")

@@ -13,6 +13,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import dust.qnd.core.QnDDCore;
+import dust.qnd.pub.QnDDEnvironment;
 
 public class Test01 implements Test01Constants {
 	
@@ -21,10 +22,16 @@ public class Test01 implements Test01Constants {
 		String fname = "input/Ptk.html";
 //		String fname = "input/61_2009_IRM.html";
 //		String fname = "input/61_2009_IRM.html";
+		Document doc = Jsoup.parse(new File(fname), CHS_UTF8);
+				
+		process(doc);
+	}
+
+	public static void process(Document doc) throws IOException {
+
 		QnDDEnvironment env = QnDDCore.getKernel();
 		QnDDEntity entity;
 		
-		Document doc = Jsoup.parse(new File(fname), "UTF-8");
 		Elements list;
 		Element e;
 		String txt;

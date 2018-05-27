@@ -4,12 +4,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import dust.qnd.pub.QnDDComponents;
+import dust.qnd.pub.QnDDEnvironment;
 import dust.qnd.pub.QnDDException;
+import dust.qnd.pub.QnDDLogic;
 import dust.utils.DustUtilsConfig;
 import dust.utils.DustUtilsFactory;
 
-class QnDDCoreKernel extends QnDDComponents.QnDDEnvironment implements DustUtilsConfig.Configurable, QnDDCoreComponents {
+class QnDDCoreKernel extends QnDDEnvironment implements DustUtilsConfig.Configurable, QnDDCoreComponents {
 
 	DustUtilsFactory<String, QnDDCoreStore> factStore = new DustUtilsFactory<String, QnDDCoreStore>(true) {
 		@Override
@@ -19,6 +20,8 @@ class QnDDCoreKernel extends QnDDComponents.QnDDEnvironment implements DustUtils
 	};
 
 	Set<QnDDCoreEntity> freeEntities = new HashSet<>();
+	
+	Set<QnDDCoreLink> links = new HashSet<>();
 
 	public QnDDCoreKernel() {
 		// TODO Auto-generated constructor stub
@@ -67,5 +70,13 @@ class QnDDCoreKernel extends QnDDComponents.QnDDEnvironment implements DustUtils
 	
 	void shutdown() {
 		
+	}
+
+	public void processRefs(QnDDLinkVisitor lv, QnDDCoreEntity src, QnDDCoreEntity target, QnDDLinkDef link, Object key) {
+		for ( QnDDCoreLink l : links ) {
+			if ( l.match(src, target, link, key)) {
+				lv.processLink(l);
+			}
+		}
 	}
 }
