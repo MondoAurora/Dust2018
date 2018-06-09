@@ -3,11 +3,10 @@ package text.test;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dust.qnd.pub.QnDDComponents;
-import dust.utils.DustUtilsComponents;
+import dust.qnd.pub.QnDDConstants;
 
-public interface Test01Constants extends QnDDComponents, DustUtilsComponents {
-	enum Text implements QnDDAttDef {
+public interface Test01Constants extends QnDDConstants {
+	enum DAttText implements QnDDAttDef {
 		dataId, text
 	}
 	

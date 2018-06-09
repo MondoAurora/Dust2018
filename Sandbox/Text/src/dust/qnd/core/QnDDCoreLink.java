@@ -1,51 +1,87 @@
 package dust.qnd.core;
 
 import dust.qnd.pub.QnDDComponents;
-import dust.utils.DustUtilsJava;
 
+@SuppressWarnings("unchecked")
 class QnDDCoreLink implements QnDDCoreComponents, QnDDComponents.QnDDLink {
+
+	class RevReader implements QnDDLink {
+		QnDDLinkDef linkRev;
+		
+		public RevReader(QnDDLinkDef linkRev) {
+			this.linkRev = linkRev;
+		}
+
+		@Override
+		public QnDDLinkDef getDef() {
+			return linkRev;
+		}
+
+		@Override
+		public <KeyType> KeyType getKey() {
+			return (KeyType) keyRev;
+		}
+
+		@Override
+		public QnDDEntity getSource() {
+			return eTarget;
+		}
+
+		@Override
+		public QnDDEntity getTarget() {
+			return eSource;
+		}
+		
+		@Override
+		public QnDDLink getRevOpt() {
+			return QnDDCoreLink.this;
+		}
+	}
+
+	QnDDLinkDef link;
 
 	QnDDCoreEntity eSource;
 	QnDDCoreEntity eTarget;
 
-	QnDDLinkDef link;
 	Object key;
+	Object keyRev;
+	
+	RevReader revReader;
 
-	public QnDDCoreLink(QnDDCoreEntity eSource, QnDDCoreEntity eTarget, QnDDLinkDef link, Object key) {
+	public QnDDCoreLink(QnDDLinkDef link, QnDDCoreEntity eSource, QnDDCoreEntity eTarget, Object key) {
 		this.eSource = eSource;
 		this.eTarget = eTarget;
 		this.link = link;
 		this.key = key;
-	}
-
-	public QnDDCoreEntity getSource() {
-		return eSource;
-	}
-
-	public QnDDCoreEntity getTarget() {
-		return eTarget;
-	}
-
-	public QnDDLinkDef getLink() {
-		return link;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <KeyType> KeyType  getKey() {
-		return (KeyType) key;
-	}
-
-	public boolean match(QnDDEntity eSource, QnDDEntity eTarget, QnDDLinkDef link, Object key) {
-		return DustUtilsJava.isEqualLenient(this.eSource, eSource)
-				&& DustUtilsJava.isEqualLenient(this.eTarget, eTarget) 
-				&& DustUtilsJava.isEqualLenient(this.link, link)
-				&& DustUtilsJava.isEqualLenient(this.key, key);
+		
+		QnDDLinkDef linkRev;
+		if ( null != (linkRev = QnDDCompUtils.getRevPair(link)) ) {
+			revReader = new RevReader(linkRev);
+		}
 	}
 
 	@Override
 	public QnDDLinkDef getDef() {
-		// TODO Auto-generated method stub
-		return null;
+		return link;
 	}
 
+	@Override
+	public QnDDCoreEntity getSource() {
+		return eSource;
+	}
+
+	@Override
+	public QnDDCoreEntity getTarget() {
+		return eTarget;
+	}
+
+	@Override
+	public <KeyType> KeyType  getKey() {
+		return (KeyType) key;
+	}
+	
+	@Override
+	public QnDDLink getRevOpt() {
+		return revReader;
+	}
 }

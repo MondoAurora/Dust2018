@@ -28,13 +28,18 @@ public abstract class QnDDLogic implements QnDDComponents, QnDDTypes, QnDDServic
 		QnDDLinkFinder lf  = new QnDDLinkFinder() {
 			@Override
 			public void processLink(QnDDLink l) {
-				if ( l.match(self, null, link, key)) {
-					this.found = l;
+				QnDDLink ll;
+				if ( null != ( ll = QnDDCompUtils.match(l, self, null, link, key))) {
+					this.found = ll;
 				}
 			}
 		};
 		self.processRefs(lf);
 		return (null == lf.found) ? null : lf.found.getTarget();
+	}
+
+	protected QnDDLink chgRef(QnDDLinkCmd cmd, QnDDLinkDef ld, QnDDEntity target, Object key) {
+		return self.changeRef(cmd, ld, target, key);
 	}
 
 }

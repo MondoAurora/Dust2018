@@ -106,6 +106,12 @@ class QnDDCoreEntity implements QnDDCoreComponents, QnDDComponents.QnDDEntity {
 	
 	@Override
 	public void processRefs(QnDDLinkVisitor lv) {
-		store.getKernel().processRefs(lv, this, null, null, null);
+		store.getKernel().processRefs(lv, null, this, null, null);
+	}
+	
+	@Override
+	public QnDDLink changeRef(QnDDLinkCmd cmd, QnDDLinkDef ld, QnDDEntity target, Object key) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

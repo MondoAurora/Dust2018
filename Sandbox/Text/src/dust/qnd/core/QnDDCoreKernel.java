@@ -20,7 +20,7 @@ class QnDDCoreKernel extends QnDDEnvironment implements DustUtilsConfig.Configur
 	};
 
 	Set<QnDDCoreEntity> freeEntities = new HashSet<>();
-	
+
 	Set<QnDDCoreLink> links = new HashSet<>();
 
 	public QnDDCoreKernel() {
@@ -57,26 +57,49 @@ class QnDDCoreKernel extends QnDDEnvironment implements DustUtilsConfig.Configur
 	public void connect(QnDDLogic logic, QnDDEntity entity) throws Exception {
 		super.connect(logic, entity);
 	}
-	
+
 	@Override
 	public void init(DustUtilsConfig config) throws Exception {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	void launch() {
-		
-	}
-	
-	void shutdown() {
-		
+
 	}
 
-	public void processRefs(QnDDLinkVisitor lv, QnDDCoreEntity src, QnDDCoreEntity target, QnDDLinkDef link, Object key) {
-		for ( QnDDCoreLink l : links ) {
-			if ( l.match(src, target, link, key)) {
-				lv.processLink(l);
+	void launch() {
+
+	}
+
+	void shutdown() {
+
+	}
+
+	public void processRefs(QnDDLinkVisitor lv, QnDDLinkDef link, QnDDCoreEntity src, QnDDCoreEntity target,
+			Object key) {
+		for (QnDDCoreLink l : links) {
+			QnDDLink ll;
+			if (null != (ll = QnDDCompUtils.match(l, src, target, link, key))) {
+				lv.processLink(ll);
 			}
 		}
+	}
+
+	@Override
+	public QnDDLink changeRef(QnDDLinkCmd cmd, QnDDLinkDef ld, QnDDEntity src, QnDDEntity target, Object key) {
+		QnDDLink ll = null;
+		QnDDCoreEntity eSrc = (QnDDCoreEntity) src;
+		QnDDCoreEntity eTgt = (QnDDCoreEntity) target;
+
+		switch (cmd) {
+		case Add:
+			QnDDCoreLink ql = new QnDDCoreLink(ld, eSrc, eTgt, key);
+			links.add(ql);
+			ll = ql;
+			break;
+		case Remove:
+			break;
+		case Update:
+			break;
+		}
+		
+		return ll;
 	}
 }

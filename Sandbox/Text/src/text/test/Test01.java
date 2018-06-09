@@ -49,9 +49,9 @@ public class Test01 implements Test01Constants {
 				txt = e.text();
 				String id = e.attr("data-tid");
 				
-				entity = env.getEntity("Text", id);
-				entity.setAttValue(Text.dataId, id);
-				entity.setAttValue(Text.text, txt);
+				entity = env.getEntity("DAttText", id);
+				entity.setAttValue(DAttText.dataId, id);
+				entity.setAttValue(DAttText.text, txt);
 				
 				m = PT_PARA.matcher(txt);
 				if ( m.matches() ) {
