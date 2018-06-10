@@ -20,4 +20,9 @@ public interface QnDDConstants extends QnDDComponents, DustUtilsComponents {
 			QnDDCompUtils.registerRevPair(this, opp);
 		}
 	}
+	
+	enum DAttText implements QnDDAttDef {
+		dataId, text
+	}
+	
 }

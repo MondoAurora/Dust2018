@@ -12,8 +12,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import dust.qnd.core.QnDDCore;
 import dust.qnd.pub.QnDDEnvironment;
+import dust.qnd.util.QnDDUtils;
 
 public class Test01 implements Test01Constants {
 	
@@ -23,13 +23,18 @@ public class Test01 implements Test01Constants {
 //		String fname = "input/61_2009_IRM.html";
 //		String fname = "input/61_2009_IRM.html";
 		Document doc = Jsoup.parse(new File(fname), CHS_UTF8);
+		
+		Test01 t = new Test01();
 				
-		process(doc);
+		t.process(doc);
 	}
 
-	public static void process(Document doc) throws IOException {
+	QnDDEntity eRoot;
+	QnDDEntity eCurrHead;
+	
+	public void process(Document doc) throws IOException {
 
-		QnDDEnvironment env = QnDDCore.getKernel();
+		QnDDEnvironment env = QnDDUtils.getEnv();
 		QnDDEntity entity;
 		
 		Elements list;
@@ -55,16 +60,18 @@ public class Test01 implements Test01Constants {
 				
 				m = PT_PARA.matcher(txt);
 				if ( m.matches() ) {
-					dump(">>>", PGrp.para.get(m), "paragrafus", PGrp.text.get(m));
+//					dump(">>>", PGrp.para.get(m), "paragrafus", PGrp.text.get(m));
 				}
 			}
 		}
 
 		list = doc.getElementsByClass("lbjvallist");
 		l = list.size();
+		l=0;
 		
 		Set<String> tvRefs = new TreeSet<>();
 
+		
 		if (1 == l) {
 			dump("==== Footer ====");
 			e = list.first();
@@ -125,7 +132,7 @@ public class Test01 implements Test01Constants {
 		System.out.println();
 	}
 
-	public static boolean printElementHeader(Element e) throws IOException {
+	public boolean printElementHeader(Element e) throws IOException {
 		if (e.classNames().contains("agc")) {
 			String tn = e.tagName();
 			if (tn.startsWith("h")) {

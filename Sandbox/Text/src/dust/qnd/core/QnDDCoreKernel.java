@@ -51,6 +51,9 @@ class QnDDCoreKernel extends QnDDEnvironment implements DustUtilsConfig.Configur
 	}
 
 	public QnDDCoreEntity getEntity(String type, String key) {
+		if ( null == key ) {
+			return new QnDDCoreEntity();
+		}
 		return factStore.get(type).get(key);
 	}
 

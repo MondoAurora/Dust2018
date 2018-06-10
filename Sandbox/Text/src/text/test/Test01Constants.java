@@ -6,10 +6,6 @@ import java.util.regex.Pattern;
 import dust.qnd.pub.QnDDConstants;
 
 public interface Test01Constants extends QnDDConstants {
-	enum DAttText implements QnDDAttDef {
-		dataId, text
-	}
-	
 	enum PGrp {
 		para, text, date,
 		year, month, day,

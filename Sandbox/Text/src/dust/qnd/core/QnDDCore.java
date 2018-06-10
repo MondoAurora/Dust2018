@@ -1,10 +1,11 @@
 package dust.qnd.core;
 
-import dust.qnd.pub.QnDDEnvironment;
 import dust.qnd.pub.QnDDException;
+import dust.qnd.util.QnDDUtils;
 import dust.utils.DustUtilsConfig;
 import dust.utils.DustUtilsConfig.DustConfigConsole;
 import dust.utils.DustUtilsDev;
+import qndd.app.lawminer.gui.LMGuiFrame;
 import text.test.Test01;
 
 public class QnDDCore implements QnDDCoreComponents {
@@ -31,17 +32,15 @@ public class QnDDCore implements QnDDCoreComponents {
 		DustUtilsDev.dump("Initializing...");
 		
 		kernel = new QnDDCoreKernel();
-		
+		QnDDUtils.init(kernel);
+				
 		kernel.init(cfg);
 		
 		DustUtilsDev.dump("Launching...");
 		
 		kernel.launch();
 		
+		new LMGuiFrame();
 		Test01.main(args);
-	}
-
-	public static QnDDEnvironment getKernel() {
-		return kernel;
 	}
 }

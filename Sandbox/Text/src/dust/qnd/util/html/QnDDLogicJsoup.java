@@ -1,4 +1,4 @@
-package dust.qnd.util;
+package dust.qnd.util.html;
 
 import java.io.File;
 
@@ -41,10 +41,11 @@ public class QnDDLogicJsoup extends QnDDLogic implements QnDDComponents, QnDDSer
 		
 		QnDDEntity n = getRef(QnDDLinkChain.Next, mapKey);
 		
-		DocumentReader reader  = n.getLogic(DocumentReader.class);
-		
-		reader.readDoc(doc);	
-
-		Test01.process(doc);
+		if ( null != n ) {
+			DocumentReader reader  = n.getLogic(DocumentReader.class);			
+			reader.readDoc(doc);	
+		} else {
+			new Test01().process(doc);			
+		}
 	}
 }

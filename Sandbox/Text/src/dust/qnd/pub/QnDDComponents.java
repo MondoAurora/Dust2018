@@ -3,9 +3,10 @@ package dust.qnd.pub;
 import java.util.HashMap;
 import java.util.Map;
 
+import dust.utils.DustUtilsComponents;
 import dust.utils.DustUtilsJava;
 
-public interface QnDDComponents {
+public interface QnDDComponents extends DustUtilsComponents {
 	interface QnDDAttDef {
 	}
 
