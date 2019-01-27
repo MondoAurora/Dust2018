@@ -112,4 +112,17 @@ public class DustUtilsJava implements DustUtilsComponents {
 		target.append(map ? " }" : " ]");
 		return target;
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <RetType> RetType getByPath(Object from, Object ... path) {
+		Object ret = from;
+		for (Object k : path) {
+			if ( k instanceof Enum ) {
+				k = ((Enum) k).name();
+			}
+			ret = ((Map<String, Object>) ret).get(k);
+		}
+		return (RetType) ret;
+	}
+
 }
