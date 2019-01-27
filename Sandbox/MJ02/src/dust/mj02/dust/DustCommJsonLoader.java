@@ -13,23 +13,24 @@ import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("unchecked")
-public class DustCommJsonLoader implements DustCommComponents {
+public class DustCommJsonLoader implements DustCommComponents, DustCommComponents.SourceReader {
 
-	enum KnownKeys {
+	enum JsonKeys {
 		Head, Body;
 	}
 
-	public Map<Object, Object> load(String fileName) throws Exception {
+	@Override
+	public Map<Object, Object> load(Object src) throws Exception {
 		Map<Object, Object> local = new HashMap<>();
 		JSONParser p = new JSONParser();
 
-		Object o = p.parse(new FileReader(fileName));
+		Object o = p.parse(new FileReader((String) src));
 
 		if (o instanceof Map) {
-			Object head = DustUtilsJava.getByPath(o, KnownKeys.Head);
+			Object head = DustUtilsJava.getByPath(o, JsonKeys.Head);
 			Object localKey = DustUtilsJava.getByPath(head, CommKeys.KeyCommIdLocal);
 
-			List<Object> content = DustUtilsJava.getByPath(o, KnownKeys.Body);
+			List<Object> content = DustUtilsJava.getByPath(o, JsonKeys.Body);
 			for (Object item : content) {
 				Object lKey = ((Map<String, Object>) item).get(localKey);
 				local.put(lKey, item);
@@ -48,7 +49,7 @@ public class DustCommJsonLoader implements DustCommComponents {
 			local.put(CommKeys.KeyCommIdLocal, localKey);
 			local.put(CommKeys.KeyCommIdStore, DustUtilsJava.getByPath(head, CommKeys.KeyCommIdStore));
 
-			DustUtilsDev.dump("done");
+			DustUtilsDev.dump(src, "loaded.");
 		}
 		
 		return local;

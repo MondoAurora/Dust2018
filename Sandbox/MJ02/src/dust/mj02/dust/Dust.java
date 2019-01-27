@@ -1,7 +1,5 @@
 package dust.mj02.dust;
 
-import java.util.Map;
-
 public class Dust implements DustComponents {
 	
 	protected interface DustRuntime {
@@ -29,8 +27,9 @@ public class Dust implements DustComponents {
 	
 	
 	public static void main(String[] args) throws Exception {
-		DustCommJsonLoader ldr = new DustCommJsonLoader();
+		DustCommComponents.SourceReader rdr = new DustCommJsonLoader();
+		DustCommDiscussion disc = new DustCommDiscussion();
 		
-		Map<Object, Object> boot1 = ldr.load("MJ02Boot02.json");
+		disc.load(rdr, "MJ02Boot02.json");
 	}
 }
