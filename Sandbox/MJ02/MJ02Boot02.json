@@ -6,22 +6,73 @@
 	},
 	"Body": [
 		{
+			"idStore 200": "Knowledge:Meta:AttDef:Identifier",
+			"idLocal 201": "KnowledgeMetaAttDefIdentifier"
+		},
+		{
+			"idStore 200": "Knowledge:Meta:AttDef:Integer",
+			"idLocal 201": "KnowledgeMetaAttDefInteger"
+		},
+		{
+			"idStore 200": "Knowledge:Meta:AttDef:Float",
+			"idLocal 201": "KnowledgeMetaAttDefFloat"
+		},
+		{
+			"idStore 200": "Knowledge:Meta:AttDef:Bool",
+			"idLocal 201": "KnowledgeMetaAttDefBool"
+		},
+		{
+			"idStore 200": "Knowledge:Meta:LinkDef:Single",
+			"idLocal 201": "KnowledgeMetaLinkDefSingle"
+		},
+		{
+			"idStore 200": "Knowledge:Meta:LinkDef:Set",
+			"idLocal 201": "KnowledgeMetaLinkDefSet"
+		},
+		{
+			"idStore 200": "Knowledge:Meta:LinkDef:Array",
+			"idLocal 201": "KnowledgeMetaLinkDefArray"
+		},
+		{
+			"idStore 200": "Knowledge:Meta:LinkDef:Map",
+			"idLocal 201": "KnowledgeMetaLinkDefMap"
+		},
+	
+		{
+			"idStore 200": "Knowledge:Meta:LinkDef:Type",
+			"idLocal 201": "KnowledgeMetaLinkDefType"
+		},
+		{
+			"idStore 200": "Knowledge:Meta:AttDef:Type",
+			"idLocal 201": "KnowledgeMetaAttDefType"
+		},
+	
+		{
 			"idStore 200": "Knowledge:Meta:Type",
 			"idLocal 201": "KnowledgeMetaType 1",
 			"idLocal 202": "Type",
-			"PrimaryType 108": "KnowledgeMetaType 1"
+			"PrimaryType 108": "KnowledgeMetaType 1",
+			"Extends 101": [
+				"ToolsGenericIdentified 6"
+			]
 		},
 		{
 			"idStore 200": "Knowledge:Meta:AttDef",
 			"idLocal 201": "KnowledgeMetaAttDef 2",
 			"idLocal 202": "AttDef",
-			"PrimaryType 108": "KnowledgeMetaType 1"
+			"PrimaryType 108": "KnowledgeMetaType 1",
+			"Extends 101": [
+				"ToolsGenericIdentified 6"
+			]
 		},
 		{
 			"idStore 200": "Knowledge:Meta:LinkDef",
 			"idLocal 201": "KnowledgeMetaLinkDef 3",
 			"idLocal 202": "LinkDef",
-			"PrimaryType 108": "KnowledgeMetaType 1"
+			"PrimaryType 108": "KnowledgeMetaType 1",
+			"Extends 101": [
+				"ToolsGenericIdentified 6"
+			]
 		},
 		{
 			"idStore 200": "Knowledge:Info:Entity",
@@ -58,6 +109,7 @@
 			"idLocal 201": "Owner 100",
 			"idLocal 202": "Owner",
 			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
+			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSingle",
 			"Owner 100": "ToolsGenericConnected 8"
 		},
 		{
@@ -65,6 +117,7 @@
 			"idLocal 201": "Extends 101",
 			"idLocal 202": "Extends",
 			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
+			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSet",
 			"Owner 100": "ToolsGenericConnected 8"
 		},
 		{
@@ -72,6 +125,7 @@
 			"idLocal 201": "PrimaryType 108",
 			"idLocal 202": "PrimaryType",
 			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
+			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSingle",
 			"Owner 100": "KnowledgeInfoEntity 4"
 		},
 		{
@@ -79,6 +133,7 @@
 			"idLocal 201": "idStore 200",
 			"idLocal 202": "idStore",
 			"PrimaryType 108": "KnowledgeMetaAttDef 2",
+			"KnowledgeMetaAttDefType" : "KnowledgeMetaAttDefIdentifier",
 			"Owner 100": "KnowledgeCommTerm 7"
 		},
 		{
@@ -86,22 +141,16 @@
 			"idLocal 201": "idLocal 201",
 			"idLocal 202": "idLocal",
 			"PrimaryType 108": "KnowledgeMetaAttDef 2",
-			"Owner 100": "KnowledgeCommTerm 7",
-			"Extends 101": {
-				"key1": "ToolsGenericIdentified 6",
-				"key2": "KnowledgeCommTerm 7"
-			}
+			"KnowledgeMetaAttDefType" : "KnowledgeMetaAttDefIdentifier",
+			"Owner 100": "KnowledgeCommTerm 7"
 		},
 		{
 			"idStore 200": "Tools:Generic:Identified.idLocal",
 			"idLocal 201": "idLocal 202",
 			"idLocal 202": "idLocal",
 			"PrimaryType 108": "KnowledgeMetaAttDef 2",
-			"Owner 100": "ToolsGenericIdentified 6",
-			"Extends 101": [
-				"ToolsGenericIdentified 6",
-				"KnowledgeCommTerm 7"
-			]
+			"KnowledgeMetaAttDefType" : "KnowledgeMetaAttDefIdentifier",
+			"Owner 100": "ToolsGenericIdentified 6"
 		}
 	]
 }

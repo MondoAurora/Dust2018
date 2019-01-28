@@ -131,6 +131,9 @@
 				"PrimaryType 108": "KnowledgeMetaLinkDef 3"
 			},
 			"ToolsGenericConnected 8": {
+				"Owner 100": "KnowledgeMetaLinkDefSet 3"
+			},
+			"ToolsGenericConnected 8": {
 				"Owner 100": "ToolsGenericConnected 8"
 			}
 		},	

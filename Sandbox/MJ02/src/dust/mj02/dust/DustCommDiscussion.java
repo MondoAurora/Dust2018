@@ -10,11 +10,7 @@ import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 public class DustCommDiscussion implements DustCommComponents {
-
-	enum KnownKeys {
-		Head, CommSrcHandler, KeyCommIdLocal, KeyCommIdStore, Body;
-	}
-
+		
 	DustUtilsFactory<Object, Map<Object, Object>> entities = new DustUtilsFactory<Object, Map<Object, Object>>(true) {
 		@Override
 		protected Map<Object, Object> create(Object key, Object... hints) {
@@ -57,7 +53,6 @@ public class DustCommDiscussion implements DustCommComponents {
 					return entities.get(si);
 				}
 			};
-
 			
 			for ( Object o : sd.values() ) {
 				if ( o instanceof Map ) {
