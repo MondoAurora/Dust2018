@@ -1,0 +1,211 @@
+{
+	"Head": {
+		"CommSrcHandler": "DustCommJsonLoader",
+		"KeyCommTerm": "KnowledgeCommTerm 7",
+		"KeyCommIdStore": "idStore 200",
+		"KeyCommIdLocal": "idLocal 201"
+	},
+	"Body": [
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Meta:Type",
+				"idLocal 201": "KnowledgeMetaType 1"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Type"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Meta:AttDef",
+				"idLocal 201": "KnowledgeMetaAttDef 2"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "AttDef"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Meta:LinkDef",
+				"idLocal 201": "KnowledgeMetaLinkDef 3"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "LinkDef"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Info:Entity",
+				"idLocal 201": "KnowledgeInfoEntity 4"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Entity"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Info:Link",
+				"idLocal 201": "KnowledgeInfoLink 5"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Link"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Tools:Generic:Identified",
+				"idLocal 201": "ToolsGenericIdentified 6"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Identified"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Comm:Term",
+				"idLocal 201": "KnowledgeCommTerm 7"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Info"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Tools:Generic:Connected",
+				"idLocal 201": "ToolsGenericConnected 8"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Connected"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaType 1"
+			}
+		},
+		
+		
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Tools:Generic:Connected.Owner",
+				"idLocal 201": "Owner 100"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Owner"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaLinkDef 3"
+			},
+			"ToolsGenericConnected 8": {
+				"Owner 100": "ToolsGenericConnected 8"
+			}
+		},	
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Tools:Generic:Connected.Extends",
+				"idLocal 201": "Extends 101"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "Extends"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaLinkDef 3"
+			},
+			"ToolsGenericConnected 8": {
+				"Owner 100": "KnowledgeMetaLinkDefSet 3"
+			},
+			"ToolsGenericConnected 8": {
+				"Owner 100": "ToolsGenericConnected 8"
+			}
+		},	
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Info:Entity.PrimaryType",
+				"idLocal 201": "PrimaryType 108"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "PrimaryType"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaLinkDef 3"
+			},
+			"ToolsGenericConnected 8": {
+				"Owner 100": "KnowledgeInfoEntity 4"
+			}
+		},
+		
+		
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Comm:Term.idStore",
+				"idLocal 201": "idStore 200"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "idStore"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaAttDef 2"
+			},
+			"ToolsGenericConnected 8": {
+				"Owner 100": "KnowledgeCommTerm 7"
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Knowledge:Comm:Term.idLocal",
+				"idLocal 201": "idLocal 201"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "idLocal"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaAttDef 2"
+			},
+			"ToolsGenericConnected 8": {
+				"Owner 100": "KnowledgeCommTerm 7",
+				"Extends 101": { 
+					"key1": "ToolsGenericIdentified 6", 
+					"key2": "KnowledgeCommTerm 7" 
+				}
+			}
+		},
+		{
+			"KnowledgeCommTerm 7": {
+				"idStore 200": "Tools:Generic:Identified.idLocal",
+				"idLocal 201": "idLocal 202"
+			},
+			"ToolsGenericIdentified 6": {
+				"idLocal 202": "idLocal"
+			},
+			"KnowledgeInfoEntity 4": {
+				"PrimaryType 108": "KnowledgeMetaAttDef 2"
+			},
+			"ToolsGenericConnected 8": {
+				"Owner 100": "ToolsGenericIdentified 6",
+				"Extends 101": [ 
+					"ToolsGenericIdentified 6", 
+					"KnowledgeCommTerm 7" 
+				]
+			}
+		}	
+	]
+}
