@@ -9,21 +9,30 @@ public class DustCommGen implements DustCommComponents {
 	private static Map<Object, Object> IDRESOLVER = new HashMap<Object, Object>();
 	
 	static {
-		IDRESOLVER.put("Knowledge:Meta:AttDef:Bool", CommAttDefTypes.AttDefBool);
-		IDRESOLVER.put("Knowledge:Meta:AttDef:Identifier", CommAttDefTypes.AttDefIdentifier);
-		IDRESOLVER.put("Knowledge:Meta:AttDef:Integer", CommAttDefTypes.AttDefInteger);
-		IDRESOLVER.put("Knowledge:Meta:AttDef:Float", CommAttDefTypes.AttDefFloat);
+		biDiPut("Knowledge:Meta:AttDef:Bool", CommAttDefTypes.AttDefBool);
+		biDiPut("Knowledge:Meta:AttDef:Identifier", CommAttDefTypes.AttDefIdentifier);
+		biDiPut("Knowledge:Meta:AttDef:Integer", CommAttDefTypes.AttDefInteger);
+		biDiPut("Knowledge:Meta:AttDef:Float", CommAttDefTypes.AttDefFloat);
 		
-		IDRESOLVER.put("Knowledge:Meta:LinkDef:Single", CommLinkDefTypes.LinkDefSingle);
-		IDRESOLVER.put("Knowledge:Meta:LinkDef:Set", CommLinkDefTypes.LinkDefSet);
-		IDRESOLVER.put("Knowledge:Meta:LinkDef:Array", CommLinkDefTypes.LinkDefArray);
-		IDRESOLVER.put("Knowledge:Meta:LinkDef:Map", CommLinkDefTypes.LinkDefMap);
+		biDiPut("Knowledge:Meta:LinkDef:Single", CommLinkDefTypes.LinkDefSingle);
+		biDiPut("Knowledge:Meta:LinkDef:Set", CommLinkDefTypes.LinkDefSet);
+		biDiPut("Knowledge:Meta:LinkDef:Array", CommLinkDefTypes.LinkDefArray);
+		biDiPut("Knowledge:Meta:LinkDef:Map", CommLinkDefTypes.LinkDefMap);
 		
-		IDRESOLVER.put("Knowledge:Meta:AttDef:Type", CommDiscKeys.AttDefType);
-		IDRESOLVER.put("Knowledge:Meta:LinkDef:Type", CommDiscKeys.LinkDefType);
+		biDiPut("Knowledge:Meta:AttDef:Type", CommDiscKeys.AttDefType);
+		biDiPut("Knowledge:Meta:LinkDef:Type", CommDiscKeys.LinkDefType);
+		
+		biDiPut("Knowledge:Info:Entity.PrimaryType", CommDiscKeys.AttPrimaryType);
+		biDiPut("Knowledge:Meta:AttDef", CommDiscKeys.TypeAtt);
+		biDiPut("Knowledge:Meta:LinkDef", CommDiscKeys.TypeLinkDef);
 	}
 	
-	public static <RetType> RetType  resolveStoreId(Object id) { 
+	private static void biDiPut(Object o1, Object o2) { 
+		IDRESOLVER.put(o1, o2);
+		IDRESOLVER.put(o2, o1);
+	}
+	
+	public static <RetType> RetType  resolve(Object id) { 
 		return (RetType) IDRESOLVER.get(id);
 	}
 }

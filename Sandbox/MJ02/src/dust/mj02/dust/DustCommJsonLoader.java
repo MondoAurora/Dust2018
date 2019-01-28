@@ -46,8 +46,9 @@ public class DustCommJsonLoader implements DustCommComponents, DustCommComponent
 				}
 			}
 			
-			local.put(CommKeys.KeyCommIdLocal, localKey);
-			local.put(CommKeys.KeyCommIdStore, DustUtilsJava.getByPath(head, CommKeys.KeyCommIdStore));
+//			local.put(CommKeys.KeyCommIdLocal, localKey);
+//			local.put(CommKeys.KeyCommIdStore, DustUtilsJava.getByPath(head, CommKeys.KeyCommIdStore));
+			local.put("", DustUtilsJava.getByPath(head, CommKeys.KeyCommIdStore));
 
 			DustUtilsDev.dump(src, "loaded.");
 		}

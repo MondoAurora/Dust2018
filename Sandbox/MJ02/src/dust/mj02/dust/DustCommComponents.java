@@ -8,7 +8,7 @@ public interface DustCommComponents extends DustComponents {
 	};
 	
 	enum CommDiscKeys {
-		LinkDefType, AttDefType
+		LinkDefType, AttDefType, AttPrimaryType, TypeAtt, TypeLinkDef
 	};
 	
 	enum CommAttDefTypes {
