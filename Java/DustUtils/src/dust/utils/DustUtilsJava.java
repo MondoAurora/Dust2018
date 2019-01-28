@@ -1,8 +1,16 @@
 package dust.utils;
 
+import java.util.EnumSet;
 import java.util.Map;
 
 public class DustUtilsJava implements DustUtilsComponents {
+	
+	public static <FlagType extends Enum<FlagType>> void optSetFlag(EnumSet<FlagType> target, FlagType flag, boolean condition) {
+		if ( condition ) {
+			target.add(flag);
+		}
+	}
+
 
 	public static String toString(Object ob) {
 		return (null == ob) ? "" : ob.toString();
