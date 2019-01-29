@@ -133,6 +133,13 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		}
 		return (RetType) retVal;
 	}
+	
+	@Override
+	public void processEntities(EntityProcessor proc) {
+		for ( Object key : entities.keys()) {
+			proc.processEntity(key, entities.peek(key));
+		}
+	}
 
 	@Override
 	public void processRefs(RefProcessor proc, DustDataEntity source, Object linkDefId, DustDataEntity target) {

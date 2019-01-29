@@ -7,10 +7,15 @@ public interface DustDataComponents extends DustComponents {
 		 void processRef(DustDataEntity source, DustDataEntity linkDef, DustDataEntity target, Object key);
 	}
 	
+	interface EntityProcessor {
+		 void processEntity(Object key, DustDataEntity entity);
+	}
+	
 	public interface DustDataContext {
 		DustDataEntity getEntity(Object globalId);
 		<RetType> RetType accessEntity(DataCommand cmd, DustDataEntity e, Object key, Object val, Object collId);
 		void processRefs(RefProcessor proc, DustDataEntity source, Object linkDef, DustDataEntity target);
+		void processEntities(EntityProcessor proc);
 	};
 
 	enum DataCommand {
