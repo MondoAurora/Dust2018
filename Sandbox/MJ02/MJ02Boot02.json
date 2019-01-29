@@ -71,7 +71,8 @@
 			"idLocal 202": "LinkDef",
 			"PrimaryType 108": "KnowledgeMetaType 1",
 			"Extends 101": [
-				"ToolsGenericIdentified 6"
+				"ToolsGenericIdentified 6", 
+				"KnowledgeMetaAttDef 2"
 			]
 		},
 		{

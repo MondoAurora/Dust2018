@@ -29,7 +29,8 @@ public class Dust implements DustComponents {
 	public static void main(String[] args) throws Exception {
 		DustCommComponents.SourceReader rdr = new DustCommJsonLoader();
 		DustCommDiscussion disc = new DustCommDiscussion();
+		DustDataContext ctx = new DustDataContext(null);
 		
-		disc.load(rdr, "MJ02Boot02.json");
+		disc.load(ctx, rdr, "MJ02Boot02.json");
 	}
 }

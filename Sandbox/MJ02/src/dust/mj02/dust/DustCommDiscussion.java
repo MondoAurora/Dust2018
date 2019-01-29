@@ -1,6 +1,5 @@
 package dust.mj02.dust;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,7 +10,7 @@ import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
-public class DustCommDiscussion implements DustCommComponents {
+public class DustCommDiscussion implements DustCommComponents, DustDataComponents {
 
 	private static final Object KEY_INFO = new Object();
 
@@ -24,6 +23,8 @@ public class DustCommDiscussion implements DustCommComponents {
 
 		private Object keyAttType;
 		private Object keyLinkType;
+		private Object idAttType;
+		private Object idLinkType;
 
 		public SourceVocabulary(Map<Object, Object> allData) {
 			this.allData = allData;
@@ -33,33 +34,13 @@ public class DustCommDiscussion implements DustCommComponents {
 			// keyLocalId = allData.remove(CommKeys.KeyCommIdLocal);
 		}
 	}
-	
-	class TempEntity {
-		Map<Object, Object> content = new HashMap<>();
-		
-		public Object put(Object key, Object value) {
-			return content.put(key, value);
-		}
-
-		public Object get(Object key) {
-			return content.get(key);
-		}
-	}
-
-	DustUtilsFactory<Object, TempEntity> entities = new DustUtilsFactory<Object, TempEntity>(true) {
-		@Override
-		protected TempEntity create(Object key, Object... hints) {
-			DustUtilsDev.dump("Creating entity", key);
-			return new TempEntity();
-		}
-	};
 
 	public DustCommDiscussion() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@SuppressWarnings("unchecked")
-	public void load(SourceReader rdr, Object... sources) throws Exception {
+	public void load(DustDataContext ctx, SourceReader rdr, Object... sources) throws Exception {
 		Set<SourceVocabulary> srcData = new HashSet<>();
 
 		for (Object src : sources) {
@@ -69,8 +50,8 @@ public class DustCommDiscussion implements DustCommComponents {
 			for (Map.Entry<Object, Object> eData : sVoc.allData.entrySet()) {
 				Map<Object, Object> in = (Map<Object, Object>) eData.getValue();
 				String si = DustUtilsJava.getByPath(in, sVoc.keyStoreId);
-				TempEntity e = entities.get(si);
-				e.put(sVoc.keyStoreId, si);
+				DustDataEntity e = ctx.getEntity(si);
+				ctx.accessEntity(DataCommand.setValue, e, sVoc.keyStoreId, si, null);
 
 				Object knownId = DustCommGen.resolve(si);
 				if (null != knownId) {
@@ -78,61 +59,66 @@ public class DustCommDiscussion implements DustCommComponents {
 					sVoc.idMap.put(li, si);
 					if (CommDiscKeys.AttDefType == knownId) {
 						sVoc.keyAttType = li;
+						sVoc.idAttType = si;
 					} else if (CommDiscKeys.LinkDefType == knownId) {
 						sVoc.keyLinkType = li;
+						sVoc.idLinkType = si;
 					}
 				}
 			}
 
 			for (Object in : sVoc.allData.values()) {
 				Object infoVal = null;
+				Object infoId = null;
 
 				Object keyMetaInfo = DustUtilsJava.getByPath(in, sVoc.keyAttType);
 				if (null != keyMetaInfo) {
 					Object metaInfo = sVoc.allData.get(keyMetaInfo);
 					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
 					infoVal = DustCommGen.resolve(metaId);
+					infoId = sVoc.idAttType;
 				} else if (null != (keyMetaInfo = DustUtilsJava.getByPath(in, sVoc.keyLinkType))) {
 					Object metaInfo = sVoc.allData.get(keyMetaInfo);
 					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
 					infoVal = DustCommGen.resolve(metaId);
+					infoId = sVoc.idLinkType;
 				}
 
 				if (null != infoVal) {
 					Object si = DustUtilsJava.getByPath(in, sVoc.keyStoreId);
-					TempEntity entity = entities.get(si);
+					DustDataEntity entity = ctx.getEntity(si);
 
-					entity.put(KEY_INFO, infoVal);
+					ctx.accessEntity(DataCommand.setValue, entity, KEY_INFO, infoVal, null);
+					ctx.accessEntity(DataCommand.setValue, entity, infoId, infoVal, null);
 				}
 			}
 		}
 
 		for (SourceVocabulary sd : srcData) {
-			DustUtilsFactory<Object, TempEntity> attRefs = new DustUtilsFactory<Object, TempEntity>(
-					true) {
+			DustUtilsFactory<Object, DustDataEntity> attRefs = new DustUtilsFactory<Object, DustDataEntity>(true) {
 				@Override
-				protected TempEntity create(Object key, Object... hints) {
+				protected DustDataEntity create(Object key, Object... hints) {
 					Object localAtt = sd.allData.get(key);
 					String si = DustUtilsJava.getByPath(localAtt, sd.keyStoreId);
-					return entities.get(si);
+					return ctx.getEntity(si);
 				}
 			};
 
 			for (Object o : sd.allData.values()) {
 				String si = DustUtilsJava.getByPath(o, sd.keyStoreId);
-				TempEntity entity = entities.get(si);
+				DustDataEntity entity = ctx.getEntity(si);
 
 				DustUtilsDev.dump("Loading entity data", si);
-				
-				if ( "Knowledge:Meta:Type".equals(si) ) {
+
+				if ("Knowledge:Meta:Type".equals(si)) {
 					DustUtilsDev.dump("hopp");
 				}
 
 				for (Map.Entry<Object, Object> eAtts : ((Map<Object, Object>) o).entrySet()) {
-					TempEntity attDef = attRefs.get(eAtts.getKey());
+					DustDataEntity attDef = attRefs.get(eAtts.getKey());
 
-					Object infoStoreId = DustUtilsJava.getByPath(attDef.content, sd.keyStoreId);
-					Object info = attDef.get(KEY_INFO);
+					Object infoStoreId = ctx.accessEntity(DataCommand.getValue, attDef, sd.keyStoreId, null, null);
+					Object info = ctx.accessEntity(DataCommand.getValue, attDef, KEY_INFO, null, null);
 
 					Object value = eAtts.getValue();
 
@@ -151,53 +137,43 @@ public class DustCommDiscussion implements DustCommComponents {
 							case AttDefInteger:
 								break;
 							}
+
+							ctx.accessEntity(DataCommand.setValue, entity, infoStoreId, value, null);
 						}
 					} else if (info instanceof CommLinkDefTypes) {
 						switch ((CommLinkDefTypes) info) {
 						case LinkDefSingle:
-							value = resolveEntity(sd, value);
+							value = resolveEntity(ctx, sd, value);
+							ctx.accessEntity(DataCommand.setRef, entity, infoStoreId, value, null);
 							break;
 						case LinkDefArray:
 						case LinkDefSet:
-							Collection<Object> c = (Collection<Object>) value;
-							if ((null != c) && !c.isEmpty()) {
-								Collection<Object> target = (CommLinkDefTypes.LinkDefArray == info) ? new ArrayList<>()
-										: new HashSet<>();
-								for (Object lk : c) {
-									target.add(resolveEntity(sd, lk));
-								}
-								value = target;
+							for (Object lk : (Collection<Object>) value) {
+								value = resolveEntity(ctx, sd, lk);
+								ctx.accessEntity(DataCommand.setRef, entity, infoStoreId, value, null);
 							}
 							break;
 						case LinkDefMap:
-							Map<Object, Object> m = (Map<Object, Object>) value;
-							if ((null != m) && !m.isEmpty()) {
-								Map<Object, Object> target = new HashMap<>();
-								for (Map.Entry<Object, Object> ee : ((Map<Object, Object>) o).entrySet()) {
-									target.put(ee.getKey(), resolveEntity(sd, ee.getValue()));
-								}
-								value = target;
+							for (Map.Entry<Object, Object> ee : ((Map<Object, Object>) value).entrySet()) {
+								ctx.accessEntity(DataCommand.setRef, entity, infoStoreId,
+										resolveEntity(ctx, sd, ee.getValue()), ee.getKey());
 							}
 							break;
 						}
 					}
 
 					DustUtilsDev.dump("  set att", infoStoreId, "to", value);
-
-					if (null != value) {
-						entity.put(infoStoreId, value);
-					}
 				}
 			}
 		}
-		
+
 		DustUtilsDev.dump("Finished loading data");
 	}
 
-	private Object resolveEntity(SourceVocabulary sd, Object value) {
+	private Object resolveEntity(DustDataContext ctx, SourceVocabulary sd, Object value) {
 		Object src = sd.allData.get(value);
 		Object idSrc = DustUtilsJava.getByPath(src, sd.keyStoreId);
-		return entities.get(idSrc);
+		return ctx.getEntity(idSrc);
 	}
 
 }
