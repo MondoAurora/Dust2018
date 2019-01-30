@@ -1,20 +1,20 @@
 package dust.mj02.dust;
 
 public interface DustDataComponents extends DustComponents {
-	public interface DustDataEntity {};
+	public interface DustEntity {};
 	
 	interface RefProcessor {
-		 void processRef(DustDataEntity source, DustDataEntity linkDef, DustDataEntity target, Object key);
+		 void processRef(DustEntity source, DustEntity linkDef, DustEntity target, Object key);
 	}
 	
 	interface EntityProcessor {
-		 void processEntity(Object key, DustDataEntity entity);
+		 void processEntity(Object key, DustEntity entity);
 	}
 	
-	public interface DustDataContext {
-		DustDataEntity getEntity(Object globalId);
-		<RetType> RetType accessEntity(DataCommand cmd, DustDataEntity e, Object key, Object val, Object collId);
-		void processRefs(RefProcessor proc, DustDataEntity source, Object linkDef, DustDataEntity target);
+	public interface DustContext {
+		DustEntity ctxGetEntity(Object globalId);
+		<RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, Object key, Object val, Object collId);
+		void processRefs(RefProcessor proc, DustEntity source, Object linkDef, DustEntity target);
 		void processEntities(EntityProcessor proc);
 	};
 

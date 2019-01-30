@@ -13,14 +13,14 @@ import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("unchecked")
-public class DustCommJsonLoader implements DustCommComponents, DustCommComponents.SourceReader {
+public class DustCommJsonLoader implements DustCommComponents, DustCommComponents.DustCommSource {
 
 	enum JsonKeys {
 		Head, Body;
 	}
 
 	@Override
-	public Map<Object, Object> load(Object src) throws Exception {
+	public Map<Object, Object> dustCommSourceRead(Object src) throws Exception {
 		Map<Object, Object> local = new HashMap<>();
 		JSONParser p = new JSONParser();
 

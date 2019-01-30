@@ -4,9 +4,9 @@ public interface DustComponents {
 	public interface DustRef {};
 	public interface DustId extends DustRef {};
 	
-	public enum DustCtx implements DustId {
-		CtxBlock, CtxMessage, CtxSelf;
-	}
+//	public enum DustCtx implements DustId {
+//		CtxBlock, CtxMessage, CtxSelf;
+//	}
 	
 	public class DustException extends RuntimeException {
 		private static final long serialVersionUID = 1L;

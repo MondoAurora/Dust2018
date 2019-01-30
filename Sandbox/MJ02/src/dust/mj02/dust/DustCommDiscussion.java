@@ -10,7 +10,7 @@ import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
-public class DustCommDiscussion implements DustCommComponents, DustDataComponents {
+public class DustCommDiscussion implements DustCommComponents, DustDataComponents, DustMetaComponents {
 
 	private static final Object KEY_INFO = new Object();
 
@@ -40,27 +40,27 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 	}
 
 	@SuppressWarnings("unchecked")
-	public void load(DustDataContext ctx, SourceReader rdr, Object... sources) throws Exception {
+	public void load(DustCommSource rdr, Object... sources) throws Exception {
 		Set<SourceVocabulary> srcData = new HashSet<>();
 
 		for (Object src : sources) {
-			SourceVocabulary sVoc = new SourceVocabulary(rdr.load(src));
+			SourceVocabulary sVoc = new SourceVocabulary(rdr.dustCommSourceRead(src));
 			srcData.add(sVoc);
 
 			for (Map.Entry<Object, Object> eData : sVoc.allData.entrySet()) {
 				Map<Object, Object> in = (Map<Object, Object>) eData.getValue();
 				String si = DustUtilsJava.getByPath(in, sVoc.keyStoreId);
-				DustDataEntity e = ctx.getEntity(si);
-				ctx.accessEntity(DataCommand.setValue, e, sVoc.keyStoreId, si, null);
+				DustEntity e = Dust.getEntity(si);
+				Dust.accessEntity(DataCommand.setValue, e, sVoc.keyStoreId, si, null);
 
 				Object knownId = DustCommGen.resolve(si);
 				if (null != knownId) {
 					Object li = eData.getKey();
 					sVoc.idMap.put(li, si);
-					if (CommDiscKeys.AttDefType == knownId) {
+					if (DustMetaAtts.AttDefType == knownId) {
 						sVoc.keyAttType = li;
 						sVoc.idAttType = si;
-					} else if (CommDiscKeys.LinkDefType == knownId) {
+					} else if (DustMetaAtts.LinkDefType == knownId) {
 						sVoc.keyLinkType = li;
 						sVoc.idLinkType = si;
 					}
@@ -86,27 +86,27 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 
 				if (null != infoVal) {
 					Object si = DustUtilsJava.getByPath(in, sVoc.keyStoreId);
-					DustDataEntity entity = ctx.getEntity(si);
+					DustEntity entity = Dust.getEntity(si);
 
-					ctx.accessEntity(DataCommand.setValue, entity, KEY_INFO, infoVal, null);
-					ctx.accessEntity(DataCommand.setValue, entity, infoId, infoVal, null);
+					Dust.accessEntity(DataCommand.setValue, entity, KEY_INFO, infoVal, null);
+					Dust.accessEntity(DataCommand.setValue, entity, infoId, infoVal, null);
 				}
 			}
 		}
 
 		for (SourceVocabulary sd : srcData) {
-			DustUtilsFactory<Object, DustDataEntity> attRefs = new DustUtilsFactory<Object, DustDataEntity>(true) {
+			DustUtilsFactory<Object, DustEntity> attRefs = new DustUtilsFactory<Object, DustEntity>(true) {
 				@Override
-				protected DustDataEntity create(Object key, Object... hints) {
+				protected DustEntity create(Object key, Object... hints) {
 					Object localAtt = sd.allData.get(key);
 					String si = DustUtilsJava.getByPath(localAtt, sd.keyStoreId);
-					return ctx.getEntity(si);
+					return Dust.getEntity(si);
 				}
 			};
 
 			for (Object o : sd.allData.values()) {
 				String si = DustUtilsJava.getByPath(o, sd.keyStoreId);
-				DustDataEntity entity = ctx.getEntity(si);
+				DustEntity entity = Dust.getEntity(si);
 
 				DustUtilsDev.dump("Loading entity data", si);
 
@@ -115,16 +115,16 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 				}
 
 				for (Map.Entry<Object, Object> eAtts : ((Map<Object, Object>) o).entrySet()) {
-					DustDataEntity attDef = attRefs.get(eAtts.getKey());
+					DustEntity attDef = attRefs.get(eAtts.getKey());
 
-					Object infoStoreId = ctx.accessEntity(DataCommand.getValue, attDef, sd.keyStoreId, null, null);
-					Object info = ctx.accessEntity(DataCommand.getValue, attDef, KEY_INFO, null, null);
+					Object infoStoreId = Dust.accessEntity(DataCommand.getValue, attDef, sd.keyStoreId, null, null);
+					Object info = Dust.accessEntity(DataCommand.getValue, attDef, KEY_INFO, null, null);
 
 					Object value = eAtts.getValue();
 
-					if (info instanceof CommAttDefTypes) {
+					if (info instanceof DustMetaValueAttDefType) {
 						if (null != value) {
-							switch ((CommAttDefTypes) info) {
+							switch ((DustMetaValueAttDefType) info) {
 							case AttDefBool:
 								if (!(value instanceof Boolean)) {
 									throw new DustException("Invalid type");
@@ -138,25 +138,25 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 								break;
 							}
 
-							ctx.accessEntity(DataCommand.setValue, entity, infoStoreId, value, null);
+							Dust.accessEntity(DataCommand.setValue, entity, infoStoreId, value, null);
 						}
-					} else if (info instanceof CommLinkDefTypes) {
-						switch ((CommLinkDefTypes) info) {
+					} else if (info instanceof DustMetaValueLinkDefType) {
+						switch ((DustMetaValueLinkDefType) info) {
 						case LinkDefSingle:
-							value = resolveEntity(ctx, sd, value);
-							ctx.accessEntity(DataCommand.setRef, entity, infoStoreId, value, null);
+							value = resolveEntity(sd, value);
+							Dust.accessEntity(DataCommand.setRef, entity, infoStoreId, value, null);
 							break;
 						case LinkDefArray:
 						case LinkDefSet:
 							for (Object lk : (Collection<Object>) value) {
-								value = resolveEntity(ctx, sd, lk);
-								ctx.accessEntity(DataCommand.setRef, entity, infoStoreId, value, null);
+								value = resolveEntity( sd, lk);
+								Dust.accessEntity(DataCommand.setRef, entity, infoStoreId, value, null);
 							}
 							break;
 						case LinkDefMap:
 							for (Map.Entry<Object, Object> ee : ((Map<Object, Object>) value).entrySet()) {
-								ctx.accessEntity(DataCommand.setRef, entity, infoStoreId,
-										resolveEntity(ctx, sd, ee.getValue()), ee.getKey());
+								Dust.accessEntity(DataCommand.setRef, entity, infoStoreId,
+										resolveEntity( sd, ee.getValue()), ee.getKey());
 							}
 							break;
 						}
@@ -170,10 +170,10 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 		DustUtilsDev.dump("Finished loading data");
 	}
 
-	private Object resolveEntity(DustDataContext ctx, SourceVocabulary sd, Object value) {
+	private Object resolveEntity(SourceVocabulary sd, Object value) {
 		Object src = sd.allData.get(value);
 		Object idSrc = DustUtilsJava.getByPath(src, sd.keyStoreId);
-		return ctx.getEntity(idSrc);
+		return Dust.getEntity(idSrc);
 	}
 
 }
