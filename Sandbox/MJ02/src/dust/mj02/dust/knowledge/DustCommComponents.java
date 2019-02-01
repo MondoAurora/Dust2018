@@ -1,6 +1,8 @@
-package dust.mj02.dust;
+package dust.mj02.dust.knowledge;
 
 import java.util.Map;
+
+import dust.mj02.dust.DustComponents;
 
 public interface DustCommComponents extends DustComponents {
 	enum CommKeys {

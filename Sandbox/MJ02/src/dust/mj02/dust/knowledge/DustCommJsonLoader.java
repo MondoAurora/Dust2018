@@ -1,4 +1,4 @@
-package dust.mj02.dust;
+package dust.mj02.dust.knowledge;
 
 import java.io.FileReader;
 import java.util.HashMap;

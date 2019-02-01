@@ -1,14 +1,19 @@
-package dust.mj02.dust;
+package dust.mj02.dust.knowledge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+
+import dust.mj02.dust.DustComponents;
 
 public interface DustMetaComponents extends DustComponents {
 	
+	enum DustMetaTypes {
+		Type, AttDef, LinkDef
+	};
+	
 	enum DustMetaAtts {
-		LinkDefType, AttDefType, AttPrimaryType, TypeAtt, TypeLinkDef
+		LinkDefType, AttDefType
 	};
 	
 	enum DustMetaValueAttDefType {

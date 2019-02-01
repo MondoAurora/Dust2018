@@ -1,4 +1,4 @@
-package dust.mj02.dust;
+package dust.mj02.dust.knowledge;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import dust.mj02.dust.Dust;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
@@ -53,7 +54,7 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 				DustEntity e = Dust.getEntity(si);
 				Dust.accessEntity(DataCommand.setValue, e, sVoc.keyStoreId, si, null);
 
-				Object knownId = DustCommGen.resolve(si);
+				Object knownId = DustKnowledgeGen.resolve(si);
 				if (null != knownId) {
 					Object li = eData.getKey();
 					sVoc.idMap.put(li, si);
@@ -75,12 +76,12 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 				if (null != keyMetaInfo) {
 					Object metaInfo = sVoc.allData.get(keyMetaInfo);
 					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
-					infoVal = DustCommGen.resolve(metaId);
+					infoVal = DustKnowledgeGen.resolve(metaId);
 					infoId = sVoc.idAttType;
 				} else if (null != (keyMetaInfo = DustUtilsJava.getByPath(in, sVoc.keyLinkType))) {
 					Object metaInfo = sVoc.allData.get(keyMetaInfo);
 					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
-					infoVal = DustCommGen.resolve(metaId);
+					infoVal = DustKnowledgeGen.resolve(metaId);
 					infoId = sVoc.idLinkType;
 				}
 

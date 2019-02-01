@@ -39,11 +39,11 @@
 		},
 	
 		{
-			"idStore 200": "Knowledge:Meta:LinkDef:Type",
+			"idStore 200": "Knowledge:Meta:LinkDef.Type",
 			"idLocal 201": "KnowledgeMetaLinkDefType"
 		},
 		{
-			"idStore 200": "Knowledge:Meta:AttDef:Type",
+			"idStore 200": "Knowledge:Meta:AttDef.Type",
 			"idLocal 201": "KnowledgeMetaAttDefType"
 		},
 	
@@ -76,14 +76,14 @@
 			]
 		},
 		{
-			"idStore 200": "Knowledge:Info:Entity",
-			"idLocal 201": "KnowledgeInfoEntity 4",
+			"idStore 200": "Knowledge:Data:Entity",
+			"idLocal 201": "KnowledgeDataEntity 4",
 			"idLocal 202": "Entity",
 			"PrimaryType 108": "KnowledgeMetaType 1"
 		},
 		{
-			"idStore 200": "Knowledge:Info:Link",
-			"idLocal 201": "KnowledgeInfoLink 5",
+			"idStore 200": "Knowledge:Data:Link",
+			"idLocal 201": "KnowledgeDataLink 5",
 			"idLocal 202": "Link",
 			"PrimaryType 108": "KnowledgeMetaType 1"
 		},
@@ -96,7 +96,7 @@
 		{
 			"idStore 200": "Knowledge:Comm:Term",
 			"idLocal 201": "KnowledgeCommTerm 7",
-			"idLocal 202": "Info",
+			"idLocal 202": "Data",
 			"PrimaryType 108": "KnowledgeMetaType 1"
 		},
 		{
@@ -122,12 +122,12 @@
 			"Owner 100": "ToolsGenericConnected 8"
 		},
 		{
-			"idStore 200": "Knowledge:Info:Entity.PrimaryType",
+			"idStore 200": "Knowledge:Data:Entity.PrimaryType",
 			"idLocal 201": "PrimaryType 108",
 			"idLocal 202": "PrimaryType",
 			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
 			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSingle",
-			"Owner 100": "KnowledgeInfoEntity 4"
+			"Owner 100": "KnowledgeDataEntity 4"
 		},
 		{
 			"idStore 200": "Knowledge:Comm:Term.idStore",

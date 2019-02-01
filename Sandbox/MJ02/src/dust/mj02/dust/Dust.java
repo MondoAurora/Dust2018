@@ -1,12 +1,8 @@
 package dust.mj02.dust;
 
-import dust.mj02.dust.DustDataComponents.DataCommand;
-import dust.mj02.dust.DustDataComponents.DustContext;
-import dust.mj02.dust.DustDataComponents.DustEntity;
-
 public class Dust implements DustComponents {
 	
-	protected interface DustRuntime extends DustContext {
+	public interface DustRuntime extends DustContext {
 //		DustRef buildRef(DustRef... path);
 //		void move(DustRef from, DustRef to);
 	}
@@ -25,9 +21,18 @@ public class Dust implements DustComponents {
 		return RUNTIME.ctxGetEntity(si);
 	}
 
-	public static Object accessEntity(DataCommand cmd, DustEntity e, Object key, Object val, Object collId) {
+	public static <RetType> RetType accessEntity(DataCommand cmd, DustEntity e, Object key, Object val, Object collId) {
 		return RUNTIME.ctxAccessEntity(cmd, e, key, val, collId);
 	}
+	
+	public static void processEntities(EntityProcessor proc) {
+		RUNTIME.ctxProcessEntities(proc);
+	}
+
+	public static void processRefs(RefProcessor proc, DustEntity source, Object linkDef, DustEntity target) {
+		RUNTIME.ctxProcessRefs(proc, source, linkDef, target);
+	}
+	
 	
 //	public static DustRef buildRef(DustRef... path) {
 //		return RUNTIME.buildRef(path);

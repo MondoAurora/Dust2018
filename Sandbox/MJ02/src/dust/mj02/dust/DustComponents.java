@@ -1,13 +1,7 @@
 package dust.mj02.dust;
 
 public interface DustComponents {
-	public interface DustRef {};
-	public interface DustId extends DustRef {};
-	
-//	public enum DustCtx implements DustId {
-//		CtxBlock, CtxMessage, CtxSelf;
-//	}
-	
+
 	public class DustException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
 
@@ -25,6 +19,36 @@ public interface DustComponents {
 			super(message);
 			// TODO Auto-generated constructor stub
 		}
+	}
+	
+	enum DataCommand {
+		getValue(false), setValue(false), setRef(true), removeRef(true), clearRefs(true);
+		
+		private final boolean ref;
+		
+		private DataCommand(boolean ref) {
+			this.ref = ref;
+		}
+	
+		public boolean isRef() {
+			return ref;
+		}
+	}
 
+	public interface DustEntity {}
+
+	interface EntityProcessor {
+		void processEntity(Object key, DustEntity entity);
+	}
+
+	interface RefProcessor {
+		 void processRef(DustEntity source, DustEntity linkDef, DustEntity target, Object key);
+	}
+	
+	public interface DustContext {
+		DustEntity ctxGetEntity(Object globalId);
+		<RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, Object key, Object val, Object collId);
+		void ctxProcessRefs(RefProcessor proc, DustEntity source, Object linkDef, DustEntity target);
+		void ctxProcessEntities(EntityProcessor proc);
 	}
 }

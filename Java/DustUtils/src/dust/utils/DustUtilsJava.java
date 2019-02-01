@@ -133,4 +133,10 @@ public class DustUtilsJava implements DustUtilsComponents {
 		return (RetType) ret;
 	}
 
+
+	public static void biDiPut(Map<Object, Object> target, Object o1, Object o2) { 
+		target.put(o1, o2);
+		target.put(o2, o1);
+	}
+
 }

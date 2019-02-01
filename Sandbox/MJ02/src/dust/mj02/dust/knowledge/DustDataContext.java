@@ -1,4 +1,4 @@
-package dust.mj02.dust;
+package dust.mj02.dust.knowledge;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		public SimpleRef(SimpleEntity linkDef, SimpleEntity source, SimpleEntity target, SimpleRef reverse, Object key,
 				SimpleRef orig) {
 			this.linkDef = linkDef;
-			lt = linkDef.get(DustCommGen.resolve(DustMetaAtts.LinkDefType));
+			lt = linkDef.get(DustKnowledgeGen.resolve(DustMetaAtts.LinkDefType));
 			if ( null == lt ) {
 				lt = DustMetaValueLinkDefType.LinkDefSingle;
 			}
@@ -135,14 +135,14 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	}
 	
 	@Override
-	public void processEntities(EntityProcessor proc) {
+	public void ctxProcessEntities(EntityProcessor proc) {
 		for ( Object key : entities.keys()) {
 			proc.processEntity(key, entities.peek(key));
 		}
 	}
 
 	@Override
-	public void processRefs(RefProcessor proc, DustEntity source, Object linkDefId, DustEntity target) {
+	public void ctxProcessRefs(RefProcessor proc, DustEntity source, Object linkDefId, DustEntity target) {
 		SimpleEntity eLD = (null == linkDefId) ? null : ctxGetEntity(linkDefId);
 		for ( SimpleRef ref : refs ) {
 			if ( DustUtilsJava.isEqualLenient(ref.source, source) 
