@@ -44,7 +44,7 @@ public class DustUtilsJava implements DustUtilsComponents {
 		return (null == str) ? true : str.isEmpty();
 	}
 
-	public static StringBuilder sbApend(StringBuilder sb, Object sep, boolean strict, Object... objects) {
+	public static StringBuilder sbAppend(StringBuilder sb, Object sep, boolean strict, Object... objects) {
 		for (Object ob : objects) {
 			String str = toString(ob);
 
@@ -94,10 +94,14 @@ public class DustUtilsJava implements DustUtilsComponents {
 
 	@SuppressWarnings("rawtypes")
 	public static StringBuilder toStringBuilder(StringBuilder target, Iterable<?> content, boolean map, String name) {
-		if (!isEmpty(name)) {
-			target = DustUtilsJava.sbApend(target, "", false, " \"", name, "\": ");
+		if ( null == content ) {
+			return null;
 		}
-		target = DustUtilsJava.sbApend(target, "", false, map ? "{ " : "[ ");
+		
+		if (!isEmpty(name)) {
+			target = DustUtilsJava.sbAppend(target, "", false, " \"", name, "\": ");
+		}
+		target = DustUtilsJava.sbAppend(target, "", false, map ? "{ " : "[ ");
 
 		boolean empty = true;
 		for (Object r : content) {
@@ -110,9 +114,9 @@ public class DustUtilsJava implements DustUtilsComponents {
 				Map.Entry e = (Map.Entry) r;
 				Object val = e.getValue();
 				if (!(val instanceof DumpFormatter)) {
-					val = sbApend(null, "", false, "\"", val, "\"");
+					val = sbAppend(null, "", false, "\"", val, "\"");
 				}
-				sbApend(target, "", false, " \"", e.getKey(), "\": ", val);
+				sbAppend(target, "", false, " \"", e.getKey(), "\": ", val);
 			} else {
 				target.append(r);
 			}

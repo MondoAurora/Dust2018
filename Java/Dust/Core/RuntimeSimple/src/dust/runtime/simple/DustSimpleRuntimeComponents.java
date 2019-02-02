@@ -82,7 +82,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 		}
 
 		public String toString(boolean withContent) {
-			StringBuilder sb = DustUtilsJava.sbApend(null, "", false, "{ \"Entity\": \"", hashCode(),
+			StringBuilder sb = DustUtilsJava.sbAppend(null, "", false, "{ \"Entity\": \"", hashCode(),
 					"\", \"primaryType\": \"", DustUtils.toString(getType()), "\"");
 
 			if (withContent) {
@@ -293,7 +293,7 @@ public interface DustSimpleRuntimeComponents extends DustBootComponents, DustKno
 
 		@Override
 		public String toString() {
-			StringBuilder sb = DustUtilsJava.sbApend(null, "", false, "{ \"link\": \"", linkDef, "\", \"target\":",
+			StringBuilder sb = DustUtilsJava.sbAppend(null, "", false, "{ \"link\": \"", linkDef, "\", \"target\":",
 					eTarget.toString(false));
 
 			if (null != key) {

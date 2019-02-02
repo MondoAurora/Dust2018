@@ -76,17 +76,17 @@ public class DustBindingManagerReflection implements DustBootComponents.DustBind
 			for (Map.Entry<DustEntity, Object> e : content.entrySet()) {
 				if (empty) {
 					empty = false;
-					target = DustUtilsJava.sbApend(target, "", true, "{");
+					target = DustUtilsJava.sbAppend(target, "", true, "{");
 				} else {
 					target.append(", ");
 				}
 				String key = DustAttributeToolsGenericIdentified.idLocal.attribute().getValue(e.getKey());
 				Object val = e.getValue();
-				target = DustUtilsJava.sbApend(target, "", true, "\"", key, "\": \"", val.getClass().getName(), ":",
+				target = DustUtilsJava.sbAppend(target, "", true, "\"", key, "\": \"", val.getClass().getName(), ":",
 						val.hashCode(), "\"");
 			}
 
-			return empty ? DustUtilsJava.sbApend(target, "", true, "{}") : target.append(" }");
+			return empty ? DustUtilsJava.sbAppend(target, "", true, "{}") : target.append(" }");
 		}
 	};
 

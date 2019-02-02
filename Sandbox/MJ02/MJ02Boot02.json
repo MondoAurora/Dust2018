@@ -130,6 +130,22 @@
 			"Owner 100": "KnowledgeDataEntity 4"
 		},
 		{
+			"idStore 200": "Knowledge:Data:Entity.Models",
+			"idLocal 201": "Models 108",
+			"idLocal 202": "Models",
+			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
+			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSet",
+			"Owner 100": "KnowledgeDataEntity 4"
+		},
+		{
+			"idStore 200": "Knowledge:Data:Entity.Services",
+			"idLocal 201": "Services 108",
+			"idLocal 202": "Services",
+			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
+			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSet",
+			"Owner 100": "KnowledgeDataEntity 4"
+		},
+		{
 			"idStore 200": "Knowledge:Comm:Term.idStore",
 			"idLocal 201": "idStore 200",
 			"idLocal 202": "idStore",
