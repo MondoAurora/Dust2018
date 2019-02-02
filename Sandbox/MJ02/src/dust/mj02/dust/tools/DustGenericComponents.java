@@ -5,7 +5,7 @@ import dust.mj02.dust.DustComponents;
 public interface DustGenericComponents extends DustComponents {
 	
 	enum DustGenericTypes {
-		Identified, Connected
+		Identified, Connected, Tag, Tagged
 	};
 	
 	enum DustGenericAtts {
@@ -14,8 +14,7 @@ public interface DustGenericComponents extends DustComponents {
 	};
 	
 	enum DustGenericLinks {
-		Owner, Extends
-		
+		Owner, Extends, Tags
 	};
 	
 }

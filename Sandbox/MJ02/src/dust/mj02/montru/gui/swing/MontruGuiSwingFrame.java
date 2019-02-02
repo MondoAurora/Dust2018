@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,51 +29,82 @@ import dust.mj02.dust.tools.DustToolsGen;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "serial"})
 public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, DustProcComponents,
 		DustGenericComponents, DustProcComponents.DustProcInitable {
 	
 	private static final Dimension INIT_FRAME_SIZE = new Dimension(800, 400);
 
-	enum InfoKey {
-		entity, type, id, owner, attributes, links
+	enum EntityKey {
+		entity, type, id, owner, attDefs, linkDefs, atts, links
 	}
 	
-	class EntityInfo extends EnumMap<InfoKey, Object> {
-		private static final long serialVersionUID = 1L;
+	enum RefKey {
+		source, target, linkDef, key
+	}
+	
+	class NodeInfo<NodeKey extends Enum<NodeKey>> {
+		private EnumMap<NodeKey, Object> content;
 
-		public EntityInfo() {
-			super(InfoKey.class);
+		public NodeInfo(Class<NodeKey> kc) {
+			content = new EnumMap<>(kc);
 		}
 		
-		public void add(InfoKey key, Object val) {
-			Set<Object> cont = (Set<Object>) get(key);
+		public Object put(NodeKey key, Object val) {
+			return content.put(key, val);
+		}
+		
+		public Object get(NodeKey key) {
+			return content.get(key);
+		}
+		
+		public void add(NodeKey key, Object val) {
+			Set<Object> cont = (Set<Object>) content.get(key);
 			if ( null == cont ) {
-				put(key, cont = new HashSet<>());
+				content.put(key, cont = new HashSet<>());
 			}
 			cont.add(val);
+		}
+	}
+	
+	class RefInfo extends NodeInfo<RefKey> {
+		public RefInfo(DustEntity source, DustEntity linkDef, DustEntity target, Object key) {
+			super(RefKey.class);
+			
+			put(RefKey.source, factEntityInfo.get(source));
+			put(RefKey.target, factEntityInfo.get(target));
+			put(RefKey.linkDef, factEntityInfo.get(linkDef));
+			
+			put(RefKey.key, (key instanceof DustEntity) ? factEntityInfo.get((DustEntity)key) : key );
+		}
+	}
+	
+	class EntityInfo extends NodeInfo<EntityKey> {
+		public EntityInfo() {
+			super(EntityKey.class);
+			put(EntityKey.atts, new HashMap<EntityInfo, Object>());
+			put(EntityKey.links, new HashSet<RefInfo>());
 		}
 		
 		@Override
 		public String toString() {
 			StringBuilder sb = null;
-			sb = DustUtilsJava.sbAppend(sb, ": ", true, get(InfoKey.type) + ": " + get(InfoKey.id));
+			sb = DustUtilsJava.sbAppend(sb, ": ", true, get(EntityKey.type) + ": " + get(EntityKey.id));
 			
-			StringBuilder sbc = DustUtilsJava.toStringBuilder(null, (Iterable<?>) get(InfoKey.attributes), false, "atts");
+			StringBuilder sbc = DustUtilsJava.toStringBuilder(null, (Iterable<?>) get(EntityKey.attDefs), false, "atts");
 			
 			DustUtilsJava.sbAppend(sb, " ", false, sbc);
 			
-			sbc = DustUtilsJava.toStringBuilder(null, (Iterable<?>) get(InfoKey.links), false, "links");
+			sbc = DustUtilsJava.toStringBuilder(null, (Iterable<?>) get(EntityKey.linkDefs), false, "linkDefs");
 			
 			DustUtilsJava.sbAppend(sb, " ", false, sbc);
 			
 			return sb.toString();
 		}
+
 	}
 	
 	class PnlEntity extends JPanel {
-		private static final long serialVersionUID = 1L;
-		
 		EntityInfo ei;
 
 		public PnlEntity(EntityInfo ei) {
@@ -149,10 +181,25 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 		@Override
 		protected EntityInfo create(DustEntity key, Object... hints) {
 			EntityInfo ret = new EntityInfo();
-			ret.put(InfoKey.entity, key);
+			ret.put(EntityKey.entity, key);
+			
+			String id = Dust.accessEntity(DataCommand.getValue, key,
+					resEntity.get(DustGenericAtts.identifiedIdLocal), null, null);
+			
+			ret.put(EntityKey.id, id);
+
 			return ret;
 		}
 	};
+	
+	ArrayList<RefInfo> arrRefs = new ArrayList<>();
+	
+	Map<Object, Object> resId = new HashMap<Object, Object>();
+	Map<Object, Object> resEntity = new HashMap<Object, Object>();
+	Map<Object, Object> resEntityRev = new HashMap<Object, Object>();
+	
+	Set<EntityInfo> allAtts = new HashSet<>();
+
 	
 	Frame frame;
 	PnlEditor pnlEditor;
@@ -164,46 +211,69 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 	@Override
 	public void dustProcInitableInit() throws Exception {
 		frame.setTitle(getClass().getSimpleName());
+		
+		resId.clear();
+		resEntity.clear();
+		resEntityRev.clear();
 
-		Map<Object, Object> resId = DustKnowledgeGen.resolveAll(null, DustMetaTypes.Type, DustMetaTypes.AttDef,
+		allAtts.clear();
+
+		DustKnowledgeGen.resolveAll(resId, DustMetaTypes.Type, DustMetaTypes.AttDef,
 				DustMetaTypes.LinkDef, DustDataLinks.EntityPrimaryType);
 		DustToolsGen.resolveAll(resId, DustGenericAtts.identifiedIdLocal, DustGenericLinks.Owner,
 				DustGenericLinks.Extends);
-
-		Map<Object, Object> resEntity = new HashMap<Object, Object>();
 
 		for (Object k : resId.keySet().toArray()) {
 			resEntity.put(k, Dust.getEntity(resId.get(k)));
 		}
 
-		Map<Object, Object> resEntityRev = new HashMap<Object, Object>();
-
 		for (Map.Entry<Object, Object> ee : resEntity.entrySet()) {
 			resEntityRev.put(ee.getValue(), ee.getKey());
 		}
+		
+		arrRefs.clear();
 
 		Dust.processRefs(new RefProcessor() {
 			@Override
 			public void processRef(DustEntity source, DustEntity linkDef, DustEntity target, Object key) {
+				RefInfo ri = new RefInfo(source, linkDef, target, key);
+				arrRefs.add(ri);
+				
+				EntityInfo eiObj = factEntityInfo.get(source);	
+				((Set<RefInfo>)eiObj.get(EntityKey.links)).add(ri);
+
 				if (resEntity.containsValue(target)) {
 					if (linkDef == resEntity.get(DustDataLinks.EntityPrimaryType)) {
-						EntityInfo eiObj = factEntityInfo.get(source);
-						
-						String id = Dust.accessEntity(DataCommand.getValue, source,
-								resId.get(DustGenericAtts.identifiedIdLocal), null, null);
-						
-						eiObj.put(InfoKey.id, id);
-						eiObj.put(InfoKey.type, resEntityRev.get(target));	
+						eiObj.put(EntityKey.type, resEntityRev.get(target));	
 					}
 				} else if (linkDef == resEntity.get(DustGenericLinks.Owner)) {
 					EntityInfo eiType = factEntityInfo.get(target);
-					EntityInfo eiObj = factEntityInfo.get(source);
 					
-					eiObj.put(InfoKey.owner, target);
-					eiType.add((DustMetaTypes.AttDef == eiObj.get(InfoKey.type)) ? InfoKey.attributes : InfoKey.links, eiObj);
+					eiObj.put(EntityKey.owner, eiType);
+					if (DustMetaTypes.AttDef == eiObj.get(EntityKey.type)) {
+						eiType.add(EntityKey.attDefs, eiObj);
+						allAtts.add(eiObj);
+					} else {
+						eiType.add(EntityKey.linkDefs, eiObj);
+					}
 				}
 			}
 		}, null, null, null);
+		
+		Dust.processEntities(new EntityProcessor() {
+			@Override
+			public void processEntity(Object key, DustEntity entity) {
+				EntityInfo ei = factEntityInfo.get(entity);
+				
+				for ( EntityInfo eiAtt : allAtts ) {
+					Object val = Dust.accessEntity(DataCommand.getValue, entity, eiAtt.get(EntityKey.entity), null, null);
+					if ( null != val ) {
+						EntityInfo eiType = (EntityInfo) eiAtt.get(EntityKey.owner);
+						((Map<EntityInfo, Object>)ei.get(EntityKey.atts)).put(eiAtt, val);
+					}
+				}
+			}
+		});
 		
 
 		pnlEditor.reloadData();

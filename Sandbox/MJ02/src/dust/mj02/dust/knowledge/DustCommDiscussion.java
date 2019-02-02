@@ -139,7 +139,7 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 								break;
 							}
 
-							Dust.accessEntity(DataCommand.setValue, entity, infoStoreId, value, null);
+							Dust.accessEntity(DataCommand.setValue, entity, attDef, value, null);
 						}
 					} else if (info instanceof DustMetaValueLinkDefType) {
 						switch ((DustMetaValueLinkDefType) info) {
