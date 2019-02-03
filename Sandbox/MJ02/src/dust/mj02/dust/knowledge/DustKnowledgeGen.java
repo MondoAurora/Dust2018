@@ -25,8 +25,8 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:LinkDef.Type", DustMetaAtts.LinkDefType);
 		
 		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Data:Entity.PrimaryType", DustDataLinks.EntityPrimaryType);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Data:Entity.EntityModels", DustDataLinks.EntityModels);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Data:Entity.EntityServices", DustDataLinks.EntityServices);
+		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Data:Entity.Models", DustDataLinks.EntityModels);
+		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Data:Entity.Services", DustDataLinks.EntityServices);
 		
 		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:Type", DustMetaTypes.Type);
 		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:AttDef", DustMetaTypes.AttDef);

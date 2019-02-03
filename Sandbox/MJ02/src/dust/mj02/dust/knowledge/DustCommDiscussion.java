@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import dust.mj02.dust.Dust;
+import dust.mj02.dust.tools.DustToolsGen;
+import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
@@ -47,6 +49,8 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 		for (Object src : sources) {
 			SourceVocabulary sVoc = new SourceVocabulary(rdr.dustCommSourceRead(src));
 			srcData.add(sVoc);
+			Object ownerId = null;
+			Object ownerSid = null;
 
 			for (Map.Entry<Object, Object> eData : sVoc.allData.entrySet()) {
 				Map<Object, Object> in = (Map<Object, Object>) eData.getValue();
@@ -64,6 +68,11 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 					} else if (DustMetaAtts.LinkDefType == knownId) {
 						sVoc.keyLinkType = li;
 						sVoc.idLinkType = si;
+					}
+				} else if (null != (knownId = DustToolsGen.resolve(si))) {
+					if (DustGenericLinks.Owner == knownId) {
+						ownerId = eData.getKey();
+						ownerSid = si;
 					}
 				}
 			}
@@ -91,6 +100,13 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 
 					Dust.accessEntity(DataCommand.setValue, entity, KEY_INFO, infoVal, null);
 					Dust.accessEntity(DataCommand.setValue, entity, infoId, infoVal, null);
+					
+					Object typeId = DustUtilsJava.getByPath(in, ownerId);
+					Object inType = sVoc.allData.get(typeId);
+					Object sidType = DustUtilsJava.getByPath(inType, sVoc.keyStoreId);
+					DustEntity eType = Dust.getEntity(sidType);
+					
+					Dust.accessEntity(DataCommand.setRef, entity, ownerSid, eType, null);
 				}
 			}
 		}

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import dust.mj02.dust.tools.DustGenericComponents;
+import dust.mj02.dust.tools.DustToolsGen;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
@@ -13,11 +15,22 @@ import dust.utils.DustUtilsJava;
 @SuppressWarnings("unchecked")
 public class DustDataContext implements DustDataComponents, DustCommComponents, DustMetaComponents, DustDataComponents.DustContext {
 
+	static Object keyOwner = DustToolsGen.resolve(DustGenericComponents.DustGenericLinks.Owner);
+			
 	class SimpleEntity implements DustEntity {
 		Map<Object, Object> content = new HashMap<>();
 		
 		public <RetType> RetType put(Object key, Object value) {
-			return (RetType) content.put(key, value);
+			RetType orig = (RetType) content.put(key, value);
+			
+			if ( null == orig ) {
+				if ( key instanceof SimpleEntity ) {
+//					SimpleRef pr = ((SimpleEntity)key).get(keyOwner);
+//					ctxAccessEntity(DataCommand.setRef, this, key, pr.target, null);
+				}
+			}
+			
+			return orig;
 		}
 
 		public <RetType> RetType  get(Object key) {
@@ -76,7 +89,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 	DustContext ctxParent;
 
-	DustUtilsFactory<Object, SimpleEntity> entities = new DustUtilsFactory<Object, SimpleEntity>(true) {
+	DustUtilsFactory<Object, SimpleEntity> entities = new DustUtilsFactory<Object, SimpleEntity>(false) {
 		@Override
 		protected SimpleEntity create(Object key, Object... hints) {
 			DustUtilsDev.dump("Creating entity", key);
@@ -97,7 +110,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	@Override
 	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, Object key, Object val, Object collId) {
 		SimpleEntity se = (SimpleEntity) e;
-		Object retVal = se.content.get(key);
+		Object retVal = se.get(key);
 		
 		SimpleEntity eLinkDef = cmd.isRef() ? ctxGetEntity(key) : null;
 
@@ -106,7 +119,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			// nothing, retVal already set
 			break;
 		case setValue:
-			retVal = se.content.put(key, val);
+			retVal = se.put(key, val);
 			break;
 		case removeRef:
 			break;
