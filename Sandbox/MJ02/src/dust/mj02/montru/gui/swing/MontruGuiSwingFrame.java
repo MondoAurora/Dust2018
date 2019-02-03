@@ -50,12 +50,12 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 			content = new EnumMap<>(kc);
 		}
 		
-		public Object put(NodeKey key, Object val) {
-			return content.put(key, val);
+		public <RetVal> RetVal put(NodeKey key, Object val) {
+			return (RetVal) content.put(key, val);
 		}
 		
-		public Object get(NodeKey key) {
-			return content.get(key);
+		public <RetVal> RetVal get(NodeKey key) {
+			return (RetVal) content.get(key);
 		}
 		
 		public void add(NodeKey key, Object val) {
@@ -195,8 +195,8 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 	ArrayList<RefInfo> arrRefs = new ArrayList<>();
 	
 	Map<Object, Object> resId = new HashMap<Object, Object>();
-	Map<Object, Object> resEntity = new HashMap<Object, Object>();
-	Map<Object, Object> resEntityRev = new HashMap<Object, Object>();
+	Map<Object, DustEntity> resEntity = new HashMap<Object, DustEntity>();
+	Map<DustEntity, Object> resEntityRev = new HashMap<DustEntity, Object>();
 	
 	Set<EntityInfo> allAtts = new HashSet<>();
 
@@ -227,7 +227,7 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 			resEntity.put(k, Dust.getEntity(resId.get(k)));
 		}
 
-		for (Map.Entry<Object, Object> ee : resEntity.entrySet()) {
+		for (Map.Entry<Object, DustEntity> ee : resEntity.entrySet()) {
 			resEntityRev.put(ee.getValue(), ee.getKey());
 		}
 		

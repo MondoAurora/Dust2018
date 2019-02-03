@@ -18,22 +18,22 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	static Object keyOwner = DustToolsGen.resolve(DustGenericComponents.DustGenericLinks.Owner);
 			
 	class SimpleEntity implements DustEntity {
-		Map<Object, Object> content = new HashMap<>();
+		Map<DustEntity, Object> content = new HashMap<>();
 		
-		public <RetType> RetType put(Object key, Object value) {
+		public <RetType> RetType put(DustEntity key, Object value) {
 			RetType orig = (RetType) content.put(key, value);
 			
 			if ( null == orig ) {
-				if ( key instanceof SimpleEntity ) {
+//				if ( key instanceof SimpleEntity ) {
 //					SimpleRef pr = ((SimpleEntity)key).get(keyOwner);
 //					ctxAccessEntity(DataCommand.setRef, this, key, pr.target, null);
-				}
+//				}
 			}
 			
 			return orig;
 		}
 
-		public <RetType> RetType  get(Object key) {
+		public <RetType> RetType  get(DustEntity key) {
 			return (RetType) content.get(key);
 		}
 	}
@@ -52,7 +52,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		public SimpleRef(SimpleEntity linkDef, SimpleEntity source, SimpleEntity target, SimpleRef reverse, Object key,
 				SimpleRef orig) {
 			this.linkDef = linkDef;
-			lt = linkDef.get(DustKnowledgeGen.resolve(DustMetaAtts.LinkDefType));
+			lt = linkDef.get(ctxGetEntity(DustKnowledgeGen.resolve(DustMetaAtts.LinkDefType)));
 			if ( null == lt ) {
 				lt = DustMetaValueLinkDefType.LinkDefSingle;
 			}
@@ -108,12 +108,10 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	}
 
 	@Override
-	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, Object key, Object val, Object collId) {
+	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId) {
 		SimpleEntity se = (SimpleEntity) e;
 		Object retVal = se.get(key);
 		
-		SimpleEntity eLinkDef = cmd.isRef() ? ctxGetEntity(key) : null;
-
 		switch (cmd) {
 		case getValue:
 			// nothing, retVal already set
@@ -133,7 +131,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 					}
 				}
 			}
-			SimpleRef sr = new SimpleRef(eLinkDef, se, (SimpleEntity) val, null, collId, actRef);
+			SimpleRef sr = new SimpleRef((SimpleEntity) key, se, (SimpleEntity) val, null, collId, actRef);
 			
 			if ( null == actRef ) {
 				se.put(key, sr);
@@ -155,7 +153,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	}
 
 	@Override
-	public void ctxProcessRefs(RefProcessor proc, DustEntity source, Object linkDefId, DustEntity target) {
+	public void ctxProcessRefs(RefProcessor proc, DustEntity source, DustEntity linkDefId, DustEntity target) {
 		SimpleEntity eLD = (null == linkDefId) ? null : ctxGetEntity(linkDefId);
 		for ( SimpleRef ref : refs ) {
 			if ( DustUtilsJava.isEqualLenient(ref.source, source) 

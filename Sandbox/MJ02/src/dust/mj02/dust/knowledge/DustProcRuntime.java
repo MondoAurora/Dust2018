@@ -34,12 +34,12 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 	}
 
 	@Override
-	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, Object key, Object val, Object collId) {
+	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId) {
 		return getCtx().ctxAccessEntity(cmd, e, key, val, collId);
 	}
 
 	@Override
-	public void ctxProcessRefs(RefProcessor proc, DustEntity source, Object linkDef, DustEntity target) {
+	public void ctxProcessRefs(RefProcessor proc, DustEntity source, DustEntity linkDef, DustEntity target) {
 		getCtx().ctxProcessRefs(proc, source, linkDef, target);
 	}
 

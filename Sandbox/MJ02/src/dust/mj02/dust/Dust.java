@@ -21,7 +21,7 @@ public class Dust implements DustComponents {
 		return RUNTIME.ctxGetEntity(si);
 	}
 
-	public static <RetType> RetType accessEntity(DataCommand cmd, DustEntity e, Object key, Object val, Object collId) {
+	public static <RetType> RetType accessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId) {
 		return RUNTIME.ctxAccessEntity(cmd, e, key, val, collId);
 	}
 	
@@ -29,7 +29,7 @@ public class Dust implements DustComponents {
 		RUNTIME.ctxProcessEntities(proc);
 	}
 
-	public static void processRefs(RefProcessor proc, DustEntity source, Object linkDef, DustEntity target) {
+	public static void processRefs(RefProcessor proc, DustEntity source, DustEntity linkDef, DustEntity target) {
 		RUNTIME.ctxProcessRefs(proc, source, linkDef, target);
 	}
 	
