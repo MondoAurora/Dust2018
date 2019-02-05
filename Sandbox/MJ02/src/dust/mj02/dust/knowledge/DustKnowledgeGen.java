@@ -1,49 +1,33 @@
 package dust.mj02.dust.knowledge;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import dust.utils.DustUtilsJava;
-
-@SuppressWarnings("unchecked")
 public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents, DustDataComponents {
+	public static void init() {
+		EntityResolver.register("Knowledge:Meta:AttDef:Bool", DustMetaValueAttDefType.AttDefBool);
+		EntityResolver.register("Knowledge:Meta:AttDef:Identifier", DustMetaValueAttDefType.AttDefIdentifier);
+		EntityResolver.register("Knowledge:Meta:AttDef:Integer", DustMetaValueAttDefType.AttDefInteger);
+		EntityResolver.register("Knowledge:Meta:AttDef:Float", DustMetaValueAttDefType.AttDefFloat);
+		
+		EntityResolver.register("Knowledge:Meta:LinkDef:Single", DustMetaValueLinkDefType.LinkDefSingle);
+		EntityResolver.register("Knowledge:Meta:LinkDef:Set", DustMetaValueLinkDefType.LinkDefSet);
+		EntityResolver.register("Knowledge:Meta:LinkDef:Array", DustMetaValueLinkDefType.LinkDefArray);
+		EntityResolver.register("Knowledge:Meta:LinkDef:Map", DustMetaValueLinkDefType.LinkDefMap);
+		
+		EntityResolver.register("Knowledge:Meta:AttDef.Type", DustMetaAtts.AttDefType);
+		EntityResolver.register("Knowledge:Meta:LinkDef.Type", DustMetaAtts.LinkDefType);
+		
+		EntityResolver.register("Knowledge:Data:Entity.PrimaryType", DustDataLinks.EntityPrimaryType);
+		EntityResolver.register("Knowledge:Data:Entity.Models", DustDataLinks.EntityModels);
+		EntityResolver.register("Knowledge:Data:Entity.Services", DustDataLinks.EntityServices);
+		
+		EntityResolver.register("Knowledge:Meta:Type", DustMetaTypes.Type);
+		EntityResolver.register("Knowledge:Meta:AttDef", DustMetaTypes.AttDef);
+		EntityResolver.register("Knowledge:Meta:LinkDef", DustMetaTypes.LinkDef);
+		
+		EntityResolver.register("Knowledge:Data:Entity", DustDataTypes.Entity);
+		
+		EntityResolver.register("Knowledge:Comm:Term.idStore", DustCommAtts.idStore);
+		EntityResolver.register("Knowledge:Comm:Term.idLocal", DustCommAtts.idLocal);
+		EntityResolver.register("Knowledge:Comm:Term", DustCommTypes.Term);
 
-	private static Map<Object, Object> IDRESOLVER = new HashMap<Object, Object>();
-	
-	static {
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:AttDef:Bool", DustMetaValueAttDefType.AttDefBool);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:AttDef:Identifier", DustMetaValueAttDefType.AttDefIdentifier);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:AttDef:Integer", DustMetaValueAttDefType.AttDefInteger);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:AttDef:Float", DustMetaValueAttDefType.AttDefFloat);
-		
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:LinkDef:Single", DustMetaValueLinkDefType.LinkDefSingle);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:LinkDef:Set", DustMetaValueLinkDefType.LinkDefSet);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:LinkDef:Array", DustMetaValueLinkDefType.LinkDefArray);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:LinkDef:Map", DustMetaValueLinkDefType.LinkDefMap);
-		
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:AttDef.Type", DustMetaAtts.AttDefType);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:LinkDef.Type", DustMetaAtts.LinkDefType);
-		
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Data:Entity.PrimaryType", DustDataLinks.EntityPrimaryType);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Data:Entity.Models", DustDataLinks.EntityModels);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Data:Entity.Services", DustDataLinks.EntityServices);
-		
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:Type", DustMetaTypes.Type);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:AttDef", DustMetaTypes.AttDef);
-		DustUtilsJava.biDiPut(IDRESOLVER, "Knowledge:Meta:LinkDef", DustMetaTypes.LinkDef);
-	}
-	
-	public static <RetType> RetType  resolve(Object id) { 
-		return (RetType) IDRESOLVER.get(id);
-	}
-	
-	public static Map<Object, Object> resolveAll(Map<Object, Object> target, Object... keys) { 
-		if (null == target) {
-			target = new HashMap<>();
-		}
-		for ( Object key : keys ) {
-			target.put(key, IDRESOLVER.get(key));
-		}
-		return target;
 	}
 }

@@ -5,6 +5,14 @@ import java.util.Map;
 import dust.mj02.dust.DustComponents;
 
 public interface DustCommComponents extends DustComponents {
+	enum DustCommTypes {
+		Term
+	};
+	
+	enum DustCommAtts {
+		idStore, idLocal
+	}
+
 	enum CommKeys {
 		CommSrcHandler, KeyCommIdLocal, KeyCommIdStore;
 	};

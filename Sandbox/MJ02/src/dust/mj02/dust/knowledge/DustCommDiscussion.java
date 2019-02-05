@@ -1,7 +1,6 @@
 package dust.mj02.dust.knowledge;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +19,6 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 
 	class SourceVocabulary {
 		Map<Object, Object> allData;
-		Map<Object, Object> idMap = new HashMap<>();
 
 		private Object keyStoreId;
 
@@ -43,6 +41,8 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 	@SuppressWarnings("unchecked")
 	public void load(DustCommSource rdr, Object... sources) throws Exception {
 		Set<SourceVocabulary> srcData = new HashSet<>();
+		DustKnowledgeGen.init();
+		DustToolsGen.init();
 
 		for (Object src : sources) {
 			SourceVocabulary sVoc = new SourceVocabulary(rdr.dustCommSourceRead(src));
@@ -56,20 +56,17 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 				
 				String si = DustUtilsJava.getByPath(in, sVoc.keyStoreId);
 				DustEntity e = Dust.getEntity(si);
-//				Dust.accessEntity(DataCommand.setValue, e, sVoc.keyStoreId, si, null);
+				in.put(TempKey.entity, e);
 
-				Object knownId = DustKnowledgeGen.resolve(si);
+				Object knownId = EntityResolver.getKey(e);
 				if (null != knownId) {
-					sVoc.idMap.put(li, si);
 					if (DustMetaAtts.AttDefType == knownId) {
 						sVoc.keyAttType = li;
 						sVoc.eAttType = e;
 					} else if (DustMetaAtts.LinkDefType == knownId) {
 						sVoc.keyLinkType = li;
 						sVoc.eLinkType = e;
-					}
-				} else if (null != (knownId = DustToolsGen.resolve(si))) {
-					if (DustGenericLinks.Owner == knownId) {
+					} else if (DustGenericLinks.Owner == knownId) {
 						keyOwner = eData.getKey();
 						eOwner = e;
 					}
@@ -77,39 +74,39 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 			}
 
 			for (Object in : sVoc.allData.values()) {
-				Object infoVal = null;
+//				Object infoVal = null;
 				DustEntity eInfo = null;
+				DustEntity eInfoVal = null;
 
 				Object keyMetaInfo = DustUtilsJava.getByPath(in, sVoc.keyAttType);
 				if (null != keyMetaInfo) {
 					Object metaInfo = sVoc.allData.get(keyMetaInfo);
 					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
-					infoVal = DustKnowledgeGen.resolve(metaId);
+//					infoVal = DustKnowledgeGen.resolve(metaId);
+					eInfoVal = Dust.getEntity(metaId);
 					eInfo = sVoc.eAttType;
 				} else if (null != (keyMetaInfo = DustUtilsJava.getByPath(in, sVoc.keyLinkType))) {
 					Object metaInfo = sVoc.allData.get(keyMetaInfo);
 					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
-					infoVal = DustKnowledgeGen.resolve(metaId);
+//					infoVal = DustKnowledgeGen.resolve(metaId);
+					eInfoVal = Dust.getEntity(metaId);
 					eInfo = sVoc.eLinkType;
 				}
 
-				if (null != infoVal) {
+				if (null != eInfoVal) {
 					Object si = DustUtilsJava.getByPath(in, sVoc.keyStoreId);
 					DustEntity entity = Dust.getEntity(si);
 
-//					Dust.accessEntity(DataCommand.setValue, entity, KEY_INFO, infoVal, null);
-					Dust.accessEntity(DataCommand.setValue, entity, eInfo, infoVal, null);
+//					Dust.accessEntity(DataCommand.setValue, entity, eInfo, infoVal, null);
+					Dust.accessEntity(DataCommand.setRef, entity, eInfo, eInfoVal, null);
 					
 					Object typeId = DustUtilsJava.getByPath(in, keyOwner);
 					Object inType = sVoc.allData.get(typeId);
 					Object sidType = DustUtilsJava.getByPath(inType, sVoc.keyStoreId);
 					DustEntity eType = Dust.getEntity(sidType);
 					
-					Dust.accessEntity(DataCommand.setRef, entity, eOwner, eType, null);
-					
-					((Map<Object, Object>) in).put(TempKey.entity, entity);
-					((Map<Object, Object>) in).put(TempKey.contentType, infoVal);
-					
+					Dust.accessEntity(DataCommand.setRef, entity, eOwner, eType, null);					
+					((Map<Object, Object>) in).put(TempKey.contentType, EntityResolver.getKey(eInfoVal));
 				}
 			}
 		}
@@ -180,7 +177,7 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 						}
 					}
 
-					DustUtilsDev.dump("  set att", ck, "to", value);
+					DustUtilsDev.dump("  set", (info instanceof DustMetaValueAttDefType) ? "att" : "ref", ck, "to", value);
 				}
 			}
 		}

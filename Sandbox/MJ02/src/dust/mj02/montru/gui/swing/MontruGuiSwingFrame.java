@@ -21,11 +21,9 @@ import javax.swing.JScrollPane;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
-import dust.mj02.dust.knowledge.DustKnowledgeGen;
 import dust.mj02.dust.knowledge.DustMetaComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.tools.DustGenericComponents;
-import dust.mj02.dust.tools.DustToolsGen;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
@@ -36,7 +34,7 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 	private static final Dimension INIT_FRAME_SIZE = new Dimension(800, 400);
 
 	enum EntityKey {
-		entity, type, id, owner, attDefs, linkDefs, atts, links
+		entity, type, models, id, owner, attDefs, linkDefs, atts, links
 	}
 	
 	enum RefKey {
@@ -59,6 +57,9 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 		}
 		
 		public void add(NodeKey key, Object val) {
+			if ( null == val ) {
+				return;
+			}
 			Set<Object> cont = (Set<Object>) content.get(key);
 			if ( null == cont ) {
 				content.put(key, cont = new HashSet<>());
@@ -91,12 +92,13 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 			StringBuilder sb = null;
 			sb = DustUtilsJava.sbAppend(sb, ": ", true, get(EntityKey.type) + ": " + get(EntityKey.id));
 			
-			StringBuilder sbc = DustUtilsJava.toStringBuilder(null, (Iterable<?>) get(EntityKey.attDefs), false, "atts");
+			StringBuilder sbc = DustUtilsJava.toStringBuilder(null, (Iterable<?>) get(EntityKey.models), false, "Models");
+			DustUtilsJava.sbAppend(sb, " ", false, sbc);
 			
+			sbc = DustUtilsJava.toStringBuilder(null, (Iterable<?>) get(EntityKey.attDefs), false, "atts");
 			DustUtilsJava.sbAppend(sb, " ", false, sbc);
 			
 			sbc = DustUtilsJava.toStringBuilder(null, (Iterable<?>) get(EntityKey.linkDefs), false, "linkDefs");
-			
 			DustUtilsJava.sbAppend(sb, " ", false, sbc);
 			
 			return sb.toString();
@@ -184,7 +186,7 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 			ret.put(EntityKey.entity, key);
 			
 			String id = Dust.accessEntity(DataCommand.getValue, key,
-					resEntity.get(DustGenericAtts.identifiedIdLocal), null, null);
+					EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal), null, null);
 			
 			ret.put(EntityKey.id, id);
 
@@ -194,9 +196,9 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 	
 	ArrayList<RefInfo> arrRefs = new ArrayList<>();
 	
-	Map<Object, Object> resId = new HashMap<Object, Object>();
-	Map<Object, DustEntity> resEntity = new HashMap<Object, DustEntity>();
-	Map<DustEntity, Object> resEntityRev = new HashMap<DustEntity, Object>();
+//	Map<Object, Object> resId = new HashMap<Object, Object>();
+//	Map<Object, DustEntity> resEntity = new HashMap<Object, DustEntity>();
+//	Map<DustEntity, Object> resEntityRev = new HashMap<DustEntity, Object>();
 	
 	Set<EntityInfo> allAtts = new HashSet<>();
 
@@ -212,24 +214,24 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 	public void dustProcInitableInit() throws Exception {
 		frame.setTitle(getClass().getSimpleName());
 		
-		resId.clear();
-		resEntity.clear();
-		resEntityRev.clear();
+//		resId.clear();
+//		resEntity.clear();
+//		resEntityRev.clear();
 
 		allAtts.clear();
 
-		DustKnowledgeGen.resolveAll(resId, DustMetaTypes.Type, DustMetaTypes.AttDef,
-				DustMetaTypes.LinkDef, DustDataLinks.EntityPrimaryType);
-		DustToolsGen.resolveAll(resId, DustGenericAtts.identifiedIdLocal, DustGenericLinks.Owner,
-				DustGenericLinks.Extends);
-
-		for (Object k : resId.keySet().toArray()) {
-			resEntity.put(k, Dust.getEntity(resId.get(k)));
-		}
-
-		for (Map.Entry<Object, DustEntity> ee : resEntity.entrySet()) {
-			resEntityRev.put(ee.getValue(), ee.getKey());
-		}
+//		DustKnowledgeGen.resolveAll(resId, DustMetaTypes.Type, DustMetaTypes.AttDef,
+//				DustMetaTypes.LinkDef, DustDataLinks.EntityPrimaryType);
+//		DustToolsGen.resolveAll(resId, DustGenericAtts.identifiedIdLocal, DustGenericLinks.Owner,
+//				DustGenericLinks.Extends);
+//
+//		for (Object k : resId.keySet().toArray()) {
+//			resEntity.put(k, Dust.getEntity(resId.get(k)));
+//		}
+//
+//		for (Map.Entry<Object, DustEntity> ee : resEntity.entrySet()) {
+//			resEntityRev.put(ee.getValue(), ee.getKey());
+//		}
 		
 		arrRefs.clear();
 
@@ -241,22 +243,29 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 				
 				EntityInfo eiObj = factEntityInfo.get(source);	
 				((Set<RefInfo>)eiObj.get(EntityKey.links)).add(ri);
+				
+				if (linkDef == EntityResolver.getEntity(DustDataLinks.EntityPrimaryType)) {
+					eiObj.put(EntityKey.type, EntityResolver.getKey(target));
+				} else if (linkDef == EntityResolver.getEntity(DustDataLinks.EntityModels)) {
+					eiObj.add(EntityKey.models, EntityResolver.getKey(target));
+				} 
 
-				if (resEntity.containsValue(target)) {
-					if (linkDef == resEntity.get(DustDataLinks.EntityPrimaryType)) {
-						eiObj.put(EntityKey.type, resEntityRev.get(target));	
-					}
-				} else if (linkDef == resEntity.get(DustGenericLinks.Owner)) {
-					EntityInfo eiType = factEntityInfo.get(target);
-					
-					eiObj.put(EntityKey.owner, eiType);
-					if (DustMetaTypes.AttDef == eiObj.get(EntityKey.type)) {
-						eiType.add(EntityKey.attDefs, eiObj);
-						allAtts.add(eiObj);
-					} else {
-						eiType.add(EntityKey.linkDefs, eiObj);
-					}
-				}
+//				if (resEntity.containsValue(target)) {
+//					if (linkDef == resEntity.get(DustDataLinks.EntityPrimaryType)) {
+//						eiObj.put(EntityKey.type, resEntityRev.get(target));	
+//					}
+//				} 
+//				else if (linkDef == resEntity.get(DustGenericLinks.Owner)) {
+//					EntityInfo eiType = factEntityInfo.get(target);
+//					
+//					eiObj.put(EntityKey.owner, eiType);
+//					if (DustMetaTypes.AttDef == eiObj.get(EntityKey.type)) {
+//						eiType.add(EntityKey.attDefs, eiObj);
+//						allAtts.add(eiObj);
+//					} else {
+//						eiType.add(EntityKey.linkDefs, eiObj);
+//					}
+//				}
 			}
 		}, null, null, null);
 		
@@ -268,7 +277,7 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 				for ( EntityInfo eiAtt : allAtts ) {
 					Object val = Dust.accessEntity(DataCommand.getValue, entity, eiAtt.get(EntityKey.entity), null, null);
 					if ( null != val ) {
-						EntityInfo eiType = (EntityInfo) eiAtt.get(EntityKey.owner);
+//						EntityInfo eiType = (EntityInfo) eiAtt.get(EntityKey.owner);
 						((Map<EntityInfo, Object>)ei.get(EntityKey.atts)).put(eiAtt, val);
 					}
 				}

@@ -40,11 +40,19 @@
 	
 		{
 			"idStore 200": "Knowledge:Meta:LinkDef.Type",
-			"idLocal 201": "KnowledgeMetaLinkDefType"
+			"idLocal 201": "KnowledgeMetaLinkDefType",
+			"idLocal 202": "LinkDefType",
+			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
+			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSingle",
+			"Owner 100": "KnowledgeMetaLinkDef 3"
 		},
 		{
 			"idStore 200": "Knowledge:Meta:AttDef.Type",
-			"idLocal 201": "KnowledgeMetaAttDefType"
+			"idLocal 201": "KnowledgeMetaAttDefType",
+			"idLocal 202": "AttDefType",
+			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
+			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSingle",
+			"Owner 100": "KnowledgeMetaAttDef 2"
 		},
 	
 		{

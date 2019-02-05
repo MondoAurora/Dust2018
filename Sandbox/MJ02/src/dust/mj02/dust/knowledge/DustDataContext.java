@@ -7,67 +7,94 @@ import java.util.Map;
 import java.util.Set;
 
 import dust.mj02.dust.tools.DustGenericComponents;
-import dust.mj02.dust.tools.DustToolsGen;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("unchecked")
-public class DustDataContext implements DustDataComponents, DustCommComponents, DustMetaComponents, DustDataComponents.DustContext {
+public class DustDataContext implements DustDataComponents, DustCommComponents, DustMetaComponents,
+		DustGenericComponents, DustDataComponents.DustContext {
 
-	static Object keyOwner = DustToolsGen.resolve(DustGenericComponents.DustGenericLinks.Owner);
-			
+	// DustUtilsFactory<Object, SimpleEntity> FACT_INFO = new
+	// DustUtilsFactory<Object, DustDataContext.SimpleEntity>(
+	// false) {
+	// @Override
+	// protected SimpleEntity create(Object key, Object... hints) {
+	// Object storeId = DustToolsGen.resolve(key);
+	// if (null == storeId) {
+	// storeId = DustKnowledgeGen.resolve(key);
+	// }
+	// return ctxGetEntity(storeId);
+	// }
+	// };
+
 	class SimpleEntity implements DustEntity {
 		Map<DustEntity, Object> content = new HashMap<>();
-		
+
 		public <RetType> RetType put(DustEntity key, Object value) {
 			RetType orig = (RetType) content.put(key, value);
 			
-			if ( null == orig ) {
-//				if ( key instanceof SimpleEntity ) {
-//					SimpleRef pr = ((SimpleEntity)key).get(keyOwner);
-//					ctxAccessEntity(DataCommand.setRef, this, key, pr.target, null);
-//				}
+			if ( EntityResolver.getEntity(DustDataLinks.EntityPrimaryType) == key ) {
+				ctxAccessEntity(DataCommand.setRef, this, EntityResolver.getEntity(DustDataLinks.EntityModels),
+						((SimpleRef) value).target, null);
 			}
-			
+
+			if (null == orig) {
+				SimpleRef pr = ((SimpleEntity) key).get(EntityResolver.getEntity(DustGenericLinks.Owner));
+				if (null != pr) {
+					ctxAccessEntity(DataCommand.setRef, this, EntityResolver.getEntity(DustDataLinks.EntityModels),
+							pr.target, null);
+				}
+			}
+
 			return orig;
 		}
 
-		public <RetType> RetType  get(DustEntity key) {
+		public <RetType> RetType get(DustEntity key) {
 			return (RetType) content.get(key);
 		}
 	}
-	
+
 	class SimpleRef {
 		SimpleEntity linkDef;
 		DustMetaValueLinkDefType lt;
-		
+
 		SimpleEntity source;
 		SimpleEntity target;
 		SimpleRef reverse;
-		
+
 		Object key;
 		Object container;
-		
+
 		public SimpleRef(SimpleEntity linkDef, SimpleEntity source, SimpleEntity target, SimpleRef reverse, Object key,
 				SimpleRef orig) {
 			this.linkDef = linkDef;
-			lt = linkDef.get(ctxGetEntity(DustKnowledgeGen.resolve(DustMetaAtts.LinkDefType)));
-			if ( null == lt ) {
-				lt = DustMetaValueLinkDefType.LinkDefSingle;
-			}
-
 			this.source = source;
 			this.target = target;
 			this.reverse = reverse;
 			this.key = key;
-			
-			this.container = (null == orig) ? lt.createContainer() : orig.container;
-			
-			switch ( lt ) {
+
+			SimpleRef refLDT = linkDef.get(EntityResolver.getEntity(DustMetaAtts.LinkDefType));
+			if (null == refLDT) {
+				lt = DustMetaValueLinkDefType.LinkDefSingle;
+				this.container = null;
+			} else {
+				lt = EntityResolver.getKey(refLDT.target);
+
+				if (null == orig) {
+					this.container = lt.createContainer();
+				} else {
+					if (null == orig.container) {
+						orig.container = lt.createContainer();
+					}
+					this.container = orig.container;
+				}
+			}
+
+			switch (lt) {
 			case LinkDefArray:
 				List<SimpleRef> l = (List<SimpleRef>) container;
-				if ( null == key ) {
+				if (null == key) {
 					l.add(this);
 				} else {
 					l.add((int) key, this);
@@ -80,9 +107,9 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				((Map<Object, SimpleRef>) container).put(key, this);
 				break;
 			case LinkDefSingle:
-				break;			
+				break;
 			}
-			
+
 			refs.add(this);
 		}
 	}
@@ -111,7 +138,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId) {
 		SimpleEntity se = (SimpleEntity) e;
 		Object retVal = se.get(key);
-		
+
 		switch (cmd) {
 		case getValue:
 			// nothing, retVal already set
@@ -123,31 +150,31 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			break;
 		case setRef:
 			SimpleRef actRef = (SimpleRef) retVal;
-			
-			if ( (null != actRef) && (DustMetaValueLinkDefType.LinkDefSet == actRef.lt) ) {
-				for ( SimpleRef er : ((Set<SimpleRef>)actRef.container) ) {
-					if ( er.target == val ) {
+
+			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSet == actRef.lt)) {
+				for (SimpleRef er : ((Set<SimpleRef>) actRef.container)) {
+					if (er.target == val) {
 						return null;
 					}
 				}
 			}
 			SimpleRef sr = new SimpleRef((SimpleEntity) key, se, (SimpleEntity) val, null, collId, actRef);
-			
-			if ( null == actRef ) {
+
+			if (null == actRef) {
 				se.put(key, sr);
 			}
-			
+
 			break;
 		case clearRefs:
-			
+
 			break;
 		}
 		return (RetType) retVal;
 	}
-	
+
 	@Override
 	public void ctxProcessEntities(EntityProcessor proc) {
-		for ( Object key : entities.keys()) {
+		for (Object key : entities.keys()) {
 			proc.processEntity(key, entities.peek(key));
 		}
 	}
@@ -155,10 +182,9 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	@Override
 	public void ctxProcessRefs(RefProcessor proc, DustEntity source, DustEntity linkDefId, DustEntity target) {
 		SimpleEntity eLD = (null == linkDefId) ? null : ctxGetEntity(linkDefId);
-		for ( SimpleRef ref : refs ) {
-			if ( DustUtilsJava.isEqualLenient(ref.source, source) 
-					&& DustUtilsJava.isEqualLenient(ref.linkDef, eLD) 
-					&& DustUtilsJava.isEqualLenient(ref.target, target) ) {
+		for (SimpleRef ref : refs) {
+			if (DustUtilsJava.isEqualLenient(ref.source, source) && DustUtilsJava.isEqualLenient(ref.linkDef, eLD)
+					&& DustUtilsJava.isEqualLenient(ref.target, target)) {
 				proc.processRef(ref.source, ref.linkDef, ref.target, ref.key);
 			}
 		}

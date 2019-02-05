@@ -1,5 +1,8 @@
 package dust.mj02.dust;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public interface DustComponents {
 
 	public class DustException extends RuntimeException {
@@ -50,5 +53,26 @@ public interface DustComponents {
 		<RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId);
 		void ctxProcessRefs(RefProcessor proc, DustEntity source, DustEntity linkDef, DustEntity target);
 		void ctxProcessEntities(EntityProcessor proc);
+	}
+	
+	public abstract class EntityResolver {
+		private static Map<Object, DustEntity> keyToEntity = new HashMap<>();
+		private static Map<DustEntity, Object> entityToKey = new HashMap<>();
+		
+		public static void register(String storeId, Object key) {
+			DustEntity e = Dust.getEntity(storeId);
+			keyToEntity.put(key, e);
+			entityToKey.put(e, key);
+		}
+		
+		public static DustEntity getEntity(Object key) {
+			return keyToEntity.get(key);
+		}
+		
+		@SuppressWarnings("unchecked")
+		public static <RetType> RetType getKey(DustEntity e) { 
+			return (RetType) entityToKey.get(e);
+		}
+
 	}
 }
