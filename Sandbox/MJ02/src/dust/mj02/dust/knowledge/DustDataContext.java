@@ -1,5 +1,7 @@
 package dust.mj02.dust.knowledge;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,26 +17,13 @@ import dust.utils.DustUtilsJava;
 public class DustDataContext implements DustDataComponents, DustCommComponents, DustMetaComponents,
 		DustGenericComponents, DustDataComponents.DustContext {
 
-	// DustUtilsFactory<Object, SimpleEntity> FACT_INFO = new
-	// DustUtilsFactory<Object, DustDataContext.SimpleEntity>(
-	// false) {
-	// @Override
-	// protected SimpleEntity create(Object key, Object... hints) {
-	// Object storeId = DustToolsGen.resolve(key);
-	// if (null == storeId) {
-	// storeId = DustKnowledgeGen.resolve(key);
-	// }
-	// return ctxGetEntity(storeId);
-	// }
-	// };
-
 	class SimpleEntity implements DustEntity {
 		Map<DustEntity, Object> content = new HashMap<>();
 
 		public <RetType> RetType put(DustEntity key, Object value) {
 			RetType orig = (RetType) content.put(key, value);
-			
-			if ( EntityResolver.getEntity(DustDataLinks.EntityPrimaryType) == key ) {
+
+			if (EntityResolver.getEntity(DustDataLinks.EntityPrimaryType) == key) {
 				ctxAccessEntity(DataCommand.setRef, this, EntityResolver.getEntity(DustDataLinks.EntityModels),
 						((SimpleRef) value).target, null);
 			}
@@ -73,23 +62,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			this.target = target;
 			this.reverse = reverse;
 			this.key = key;
-
-			SimpleRef refLDT = linkDef.get(EntityResolver.getEntity(DustMetaAtts.LinkDefType));
-			if (null == refLDT) {
-				lt = DustMetaValueLinkDefType.LinkDefSingle;
-				this.container = null;
-			} else {
-				lt = EntityResolver.getKey(refLDT.target);
-
-				if (null == orig) {
-					this.container = lt.createContainer();
-				} else {
-					if (null == orig.container) {
-						orig.container = lt.createContainer();
-					}
-					this.container = orig.container;
-				}
-			}
+			
+			initContainer(orig);
 
 			switch (lt) {
 			case LinkDefArray:
@@ -104,13 +78,49 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				((Set<SimpleRef>) container).add(this);
 				break;
 			case LinkDefMap:
-				((Map<Object, SimpleRef>) container).put(key, this);
+				SimpleRef old = ((Map<Object, SimpleRef>) container).put(key, this);
+				if (null != old) {
+					refs.remove(old);
+				}
 				break;
 			case LinkDefSingle:
 				break;
 			}
 
 			refs.add(this);
+		}
+
+		void initContainer(SimpleRef orig) {
+			SimpleRef refLDT = linkDef.get(EntityResolver.getEntity(DustMetaAtts.LinkDefType));
+			lt = (null == refLDT) ? DustMetaValueLinkDefType.LinkDefSingle : EntityResolver.getKey(refLDT.target);
+			
+			if ((null == orig) || (null == orig.container)) {
+				switch (lt) {
+				case LinkDefArray:
+					container = new ArrayList<SimpleRef>();
+					break;
+				case LinkDefSet:
+					container = new HashSet<SimpleRef>();
+					break;
+				case LinkDefMap:
+					container = new HashMap<Object, SimpleRef>();
+					break;
+				case LinkDefSingle:
+					container = null;
+					return;
+				}
+
+				if (null != orig) {
+					if (DustMetaValueLinkDefType.LinkDefMap == lt) {
+						((HashMap<Object, SimpleRef>) container).put(orig.key, orig);
+					} else {
+						((Collection<SimpleRef>) container).add(orig);
+					}
+					orig.container = container;
+				}
+			} else {
+				container = orig.container;
+			}
 		}
 	}
 

@@ -74,30 +74,24 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 			}
 
 			for (Object in : sVoc.allData.values()) {
-//				Object infoVal = null;
 				DustEntity eInfo = null;
 				DustEntity eInfoVal = null;
 
 				Object keyMetaInfo = DustUtilsJava.getByPath(in, sVoc.keyAttType);
 				if (null != keyMetaInfo) {
-					Object metaInfo = sVoc.allData.get(keyMetaInfo);
-					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
-//					infoVal = DustKnowledgeGen.resolve(metaId);
-					eInfoVal = Dust.getEntity(metaId);
 					eInfo = sVoc.eAttType;
 				} else if (null != (keyMetaInfo = DustUtilsJava.getByPath(in, sVoc.keyLinkType))) {
-					Object metaInfo = sVoc.allData.get(keyMetaInfo);
-					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
-//					infoVal = DustKnowledgeGen.resolve(metaId);
-					eInfoVal = Dust.getEntity(metaId);
 					eInfo = sVoc.eLinkType;
 				}
 
-				if (null != eInfoVal) {
+				if (null != keyMetaInfo) {
+					Object metaInfo = sVoc.allData.get(keyMetaInfo);
+					Object metaId = DustUtilsJava.getByPath(metaInfo, sVoc.keyStoreId);
+					eInfoVal = Dust.getEntity(metaId);
+
 					Object si = DustUtilsJava.getByPath(in, sVoc.keyStoreId);
 					DustEntity entity = Dust.getEntity(si);
 
-//					Dust.accessEntity(DataCommand.setValue, entity, eInfo, infoVal, null);
 					Dust.accessEntity(DataCommand.setRef, entity, eInfo, eInfoVal, null);
 					
 					Object typeId = DustUtilsJava.getByPath(in, keyOwner);
@@ -118,10 +112,6 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 
 				DustUtilsDev.dump("Loading entity data", si);
 
-				if ("Knowledge:Meta:Type".equals(si)) {
-					DustUtilsDev.dump("hopp");
-				}
-
 				for (Map.Entry<Object, Object> eAtts : ((Map<Object, Object>) o).entrySet()) {
 					Object ck = eAtts.getKey();
 					if ( ck instanceof TempKey) {
@@ -130,9 +120,6 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 					Map<Object, Object> contentInfo = (Map<Object, Object>) sd.allData.get(ck);
 					DustEntity eContent = (DustEntity) contentInfo.get(TempKey.entity);
 
-//					Object infoStoreId = contentInfo.get(sd.keyStoreId);
-//					Object infoStoreId = Dust.accessEntity(DataCommand.getValue, attDef, sd.keyStoreId, null, null);
-//					Object info = Dust.accessEntity(DataCommand.getValue, attDef, KEY_INFO, null, null);
 					Object info = contentInfo.get(TempKey.contentType);
 
 					Object value = eAtts.getValue();
