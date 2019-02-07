@@ -1,16 +1,23 @@
 package dust.mj02.montru.gui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -41,6 +48,9 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 		DustGenericComponents, DustProcComponents.DustProcInitable {
 
 	private static final Dimension INIT_FRAME_SIZE = new Dimension(800, 400);
+	private static final int HR = 6;
+	public static final Color COL_REF_SEL = Color.RED;
+	public static final Color COL_REF_NORMAL = Color.BLACK;
 
 	enum EntityKey {
 		entity, type, models, id, owner, attDefs, linkDefs, links// , atts
@@ -49,7 +59,7 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 	enum RefKey {
 		source, target, linkDef, key
 	}
-	
+
 	interface PanelProvider {
 		JPanel getPanel();
 		String getTitle();
@@ -96,22 +106,23 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 
 	class EntityInfo extends NodeInfo<EntityKey> implements PanelProvider {
 		PnlEntity pnl;
-		
+
 		public EntityInfo() {
 			super(EntityKey.class);
 			put(EntityKey.links, new HashSet<RefInfo>());
 		}
-		
+
 		@Override
 		public JPanel getPanel() {
 			return (null == pnl) ? (pnl = new PnlEntity(this)) : pnl;
 		}
-		
+
 		@Override
 		public String getTitle() {
 			EntityInfo tt = get(EntityKey.type);
-			return DustUtilsJava.sbAppend(null, " ", true, (null == tt) ? "" : tt.get(EntityKey.id), ":",
-					get(EntityKey.id)).toString();
+			return DustUtilsJava
+					.sbAppend(null, " ", true, (null == tt) ? "" : tt.get(EntityKey.id), ":", get(EntityKey.id))
+					.toString();
 		}
 
 		@Override
@@ -149,7 +160,7 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 						DustUtilsJava.sbAppend(sb, " ", true, ld.get(EntityKey.id), " -> {", factRefs.peek(ld), "}, ");
 					}
 				}
-				
+
 				sb.append("}");
 			}
 
@@ -163,14 +174,14 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 	class PnlEntity extends JPanel {
 		EntityInfo ei;
 		Map<EntityInfo, JLabel> linkLabels = new HashMap<>();
-		
+
 		public PnlEntity(EntityInfo ei) {
 			super(new GridLayout(0, 1));
 			this.ei = ei;
-			
+
 			reloadData();
 		}
-		
+
 		public void reloadData() {
 			removeAll();
 			linkLabels.clear();
@@ -189,22 +200,25 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 			}
 
 			for (EntityInfo m : (Iterable<EntityInfo>) ei.get(EntityKey.models)) {
-				add(new JLabel((String)m.get(EntityKey.id)));
+				add(new JLabel((String) m.get(EntityKey.id)));
 
 				Iterable<EntityInfo> it = (Iterable<EntityInfo>) m.get(EntityKey.attDefs);
 				if (null != it) {
 					for (EntityInfo ad : it) {
-						add(new JLabel("  " + ad.get(EntityKey.id) + "=" + 
-								Dust.accessEntity(DataCommand.getValue, entity, ad.get(EntityKey.entity), null, null)));
+						add(new JLabel("  " + ad.get(EntityKey.id) + "=" + Dust.accessEntity(DataCommand.getValue,
+								entity, ad.get(EntityKey.entity), null, null)));
 					}
 				}
 
 				it = (Iterable<EntityInfo>) m.get(EntityKey.linkDefs);
 				if (null != it) {
 					for (EntityInfo ld : it) {
-						JLabel llbl = new JLabel("  " + ld.get(EntityKey.id) + " -> {" + factRefs.peek(ld) + "}");
-						linkLabels.put(ld, llbl);
-						add(llbl);
+						StringBuilder links = factRefs.peek(ld);
+						if (null != links) {
+							JLabel llbl = new JLabel("  " + ld.get(EntityKey.id) + " -> {" + links + "}");
+							linkLabels.put(ld, llbl);
+							add(llbl);
+						}
 					}
 				}
 			}
@@ -213,98 +227,147 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 			repaint();
 		}
 	}
-	
-	DustUtilsFactory<PanelProvider, JInternalFrame> factIntFrames = new DustUtilsFactory<PanelProvider, JInternalFrame>(false) {
+
+	DustUtilsFactory<PanelProvider, JInternalFrame> factIntFrames = new DustUtilsFactory<PanelProvider, JInternalFrame>(
+			false) {
 		@Override
 		protected JInternalFrame create(PanelProvider key, Object... hints) {
 			JInternalFrame internal = new JInternalFrame(key.getTitle(), true, false, true, true);
 			internal.getContentPane().add(key.getPanel(), BorderLayout.CENTER);
 			internal.setTitle(key.getTitle());
 			internal.pack();
-			
+
 			pnlLinks.followContent(internal);
 
 			return internal;
 		}
 	};
-	
+
 	class PnlLinks extends JPanel {
+		Map<RefInfo, Line2D> lines = new HashMap<>();
+
 		ComponentListener painter = new ComponentAdapter() {
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				repaint();
+				refreshLines();
 			}
 			@Override
 			public void componentResized(ComponentEvent e) {
-				repaint();
+				refreshLines();
 			}
 			@Override
 			public void componentHidden(ComponentEvent e) {
-				repaint();
+				refreshLines();
 			}
 			@Override
 			public void componentShown(ComponentEvent e) {
-				repaint();
+				refreshLines();
 			}
 		};
 
 		public PnlLinks() {
 			setOpaque(false);
 		}
-		
+
 		public void followContent(JComponent comp) {
 			comp.addComponentListener(painter);
 		}
-		
+
 		public void followParent(JComponent comp) {
 			comp.addComponentListener(new ComponentAdapter() {
 				@Override
 				public void componentResized(ComponentEvent e) {
 					setSize(e.getComponent().getSize());
+					refreshLines();
 				}
 			});
 		}
-		
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			
-			for ( RefInfo ri : arrRefs ) {
+
+		private void hitTest(Point pt) {
+			Rectangle hit = new Rectangle(pt.x - HR, pt.y - HR, 2 * HR, 2 * HR);
+
+			for (Map.Entry<RefInfo, Line2D> e : lines.entrySet()) {
+				if (e.getValue().intersects(hit)) {
+					RefInfo ri = e.getKey();
+					if (selRefs.contains(ri)) {
+						selRefs.remove(ri);
+					} else {
+						selRefs.add(ri);
+					}
+				}
+			}
+
+			repaint();
+		}
+
+		private void refreshLines() {
+			lines.clear();
+
+			for (RefInfo ri : arrRefs) {
 				EntityInfo eiSrc = ri.get(RefKey.source);
 				JInternalFrame frmSource = factIntFrames.peek(eiSrc);
 				JInternalFrame frmTarget = factIntFrames.peek(ri.get(RefKey.target));
-				
-				if ((null != frmSource) && ( null != frmTarget)) {
+
+				if ((null != frmSource) && (null != frmTarget)) {
 					JComponent comp = eiSrc.pnl.linkLabels.get(ri.get(RefKey.linkDef));
-					
-					if ( null != comp ) {
+
+					if (null != comp) {
 						Point ptSource = new Point(0, comp.getHeight() / 2);
 						SwingUtilities.convertPointToScreen(ptSource, comp);
 						Point ptTarget = new Point(0, 0);
 						SwingUtilities.convertPointToScreen(ptTarget, frmTarget);
-						
+
 						SwingUtilities.convertPointFromScreen(ptSource, this);
 						SwingUtilities.convertPointFromScreen(ptTarget, this);
-						
-						g.drawLine(ptSource.x, ptSource.y, ptTarget.x, ptTarget.y);
+
+						lines.put(ri, new Line2D.Float(ptSource, ptTarget));
 					}
 				}
 			}
+
+			repaint();
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+
+			Color col = g.getColor();
+
+			for (Map.Entry<RefInfo, Line2D> e : lines.entrySet()) {
+				Line2D line = e.getValue();
+				g.setColor(selRefs.contains(e.getKey()) ? COL_REF_SEL : COL_REF_NORMAL);
+				g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(), (int) line.getY2());
+			}
+
+			g.setColor(col);
 		}
 	};
-	
-	class PnlEditor extends JDesktopPane {	
-		
+
+	class PnlEditor extends JDesktopPane {
+		MouseListener ml = new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0) {
+					selRefs.clear();
+				}
+				pnlLinks.hitTest(e.getPoint());
+			}
+		};
+
 		public PnlEditor() {
 			pnlLinks = new PnlLinks();
 			pnlLinks.followParent(this);
+
+			addMouseListener(ml);
 		}
-		
+
 		public void reloadData() {
 			removeAll();
-			
+
 			add(pnlLinks, JDesktopPane.POPUP_LAYER);
-			
+
 			for (DustEntity k : factEntityInfo.keys()) {
 				JInternalFrame jif = factIntFrames.get(factEntityInfo.peek(k));
 				add(jif, JDesktopPane.DEFAULT_LAYER);
@@ -333,11 +396,7 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 			btn.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					try {
-						dustProcInitableInit();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+					dustProcInitableInit();
 				}
 			});
 
@@ -347,7 +406,7 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 			pnlMain.add(pnlCmds, BorderLayout.SOUTH);
 
 			getContentPane().add(pnlMain, BorderLayout.CENTER);
-			
+
 			pack();
 			setVisible(true);
 		}
@@ -371,16 +430,20 @@ public class MontruGuiSwingFrame implements DustComponents, DustMetaComponents, 
 	ArrayList<RefInfo> arrRefs = new ArrayList<>();
 	ArrayList<EntityInfo> arrTypes = new ArrayList<>();
 
+	Set<RefInfo> selRefs = new HashSet<>();
+
 	Frame frame;
 	PnlEditor pnlEditor;
 	PnlLinks pnlLinks;
 
 	public MontruGuiSwingFrame() {
 		this.frame = new Frame();
+
+		dustProcInitableInit();
 	};
 
 	@Override
-	public void dustProcInitableInit() throws Exception {
+	public void dustProcInitableInit() {
 		frame.setTitle(getClass().getSimpleName());
 
 		arrTypes.clear();
