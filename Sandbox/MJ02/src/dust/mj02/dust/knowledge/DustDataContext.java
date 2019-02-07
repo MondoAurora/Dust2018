@@ -114,7 +114,11 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 					if (DustMetaValueLinkDefType.LinkDefMap == lt) {
 						((HashMap<Object, SimpleRef>) container).put(orig.key, orig);
 					} else {
-						((Collection<SimpleRef>) container).add(orig);
+						if ( orig.target == target ) {
+							refs.remove(orig);
+						} else {
+							((Collection<SimpleRef>) container).add(orig);
+						}
 					}
 					orig.container = container;
 				}
