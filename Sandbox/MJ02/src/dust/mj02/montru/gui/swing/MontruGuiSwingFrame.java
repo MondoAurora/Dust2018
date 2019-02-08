@@ -1,14 +1,8 @@
 package dust.mj02.montru.gui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import dust.mj02.dust.knowledge.DustProcComponents;
 
@@ -24,23 +18,7 @@ public class MontruGuiSwingFrame implements MontruGuiSwingComponents, DustProcCo
 
 			pnlEditor = new MontruGuiSwingPanelEditor();
 
-			JPanel pnlCmds = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-			JButton btn = new JButton("Test!");
-			pnlCmds.add(btn);
-			btn.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dustProcInitableInit();
-				}
-			});
-
-			JPanel pnlMain = new JPanel(new BorderLayout());
-
-			pnlMain.add(new JScrollPane(pnlEditor), BorderLayout.CENTER);
-			pnlMain.add(pnlCmds, BorderLayout.SOUTH);
-
-			getContentPane().add(pnlMain, BorderLayout.CENTER);
+			getContentPane().add(pnlEditor, BorderLayout.CENTER);
 
 			pack();
 			setVisible(true);
@@ -60,7 +38,7 @@ public class MontruGuiSwingFrame implements MontruGuiSwingComponents, DustProcCo
 	public void dustProcInitableInit() {
 		frame.setTitle(getClass().getSimpleName());
 
-		pnlEditor.reloadData();
+		pnlEditor.pnlDesktop.reloadData();
 	}
 
 }

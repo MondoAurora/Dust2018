@@ -83,19 +83,29 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 		for (RefInfo ri : arrRefs) {
 			EntityInfo eiSrc = ri.get(RefKey.source);
 			JComponent frmSource = eiCompRes.getEntityPanel(eiSrc);
-			JComponent frmTarget = eiCompRes.getEntityPanel(ri.get(RefKey.target));
+			EntityInfo eiTarg = ri.get(RefKey.target);
+			JComponent frmTarget = eiCompRes.getEntityPanel(eiTarg);
 
 			if ((null != frmSource) && (null != frmTarget)) {
-				JComponent comp = ((MontruGuiSwingPanelEntity) eiSrc.get(EntityKey.panel)).linkLabels.get(ri.get(RefKey.linkDef));
+				JComponent comp = ((MontruGuiSwingPanelEntity) eiSrc.get(EntityKey.panel)).linkLabels
+						.get(ri.get(RefKey.linkDef));
 
 				if (null != comp) {
+					JComponent tcomp = ((MontruGuiSwingPanelEntity) eiTarg.get(EntityKey.panel)).pnlTop;
 					Point ptSource = new Point(0, comp.getHeight() / 2);
 					SwingUtilities.convertPointToScreen(ptSource, comp);
-					Point ptTarget = new Point(0, 0);
-					SwingUtilities.convertPointToScreen(ptTarget, frmTarget);
+					Point ptTarget = new Point(0, tcomp.getHeight() / 2);
+					SwingUtilities.convertPointToScreen(ptTarget, tcomp);
 
 					SwingUtilities.convertPointFromScreen(ptSource, this);
 					SwingUtilities.convertPointFromScreen(ptTarget, this);
+
+					if (ptTarget.x > ptSource.x) {
+						int w = comp.getWidth();
+						if (ptTarget.x > ptSource.x + (w / 2)) {
+							ptSource.x = ptSource.x + w;
+						}
+					}
 
 					lines.put(ri, new Line2D.Float(ptSource, ptTarget));
 				}
