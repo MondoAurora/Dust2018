@@ -60,7 +60,7 @@
 			"idLocal 201": "KnowledgeMetaType 1",
 			"idLocal 202": "Type",
 			"PrimaryType 108": "KnowledgeMetaType 1",
-			"Extends 101": [
+			"Requires 101": [
 				"ToolsGenericIdentified 6"
 			]
 		},
@@ -69,7 +69,7 @@
 			"idLocal 201": "KnowledgeMetaAttDef 2",
 			"idLocal 202": "AttDef",
 			"PrimaryType 108": "KnowledgeMetaType 1",
-			"Extends 101": [
+			"Requires 101": [
 				"ToolsGenericIdentified 6"
 			]
 		},
@@ -78,7 +78,7 @@
 			"idLocal 201": "KnowledgeMetaLinkDef 3",
 			"idLocal 202": "LinkDef",
 			"PrimaryType 108": "KnowledgeMetaType 1",
-			"Extends 101": [
+			"Requires 101": [
 				"ToolsGenericIdentified 6", 
 				"KnowledgeMetaAttDef 2"
 			]
@@ -122,9 +122,9 @@
 			"Owner 100": "ToolsGenericConnected 8"
 		},
 		{
-			"idStore 200": "Tools:Generic:Connected.Extends",
-			"idLocal 201": "Extends 101",
-			"idLocal 202": "Extends",
+			"idStore 200": "Tools:Generic:Connected.Requires",
+			"idLocal 201": "Requires 101",
+			"idLocal 202": "Requires",
 			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
 			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSet",
 			"Owner 100": "ToolsGenericConnected 8"

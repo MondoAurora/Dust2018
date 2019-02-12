@@ -8,6 +8,6 @@ public class DustToolsGen implements DustGenericComponents {
 		EntityResolver.register("Tools:Generic:Identified.idLocal", DustGenericAtts.identifiedIdLocal);
 		
 		EntityResolver.register("Tools:Generic:Connected.Owner", DustGenericLinks.Owner);
-		EntityResolver.register("Tools:Generic:Connected.Extends", DustGenericLinks.Extends);
+		EntityResolver.register("Tools:Generic:Connected.Requires", DustGenericLinks.Requires);
 	}
 }

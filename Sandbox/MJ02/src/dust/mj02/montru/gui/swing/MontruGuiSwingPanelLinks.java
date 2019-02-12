@@ -49,11 +49,11 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 		this.eiCompRes = eiCompRes;
 	}
 
-	public void followContent(JComponent comp) {
+	void followContent(JComponent comp) {
 		comp.addComponentListener(painter);
 	}
 
-	public void followParent(JComponent comp) {
+	void followParent(JComponent comp) {
 		comp.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -77,7 +77,7 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 		repaint();
 	}
 
-	private void refreshLines() {
+	void refreshLines() {
 		lines.clear();
 
 		for (RefInfo ri : arrRefs) {

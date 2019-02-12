@@ -20,12 +20,20 @@ public interface MontruGuiComponents
 		extends DustComponents, DustMetaComponents, DustProcComponents, DustGenericComponents {
 
 	enum EntityKey {
-		entity, type, models, id, owner, attDefs, linkDefs, links, title, panel
+		entity, type, models, id, owner, attDefs, linkDefs, links, title, panel, showFlags
 	}
 
 	enum RefKey {
 		source, target, linkDef, key, selected
 	}
+
+	enum ShowFlag {
+		hide, showEmpty, showLine
+	};
+
+	enum EditorCommands {
+		createEntity, deleteEntity, deleteRef, test01
+	};
 
 	class NodeInfo<NodeKey extends Enum<NodeKey>> {
 		private EnumMap<NodeKey, Object> content;
@@ -42,17 +50,27 @@ public interface MontruGuiComponents
 			return (RetVal) content.get(key);
 		}
 
-		public void add(NodeKey key, Object val) {
+		public boolean add(NodeKey key, Object val) {
 			if (null == val) {
-				return;
+				return false;
 			}
 			Set<Object> cont = (Set<Object>) content.get(key);
 			if (null == cont) {
 				content.put(key, cont = new HashSet<>());
 			}
-			cont.add(val);
+			return cont.add(val);
 		}
-		
+
+		public boolean contains(NodeKey key, Object val) {
+			Set<Object> cont = (Set<Object>) content.get(key);
+			return (null == cont) ? false : cont.contains(val);
+		}
+
+		public boolean remove(NodeKey key, Object val) {
+			Set<Object> cont = (Set<Object>) content.get(key);
+			return (null == cont) ? false : cont.remove(val);
+		}
+
 		public boolean isTrue(NodeKey k) {
 			return Boolean.TRUE.equals(get(k));
 		}
@@ -67,7 +85,33 @@ public interface MontruGuiComponents
 			put(RefKey.linkDef, factEntityInfo.get(linkDef));
 
 			put(RefKey.key, (key instanceof DustEntity) ? factEntityInfo.get((DustEntity) key) : key);
-		}		
+		}
+
+		public RefInfo(EntityInfo source, EntityInfo linkDef, EntityInfo target, Object key) {
+			super(RefKey.class);
+
+			put(RefKey.source, source);
+			put(RefKey.target, target);
+			put(RefKey.linkDef, linkDef);
+
+			put(RefKey.key, (key instanceof DustEntity) ? factEntityInfo.get((DustEntity) key) : key);
+
+			Dust.accessEntity(DataCommand.setRef, source.get(EntityKey.entity), linkDef.get(EntityKey.entity),
+					target.get(EntityKey.entity), null);
+			source.add(EntityKey.links, this);
+			target.add(EntityKey.links, this);
+		}
+
+		public DustEntity getEntity(RefKey rk) {
+			return ((EntityInfo) get(rk)).get(EntityKey.entity);
+		}
+
+		public void remove() {
+			Dust.accessEntity(DataCommand.removeRef, getEntity(RefKey.source), getEntity(RefKey.linkDef),
+					getEntity(RefKey.target), get(RefKey.key));
+			((EntityInfo) get(RefKey.source)).remove(EntityKey.links, this);
+			((EntityInfo) get(RefKey.target)).remove(EntityKey.links, this);
+		}
 	}
 
 	class EntityInfo extends NodeInfo<EntityKey> {
