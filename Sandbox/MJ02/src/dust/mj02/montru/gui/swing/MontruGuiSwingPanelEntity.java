@@ -17,9 +17,9 @@ import dust.utils.DustUtilsJava;
 @SuppressWarnings({ "serial", "unchecked" })
 class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponents {
 	class EntityHeader extends JPanel {
-		EntityInfo ei;
+		GuiEntityInfo ei;
 
-		public EntityHeader(EntityInfo ei) {
+		public EntityHeader(GuiEntityInfo ei) {
 			super(new BorderLayout(5, 5));
 			this.ei = ei;
 			
@@ -34,19 +34,19 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 			addMouseListener(editor.pnlDesktop.ml);
 		}
 
-		public EntityInfo getEi() {
+		public GuiEntityInfo getEi() {
 			return ei;
 		}
 	}
 
-	EntityInfo ei;
-	Map<EntityInfo, JLabel> linkLabels = new HashMap<>();
+	GuiEntityInfo ei;
+	Map<GuiEntityInfo, JLabel> linkLabels = new HashMap<>();
 	EntityHeader pnlTop;
 
 	MontruGuiSwingPanelEditor editor;
 	
 
-	public MontruGuiSwingPanelEntity(MontruGuiSwingPanelEditor editor, EntityInfo ei) {
+	public MontruGuiSwingPanelEntity(MontruGuiSwingPanelEditor editor, GuiEntityInfo ei) {
 		super(new GridLayout(0, 1));
 		this.ei = ei;
 		this.editor = editor;
@@ -60,7 +60,7 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 		removeAll();
 		linkLabels.clear();
 
-		DustEntity entity = ei.get(EntityKey.entity);
+		DustEntity entity = ei.get(GuiEntityKey.entity);
 		DustUtilsFactory<Object, StringBuilder> factRefs = new DustUtilsFactory<Object, StringBuilder>(false) {
 			@Override
 			protected StringBuilder create(Object key, Object... hints) {
@@ -68,29 +68,29 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 			}
 		};
 
-		for (RefInfo ri : (Iterable<RefInfo>) ei.get(EntityKey.links)) {
-			factRefs.get(ri.get(RefKey.linkDef)).append(((EntityInfo) ri.get(RefKey.target)).getTitle()).append(", ");
+		for (GuiRefInfo ri : (Iterable<GuiRefInfo>) ei.get(GuiEntityKey.links)) {
+			factRefs.get(ri.get(GuiRefKey.linkDef)).append(((GuiEntityInfo) ri.get(GuiRefKey.target)).getTitle()).append(", ");
 		}
 
 		add(pnlTop);
 
-		for (EntityInfo m : editor.arrTypes) {
-			if (m.contains(EntityKey.showFlags, ShowFlag.hide) || !ei.contains(EntityKey.models, m)) {
+		for (GuiEntityInfo m : editor.arrTypes) {
+			if (m.contains(GuiEntityKey.showFlags, GuiShowFlag.hide) || !ei.contains(GuiEntityKey.models, m)) {
 				continue;
 			}
 
-			JLabel lbMdl = new JLabel((String) m.get(EntityKey.id));
+			JLabel lbMdl = new JLabel((String) m.get(GuiEntityKey.id));
 			add(lbMdl);
-			if (m == ei.get(EntityKey.type)) {
+			if (m == ei.get(GuiEntityKey.type)) {
 				lbMdl.setForeground(Color.RED);
 			}
 
-			Iterable<EntityInfo> it = (Iterable<EntityInfo>) m.get(EntityKey.attDefs);
+			Iterable<GuiEntityInfo> it = (Iterable<GuiEntityInfo>) m.get(GuiEntityKey.attDefs);
 			if (null != it) {
-				for (EntityInfo ad : it) {
-					Object val = Dust.accessEntity(DataCommand.getValue, entity, ad.get(EntityKey.entity), null, null);
+				for (GuiEntityInfo ad : it) {
+					Object val = Dust.accessEntity(DataCommand.getValue, entity, ad.get(GuiEntityKey.entity), null, null);
 					JPanel pnl = new JPanel(new BorderLayout(10, 0));
-					pnl.add(new JLabel("  " + ad.get(EntityKey.id)), BorderLayout.WEST);
+					pnl.add(new JLabel("  " + ad.get(GuiEntityKey.id)), BorderLayout.WEST);
 					JTextField tf = new JTextField();
 					tf.setText(DustUtilsJava.toString(val));
 					pnl.add(tf, BorderLayout.CENTER);
@@ -98,9 +98,9 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 				}
 			}
 
-			it = (Iterable<EntityInfo>) m.get(EntityKey.linkDefs);
+			it = (Iterable<GuiEntityInfo>) m.get(GuiEntityKey.linkDefs);
 			if (null != it) {
-				for (EntityInfo ld : it) {
+				for (GuiEntityInfo ld : it) {
 					StringBuilder links = factRefs.peek(ld);
 					String str;
 					if (null == links) {
@@ -108,16 +108,16 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 					} else {
 						str = " -> {" + links + "}";
 					}
-					JLabel llbl = new JLabel("  " + ld.get(EntityKey.id) + str);
+					JLabel llbl = new JLabel("  " + ld.get(GuiEntityKey.id) + str);
 					linkLabels.put(ld, llbl);
 					add(llbl);
 				}
 			}
 		}
 //
-//		Iterable<EntityInfo> im = (Iterable<EntityInfo>) ei.get(EntityKey.models);
+//		Iterable<GuiEntityInfo> im = (Iterable<GuiEntityInfo>) ei.get(GuiEntityKey.models);
 //		if (null != im) {
-//			for (EntityInfo m : im) {
+//			for (GuiEntityInfo m : im) {
 //				if (eiEntity == m) {
 //					continue;
 //				}

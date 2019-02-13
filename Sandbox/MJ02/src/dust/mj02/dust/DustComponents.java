@@ -24,6 +24,10 @@ public interface DustComponents {
 		}
 	}
 	
+	enum RefKey {
+		source, target, linkDef, key
+	}
+	
 	enum DataCommand {
 		getValue(false), setValue(false), setRef(true), removeRef(true), clearRefs(true);
 		
@@ -39,13 +43,17 @@ public interface DustComponents {
 	}
 
 	public interface DustEntity {}
+	public interface DustRef {
+		<InfoType> InfoType get(RefKey ref);
+	}
 
 	interface EntityProcessor {
 		void processEntity(Object key, DustEntity entity);
 	}
 
 	interface RefProcessor {
-		 void processRef(DustEntity source, DustEntity linkDef, DustEntity target, Object key);
+//		 void processRef(DustEntity source, DustEntity linkDef, DustEntity target, Object key);
+		 void processRef(DustRef rref);
 	}
 	
 	public interface DustContext {

@@ -8,7 +8,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,13 +15,15 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import dust.utils.DustUtilsFactory;
+
 class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponents {
 	private static final long serialVersionUID = 1L;
 
-	ArrayList<RefInfo> arrRefs = new ArrayList<>();
+	DustUtilsFactory<DustRef, GuiRefInfo> factRefs;
 	EntityInfoResolver eiCompRes;
 
-	Map<RefInfo, Line2D> lines = new HashMap<>();
+	Map<GuiRefInfo, Line2D> lines = new HashMap<>();
 
 	ComponentListener painter = new ComponentAdapter() {
 		@Override
@@ -43,9 +44,9 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 		}
 	};
 
-	public MontruGuiSwingPanelLinks(EntityInfoResolver eiCompRes, ArrayList<RefInfo> arrRefs) {
+	public MontruGuiSwingPanelLinks(EntityInfoResolver eiCompRes, DustUtilsFactory<DustRef, GuiRefInfo> factRefs) {
 		setOpaque(false);
-		this.arrRefs = arrRefs;
+		this.factRefs = factRefs;
 		this.eiCompRes = eiCompRes;
 	}
 
@@ -67,10 +68,10 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 		Rectangle hit = new Rectangle(pt.x - MontruGuiSwingFrame.HR, pt.y - MontruGuiSwingFrame.HR,
 				2 * MontruGuiSwingFrame.HR, 2 * MontruGuiSwingFrame.HR);
 
-		for (Map.Entry<RefInfo, Line2D> e : lines.entrySet()) {
+		for (Map.Entry<GuiRefInfo, Line2D> e : lines.entrySet()) {
 			if (e.getValue().intersects(hit)) {
-				RefInfo ri = e.getKey();
-				ri.put(RefKey.selected, !ri.isTrue(RefKey.selected));
+				GuiRefInfo ri = e.getKey();
+				ri.put(GuiRefKey.selected, !ri.isTrue(GuiRefKey.selected));
 			}
 		}
 
@@ -80,18 +81,18 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 	void refreshLines() {
 		lines.clear();
 
-		for (RefInfo ri : arrRefs) {
-			EntityInfo eiSrc = ri.get(RefKey.source);
+		for (GuiRefInfo ri : factRefs.values()) {
+			GuiEntityInfo eiSrc = ri.get(GuiRefKey.source);
 			JComponent frmSource = eiCompRes.getEntityPanel(eiSrc);
-			EntityInfo eiTarg = ri.get(RefKey.target);
+			GuiEntityInfo eiTarg = ri.get(GuiRefKey.target);
 			JComponent frmTarget = eiCompRes.getEntityPanel(eiTarg);
 
 			if ((null != frmSource) && (null != frmTarget)) {
-				JComponent comp = ((MontruGuiSwingPanelEntity) eiSrc.get(EntityKey.panel)).linkLabels
-						.get(ri.get(RefKey.linkDef));
+				JComponent comp = ((MontruGuiSwingPanelEntity) eiSrc.get(GuiEntityKey.panel)).linkLabels
+						.get(ri.get(GuiRefKey.linkDef));
 
 				if (null != comp) {
-					JComponent tcomp = ((MontruGuiSwingPanelEntity) eiTarg.get(EntityKey.panel)).pnlTop;
+					JComponent tcomp = ((MontruGuiSwingPanelEntity) eiTarg.get(GuiEntityKey.panel)).pnlTop;
 					Point ptSource = new Point(0, comp.getHeight() / 2);
 					SwingUtilities.convertPointToScreen(ptSource, comp);
 					Point ptTarget = new Point(0, tcomp.getHeight() / 2);
@@ -121,9 +122,9 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 
 		Color col = g.getColor();
 
-		for (Map.Entry<RefInfo, Line2D> e : lines.entrySet()) {
+		for (Map.Entry<GuiRefInfo, Line2D> e : lines.entrySet()) {
 			Line2D line = e.getValue();
-			g.setColor(e.getKey().isTrue(RefKey.selected) ? MontruGuiSwingFrame.COL_REF_SEL
+			g.setColor(e.getKey().isTrue(GuiRefKey.selected) ? MontruGuiSwingFrame.COL_REF_SEL
 					: MontruGuiSwingFrame.COL_REF_NORMAL);
 			g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(), (int) line.getY2());
 		}

@@ -16,6 +16,6 @@ public interface MontruGuiSwingComponents
 	Color COL_REF_NORMAL = Color.BLACK;
 
 	interface EntityInfoResolver {
-		JComponent getEntityPanel(EntityInfo ei);
+		JComponent getEntityPanel(GuiEntityInfo ei);
 	}
 }

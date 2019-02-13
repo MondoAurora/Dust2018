@@ -44,15 +44,15 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		}
 	}
 
-	class SimpleRef {
+	class SimpleRef implements DustRef {
 		SimpleEntity linkDef;
-		DustMetaValueLinkDefType lt;
-
 		SimpleEntity source;
 		SimpleEntity target;
+		Object key;
+
 		SimpleRef reverse;
 
-		Object key;
+		DustMetaValueLinkDefType lt;
 		Object container;
 
 		public SimpleRef(SimpleEntity linkDef, SimpleEntity source, SimpleEntity target, SimpleRef reverse, Object key,
@@ -126,6 +126,21 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				container = orig.container;
 			}
 		}
+		
+		@Override
+		public <InfoType> InfoType get(RefKey ref) {
+			switch (ref) {
+			case key:
+				return (InfoType) key;
+			case linkDef:
+				return (InfoType) linkDef;
+			case source:
+				return (InfoType) source;
+			case target:
+				return (InfoType) target;
+			}
+			return null;
+		}
 	}
 
 	DustContext ctxParent;
@@ -168,7 +183,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSet == actRef.lt)) {
 				for (SimpleRef er : ((Set<SimpleRef>) actRef.container)) {
 					if (er.target == val) {
-						return null;
+						return (RetType) er;
 					}
 				}
 			}
@@ -177,6 +192,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			if (null == actRef) {
 				se.put(key, sr);
 			}
+			
+			retVal = sr;
 
 			break;
 		case clearRefs:
@@ -199,7 +216,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		for (SimpleRef ref : refs) {
 			if (DustUtilsJava.isEqualLenient(ref.source, source) && DustUtilsJava.isEqualLenient(ref.linkDef, eLD)
 					&& DustUtilsJava.isEqualLenient(ref.target, target)) {
-				proc.processRef(ref.source, ref.linkDef, ref.target, ref.key);
+				proc.processRef(ref);
+//				proc.processRef(ref.source, ref.linkDef, ref.target, ref.key);
 			}
 		}
 	}

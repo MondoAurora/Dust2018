@@ -50,6 +50,10 @@ public abstract class DustUtilsFactory<KeyType, ValType> implements DustUtilsCom
 		return content.keySet();
 	}
 
+	public Iterable<ValType> values() {
+		return content.values();
+	}
+
 	public void put(KeyType key, ValType value) {
 		content.put(key, value);
 	}
