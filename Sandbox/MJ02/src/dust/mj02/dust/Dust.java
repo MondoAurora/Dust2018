@@ -33,6 +33,13 @@ public class Dust implements DustComponents {
 		RUNTIME.ctxProcessRefs(proc, source, linkDef, target);
 	}
 	
+	public static void wrapAndRethrowException(String msg, Throwable src) {
+		if ( src instanceof DustException ) {
+			throw (DustException) src;
+		} else {
+			throw new DustException(msg, src);
+		}
+	}
 	
 //	public static DustRef buildRef(DustRef... path) {
 //		return RUNTIME.buildRef(path);

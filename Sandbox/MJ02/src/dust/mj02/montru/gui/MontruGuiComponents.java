@@ -35,6 +35,10 @@ public interface MontruGuiComponents
 		createEntity, deleteEntity, deleteRef, test01
 	};
 
+	enum WidgetType {
+		entityPanel, entityHead, dataLabel, dataEditor
+	};
+	
 	class NodeInfo<NodeKey extends Enum<NodeKey>> {
 		private EnumMap<NodeKey, Object> content;
 
@@ -169,7 +173,20 @@ public interface MontruGuiComponents
 
 			return sb.toString();
 		}
+	}
+	
+	interface GuiChangeListener {
+		public void guiChangedAttribute(GuiEntityInfo entity, GuiEntityInfo att, Object value);
+		public void guiChangedRef(GuiEntityInfo entity, GuiRefInfo ref, DataCommand cmd);
+	}
+	
+	interface GuiEntityElement extends GuiChangeListener {
+//		GuiEntityInfo getEntityInfo();
+//		void updateDisplay();
+	}
 
+	interface GuiEntityDataElement extends GuiEntityElement {
+//		GuiEntityInfo getDataInfo();
 	}
 
 	DustUtilsFactory<DustEntity, GuiEntityInfo> factEntityInfo = new DustUtilsFactory<DustEntity, GuiEntityInfo>(false) {

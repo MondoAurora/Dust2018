@@ -50,6 +50,8 @@ import dust.utils.DustUtilsJava;
 class MontruGuiSwingPanelEditor extends JPanel
 		implements MontruGuiSwingComponents, MontruGuiSwingComponents.EntityInfoResolver {
 	ArrayList<GuiEntityInfo> arrTypes = new ArrayList<>();
+	
+	MontruGuiSwingWidgetManager widgetManager = new MontruGuiSwingWidgetManager();
 
 //	ArrayList<GuiRefInfo> arrRefs = new ArrayList<>();
 	DustUtilsFactory<DustRef, GuiRefInfo> factRefs = new DustUtilsFactory<DustRef, GuiRefInfo>(false) {
@@ -130,8 +132,8 @@ class MontruGuiSwingPanelEditor extends JPanel
 					}
 
 					if (null != targetPanel) {
-						for (Map.Entry<GuiEntityInfo, JLabel> le : targetPanel.linkLabels.entrySet()) {
-							JLabel lbl = le.getValue();
+						for (Map.Entry<GuiEntityInfo, JComponent> le : targetPanel.linkLabels.entrySet()) {
+							JComponent lbl = le.getValue();
 							loc = SwingUtilities.convertPoint(null, pt, lbl);
 							if (lbl.contains(loc)) {
 								DustRef dr = Dust.accessEntity(DataCommand.setRef, targetPanel.ei.get(GuiEntityKey.entity), 
