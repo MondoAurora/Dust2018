@@ -1,10 +1,8 @@
 package dust.mj02.montru.gui;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import dust.mj02.dust.Dust;
@@ -81,18 +79,18 @@ public interface MontruGuiComponents
 	}
 
 	class GuiRefInfo extends NodeInfo<GuiRefKey> {
-		public GuiRefInfo(DustRef ref) {
+		public GuiRefInfo(GuiEditorModel em, DustRef ref) {
 			super(GuiRefKey.class);
 
-			GuiEntityInfo s = factEntityInfo.get(ref.get(RefKey.source));
-			GuiEntityInfo t = factEntityInfo.get(ref.get(RefKey.target));
+			GuiEntityInfo s = em.getEntityInfo(ref.get(RefKey.source));
+			GuiEntityInfo t = em.getEntityInfo(ref.get(RefKey.target));
 
 			put(GuiRefKey.source, s);
 			put(GuiRefKey.target, t);
-			put(GuiRefKey.linkDef, factEntityInfo.get(ref.get(RefKey.linkDef)));
+			put(GuiRefKey.linkDef, em.getEntityInfo(ref.get(RefKey.linkDef)));
 			
 			Object key = ref.get(RefKey.key);
-			put(GuiRefKey.key, (key instanceof DustEntity) ? factEntityInfo.get((DustEntity) key) : key);
+			put(GuiRefKey.key, (key instanceof DustEntity) ? em.getEntityInfo((DustEntity) key) : key);
 			
 			s.add(GuiEntityKey.links, this);
 //			t.add(GuiEntityKey.links, this);
@@ -175,9 +173,22 @@ public interface MontruGuiComponents
 		}
 	}
 	
+	interface GuiEditorModel {
+		void refreshData();
+		
+		GuiEntityInfo getEntityInfo(DustEntity entity);
+		GuiRefInfo getRefInfo(DustRef ref);
+		
+		Iterable<GuiRefInfo> getAllRefs();
+		Iterable<GuiEntityInfo> getAllEntities();
+		ArrayList<GuiEntityInfo> getAllTypes();
+
+		Iterable<GuiEntityInfo> dropRefs(Iterable<GuiRefInfo> refs);
+	}
+	
 	interface GuiChangeListener {
-		public void guiChangedAttribute(GuiEntityInfo entity, GuiEntityInfo att, Object value);
-		public void guiChangedRef(GuiEntityInfo entity, GuiRefInfo ref, DataCommand cmd);
+		void guiChangedAttribute(GuiEntityInfo entity, GuiEntityInfo att, Object value);
+		void guiChangedRef(GuiEntityInfo entity, GuiRefInfo ref, DataCommand cmd);
 	}
 	
 	interface GuiEntityElement extends GuiChangeListener {
@@ -187,85 +198,5 @@ public interface MontruGuiComponents
 
 	interface GuiEntityDataElement extends GuiEntityElement {
 //		GuiEntityInfo getDataInfo();
-	}
-
-	DustUtilsFactory<DustEntity, GuiEntityInfo> factEntityInfo = new DustUtilsFactory<DustEntity, GuiEntityInfo>(false) {
-		@Override
-		protected GuiEntityInfo create(DustEntity key, Object... hints) {
-			GuiEntityInfo ret = new GuiEntityInfo();
-			ret.put(GuiEntityKey.entity, key);
-
-			String id = Dust.accessEntity(DataCommand.getValue, key,
-					EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal), null, null);
-
-			ret.put(GuiEntityKey.id, id);
-
-			return ret;
-		}
-	};
-
-	public static void loadRefsAndEntities(Collection<GuiEntityInfo> arrTypes, DustUtilsFactory<DustRef, GuiRefInfo> factRefs) {
-		arrTypes.clear();
-//		arrRefs.clear();
-
-		DustEntity eldPrimaryType = EntityResolver.getEntity(DustDataLinks.EntityPrimaryType);
-		DustEntity eldEntityModels = EntityResolver.getEntity(DustDataLinks.EntityModels);
-
-		Dust.processRefs(new RefProcessor() {
-			@Override
-			public void processRef(DustRef ref) {
-				GuiRefInfo ri = factRefs.get(ref);
-
-				GuiEntityInfo eiSource = ri.get(GuiRefKey.source);
-				GuiEntityInfo eiTarget = ri.get(GuiRefKey.target);
-
-				Object ld = ri.getEntity(GuiRefKey.linkDef);				
-				if (ld == eldPrimaryType) {
-					eiSource.put(GuiEntityKey.type, eiTarget);
-				} else if (ld == eldEntityModels) {
-					eiSource.add(GuiEntityKey.models, eiTarget);
-				}
-			}
-		}, null, null, null);
-
-		Map<GuiEntityInfo, DustMetaTypes> mapMeta = new HashMap<>();
-		for (DustMetaTypes dmt : DustMetaTypes.values()) {
-			mapMeta.put(factEntityInfo.get(EntityResolver.getEntity(dmt)), dmt);
-		}
-		GuiEntityInfo eiGenericOwner = factEntityInfo.get(EntityResolver.getEntity(DustGenericLinks.Owner));
-
-		Dust.processEntities(new EntityProcessor() {
-			@Override
-			public void processEntity(Object key, DustEntity entity) {
-				GuiEntityInfo ei = factEntityInfo.get(entity);
-				GuiEntityInfo eiType = ei.get(GuiEntityKey.type);
-				DustMetaTypes dmt = mapMeta.get(eiType);
-
-				GuiEntityKey ekInfo = null;
-
-				if (null != dmt) {
-					switch (dmt) {
-					case Type:
-						arrTypes.add(ei);
-						break;
-					case AttDef:
-						ekInfo = GuiEntityKey.attDefs;
-						break;
-					case LinkDef:
-						ekInfo = GuiEntityKey.linkDefs;
-						break;
-					}
-				}
-
-				if (null != ekInfo) {
-					for (GuiRefInfo ri : (Iterable<GuiRefInfo>) ei.get(GuiEntityKey.links)) {
-						if (eiGenericOwner == ri.get(GuiRefKey.linkDef)) {
-							GuiEntityInfo eiOwnerType = ri.get(GuiRefKey.target);
-							eiOwnerType.add(ekInfo, ei);
-						}
-					}
-				}
-			}
-		});
 	}
 }

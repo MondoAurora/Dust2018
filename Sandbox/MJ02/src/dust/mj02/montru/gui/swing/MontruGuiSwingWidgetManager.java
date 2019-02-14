@@ -92,6 +92,11 @@ public class MontruGuiSwingWidgetManager extends MontruGuiWidgetManager<JCompone
 			((EntityDataEditorText)e.getDocument().getProperty(DOC_EDIT_PROP)).sendUpdate();
 		}
 	};
+	
+	public MontruGuiSwingWidgetManager(GuiEditorModel editorModel) {
+		super(editorModel);
+	}
+
 
 	@Override
 	protected <WT> WT createWidgetInt(WidgetType wt, GuiEntityInfo eEntity, GuiEntityInfo eData) {

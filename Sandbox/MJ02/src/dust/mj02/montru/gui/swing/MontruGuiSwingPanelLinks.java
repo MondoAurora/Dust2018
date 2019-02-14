@@ -15,13 +15,10 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import dust.utils.DustUtilsFactory;
-
 class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponents {
 	private static final long serialVersionUID = 1L;
 
-	DustUtilsFactory<DustRef, GuiRefInfo> factRefs;
-	EntityInfoResolver eiCompRes;
+	MontruGuiSwingPanelEditor editor;
 
 	Map<GuiRefInfo, Line2D> lines = new HashMap<>();
 
@@ -44,10 +41,9 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 		}
 	};
 
-	public MontruGuiSwingPanelLinks(EntityInfoResolver eiCompRes, DustUtilsFactory<DustRef, GuiRefInfo> factRefs) {
+	public MontruGuiSwingPanelLinks(MontruGuiSwingPanelEditor editor) {
 		setOpaque(false);
-		this.factRefs = factRefs;
-		this.eiCompRes = eiCompRes;
+		this.editor = editor;
 	}
 
 	void followContent(JComponent comp) {
@@ -81,11 +77,11 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 	void refreshLines() {
 		lines.clear();
 
-		for (GuiRefInfo ri : factRefs.values()) {
+		for (GuiRefInfo ri : editor.editorModel.getAllRefs() ) {
 			GuiEntityInfo eiSrc = ri.get(GuiRefKey.source);
-			JComponent frmSource = eiCompRes.getEntityPanel(eiSrc);
+			JComponent frmSource = editor.getEntityPanel(eiSrc);
 			GuiEntityInfo eiTarg = ri.get(GuiRefKey.target);
-			JComponent frmTarget = eiCompRes.getEntityPanel(eiTarg);
+			JComponent frmTarget = editor.getEntityPanel(eiTarg);
 
 			if ((null != frmSource) && (null != frmTarget)) {
 				JComponent comp = ((MontruGuiSwingPanelEntity) eiSrc.get(GuiEntityKey.panel)).linkLabels

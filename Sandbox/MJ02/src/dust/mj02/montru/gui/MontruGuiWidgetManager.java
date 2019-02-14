@@ -27,7 +27,7 @@ public abstract class MontruGuiWidgetManager<BaseType> implements MontruGuiCompo
 		<WT> WT createWidget(WidgetType wt, GuiEntityInfo eEntity, GuiEntityInfo eData) {
 			if ( null == eData ) {
 				DustEntity dea = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
-				eData = factEntityInfo.get(dea);
+				eData = editorModel.getEntityInfo(dea);
 			}
 			WT ret = createWidgetInt(wt, eEntity, eData);
 			
@@ -69,12 +69,20 @@ public abstract class MontruGuiWidgetManager<BaseType> implements MontruGuiCompo
 
 	}
 
-	DustUtilsFactory<GuiEntityInfo, WidgetUpdater> factWidgetUpdaters = new DustUtilsFactory<GuiEntityInfo, WidgetUpdater>(false){
+	private final DustUtilsFactory<GuiEntityInfo, WidgetUpdater> factWidgetUpdaters = new DustUtilsFactory<GuiEntityInfo, WidgetUpdater>(false){
 		@Override
 		protected WidgetUpdater create(GuiEntityInfo key, Object... hints) {
 			return new WidgetUpdater(key);
 		}
 	};
+	
+	private final GuiEditorModel editorModel;
+	
+
+	public MontruGuiWidgetManager(GuiEditorModel editorModel) {
+		super();
+		this.editorModel = editorModel;
+	}
 
 	protected abstract <WT> WT createWidgetInt(WidgetType wt, GuiEntityInfo eEntity, GuiEntityInfo eData);
 	

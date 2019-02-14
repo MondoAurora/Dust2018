@@ -14,7 +14,7 @@ public interface MontruGuiSwingComponents extends MontruGuiComponents {
 	Color COL_REF_SEL = Color.RED;
 	Color COL_REF_NORMAL = Color.BLACK;
 
-	interface EntityInfoResolver {
+	interface EntitySwingCompResolver {
 		JComponent getEntityPanel(GuiEntityInfo ei);
 	}
 

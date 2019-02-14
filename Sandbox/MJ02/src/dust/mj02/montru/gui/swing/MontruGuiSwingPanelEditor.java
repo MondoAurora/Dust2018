@@ -13,7 +13,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyVetoException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,25 +40,19 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import dust.mj02.dust.Dust;
-import dust.mj02.montru.gui.MontruGuiComponents;
+import dust.mj02.montru.gui.MontruGuiEditorModel;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("serial")
 class MontruGuiSwingPanelEditor extends JPanel
-		implements MontruGuiSwingComponents, MontruGuiSwingComponents.EntityInfoResolver {
-	ArrayList<GuiEntityInfo> arrTypes = new ArrayList<>();
-	
-	MontruGuiSwingWidgetManager widgetManager = new MontruGuiSwingWidgetManager();
+		implements MontruGuiSwingComponents, MontruGuiSwingComponents.EntitySwingCompResolver {
+
+	GuiEditorModel editorModel = new MontruGuiEditorModel();
+	MontruGuiSwingWidgetManager widgetManager = new MontruGuiSwingWidgetManager(editorModel);
 
 //	ArrayList<GuiRefInfo> arrRefs = new ArrayList<>();
-	DustUtilsFactory<DustRef, GuiRefInfo> factRefs = new DustUtilsFactory<DustRef, GuiRefInfo>(false) {
-		@Override
-		protected GuiRefInfo create(DustRef ref, Object... hints) {
-			return new GuiRefInfo(ref);
-		}
-	};
 
 	DustUtilsFactory<GuiEntityInfo, JInternalFrame> factIntFrames = new DustUtilsFactory<GuiEntityInfo, JInternalFrame>(
 			false) {
@@ -87,7 +80,7 @@ class MontruGuiSwingPanelEditor extends JPanel
 		MouseListener ml = new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Iterable<GuiRefInfo> itRef = factRefs.values();
+				Iterable<GuiRefInfo> itRef = editorModel.getAllRefs();
 
 				if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0) {
 					for (GuiRefInfo ri : itRef) {
@@ -139,7 +132,7 @@ class MontruGuiSwingPanelEditor extends JPanel
 								DustRef dr = Dust.accessEntity(DataCommand.setRef, targetPanel.ei.get(GuiEntityKey.entity), 
 										le.getKey().get(GuiEntityKey.entity), dragging.get(GuiEntityKey.entity), null);
 
-								GuiRefInfo ri = factRefs.get(dr);
+								GuiRefInfo ri = editorModel.getRefInfo(dr);
 								ri.put(GuiRefKey.selected, true);
 
 								Set<GuiEntityInfo> uu = new HashSet<>();
@@ -149,12 +142,12 @@ class MontruGuiSwingPanelEditor extends JPanel
 								break;
 							}
 						}
-					} else if (arrTypes.contains(dragging)) {
+					} else if (editorModel.getAllTypes().contains(dragging)) {
 						String id = JOptionPane.showInputDialog("Entity id?");
 
 						if (!DustUtilsJava.isEmpty(id)) {
 							DustEntity de = Dust.getEntity(id);
-							GuiEntityInfo ei = factEntityInfo.get(de);
+							GuiEntityInfo ei = editorModel.getEntityInfo(de);
 
 							ei.add(GuiEntityKey.models, dragging);
 
@@ -182,32 +175,32 @@ class MontruGuiSwingPanelEditor extends JPanel
 		GuiEntityInfo dragging;
 
 		public PnlDesktop() {
-			pnlLinks = new MontruGuiSwingPanelLinks(MontruGuiSwingPanelEditor.this, factRefs);
+			pnlLinks = new MontruGuiSwingPanelLinks(MontruGuiSwingPanelEditor.this);
 			pnlLinks.followParent(this);
 
 			addMouseListener(ml);
 		}
 
 		public void reloadData() {
-			MontruGuiComponents.loadRefsAndEntities(arrTypes, factRefs);
+			editorModel.refreshData();
 			pnlMeta.lmTypes.update();
 
-			GuiEntityInfo eiEntity = factEntityInfo.get(EntityResolver.getEntity(DustDataTypes.Entity));
+			GuiEntityInfo eiEntity = editorModel.getEntityInfo(EntityResolver.getEntity(DustDataTypes.Entity));
 			eiEntity.add(GuiEntityKey.showFlags, GuiShowFlag.hide);
 
 			removeAll();
 
 			add(pnlLinks, JDesktopPane.POPUP_LAYER);
 
-			for (DustEntity k : MontruGuiSwingFrame.factEntityInfo.keys()) {
-				factIntFrames.get(MontruGuiSwingFrame.factEntityInfo.peek(k));
+			for (GuiEntityInfo ei : editorModel.getAllEntities()) {
+				factIntFrames.get(ei);
 			}
 
 			revalidate();
 			repaint();
 		}
 
-		public void updatePanels(Set<GuiEntityInfo> toUpdate) {
+		public void updatePanels(Iterable<GuiEntityInfo> toUpdate) {
 			for (GuiEntityInfo pe : toUpdate) {
 				JInternalFrame pf = activateEntity(pe, false);
 				if (null != pf) {
@@ -224,12 +217,12 @@ class MontruGuiSwingPanelEditor extends JPanel
 	class TypelistModel extends AbstractListModel<GuiEntityInfo> {
 		@Override
 		public GuiEntityInfo getElementAt(int index) {
-			return arrTypes.get(index);
+			return editorModel.getAllTypes().get(index);
 		}
 
 		@Override
 		public int getSize() {
-			return arrTypes.size();
+			return editorModel.getAllTypes().size();
 		}
 
 		private void update() {
@@ -299,19 +292,13 @@ class MontruGuiSwingPanelEditor extends JPanel
 			case deleteRef:
 				Set<GuiRefInfo> toDel = new HashSet<>();
 
-				for (GuiRefInfo ri : factRefs.values()) {
+				for (GuiRefInfo ri : editorModel.getAllRefs()) {
 					if (ri.isTrue(GuiRefKey.selected)) {
 						toDel.add(ri);
 					}
 				}
 
-				Set<GuiEntityInfo> toUpdate = new HashSet<>();
-				for (GuiRefInfo ri : toDel) {
-					ri.remove();
-					factRefs.drop(ri);
-					toUpdate.add(ri.get(GuiRefKey.source));
-					toUpdate.add(ri.get(GuiRefKey.target));
-				}
+				Iterable<GuiEntityInfo> toUpdate = editorModel.dropRefs(toDel);
 
 				pnlDesktop.updatePanels(toUpdate);
 

@@ -25,8 +25,10 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 			add(new JLabel(ei.getTitle(), JLabel.CENTER), BorderLayout.CENTER);
 			setBackground(Color.lightGray);
 			JLabel lbl = new JLabel(" + ", JLabel.CENTER);
+			lbl.setSize(lbl.getHeight(), lbl.getHeight());
 			add(lbl, BorderLayout.WEST);
 			lbl = new JLabel(" + ", JLabel.CENTER);
+			lbl.setSize(lbl.getHeight(), lbl.getHeight());
 			add(lbl, BorderLayout.EAST);
 
 			addMouseMotionListener(editor.pnlDesktop.mml);
@@ -53,6 +55,8 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 		pnlTop = new EntityHeader(ei);
 
 		reloadData();
+		
+		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 	}
 
 	public void reloadData() {
@@ -73,7 +77,7 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 
 		add(pnlTop);
 
-		for (GuiEntityInfo m : editor.arrTypes) {
+		for (GuiEntityInfo m : editor.editorModel.getAllTypes()) {
 			if (m.contains(GuiEntityKey.showFlags, GuiShowFlag.hide) || !ei.contains(GuiEntityKey.models, m)) {
 				continue;
 			}
