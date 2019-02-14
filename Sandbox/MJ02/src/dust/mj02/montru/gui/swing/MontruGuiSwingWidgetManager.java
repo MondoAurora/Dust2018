@@ -18,9 +18,24 @@ public class MontruGuiSwingWidgetManager extends MontruGuiWidgetManager<JCompone
 	private static final String DOC_EDIT_PROP = "MontruDocEditComp";
 
 	class EntityDataLabel extends JLabel implements GuiEntityDataElement {
+		private final GuiEntityInfo eiEntity;
+		private final GuiEntityInfo eiData;
+
 		public EntityDataLabel(GuiEntityInfo eiEntity, GuiEntityInfo eiData) {
 			super();
+
+			this.eiEntity = eiEntity;
+			this.eiData = eiData;
+			
 			guiChangedAttribute(eiEntity, eiData, null);
+		}
+		
+		public GuiEntityInfo getEntityInfo() {
+			return eiEntity;
+		}
+		
+		public GuiEntityInfo getDataInfo() {
+			return eiData;
 		}
 
 		@Override
@@ -51,6 +66,14 @@ public class MontruGuiSwingWidgetManager extends MontruGuiWidgetManager<JCompone
 			Document doc = getDocument();
 			doc.addDocumentListener(dl);
 			doc.putProperty(DOC_EDIT_PROP, this);
+		}
+		
+		public GuiEntityInfo getEntityInfo() {
+			return eiEntity;
+		}
+		
+		public GuiEntityInfo getDataInfo() {
+			return eiData;
 		}
 
 		@Override

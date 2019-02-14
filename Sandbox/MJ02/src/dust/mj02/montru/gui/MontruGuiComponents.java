@@ -192,11 +192,11 @@ public interface MontruGuiComponents
 	}
 	
 	interface GuiEntityElement extends GuiChangeListener {
-//		GuiEntityInfo getEntityInfo();
+		GuiEntityInfo getEntityInfo();
 //		void updateDisplay();
 	}
 
 	interface GuiEntityDataElement extends GuiEntityElement {
-//		GuiEntityInfo getDataInfo();
+		GuiEntityInfo getDataInfo();
 	}
 }
