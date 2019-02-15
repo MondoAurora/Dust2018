@@ -17,7 +17,25 @@ public interface DustMetaComponents extends DustComponents {
 	};
 	
 	enum DustMetaValueLinkDefType {
-		LinkDefSet, LinkDefMap, LinkDefArray, LinkDefSingle
+		LinkDefSet("(", ")"), LinkDefMap("{", "}"), LinkDefArray("[", "]"), LinkDefSingle("", "");
+		
+		final String sepStart;
+		final String sepEnd;
+		
+		
+		private DustMetaValueLinkDefType(String sepStart, String sepEnd) {
+			this.sepStart = sepStart;
+			this.sepEnd = sepEnd;
+		}
+
+		public String getSepStart() {
+			return sepStart;
+		}
+		
+		public String getSepEnd() {
+			return sepEnd;
+		}
+		
 	};
 	
 }

@@ -4,13 +4,13 @@ import java.util.EnumSet;
 import java.util.Map;
 
 public class DustUtilsJava implements DustUtilsComponents {
-	
-	public static <FlagType extends Enum<FlagType>> void optSetFlag(EnumSet<FlagType> target, FlagType flag, boolean condition) {
-		if ( condition ) {
+
+	public static <FlagType extends Enum<FlagType>> void optSetFlag(EnumSet<FlagType> target, FlagType flag,
+			boolean condition) {
+		if (condition) {
 			target.add(flag);
 		}
 	}
-
 
 	public static String toString(Object ob) {
 		return (null == ob) ? "" : ob.toString();
@@ -94,14 +94,14 @@ public class DustUtilsJava implements DustUtilsComponents {
 
 	@SuppressWarnings("rawtypes")
 	public static StringBuilder toStringBuilder(StringBuilder target, Iterable<?> content, boolean map, String name) {
-		if ( null == content ) {
+		if (null == content) {
 			return null;
 		}
-		
+
 		if (!isEmpty(name)) {
 			target = DustUtilsJava.sbAppend(target, "", false, " \"", name, "\": ");
+			target = DustUtilsJava.sbAppend(target, "", false, map ? "{ " : "[ ");
 		}
-		target = DustUtilsJava.sbAppend(target, "", false, map ? "{ " : "[ ");
 
 		boolean empty = true;
 		for (Object r : content) {
@@ -118,18 +118,20 @@ public class DustUtilsJava implements DustUtilsComponents {
 				}
 				sbAppend(target, "", false, " \"", e.getKey(), "\": ", val);
 			} else {
-				target.append(r);
+				target = DustUtilsJava.sbAppend(target, "", false, r);
 			}
 		}
-		target.append(map ? " }" : " ]");
+		if (!isEmpty(name)) {
+			target.append(map ? " }" : " ]");
+		}
 		return target;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <RetType> RetType getByPath(Object from, Object ... path) {
+	public static <RetType> RetType getByPath(Object from, Object... path) {
 		Object ret = from;
 		for (Object k : path) {
-			if ( k instanceof Enum ) {
+			if (k instanceof Enum) {
 				k = ((Enum) k).name();
 			}
 			ret = ((Map<String, Object>) ret).get(k);
@@ -137,8 +139,7 @@ public class DustUtilsJava implements DustUtilsComponents {
 		return (RetType) ret;
 	}
 
-
-	public static void biDiPut(Map<Object, Object> target, Object o1, Object o2) { 
+	public static void biDiPut(Map<Object, Object> target, Object o1, Object o2) {
 		target.put(o1, o2);
 		target.put(o2, o1);
 	}

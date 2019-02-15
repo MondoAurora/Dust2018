@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import dust.mj02.dust.tools.DustGenericComponents;
@@ -19,13 +20,15 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 	class SimpleEntity implements DustEntity {
 		Map<DustEntity, Object> content = new HashMap<>();
+		DustEntity ePT;
 
 		public <RetType> RetType put(DustEntity key, Object value) {
 			RetType orig = (RetType) content.put(key, value);
 
 			if (EntityResolver.getEntity(DustDataLinks.EntityPrimaryType) == key) {
-				ctxAccessEntity(DataCommand.setRef, this, EntityResolver.getEntity(DustDataLinks.EntityModels),
-						((SimpleRef) value).target, null);
+				ePT = ((SimpleRef) value).target;
+				ctxAccessEntity(DataCommand.setRef, this, EntityResolver.getEntity(DustDataLinks.EntityModels), ePT,
+						null);
 			}
 
 			if (null == orig) {
@@ -41,6 +44,16 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 		public <RetType> RetType get(DustEntity key) {
 			return (RetType) content.get(key);
+		}
+
+		@Override
+		public String toString() {
+			String id = get(EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal));
+
+			String type = (null == ePT) ? "?"
+					: (ePT == this) ? id
+							: ((SimpleEntity) ePT).get(EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal));
+			return type + ": " + id;
 		}
 	}
 
@@ -140,6 +153,34 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				return (InfoType) target;
 			}
 			return null;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = null;
+
+			switch (lt) {
+			case LinkDefSingle:
+				sb = new StringBuilder(DustUtilsJava.toString(target));
+				break;
+			case LinkDefArray:
+			case LinkDefSet:
+				if (null != container) {
+					for (SimpleRef sr : (Iterable<SimpleRef>) container) {
+						sb = DustUtilsJava.sbAppend(sb, ", ", false, sr.target);
+					}
+				}
+				break;
+			case LinkDefMap:
+				if (null != container) {
+					for (Entry<Object, SimpleRef> e : ((Map<Object, SimpleRef>) container).entrySet()) {
+						sb = DustUtilsJava.sbAppend(sb, ", ", false, e.getKey() + "=" + e.getValue().target);
+					}
+				}
+				break;
+			}
+
+			return sb.insert(0, lt.sepStart).append(lt.sepEnd).toString();
 		}
 	}
 

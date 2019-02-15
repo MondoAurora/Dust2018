@@ -8,6 +8,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Line2D;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,36 +77,43 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 
 	void refreshLines() {
 		lines.clear();
+		EnumMap<AnchorLocation, Point> aSrc = new EnumMap<>(AnchorLocation.class);
+		EnumMap<AnchorLocation, Point> aTrg = new EnumMap<>(AnchorLocation.class);
+		
+		AnchorLocation[][] test = {{AnchorLocation.Left, AnchorLocation.Left}, 
+				{AnchorLocation.Left, AnchorLocation.Right}, 
+				{AnchorLocation.Right, AnchorLocation.Left}, 
+				{AnchorLocation.Right, AnchorLocation.Right} };
 
-		for (GuiRefInfo ri : editor.editorModel.getAllRefs() ) {
+		for (GuiRefInfo ri : editor.getEditorModel().getAllRefs() ) {
 			GuiEntityInfo eiSrc = ri.get(GuiRefKey.source);
 			JComponent frmSource = editor.getEntityPanel(eiSrc);
 			GuiEntityInfo eiTarg = ri.get(GuiRefKey.target);
 			JComponent frmTarget = editor.getEntityPanel(eiTarg);
 
 			if ((null != frmSource) && (null != frmTarget)) {
-				JComponent comp = ((MontruGuiSwingPanelEntity) eiSrc.get(GuiEntityKey.panel)).linkLabels
-						.get(ri.get(GuiRefKey.linkDef));
+				((MontruGuiSwingPanelEntity) eiSrc.get(GuiEntityKey.panel)).getAnchorOnScreen(aSrc, ri.get(GuiRefKey.linkDef));
+				((MontruGuiSwingPanelEntity) eiTarg.get(GuiEntityKey.panel)).getAnchorOnScreen(aTrg, null);
 
-				if (null != comp) {
-					JComponent tcomp = ((MontruGuiSwingPanelEntity) eiTarg.get(GuiEntityKey.panel)).pnlTop;
-					Point ptSource = new Point(0, comp.getHeight() / 2);
-					SwingUtilities.convertPointToScreen(ptSource, comp);
-					Point ptTarget = new Point(0, tcomp.getHeight() / 2);
-					SwingUtilities.convertPointToScreen(ptTarget, tcomp);
-
-					SwingUtilities.convertPointFromScreen(ptSource, this);
-					SwingUtilities.convertPointFromScreen(ptTarget, this);
-
-					if (ptTarget.x > ptSource.x) {
-						int w = comp.getWidth();
-						if (ptTarget.x > ptSource.x + (w / 2)) {
-							ptSource.x = ptSource.x + w;
+				if ( !aSrc.isEmpty() && !aTrg.isEmpty() ) {
+					Point pt0 = new Point();
+					Point pt1 = new Point();
+					int min = Integer.MAX_VALUE;
+					
+					for ( AnchorLocation[] t : test ) {
+						int diff = Math.abs(aSrc.get(t[0]).x - aTrg.get(t[1]).x);
+						if ( diff < min ) {
+							min = diff;
+							pt0.setLocation(aSrc.get(t[0]));
+							pt1.setLocation(aTrg.get(t[1]));
 						}
 					}
-
-					lines.put(ri, new Line2D.Float(ptSource, ptTarget));
-				}
+					
+					SwingUtilities.convertPointFromScreen(pt0, this);
+					SwingUtilities.convertPointFromScreen(pt1, this);
+	
+					lines.put(ri, new Line2D.Float(pt0, pt1));
+				}				
 			}
 		}
 

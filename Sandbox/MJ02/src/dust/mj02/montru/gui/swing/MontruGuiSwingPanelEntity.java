@@ -3,86 +3,94 @@ package dust.mj02.montru.gui.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.util.HashMap;
-import java.util.Map;
+import java.awt.Point;
+import java.util.EnumMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
 
+import dust.mj02.montru.gui.swing.MontruGuiSwingWidgetManager.AnchoredPanel;
 import dust.utils.DustUtilsFactory;
 
 @SuppressWarnings({ "serial", "unchecked" })
 class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponents {
-	class EntityHeader extends JPanel implements GuiEntityElement {
-		GuiEntityInfo ei;
-
-		public EntityHeader(GuiEntityInfo ei) {
-			super(new BorderLayout(5, 5));
-			this.ei = ei;
-			
-			setBackground(Color.lightGray);
-			
-			JLabel lbl = new JLabel(ei.getTitle(), JLabel.CENTER);
-			add(lbl, BorderLayout.CENTER);			
-			add(createDragger(), BorderLayout.WEST);
-			add(createDragger(), BorderLayout.EAST);
-
-			addMouseListener(editor.mlDragTarget);
-		}
-
-		public JLabel createDragger() {
-			JLabel lbl = editor.widgetManager.createWidget(WidgetType.dataLabel, ei, null);
-
-			lbl.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-			lbl.setText("OO");
-
-			lbl.addMouseMotionListener(editor.mmlDragSource);
-			lbl.addMouseListener(editor.mlDragSource);
-
-			return lbl;
-		}
-
-		@Override
-		public GuiEntityInfo getEntityInfo() {
-			return ei;
-		}
-
-		@Override
-		public void guiChangedAttribute(GuiEntityInfo entity, GuiEntityInfo att, Object value) {
-			
-		}
-
-		@Override
-		public void guiChangedRef(GuiEntityInfo entity, GuiRefInfo ref, DataCommand cmd) {
-			
-		}
-	}
-
-	GuiEntityInfo ei;
-	Map<GuiEntityInfo, JComponent> linkLabels = new HashMap<>();
-	EntityHeader pnlTop;
 
 	MontruGuiSwingPanelEditor editor;
-	
+	MontruGuiSwingWidgetManager widgetManager;
+
+	GuiEntityInfo ei;
+
+	DustUtilsFactory<GuiEntityInfo, JComponent> factRows = new DustUtilsFactory<GuiEntityInfo, JComponent>(false) {
+		@Override
+		protected JComponent create(GuiEntityInfo key, Object... hints) {
+			WidgetType wt = (WidgetType) hints[0];
+			JComponent comp = null;
+
+			switch (wt) {
+			case dataLabel:
+				comp = widgetManager.createWidget(wt, key, null);
+				break;
+			case entityHead:
+				comp = widgetManager.createWidget(wt, ei, null);
+				comp = widgetManager.anchorPanel(comp, (GuiEntityElement) comp);
+				break;
+			case dataEditor:
+				JPanel pnlContent = new JPanel(new BorderLayout(HR, 0));
+				pnlContent.add(widgetManager.createWidget(WidgetType.dataLabel, key, null), BorderLayout.WEST);
+
+				boolean link = (boolean) hints[1];
+				if (link) {
+					comp = widgetManager.createWidget(WidgetType.dataLabel, ei, key);
+					pnlContent.add(comp, BorderLayout.CENTER);
+
+					comp = widgetManager.anchorPanel(pnlContent, (GuiEntityElement) comp);
+				} else {
+					comp = widgetManager.createWidget(wt, ei, key);
+					pnlContent.add(comp, BorderLayout.CENTER);
+
+					JPanel pnlRow = new JPanel(new BorderLayout(0, 0));
+					pnlRow.add(Box.createRigidArea(ANCHOR_SIZE), BorderLayout.WEST);
+					pnlRow.add(pnlContent, BorderLayout.CENTER);
+					comp = pnlRow;
+				}
+				break;
+			default:
+				break;
+
+			}
+
+			return comp;
+		}
+
+	};
 
 	public MontruGuiSwingPanelEntity(MontruGuiSwingPanelEditor editor, GuiEntityInfo ei) {
 		super(new GridLayout(0, 1));
 		this.ei = ei;
 		this.editor = editor;
+		this.widgetManager = editor.getWidgetManager();
 
 		reloadData();
-		
+
 		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	}
+
+	public boolean getAnchorOnScreen(EnumMap<AnchorLocation, Point> target, GuiEntityInfo link) {
+		AnchoredPanel ap = (AnchoredPanel) factRows.peek(link);
+		if (null == ap) {
+			target.clear();
+			return false;
+		} else {
+			ap.getAnchorCentersOnScreen(target);
+			return true;
+		}
 	}
 
 	public void reloadData() {
 		removeAll();
-		linkLabels.clear();
 
-//		DustEntity entity = ei.get(GuiEntityKey.entity);
 		DustUtilsFactory<Object, StringBuilder> factRefs = new DustUtilsFactory<Object, StringBuilder>(false) {
 			@Override
 			protected StringBuilder create(Object key, Object... hints) {
@@ -91,70 +99,39 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 		};
 
 		for (GuiRefInfo ri : (Iterable<GuiRefInfo>) ei.get(GuiEntityKey.links)) {
-			factRefs.get(ri.get(GuiRefKey.linkDef)).append(((GuiEntityInfo) ri.get(GuiRefKey.target)).getTitle()).append(", ");
+			factRefs.get(ri.get(GuiRefKey.linkDef)).append(((GuiEntityInfo) ri.get(GuiRefKey.target)).getTitle())
+					.append(", ");
 		}
 
-		pnlTop = new EntityHeader(ei);
-		add(pnlTop);
+		add(factRows.get(null, WidgetType.entityHead));
 
-		for (GuiEntityInfo m : editor.editorModel.getAllTypes()) {
+		JComponent row;
+
+		for (GuiEntityInfo m : editor.getEditorModel().getAllTypes()) {
 			if (m.contains(GuiEntityKey.showFlags, GuiShowFlag.hide) || !ei.contains(GuiEntityKey.models, m)) {
 				continue;
 			}
 
-//			JLabel lbMdl = new JLabel((String) m.get(GuiEntityKey.id));
-			JLabel lbMdl = editor.widgetManager.createWidget(WidgetType.dataLabel, m, null);
-			add(lbMdl);
+			row = factRows.get(m, WidgetType.dataLabel);
 			if (m == ei.get(GuiEntityKey.type)) {
-				lbMdl.setForeground(Color.RED);
+				row.setForeground(Color.RED);
 			}
-			lbMdl.addMouseListener(editor.mlLabelActivator);
-
+			add(row);
 
 			Iterable<GuiEntityInfo> it = (Iterable<GuiEntityInfo>) m.get(GuiEntityKey.attDefs);
 			if (null != it) {
 				for (GuiEntityInfo ad : it) {
-					JPanel pnl = new JPanel(new BorderLayout(10, 0));
-					pnl.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-					JLabel lblHead = editor.widgetManager.createWidget(WidgetType.dataLabel, ad, null);
-					lblHead.addMouseListener(editor.mlLabelActivator);
-					pnl.add(lblHead, BorderLayout.WEST);
-					JComponent cmpVal = editor.widgetManager.createWidget(WidgetType.dataEditor, ei, ad);
-					pnl.add(cmpVal, BorderLayout.CENTER);
-					add(pnl);
-//					pnl.addMouseMotionListener(editor.pnlDesktop.mml);
-
+					row = factRows.get(ad, WidgetType.dataEditor, false);
+					add(row);
 				}
 			}
 
 			it = (Iterable<GuiEntityInfo>) m.get(GuiEntityKey.linkDefs);
 			if (null != it) {
 				for (GuiEntityInfo ld : it) {
-					StringBuilder links = factRefs.peek(ld);
-					String str;
-					if (null == links) {
-						str = " - ";
-					} else {
-						str = " -> {" + links + "}";
-					}
-					
-					JPanel pnl = new JPanel(new BorderLayout(10, 0));
-					pnl.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-					JLabel lblHead = editor.widgetManager.createWidget(WidgetType.dataLabel, ld, null);
-					lblHead.addMouseListener(editor.mlLabelActivator);
-					pnl.add(lblHead, BorderLayout.WEST);
-					
-					JLabel lblLink = editor.widgetManager.createWidget(WidgetType.dataLabel, ei, ld);
-
-					lblLink.setText(str);
-					lblLink.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-					pnl.add(lblLink, BorderLayout.CENTER);
-					
-					lblLink.addMouseListener(editor.mlDragTarget);
-					add(pnl);
-					
-					linkLabels.put(ld, pnl);
-					add(pnl);
+					row = factRows.get(ld, WidgetType.dataEditor, true);
+					((AnchoredPanel)row).getElement().guiChangedAttribute(ei, ld, null);
+					add(row);
 				}
 			}
 		}
