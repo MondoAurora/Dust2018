@@ -18,11 +18,11 @@ public interface MontruGuiComponents
 		extends DustComponents, DustMetaComponents, DustProcComponents, DustGenericComponents {
 
 	enum GuiEntityKey {
-		entity, type, models, id, owner, attDefs, linkDefs, links, title, panel, showFlags
+		entity, type, models, id, owner, attDefs, linkDefs, title, panel, showFlags//, links
 	}
 
 	enum GuiRefKey {
-		source, target, linkDef, key, selected
+		ref, source, target, linkDef, key, selected
 	}
 
 	enum GuiShowFlag {
@@ -85,15 +85,14 @@ public interface MontruGuiComponents
 			GuiEntityInfo s = em.getEntityInfo(ref.get(RefKey.source));
 			GuiEntityInfo t = em.getEntityInfo(ref.get(RefKey.target));
 
+			put(GuiRefKey.ref, ref);
+
 			put(GuiRefKey.source, s);
 			put(GuiRefKey.target, t);
 			put(GuiRefKey.linkDef, em.getEntityInfo(ref.get(RefKey.linkDef)));
 			
 			Object key = ref.get(RefKey.key);
 			put(GuiRefKey.key, (key instanceof DustEntity) ? em.getEntityInfo((DustEntity) key) : key);
-			
-			s.add(GuiEntityKey.links, this);
-//			t.add(GuiEntityKey.links, this);
 		}
 
 		public DustEntity getEntity(GuiRefKey rk) {
@@ -103,15 +102,12 @@ public interface MontruGuiComponents
 		public void remove() {
 			Dust.accessEntity(DataCommand.removeRef, getEntity(GuiRefKey.source), getEntity(GuiRefKey.linkDef),
 					getEntity(GuiRefKey.target), get(GuiRefKey.key));
-			((GuiEntityInfo) get(GuiRefKey.source)).remove(GuiEntityKey.links, this);
-//			((GuiEntityInfo) get(GuiRefKey.target)).remove(GuiEntityKey.links, this);
 		}
 	}
 
 	class GuiEntityInfo extends NodeInfo<GuiEntityKey> {
 		public GuiEntityInfo() {
 			super(GuiEntityKey.class);
-			put(GuiEntityKey.links, new HashSet<GuiRefInfo>());
 		}
 
 		public String getTitle() {
@@ -133,17 +129,17 @@ public interface MontruGuiComponents
 			StringBuilder sb = new StringBuilder(getTitle()).append(" [");
 
 			DustEntity entity = get(GuiEntityKey.entity);
-			DustUtilsFactory<Object, StringBuilder> factRefs = new DustUtilsFactory<Object, StringBuilder>(false) {
-				@Override
-				protected StringBuilder create(Object key, Object... hints) {
-					return new StringBuilder();
-				}
-			};
-
-			for (GuiRefInfo ri : (Iterable<GuiRefInfo>) get(GuiEntityKey.links)) {
-				factRefs.get(ri.get(GuiRefKey.linkDef)).append(((GuiEntityInfo) ri.get(GuiRefKey.target)).getTitle())
-						.append(", ");
-			}
+//			DustUtilsFactory<Object, StringBuilder> factRefs = new DustUtilsFactory<Object, StringBuilder>(false) {
+//				@Override
+//				protected StringBuilder create(Object key, Object... hints) {
+//					return new StringBuilder();
+//				}
+//			};
+//
+//			for (GuiRefInfo ri : (Iterable<GuiRefInfo>) get(GuiEntityKey.links)) {
+//				factRefs.get(ri.get(GuiRefKey.linkDef)).append(((GuiEntityInfo) ri.get(GuiRefKey.target)).getTitle())
+//						.append(", ");
+//			}
 
 			for (GuiEntityInfo m : (Iterable<GuiEntityInfo>) get(GuiEntityKey.models)) {
 				DustUtilsJava.sbAppend(sb, " ", true, m.get(GuiEntityKey.id), ": {");
@@ -157,12 +153,12 @@ public interface MontruGuiComponents
 					}
 				}
 
-				it = (Iterable<GuiEntityInfo>) m.get(GuiEntityKey.linkDefs);
-				if (null != it) {
-					for (GuiEntityInfo ld : it) {
-						DustUtilsJava.sbAppend(sb, " ", true, ld.get(GuiEntityKey.id), " -> {", factRefs.peek(ld), "}, ");
-					}
-				}
+//				it = (Iterable<GuiEntityInfo>) m.get(GuiEntityKey.linkDefs);
+//				if (null != it) {
+//					for (GuiEntityInfo ld : it) {
+//						DustUtilsJava.sbAppend(sb, " ", true, ld.get(GuiEntityKey.id), " -> {", factRefs.peek(ld), "}, ");
+//					}
+//				}
 
 				sb.append("}");
 			}

@@ -92,7 +92,6 @@ public class MontruGuiEditorModel implements MontruGuiComponents, DustProcCompon
 		GuiEntityInfo eiGenericOwner = factEntityInfo.get(EntityResolver.getEntity(DustGenericLinks.Owner));
 
 		Dust.processEntities(new EntityProcessor() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public void processEntity(Object key, DustEntity entity) {
 				GuiEntityInfo ei = factEntityInfo.get(entity);
@@ -116,8 +115,8 @@ public class MontruGuiEditorModel implements MontruGuiComponents, DustProcCompon
 				}
 
 				if (null != ekInfo) {
-					for (GuiRefInfo ri : (Iterable<GuiRefInfo>) ei.get(GuiEntityKey.links)) {
-						if (eiGenericOwner == ri.get(GuiRefKey.linkDef)) {
+					for (GuiRefInfo ri : getAllRefs()) {
+						if ((eiGenericOwner == ri.get(GuiRefKey.linkDef)) && (ei == ri.get(GuiRefKey.source))) {
 							GuiEntityInfo eiOwnerType = ri.get(GuiRefKey.target);
 							eiOwnerType.add(ekInfo, ei);
 						}

@@ -91,18 +91,6 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 	public void reloadData() {
 		removeAll();
 
-		DustUtilsFactory<Object, StringBuilder> factRefs = new DustUtilsFactory<Object, StringBuilder>(false) {
-			@Override
-			protected StringBuilder create(Object key, Object... hints) {
-				return new StringBuilder();
-			}
-		};
-
-		for (GuiRefInfo ri : (Iterable<GuiRefInfo>) ei.get(GuiEntityKey.links)) {
-			factRefs.get(ri.get(GuiRefKey.linkDef)).append(((GuiEntityInfo) ri.get(GuiRefKey.target)).getTitle())
-					.append(", ");
-		}
-
 		add(factRows.get(null, WidgetType.entityHead));
 
 		JComponent row;
