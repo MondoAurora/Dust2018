@@ -36,6 +36,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import dust.mj02.dust.knowledge.DustCommComponents;
+import dust.mj02.dust.knowledge.DustCommDiscussion;
+import dust.mj02.dust.knowledge.DustCommJsonLoader;
 import dust.mj02.montru.gui.MontruGuiEditorModel;
 import dust.utils.DustUtilsFactory;
 
@@ -92,6 +95,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 		public PnlDesktop() {
 			pnlLinks = new MontruGuiSwingPanelLinks(MontruGuiSwingPanelEditor.this);
 			pnlLinks.followParent(this);
+			add(pnlLinks, JDesktopPane.POPUP_LAYER);
 
 			addMouseListener(ml);
 		}
@@ -103,13 +107,18 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			GuiEntityInfo eiEntity = getEditorModel().getEntityInfo(EntityResolver.getEntity(DustDataTypes.Entity));
 			eiEntity.add(GuiEntityKey.showFlags, GuiShowFlag.hide);
 
-			removeAll();
+//			removeAll();
 
-			add(pnlLinks, JDesktopPane.POPUP_LAYER);
+//			add(pnlLinks, JDesktopPane.POPUP_LAYER);
 
-			for (GuiEntityInfo ei : getEditorModel().getAllEntities()) {
-				factIntFrames.get(ei);
+			Iterable<GuiEntityInfo> allEntities = getEditorModel().getAllEntities();
+			for (GuiEntityInfo ei : allEntities) {
+				ei.put(GuiEntityKey.title, null);
+				String t = ei.getTitle();
+				activateEntity(ei, true).setTitle(t);
+//				factIntFrames.get(ei);
 			}
+			updatePanels(allEntities);
 
 			revalidate();
 			repaint();
@@ -230,7 +239,17 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 				break;
 			case test01:
-				pnlDesktop.reloadData();
+				DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
+				DustCommDiscussion disc = new DustCommDiscussion();
+				
+				try {
+					disc.load(rdr, "MJ02Boot02.json");
+					pnlDesktop.reloadData();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
 				break;
 			}
 		}

@@ -10,7 +10,6 @@ import dust.mj02.dust.DustComponents;
 import dust.mj02.dust.knowledge.DustMetaComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.tools.DustGenericComponents;
-import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings({ "unchecked" })
@@ -108,12 +107,18 @@ public interface MontruGuiComponents
 	class GuiEntityInfo extends NodeInfo<GuiEntityKey> {
 		public GuiEntityInfo() {
 			super(GuiEntityKey.class);
+			put(GuiEntityKey.models, new HashSet<>());
 		}
 
 		public String getTitle() {
 			String title = get(GuiEntityKey.title);
 
 			if (null == title) {
+				String id = Dust.accessEntity(DataCommand.getValue, get(GuiEntityKey.entity),
+						EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal), null, null);
+
+				put(GuiEntityKey.id, id);
+
 				GuiEntityInfo tt = get(GuiEntityKey.type);
 				title = DustUtilsJava
 						.sbAppend(null, " ", true, (null == tt) ? "" : tt.get(GuiEntityKey.id), ":", get(GuiEntityKey.id))

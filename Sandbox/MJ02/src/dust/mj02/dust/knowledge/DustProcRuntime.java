@@ -2,6 +2,7 @@ package dust.mj02.dust.knowledge;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
+import dust.mj02.dust.tools.DustToolsGen;
 import dust.mj02.montru.gui.swing.MontruGuiSwingFrame;
 
 public class DustProcRuntime extends Dust implements DustComponents, DustDataComponents, Dust.DustRuntime {
@@ -20,10 +21,13 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 	}
 	
 	void init() throws Exception {
-		DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
-		DustCommDiscussion disc = new DustCommDiscussion();
-		
-		disc.load(rdr, "MJ02Boot02.json");
+		DustKnowledgeGen.init();
+		DustToolsGen.init();
+
+//		DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
+//		DustCommDiscussion disc = new DustCommDiscussion();
+//		
+//		disc.load(rdr, "MJ02Boot02.json");
 		
 		new MontruGuiSwingFrame();
 	}

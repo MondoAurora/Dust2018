@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import dust.mj02.dust.tools.DustGenericComponents;
-import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
@@ -189,8 +188,14 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	DustUtilsFactory<Object, SimpleEntity> entities = new DustUtilsFactory<Object, SimpleEntity>(false) {
 		@Override
 		protected SimpleEntity create(Object key, Object... hints) {
-			DustUtilsDev.dump("Creating entity", key);
-			return new SimpleEntity();
+//			DustUtilsDev.dump("Creating entity", key);
+			SimpleEntity se = new SimpleEntity();
+			
+//			se.put(EntityResolver.getEntity(DustCommAtts.idStore), key);
+//			ctxAccessEntity(DataCommand.setRef, se, EntityResolver.getEntity(DustDataLinks.EntityModels),
+//					EntityResolver.getEntity(DustCommTypes.Term), null);
+			
+			return se;
 		}
 	};
 	Set<SimpleRef> refs = new HashSet<>();

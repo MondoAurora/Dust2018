@@ -7,7 +7,6 @@ import java.util.Set;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
-import dust.mj02.dust.tools.DustToolsGen;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsJava;
 
@@ -41,8 +40,6 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 	@SuppressWarnings("unchecked")
 	public void load(DustCommSource rdr, Object... sources) throws Exception {
 		Set<SourceVocabulary> srcData = new HashSet<>();
-		DustKnowledgeGen.init();
-		DustToolsGen.init();
 
 		for (Object src : sources) {
 			SourceVocabulary sVoc = new SourceVocabulary(rdr.dustCommSourceRead(src));
