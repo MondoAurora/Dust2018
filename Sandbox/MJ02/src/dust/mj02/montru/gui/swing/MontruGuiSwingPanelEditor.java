@@ -1,7 +1,6 @@
 package dust.mj02.montru.gui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -12,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,18 +29,24 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 
+import dust.mj02.dust.Dust;
 import dust.mj02.dust.knowledge.DustCommComponents;
 import dust.mj02.dust.knowledge.DustCommDiscussion;
 import dust.mj02.dust.knowledge.DustCommJsonLoader;
 import dust.mj02.montru.gui.MontruGuiEditorModel;
 import dust.utils.DustUtilsFactory;
+import dust.utils.DustUtilsJava;
+import dust.utils.DustUtilsJavaSwing;
 
 @SuppressWarnings("serial")
 class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponents {
@@ -68,7 +74,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 		}
 	};
 
-	class PnlDesktop extends JDesktopPane {
+	class DesktopPanel extends JDesktopPane {
 		MontruGuiSwingPanelLinks pnlLinks;
 
 		MouseListener ml = new MouseAdapter() {
@@ -92,7 +98,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			}
 		};
 
-		public PnlDesktop() {
+		public DesktopPanel() {
 			pnlLinks = new MontruGuiSwingPanelLinks(MontruGuiSwingPanelEditor.this);
 			pnlLinks.followParent(this);
 			add(pnlLinks, JDesktopPane.POPUP_LAYER);
@@ -102,21 +108,21 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 		public void reloadData() {
 			getEditorModel().refreshData();
-			pnlMeta.lmTypes.update();
+			pnlControl.tmTypes.update();
 
 			GuiEntityInfo eiEntity = getEditorModel().getEntityInfo(EntityResolver.getEntity(DustDataTypes.Entity));
 			eiEntity.add(GuiEntityKey.showFlags, GuiShowFlag.hide);
 
-//			removeAll();
+			// removeAll();
 
-//			add(pnlLinks, JDesktopPane.POPUP_LAYER);
+			// add(pnlLinks, JDesktopPane.POPUP_LAYER);
 
 			Iterable<GuiEntityInfo> allEntities = getEditorModel().getAllEntities();
 			for (GuiEntityInfo ei : allEntities) {
 				ei.put(GuiEntityKey.title, null);
 				String t = ei.getTitle();
 				activateEntity(ei, true).setTitle(t);
-//				factIntFrames.get(ei);
+				// factIntFrames.get(ei);
 			}
 			updatePanels(allEntities);
 
@@ -149,23 +155,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 		}
 	}
 
-	class TypelistModel extends AbstractListModel<GuiEntityInfo> {
-		@Override
-		public GuiEntityInfo getElementAt(int index) {
-			return getEditorModel().getAllTypes().get(index);
-		}
-
-		@Override
-		public int getSize() {
-			return getEditorModel().getAllTypes().size();
-		}
-
-		private void update() {
-			fireContentsChanged(pnlMeta, 0, getSize());
-		}
-	}
-
-	class TypeRenderer extends DefaultListCellRenderer {
+	class EntityInfoRenderer extends DefaultListCellRenderer {
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 				boolean cellHasFocus) {
@@ -175,27 +165,179 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 		}
 	}
 
-	class PnlMetaControl extends JPanel {
-		TypelistModel lmTypes = new TypelistModel();
-		TypeRenderer crTypes = new TypeRenderer();
+	class EntityInfoListModel extends AbstractListModel<GuiEntityInfo> {
+		ArrayList<GuiEntityInfo> data;
 
-		public PnlMetaControl() {
+		public EntityInfoListModel(ArrayList<GuiEntityInfo> data) {
+			super();
+			this.data = data;
+		}
+
+		@Override
+		public GuiEntityInfo getElementAt(int index) {
+			return data.get(index);
+		}
+
+		@Override
+		public int getSize() {
+			return data.size();
+		}
+
+		private void update() {
+			fireContentsChanged(pnlControl, 0, getSize());
+		}
+	}
+
+	enum TypeTableCols {
+		sel, ei
+	}
+
+	class EditorControlPanel extends JPanel {
+
+		class TypeTableModel extends AbstractTableModel {
+			ArrayList<GuiEntityInfo> data;
+
+			public TypeTableModel(ArrayList<GuiEntityInfo> data) {
+				this.data = data;
+			}
+
+			private void update() {
+				fireTableDataChanged();
+			}
+
+			@Override
+			public int getColumnCount() {
+				return TypeTableCols.values().length;
+			}
+			
+			@Override
+			public String getColumnName(int column) {
+				return TypeTableCols.values()[column].name();
+			}
+			
+			@Override
+			public int getRowCount() {
+				return data.size();
+			}
+
+			@Override
+			public Object getValueAt(int rowIndex, int columnIndex) {
+				GuiEntityInfo type = data.get(rowIndex);
+
+				switch (TypeTableCols.values()[columnIndex]) {
+				case ei:
+					return type.getTitle();
+				case sel:
+					return setFilterTypes.contains(type);
+				}
+				return null;
+			}
+
+			@Override
+			public boolean isCellEditable(int rowIndex, int columnIndex) {
+				return 0 == columnIndex;
+			}
+
+			@Override
+			public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+				switch (TypeTableCols.values()[columnIndex]) {
+				case sel:
+					GuiEntityInfo type = data.get(rowIndex);
+					if ((Boolean) aValue) {
+						setFilterTypes.add(type);
+					} else {
+						setFilterTypes.remove(type);
+					}
+					doSearch();
+				default:
+					break;
+				}
+			}
+
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				switch (TypeTableCols.values()[columnIndex]) {
+				case ei:
+					return String.class;
+				case sel:
+					return Boolean.class;
+				}
+				return null;
+			}
+		}
+
+		String filterText;
+		Set<GuiEntityInfo> setFilterTypes;
+		ArrayList<GuiEntityInfo> arrSearchResults;
+		GuiEntityInfo eiSelected;
+
+		TypeTableModel tmTypes;
+		EntityInfoListModel lmResults;
+		EntityInfoRenderer crTypes;
+
+		JTextField tfSearch;
+		JTextArea taSelEntity;
+
+		public EditorControlPanel() {
 			super(new BorderLayout(5, 5));
 
-			JList<GuiEntityInfo> lstTypes = new JList<GuiEntityInfo>(lmTypes);
-			JScrollPane scpTypes = new JScrollPane(lstTypes);
-			scpTypes.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Types"));
+			setFilterTypes = new HashSet<>();
+			arrSearchResults = new ArrayList<>();
 
-			lstTypes.setCellRenderer(crTypes);
-			lstTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			lstTypes.addListSelectionListener(new ListSelectionListener() {
+			tmTypes = new TypeTableModel(editorModel.getAllTypes());
+			lmResults = new EntityInfoListModel(arrSearchResults);
+			crTypes = new EntityInfoRenderer();
+
+			JPanel pnlSearch = new JPanel(new BorderLayout());
+
+			tfSearch = new JTextField();
+			DustSwingTextListener tl = new DustSwingTextListener(new DustSwingTextChangeProcessor() {
+				@Override
+				public void textChanged(String text, Object source, DocumentEvent e) {
+					filterText = text.toLowerCase();
+					doSearch();
+				}
+			});
+			tl.listen(tfSearch);
+
+			pnlSearch.add(DustUtilsJavaSwing.setBorder(tfSearch, "Search in content"), BorderLayout.NORTH);
+
+			JTable tblTypes = new JTable(tmTypes);
+			pnlSearch.add(DustUtilsJavaSwing.setBorderScroll(tblTypes, "Type filter"), BorderLayout.CENTER);
+
+			JList<GuiEntityInfo> lstResults = new JList<GuiEntityInfo>(lmResults);
+
+			lstResults.setCellRenderer(crTypes);
+			lstResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			lstResults.addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					eiSelType = lstTypes.getSelectedValue();
+					selectEntity(lstResults.getSelectedValue());
+				}
+			});
+			lstResults.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if ( 1 < e.getClickCount() ) {
+						activateEntity(eiSelected, true);
+					}
 				}
 			});
 
-			add(scpTypes, BorderLayout.CENTER);
+			taSelEntity = new JTextArea();
+
+			JSplitPane splResults = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+					DustUtilsJavaSwing.setBorderScroll(lstResults, "Matching entities"),
+					DustUtilsJavaSwing.setBorderScroll(taSelEntity, "Selected entity"));
+			
+			splResults.setDividerLocation(.5);
+			splResults.setResizeWeight(.5);
+
+			JSplitPane splMain = new JSplitPane(JSplitPane.VERTICAL_SPLIT, pnlSearch, splResults);
+			splMain.setDividerLocation(.5);
+			splMain.setResizeWeight(0.2);
+
+			add(splMain, BorderLayout.CENTER);
 
 			JToolBar tbButtons = new JToolBar();
 
@@ -208,11 +350,71 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 			add(tbButtons, BorderLayout.SOUTH);
 		}
+
+		private void selectEntity(GuiEntityInfo ei) {
+			eiSelected = ei;
+			taSelEntity.setText(eiSelected.toString());
+		}
+
+		private void doSearch() {
+			arrSearchResults.clear();
+			
+			for (GuiEntityInfo ei : editorModel.getAllEntities()) {
+				Set<GuiEntityInfo> models = ei.get(GuiEntityKey.models);
+				boolean ok = false;
+				
+				if (!setFilterTypes.isEmpty()) {
+					ok = false;
+					for (GuiEntityInfo fm : setFilterTypes ) {
+						if ( models.contains(fm) ) {
+							ok = true;
+							break;
+						}
+					}
+					
+					if ( !ok ) { 
+						continue;
+					}
+				}
+				
+				if ( !DustUtilsJava.isEmpty(filterText) ) {
+					ok = false;
+					DustEntity e = ei.get(GuiEntityKey.entity);
+					
+					for (GuiEntityInfo fm : models ) {
+						Set<GuiEntityInfo> atts = fm.get(GuiEntityKey.attDefs);
+
+						if ( null != atts ) {
+							for (GuiEntityInfo ad : atts ) {
+								Object val = Dust.accessEntity(DataCommand.getValue, e, ad.get(GuiEntityKey.entity), null, null);
+								
+								if ( val instanceof String ) {
+									ok = ((String)val).toLowerCase().contains(filterText);
+								}
+								
+								if ( ok ) {
+									break;
+								}
+							}
+						}
+						
+						if ( ok ) {
+							break;
+						}
+					}
+				}
+				
+				if ( ok ) {
+					arrSearchResults.add(ei);
+				}
+			}
+
+			lmResults.update();
+		}
 	}
 
-	PnlDesktop pnlDesktop;
-	PnlMetaControl pnlMeta;
-	GuiEntityInfo eiSelType;
+	DesktopPanel pnlDesktop;
+	EditorControlPanel pnlControl;
 
 	Map<Enum<?>, AbstractButton> buttons = new HashMap<>();
 	ActionListener cmdListener = new ActionListener() {
@@ -241,7 +443,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			case test01:
 				DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
 				DustCommDiscussion disc = new DustCommDiscussion();
-				
+
 				try {
 					disc.load(rdr, "MJ02Boot02.json");
 					pnlDesktop.reloadData();
@@ -261,10 +463,10 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 		editorModel = new MontruGuiEditorModel();
 		widgetManager = new MontruGuiSwingWidgetManager(this);
 
-		pnlDesktop = new PnlDesktop();
-		pnlMeta = new PnlMetaControl();
+		pnlDesktop = new DesktopPanel();
+		pnlControl = new EditorControlPanel();
 
-		JSplitPane spMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlMeta, new JScrollPane(pnlDesktop));
+		JSplitPane spMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlControl, new JScrollPane(pnlDesktop));
 		add(spMain, BorderLayout.CENTER);
 	}
 

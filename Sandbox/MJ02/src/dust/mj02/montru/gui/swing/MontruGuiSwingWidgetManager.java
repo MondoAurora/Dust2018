@@ -21,8 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.montru.gui.MontruGuiWidgetManager;
@@ -32,8 +30,6 @@ import dust.utils.DustUtilsJava;
 @SuppressWarnings({ "serial", "unchecked" })
 public class MontruGuiSwingWidgetManager extends MontruGuiWidgetManager<JComponent>
 		implements MontruGuiSwingComponents {
-
-	private static final String DOC_EDIT_PROP = "MontruDocEditComp";
 
 	class EntityDataAnchor extends JLabel implements GuiEntityDataElement {
 		private final GuiEntityInfo eiEntity;
@@ -196,9 +192,8 @@ public class MontruGuiSwingWidgetManager extends MontruGuiWidgetManager<JCompone
 			this.eiData = eiData_;
 
 			guiChangedAttribute(eiEntity, eiData, null);
-			Document doc = getDocument();
-			doc.addDocumentListener(dl);
-			doc.putProperty(DOC_EDIT_PROP, this);
+			
+			txtListener.listen(this);
 		}
 
 		public GuiEntityInfo getEntityInfo() {
@@ -230,23 +225,12 @@ public class MontruGuiSwingWidgetManager extends MontruGuiWidgetManager<JCompone
 		}
 	}
 
-	private final DocumentListener dl = new DocumentListener() {
-
+	private final DustSwingTextListener txtListener = new DustSwingTextListener(new DustSwingTextChangeProcessor() {
 		@Override
-		public void removeUpdate(DocumentEvent e) {
-			((EntityDataEditorText) e.getDocument().getProperty(DOC_EDIT_PROP)).sendUpdate();
+		public void textChanged(String text, Object source, DocumentEvent e) {
+			((EntityDataEditorText) source).sendUpdate();
 		}
-
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			((EntityDataEditorText) e.getDocument().getProperty(DOC_EDIT_PROP)).sendUpdate();
-		}
-
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			((EntityDataEditorText) e.getDocument().getProperty(DOC_EDIT_PROP)).sendUpdate();
-		}
-	};
+	});
 
 	private final MouseListener mlLabelActivator = new MouseAdapter() {
 		@Override

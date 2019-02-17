@@ -1,0 +1,17 @@
+** TASKS **
+
+duplicate
+save area size and open entity panel location, opened sources
+drop file on editor, load and display
+
+resolver entity management (or: correct ID resolution?)
+Unit introduction
+boot entities, change flag, save back to boot
+Java source connection info, source generator
+
+** LOG **
+
+* 20190217 *
+doclistener out to utils
+generic search: list shows result bottom textarea show toString, doubleclick activate
+

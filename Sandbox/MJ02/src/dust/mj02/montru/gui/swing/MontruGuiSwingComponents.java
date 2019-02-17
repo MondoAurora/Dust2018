@@ -5,8 +5,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import dust.mj02.montru.gui.MontruGuiComponents;
+import dust.utils.DustUtilsSwingComponents;
 
-public interface MontruGuiSwingComponents extends MontruGuiComponents {
+public interface MontruGuiSwingComponents extends MontruGuiComponents, DustUtilsSwingComponents {
 
 	Dimension INIT_FRAME_SIZE = new Dimension(1200, 600);
 	Dimension ANCHOR_SIZE = new Dimension(16, 16);
