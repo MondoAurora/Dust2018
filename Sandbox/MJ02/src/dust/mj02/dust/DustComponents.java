@@ -28,6 +28,10 @@ public interface DustComponents {
 		source, target, linkDef, key
 	}
 	
+	enum ContextRef {
+		msg, self, ctx
+	}
+	
 	enum DataCommand {
 		getValue(false), setValue(false), setRef(true), removeRef(true), clearRefs(true);
 		
@@ -52,17 +56,9 @@ public interface DustComponents {
 	}
 
 	interface RefProcessor {
-//		 void processRef(DustEntity source, DustEntity linkDef, DustEntity target, Object key);
-		 void processRef(DustRef rref);
+		 void processRef(DustRef ref);
 	}
-	
-	public interface DustContext {
-		DustEntity ctxGetEntity(Object globalId);
-		<RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId);
-		void ctxProcessRefs(RefProcessor proc, DustEntity source, DustEntity linkDef, DustEntity target);
-		void ctxProcessEntities(EntityProcessor proc);
-	}
-	
+		
 	public abstract class EntityResolver {
 		private static Map<Object, DustEntity> keyToEntity = new HashMap<>();
 		private static Map<DustEntity, Object> entityToKey = new HashMap<>();

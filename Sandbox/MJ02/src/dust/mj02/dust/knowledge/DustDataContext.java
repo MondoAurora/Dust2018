@@ -9,13 +9,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import dust.mj02.dust.Dust;
+import dust.mj02.dust.Dust.DustContext;
 import dust.mj02.dust.tools.DustGenericComponents;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("unchecked")
 public class DustDataContext implements DustDataComponents, DustCommComponents, DustMetaComponents,
-		DustGenericComponents, DustDataComponents.DustContext {
+		DustGenericComponents, Dust.DustContext {
 
 	class SimpleEntity implements DustEntity {
 		Map<DustEntity, Object> content = new HashMap<>();

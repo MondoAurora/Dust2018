@@ -5,7 +5,7 @@ import dust.mj02.dust.DustComponents;
 public interface DustMetaComponents extends DustComponents {
 	
 	enum DustMetaTypes {
-		Type, AttDef, LinkDef
+		Unit, Type, AttDef, LinkDef, Service, Command
 	};
 	
 	enum DustMetaAtts {

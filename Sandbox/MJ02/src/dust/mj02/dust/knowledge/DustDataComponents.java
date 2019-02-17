@@ -11,6 +11,6 @@ public interface DustDataComponents extends DustComponents {
 	}
 	
 	enum DustDataLinks {
-		EntityPrimaryType, EntityModels, EntityServices
+		EntityPrimaryType, EntityModels, EntityServices, EntityBinaries
 	}
 }
