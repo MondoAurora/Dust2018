@@ -101,11 +101,15 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 				}
 			}
 		}
+		
+		DustEntity ldStore = EntityResolver.getEntity(DustCommLinks.TermStore);
 
 		for (SourceVocabulary sd : srcData) {
 			for (Object o : sd.allData.values()) {
 				String si = DustUtilsJava.getByPath(o, sd.keyStoreId);
 				DustEntity entity = Dust.getEntity(si);
+				
+				Dust.accessEntity(DataCommand.setRef, entity, ldStore, ContextRef.self, null);
 
 				DustUtilsDev.dump("Loading entity data", si);
 
@@ -173,6 +177,10 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 		Object src = sd.allData.get(value);
 		Object idSrc = DustUtilsJava.getByPath(src, sd.keyStoreId);
 		return Dust.getEntity(idSrc);
+	}
+
+	public void save(DustCommSource rdr, String fileName, Set<DustEntity> toSave) {
+		DustUtilsDev.dump("Would save into", fileName, toSave.size(), "entities.");
 	}
 
 }

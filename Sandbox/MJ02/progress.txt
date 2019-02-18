@@ -1,8 +1,6 @@
 ** TASKS **
-
 duplicate
 save area size and open entity panel location, opened sources
-drop file on editor, load and display
 
 resolver entity management (or: correct ID resolution?)
 Unit introduction
@@ -10,6 +8,13 @@ boot entities, change flag, save back to boot
 Java source connection info, source generator
 
 ** LOG **
+
+* 20190218 *
+context entity management added
+lazy entity creation for enum keys (no need to configure all needed entities)
+Binary management, testing on Json load
+drop file on editor, load and display
+preparing for save
 
 * 20190217 *
 doclistener out to utils

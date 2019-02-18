@@ -46,8 +46,6 @@ import javax.swing.table.AbstractTableModel;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.knowledge.DustCommComponents;
-import dust.mj02.dust.knowledge.DustCommDiscussion;
-import dust.mj02.dust.knowledge.DustCommJsonLoader;
 import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.montru.gui.MontruGuiEditorModel;
 import dust.mj02.sandbox.DustSandboxJsonLoader;
@@ -58,11 +56,16 @@ import dust.utils.DustUtilsJavaSwing;
 @SuppressWarnings("serial")
 class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponents {
 	private static DustEntity DSVC_COMM_STORE = EntityResolver.getEntity(DustCommComponents.DustCommServices.Store);
-	private static DustEntity DR_ENTITY_SERVICE = EntityResolver.getEntity(DustDataComponents.DustDataLinks.EntityServices);
-	
+	private static DustEntity DR_ENTITY_SERVICE = EntityResolver
+			.getEntity(DustDataComponents.DustDataLinks.EntityServices);
+	private static DustEntity DREF_DATA_STORE = EntityResolver.getEntity(DustCommComponents.DustCommLinks.TermStore);
+
 	private static DustEntity DA_STREAM_FILENAME = EntityResolver.getEntity(DustGenericAtts.streamFileName);
 	private static DustEntity DR_MSG_CMD = EntityResolver.getEntity(DustDataLinks.MessageCommand);
-	private static DustEntity DCMD_COMMSTORE_LOAD = EntityResolver.getEntity(DustCommComponents.DustCommMessages.StoreLoad);
+	private static DustEntity DCMD_COMMSTORE_LOAD = EntityResolver
+			.getEntity(DustCommComponents.DustCommMessages.StoreLoad);
+	private static DustEntity DCMD_COMMSTORE_SAVE = EntityResolver
+			.getEntity(DustCommComponents.DustCommMessages.StoreSave);
 
 	private final GuiEditorModel editorModel;
 	private final MontruGuiSwingWidgetManager widgetManager;
@@ -111,29 +114,8 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 				try {
 					Collection<?> cont = (Collection<?>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-					
-					DustSandboxJsonLoader.init();
-//					DustCommStore loader = new DustSandboxJsonLoader();
-					DustEntity msg = Dust.getEntity(null);
-					Dust.accessEntity(DataCommand.setRef, msg, DR_MSG_CMD, DCMD_COMMSTORE_LOAD, null);
-					
-					for ( Object of : cont ) {
-						
-						File f = (File) of;
-						String fp = f.getAbsolutePath();
-						
-						DustEntity store = Dust.getEntity("Store: " + fp);
-						Dust.accessEntity(DataCommand.setValue, store, DA_STREAM_FILENAME, fp, null);
-						Dust.accessEntity(DataCommand.setRef, store, DR_ENTITY_SERVICE, DSVC_COMM_STORE, null);
 
-						Dust.accessEntity(DataCommand.tempSend, store, msg, null, null);
-						
-//						loader.dustCommStoreLoad();
-					}
-					
-					pnlDesktop.reloadData();
-					// because title management is ugly, and this all will go away anyway :-)
-					pnlDesktop.reloadData();
+					loadFiles(cont.toArray());
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -511,17 +493,21 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 				break;
 			case test01:
-				DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
-				DustCommDiscussion disc = new DustCommDiscussion();
+				// DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
+				// DustCommDiscussion disc = new DustCommDiscussion();
 
 				try {
-					disc.load(rdr, "MJ02Boot02.json");
-					pnlDesktop.reloadData();
+					loadFiles(new File("MJ02Boot02.json"));
+					// disc.load(rdr, "MJ02Boot02.json");
+					// pnlDesktop.reloadData();
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
+				break;
+			case test02:
+				saveAll();
 				break;
 			}
 		}
@@ -584,5 +570,47 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			}
 		}
 		return pf;
+	}
+
+	private void saveAll() {
+		DustSandboxJsonLoader.init();
+
+		Set<DustEntity> stores = new HashSet<>();
+		DustEntity msg = Dust.getEntity(null);
+		Dust.accessEntity(DataCommand.setRef, msg, DR_MSG_CMD, DCMD_COMMSTORE_SAVE, null);
+
+		for (GuiEntityInfo ei : editorModel.getAllEntities()) {
+			DustEntity e = ei.get(GuiEntityKey.entity);
+			DustRef ref = Dust.accessEntity(DataCommand.getValue, e, DREF_DATA_STORE, null, null);
+			if (null != ref) {
+				DustEntity store = ref.get(RefKey.target);
+
+				if (stores.add(store)) {
+					Dust.accessEntity(DataCommand.tempSend, store, msg, null, null);
+				}
+			}
+		}
+	}
+
+	private void loadFiles(Object... cont) {
+		DustSandboxJsonLoader.init();
+		DustEntity msg = Dust.getEntity(null);
+		Dust.accessEntity(DataCommand.setRef, msg, DR_MSG_CMD, DCMD_COMMSTORE_LOAD, null);
+
+		for (Object of : cont) {
+
+			File f = (File) of;
+			String fp = f.getAbsolutePath();
+
+			DustEntity store = Dust.getEntity("Store: " + fp);
+			Dust.accessEntity(DataCommand.setValue, store, DA_STREAM_FILENAME, fp, null);
+			Dust.accessEntity(DataCommand.setRef, store, DR_ENTITY_SERVICE, DSVC_COMM_STORE, null);
+
+			Dust.accessEntity(DataCommand.tempSend, store, msg, null, null);
+		}
+
+		pnlDesktop.reloadData();
+		// because title management is ugly, and this all will go away anyway :-)
+		pnlDesktop.reloadData();
 	}
 }

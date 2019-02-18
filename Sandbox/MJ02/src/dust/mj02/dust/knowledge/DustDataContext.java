@@ -17,8 +17,8 @@ import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("unchecked")
-public class DustDataContext implements DustDataComponents, DustCommComponents, DustMetaComponents,
-		DustGenericComponents, Dust.DustContext {
+public class DustDataContext
+		implements DustDataComponents, DustCommComponents, DustMetaComponents, DustGenericComponents, Dust.DustContext {
 
 	class SimpleEntity implements DustEntity {
 		Map<DustEntity, Object> content = new HashMap<>();
@@ -78,7 +78,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			this.target = target;
 			this.reverse = reverse;
 			this.key = key;
-			
+
 			initContainer(orig);
 
 			switch (lt) {
@@ -109,7 +109,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		void initContainer(SimpleRef orig) {
 			SimpleRef refLDT = linkDef.get(EntityResolver.getEntity(DustMetaLinks.LinkDefType));
 			lt = (null == refLDT) ? DustMetaValueLinkDefType.LinkDefSingle : EntityResolver.getKey(refLDT.target);
-			
+
 			if ((null == orig) || (null == orig.container)) {
 				switch (lt) {
 				case LinkDefArray:
@@ -130,7 +130,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 					if (DustMetaValueLinkDefType.LinkDefMap == lt) {
 						((HashMap<Object, SimpleRef>) container).put(orig.key, orig);
 					} else {
-						if ( orig.target == target ) {
+						if (orig.target == target) {
 							refs.remove(orig);
 						} else {
 							((Collection<SimpleRef>) container).add(orig);
@@ -142,7 +142,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				container = orig.container;
 			}
 		}
-		
+
 		@Override
 		public <InfoType> InfoType get(RefKey ref) {
 			switch (ref) {
@@ -192,24 +192,42 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	DustUtilsFactory<Object, SimpleEntity> entities = new DustUtilsFactory<Object, SimpleEntity>(false) {
 		@Override
 		protected SimpleEntity create(Object key, Object... hints) {
-//			DustUtilsDev.dump("Creating entity", key);
+			// DustUtilsDev.dump("Creating entity", key);
 			SimpleEntity se = new SimpleEntity();
-			
-//			se.put(EntityResolver.getEntity(DustCommAtts.idStore), key);
-//			ctxAccessEntity(DataCommand.setRef, se, EntityResolver.getEntity(DustDataLinks.EntityModels),
-//					EntityResolver.getEntity(DustCommTypes.Term), null);
-			
+
+			// se.put(EntityResolver.getEntity(DustCommAtts.idStore), key);
+			// ctxAccessEntity(DataCommand.setRef, se,
+			// EntityResolver.getEntity(DustDataLinks.EntityModels),
+			// EntityResolver.getEntity(DustCommTypes.Term), null);
+
 			return se;
 		}
 	};
 	Set<SimpleRef> refs = new HashSet<>();
-	
+
 	EnumMap<ContextRef, SimpleEntity> mapCtxEntities = new EnumMap<>(ContextRef.class);
-	
+
 	DustBinaryConnector binConn = new DustBinaryConnector(this);
 
 	public DustDataContext(DustContext ctxParent) {
 		this.ctxParent = ctxParent;
+	}
+
+	private SimpleEntity optResolveCtxEntity(Object e, boolean createIfMissing) {
+		if (null == e) {
+			return null;
+		} else if (e instanceof SimpleEntity) {
+			return (SimpleEntity) e;
+		} else {
+			ContextRef cr = (ContextRef) e;
+			SimpleEntity se = mapCtxEntities.get(cr);
+			if (createIfMissing && (null == se)) {
+				se = new SimpleEntity();
+				mapCtxEntities.put(cr, se);
+			}
+			return se;
+		}
+
 	}
 
 	@Override
@@ -219,19 +237,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 	@Override
 	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId) {
-		SimpleEntity se;
-		
-		if ( e instanceof SimpleEntity ) {
-			se = (SimpleEntity) e;
-		} else {
-			ContextRef cr = (ContextRef) e;
-			se = mapCtxEntities.get(cr);
-			if ( null == se ) {
-				se = new SimpleEntity();
-				mapCtxEntities.put(cr, se);
-			}
-		}
-		
+		SimpleEntity se = optResolveCtxEntity(e, true);
+
 		Object retVal = se.get(key);
 
 		switch (cmd) {
@@ -249,6 +256,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		case setRef:
 			SimpleRef actRef = (SimpleRef) retVal;
 
+			val = optResolveCtxEntity(val, false);
+
 			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSet == actRef.lt)) {
 				for (SimpleRef er : ((Set<SimpleRef>) actRef.container)) {
 					if (er.target == val) {
@@ -261,7 +270,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			if (null == actRef) {
 				se.put(key, sr);
 			}
-			
+
 			retVal = sr;
 
 			break;
@@ -280,13 +289,16 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	}
 
 	@Override
-	public void ctxProcessRefs(RefProcessor proc, DustEntity source, DustEntity linkDefId, DustEntity target) {
-		SimpleEntity eLD = (null == linkDefId) ? null : ctxGetEntity(linkDefId);
+	public void ctxProcessRefs(RefProcessor proc, DustEntity source, DustEntity linkDef, DustEntity target) {
+		source = optResolveCtxEntity(source, false);
+		target = optResolveCtxEntity(target, false);
+
 		for (SimpleRef ref : refs) {
-			if (DustUtilsJava.isEqualLenient(ref.source, source) && DustUtilsJava.isEqualLenient(ref.linkDef, eLD)
+			if (DustUtilsJava.isEqualLenient(ref.source, source) && DustUtilsJava.isEqualLenient(ref.linkDef, linkDef)
 					&& DustUtilsJava.isEqualLenient(ref.target, target)) {
 				proc.processRef(ref);
-//				proc.processRef(ref.source, ref.linkDef, ref.target, ref.key);
+				// } else {
+				// DustUtilsDev.dump("skip");
 			}
 		}
 	}

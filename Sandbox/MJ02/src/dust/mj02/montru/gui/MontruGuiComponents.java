@@ -29,7 +29,7 @@ public interface MontruGuiComponents
 	};
 
 	enum GuiCommands {
-		createEntity, deleteEntity, deleteRef, test01
+		createEntity, deleteEntity, deleteRef, test01, test02
 	};
 
 	enum WidgetType {
