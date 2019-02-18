@@ -137,11 +137,11 @@ public class DustUtilsGen implements DustComponents, DustKnowledgeMetaComponents
 				envName = m.group(1);
 				Matcher rm = PTRN_OWNER_SPLITTER.matcher(envName);
 				while (rm.find()) {
-					sb = DustUtilsJava.sbApend(sb, SEP_PATH, false, rm.group());
+					sb = DustUtilsJava.sbAppend(sb, SEP_PATH, false, rm.group());
 				} 
 			}
-			sb = DustUtilsJava.sbApend(sb, SEP_PATH, false, cName.substring(envName.length()));
-			sb = DustUtilsJava.sbApend(sb, mp.isChild() ? SEP_ATT : SEP_PATH, false, e.name());
+			sb = DustUtilsJava.sbAppend(sb, SEP_PATH, false, cName.substring(envName.length()));
+			sb = DustUtilsJava.sbAppend(sb, mp.isChild() ? SEP_ATT : SEP_PATH, false, e.name());
 			
 			storeId = sb.toString();
 			typeId = typeType ? storeId : FACT_ENUM_RESOLVER.get(mp.getMetaEnum()).storeId;
