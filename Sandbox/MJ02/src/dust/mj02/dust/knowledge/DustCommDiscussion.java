@@ -57,10 +57,10 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 
 				Object knownId = EntityResolver.getKey(e);
 				if (null != knownId) {
-					if (DustMetaAtts.AttDefType == knownId) {
+					if (DustMetaLinks.AttDefType == knownId) {
 						sVoc.keyAttType = li;
 						sVoc.eAttType = e;
-					} else if (DustMetaAtts.LinkDefType == knownId) {
+					} else if (DustMetaLinks.LinkDefType == knownId) {
 						sVoc.keyLinkType = li;
 						sVoc.eLinkType = e;
 					} else if (DustGenericLinks.Owner == knownId) {

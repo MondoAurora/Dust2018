@@ -2,6 +2,7 @@ package dust.mj02.dust.knowledge;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	class SimpleEntity implements DustEntity {
 		Map<DustEntity, Object> content = new HashMap<>();
 		DustEntity ePT;
+		Map<DustEntity, Object> binObjs;
 
 		public <RetType> RetType put(DustEntity key, Object value) {
 			RetType orig = (RetType) content.put(key, value);
@@ -105,7 +107,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		}
 
 		void initContainer(SimpleRef orig) {
-			SimpleRef refLDT = linkDef.get(EntityResolver.getEntity(DustMetaAtts.LinkDefType));
+			SimpleRef refLDT = linkDef.get(EntityResolver.getEntity(DustMetaLinks.LinkDefType));
 			lt = (null == refLDT) ? DustMetaValueLinkDefType.LinkDefSingle : EntityResolver.getKey(refLDT.target);
 			
 			if ((null == orig) || (null == orig.container)) {
@@ -201,6 +203,10 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		}
 	};
 	Set<SimpleRef> refs = new HashSet<>();
+	
+	EnumMap<ContextRef, SimpleEntity> mapCtxEntities = new EnumMap<>(ContextRef.class);
+	
+	DustBinaryConnector binConn = new DustBinaryConnector(this);
 
 	public DustDataContext(DustContext ctxParent) {
 		this.ctxParent = ctxParent;
@@ -208,15 +214,30 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 	@Override
 	public SimpleEntity ctxGetEntity(Object globalId) {
-		return entities.get(globalId);
+		return (null == globalId) ? new SimpleEntity() : entities.get(globalId);
 	}
 
 	@Override
 	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId) {
-		SimpleEntity se = (SimpleEntity) e;
+		SimpleEntity se;
+		
+		if ( e instanceof SimpleEntity ) {
+			se = (SimpleEntity) e;
+		} else {
+			ContextRef cr = (ContextRef) e;
+			se = mapCtxEntities.get(cr);
+			if ( null == se ) {
+				se = new SimpleEntity();
+				mapCtxEntities.put(cr, se);
+			}
+		}
+		
 		Object retVal = se.get(key);
 
 		switch (cmd) {
+		case tempSend:
+			binConn.send(se, (SimpleEntity) key);
+			break;
 		case getValue:
 			// nothing, retVal already set
 			break;

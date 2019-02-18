@@ -4,29 +4,34 @@ import dust.mj02.dust.DustComponents;
 
 public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
-	enum DustProcTypes {
+	enum DustProcTypes implements DustEntityKey {
 		Context, Change, Binary
 	};
 	
-	enum DustProcAtts {
+	enum DustProcAtts implements DustEntityKey {
 		ChangeValue, ChangeKey, BinaryObjectName
 	}
 	
-	enum DustProcLinks {
-		ContextChangeListeners, BinaryImplementedServices,
+	enum DustProcLinks implements DustEntityKey {
+		ContextChangeListeners, ContextBinaryAssignments, 
+		BinaryImplementedServices,
 		ChangeCmd, ChangeEntity, ChangeAtt, ChangeLinkDef, ChangeTarget
 	}
 
-	enum DustProcServices {
+	enum DustProcServices implements DustEntityKey {
 		Listener, Channel, Pocessor
 	};
 	
-	enum DustProcMessages {
+	enum DustProcMessages implements DustEntityKey {
 		ListenerProcessChange, ChannelOpen, ChannelClose, ProcessorProcess
 	};
 	
 
 
+	
+	interface DustProcPocessor {
+		public void dustProcPocessorPocess() throws Exception;
+	}
 	
 	interface DustProcInitable {
 		public void dustProcInitableInit() throws Exception;

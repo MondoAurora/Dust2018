@@ -1,6 +1,8 @@
 package dust.mj02.montru.gui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -13,6 +15,13 @@ public class MontruGuiSwingFrame implements MontruGuiSwingComponents, DustProcCo
 
 		public Frame() {
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
+			
+			addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e) {
+					saveState();
+				}
+			});
 
 			setPreferredSize(INIT_FRAME_SIZE);
 
@@ -40,5 +49,10 @@ public class MontruGuiSwingFrame implements MontruGuiSwingComponents, DustProcCo
 
 		pnlEditor.pnlDesktop.reloadData();
 	}
+	
+	protected void saveState() {
+		
+	}
+
 
 }

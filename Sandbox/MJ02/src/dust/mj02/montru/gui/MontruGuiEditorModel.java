@@ -111,6 +111,8 @@ public class MontruGuiEditorModel implements MontruGuiComponents, DustProcCompon
 					case LinkDef:
 						ekInfo = GuiEntityKey.linkDefs;
 						break;
+					default:
+						break;
 					}
 				}
 

@@ -44,6 +44,7 @@ public class Dust implements DustComponents {
 		if ( src instanceof DustException ) {
 			throw (DustException) src;
 		} else {
+			src.printStackTrace();
 			throw new DustException(msg, src);
 		}
 	}

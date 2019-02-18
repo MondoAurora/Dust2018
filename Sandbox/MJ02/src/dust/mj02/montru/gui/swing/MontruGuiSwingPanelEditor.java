@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -11,7 +13,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,6 +38,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -43,13 +48,21 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.knowledge.DustCommComponents;
 import dust.mj02.dust.knowledge.DustCommDiscussion;
 import dust.mj02.dust.knowledge.DustCommJsonLoader;
+import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.montru.gui.MontruGuiEditorModel;
+import dust.mj02.sandbox.DustSandboxJsonLoader;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
 
 @SuppressWarnings("serial")
 class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponents {
+	private static DustEntity DSVC_COMM_STORE = EntityResolver.getEntity(DustCommComponents.DustCommServices.Store);
+	private static DustEntity DR_ENTITY_SERVICE = EntityResolver.getEntity(DustDataComponents.DustDataLinks.EntityServices);
+	
+	private static DustEntity DA_STREAM_FILENAME = EntityResolver.getEntity(DustGenericAtts.streamFileName);
+	private static DustEntity DR_MSG_CMD = EntityResolver.getEntity(DustDataLinks.MessageCommand);
+	private static DustEntity DCMD_COMMSTORE_LOAD = EntityResolver.getEntity(DustCommComponents.DustCommMessages.StoreLoad);
 
 	private final GuiEditorModel editorModel;
 	private final MontruGuiSwingWidgetManager widgetManager;
@@ -76,6 +89,60 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 	class DesktopPanel extends JDesktopPane {
 		MontruGuiSwingPanelLinks pnlLinks;
+
+		TransferHandler dropHandler = new TransferHandler() {
+
+			public boolean canImport(TransferSupport support) {
+
+				if (!support.isDrop()) {
+					return false;
+				}
+
+				return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+			}
+
+			public boolean importData(TransferSupport support) {
+
+				if (!canImport(support)) {
+					return false;
+				}
+
+				Transferable transferable = support.getTransferable();
+
+				try {
+					Collection<?> cont = (Collection<?>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+					
+					DustSandboxJsonLoader.init();
+//					DustCommStore loader = new DustSandboxJsonLoader();
+					DustEntity msg = Dust.getEntity(null);
+					Dust.accessEntity(DataCommand.setRef, msg, DR_MSG_CMD, DCMD_COMMSTORE_LOAD, null);
+					
+					for ( Object of : cont ) {
+						
+						File f = (File) of;
+						String fp = f.getAbsolutePath();
+						
+						DustEntity store = Dust.getEntity("Store: " + fp);
+						Dust.accessEntity(DataCommand.setValue, store, DA_STREAM_FILENAME, fp, null);
+						Dust.accessEntity(DataCommand.setRef, store, DR_ENTITY_SERVICE, DSVC_COMM_STORE, null);
+
+						Dust.accessEntity(DataCommand.tempSend, store, msg, null, null);
+						
+//						loader.dustCommStoreLoad();
+					}
+					
+					pnlDesktop.reloadData();
+					// because title management is ugly, and this all will go away anyway :-)
+					pnlDesktop.reloadData();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+
+				return true;
+			}
+		};
 
 		MouseListener ml = new MouseAdapter() {
 			@Override
@@ -104,6 +171,8 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			add(pnlLinks, JDesktopPane.POPUP_LAYER);
 
 			addMouseListener(ml);
+
+			setTransferHandler(dropHandler);
 		}
 
 		public void reloadData() {
@@ -209,12 +278,12 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			public int getColumnCount() {
 				return TypeTableCols.values().length;
 			}
-			
+
 			@Override
 			public String getColumnName(int column) {
 				return TypeTableCols.values()[column].name();
 			}
-			
+
 			@Override
 			public int getRowCount() {
 				return data.size();
@@ -318,7 +387,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			lstResults.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					if ( 1 < e.getClickCount() ) {
+					if (1 < e.getClickCount()) {
 						activateEntity(eiSelected, true);
 					}
 				}
@@ -329,7 +398,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			JSplitPane splResults = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 					DustUtilsJavaSwing.setBorderScroll(lstResults, "Matching entities"),
 					DustUtilsJavaSwing.setBorderScroll(taSelEntity, "Selected entity"));
-			
+
 			splResults.setDividerLocation(.5);
 			splResults.setResizeWeight(.5);
 
@@ -358,53 +427,54 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 		private void doSearch() {
 			arrSearchResults.clear();
-			
+
 			for (GuiEntityInfo ei : editorModel.getAllEntities()) {
 				Set<GuiEntityInfo> models = ei.get(GuiEntityKey.models);
 				boolean ok = false;
-				
+
 				if (!setFilterTypes.isEmpty()) {
 					ok = false;
-					for (GuiEntityInfo fm : setFilterTypes ) {
-						if ( models.contains(fm) ) {
+					for (GuiEntityInfo fm : setFilterTypes) {
+						if (models.contains(fm)) {
 							ok = true;
 							break;
 						}
 					}
-					
-					if ( !ok ) { 
+
+					if (!ok) {
 						continue;
 					}
 				}
-				
-				if ( !DustUtilsJava.isEmpty(filterText) ) {
+
+				if (!DustUtilsJava.isEmpty(filterText)) {
 					ok = false;
 					DustEntity e = ei.get(GuiEntityKey.entity);
-					
-					for (GuiEntityInfo fm : models ) {
+
+					for (GuiEntityInfo fm : models) {
 						Set<GuiEntityInfo> atts = fm.get(GuiEntityKey.attDefs);
 
-						if ( null != atts ) {
-							for (GuiEntityInfo ad : atts ) {
-								Object val = Dust.accessEntity(DataCommand.getValue, e, ad.get(GuiEntityKey.entity), null, null);
-								
-								if ( val instanceof String ) {
-									ok = ((String)val).toLowerCase().contains(filterText);
+						if (null != atts) {
+							for (GuiEntityInfo ad : atts) {
+								Object val = Dust.accessEntity(DataCommand.getValue, e, ad.get(GuiEntityKey.entity),
+										null, null);
+
+								if (val instanceof String) {
+									ok = ((String) val).toLowerCase().contains(filterText);
 								}
-								
-								if ( ok ) {
+
+								if (ok) {
 									break;
 								}
 							}
 						}
-						
-						if ( ok ) {
+
+						if (ok) {
 							break;
 						}
 					}
 				}
-				
-				if ( ok ) {
+
+				if (ok) {
 					arrSearchResults.add(ei);
 				}
 			}

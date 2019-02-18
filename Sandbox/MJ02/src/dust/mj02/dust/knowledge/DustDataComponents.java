@@ -3,14 +3,15 @@ package dust.mj02.dust.knowledge;
 import dust.mj02.dust.DustComponents;
 
 public interface DustDataComponents extends DustComponents {
-	enum DustDataTypes {
-		Entity
+	enum DustDataTypes implements DustEntityKey {
+		Entity, Message
 	};
 	
-	enum DustDataAtts {
+	enum DustDataAtts implements DustEntityKey {
 	}
 	
-	enum DustDataLinks {
-		EntityPrimaryType, EntityModels, EntityServices, EntityBinaries
+	enum DustDataLinks implements DustEntityKey {
+		EntityPrimaryType, EntityModels, EntityServices, EntityBinaries,
+		MessageCommand
 	}
 }

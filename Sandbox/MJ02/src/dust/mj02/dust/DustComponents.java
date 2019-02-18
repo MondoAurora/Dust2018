@@ -23,30 +23,35 @@ public interface DustComponents {
 			// TODO Auto-generated constructor stub
 		}
 	}
-	
+
 	enum RefKey {
 		source, target, linkDef, key
 	}
-	
-	enum ContextRef {
+
+	enum ContextRef implements DustEntity {
 		msg, self, ctx
 	}
-	
+
 	enum DataCommand {
-		getValue(false), setValue(false), setRef(true), removeRef(true), clearRefs(true);
-		
+		getValue(false), setValue(false), setRef(true), removeRef(true), clearRefs(true), tempSend(false);
+
 		private final boolean ref;
-		
+
 		private DataCommand(boolean ref) {
 			this.ref = ref;
 		}
-	
+
 		public boolean isRef() {
 			return ref;
 		}
 	}
 
-	public interface DustEntity {}
+	public interface DustEntity {
+	}
+
+	public interface DustEntityKey {
+	}
+
 	public interface DustRef {
 		<InfoType> InfoType get(RefKey ref);
 	}
@@ -56,25 +61,34 @@ public interface DustComponents {
 	}
 
 	interface RefProcessor {
-		 void processRef(DustRef ref);
+		void processRef(DustRef ref);
 	}
-		
+
 	public abstract class EntityResolver {
 		private static Map<Object, DustEntity> keyToEntity = new HashMap<>();
 		private static Map<DustEntity, Object> entityToKey = new HashMap<>();
-		
-		public static void register(String storeId, Object key) {
+
+		public static DustEntity register(String storeId, Object key) {
 			DustEntity e = Dust.getEntity(storeId);
 			keyToEntity.put(key, e);
 			entityToKey.put(e, key);
+			return e;
 		}
-		
+
 		public static DustEntity getEntity(Object key) {
-			return keyToEntity.get(key);
+			DustEntity e = keyToEntity.get(key);
+
+			if ((null == e) && (key instanceof DustEntityKey)) {
+				// so that all enums will have their entity without problem
+				String kk = key.getClass().getName() +":" + ((Enum<?>) key).name();
+				e = register(kk, key);
+			}
+
+			return e;
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		public static <RetType> RetType getKey(DustEntity e) { 
+		public static <RetType> RetType getKey(DustEntity e) {
 			return (RetType) entityToKey.get(e);
 		}
 

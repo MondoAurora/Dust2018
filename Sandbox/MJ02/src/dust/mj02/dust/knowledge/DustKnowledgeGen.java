@@ -12,8 +12,8 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		EntityResolver.register("Knowledge:Meta:LinkDef:Array", DustMetaValueLinkDefType.LinkDefArray);
 		EntityResolver.register("Knowledge:Meta:LinkDef:Map", DustMetaValueLinkDefType.LinkDefMap);
 		
-		EntityResolver.register("Knowledge:Meta:AttDef.Type", DustMetaAtts.AttDefType);
-		EntityResolver.register("Knowledge:Meta:LinkDef.Type", DustMetaAtts.LinkDefType);
+		EntityResolver.register("Knowledge:Meta:AttDef.Type", DustMetaLinks.AttDefType);
+		EntityResolver.register("Knowledge:Meta:LinkDef.Type", DustMetaLinks.LinkDefType);
 		
 		EntityResolver.register("Knowledge:Data:Entity.PrimaryType", DustDataLinks.EntityPrimaryType);
 		EntityResolver.register("Knowledge:Data:Entity.Models", DustDataLinks.EntityModels);
