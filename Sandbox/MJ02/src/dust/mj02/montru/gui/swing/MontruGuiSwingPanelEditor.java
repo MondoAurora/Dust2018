@@ -49,6 +49,7 @@ import dust.mj02.dust.knowledge.DustCommComponents;
 import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.montru.gui.MontruGuiEditorModel;
 import dust.mj02.sandbox.DustSandboxJsonLoader;
+import dust.mj02.sandbox.DustSandboxListenerDump;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
@@ -595,6 +596,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 	}
 
 	private void loadFiles(Object... cont) {
+		DustSandboxListenerDump.init();
 		DustSandboxJsonLoader.init();
 		DustEntity msg = Dust.getEntity(null);
 		Dust.accessEntity(DataCommand.setRef, msg, DR_MSG_CMD, DCMD_COMMSTORE_LOAD, null);

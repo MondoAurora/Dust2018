@@ -32,7 +32,7 @@ public interface DustComponents {
 		msg, self, ctx
 	}
 
-	enum DataCommand {
+	enum DataCommand implements DustEntityKey {
 		getValue(false), setValue(false), setRef(true), removeRef(true), clearRefs(true), tempSend(false);
 
 		private final boolean ref;
@@ -54,6 +54,7 @@ public interface DustComponents {
 
 	public interface DustRef {
 		<InfoType> InfoType get(RefKey ref);
+		void processAll(RefProcessor proc);
 	}
 
 	interface EntityProcessor {

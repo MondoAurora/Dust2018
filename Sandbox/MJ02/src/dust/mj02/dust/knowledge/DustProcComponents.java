@@ -9,13 +9,13 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
-		ChangeValue, ChangeKey, BinaryObjectName
+		ChangeOldValue, ChangeNewValue, BinaryObjectName
 	}
 	
 	enum DustProcLinks implements DustEntityKey {
 		ContextChangeListeners, ContextBinaryAssignments, 
 		BinaryImplementedServices,
-		ChangeCmd, ChangeEntity, ChangeAtt, ChangeLinkDef, ChangeTarget
+		ChangeCmd, ChangeEntity, ChangeKey, 
 	}
 
 	enum DustProcServices implements DustEntityKey {
@@ -35,6 +35,10 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	interface DustProcInitable {
 		public void dustProcInitableInit() throws Exception;
+	}
+	
+	interface DustProcListener {
+		public void dustProcListenerProcessChange() throws Exception;
 	}
 	
 	interface DustProcChangeListener {
