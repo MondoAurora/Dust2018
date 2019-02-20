@@ -91,7 +91,7 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 			GuiEntityInfo eiTarg = ri.get(GuiRefKey.target);
 			JComponent frmTarget = editor.getEntityPanel(eiTarg);
 
-			if ((null != frmSource) && (null != frmTarget)) {
+			if ((null != frmSource) && frmSource.isShowing() && (null != frmTarget) && frmTarget.isShowing()) {
 				((MontruGuiSwingPanelEntity) eiSrc.get(GuiEntityKey.panel)).getAnchorOnScreen(aSrc, ri.get(GuiRefKey.linkDef));
 				((MontruGuiSwingPanelEntity) eiTarg.get(GuiEntityKey.panel)).getAnchorOnScreen(aTrg, null);
 

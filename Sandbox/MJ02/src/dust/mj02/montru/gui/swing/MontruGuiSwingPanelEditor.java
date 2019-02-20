@@ -489,7 +489,9 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 				Iterable<GuiEntityInfo> toUpdate = getEditorModel().dropRefs(toDel);
 
-				pnlDesktop.updatePanels(toUpdate);
+				editorModel.updateTypeStructure();
+				pnlDesktop.updatePanels(getEditorModel().getAllEntities());
+//				pnlDesktop.updatePanels(toUpdate);
 
 				break;
 			case test01:

@@ -185,6 +185,7 @@ public interface MontruGuiComponents
 		ArrayList<GuiEntityInfo> getAllTypes();
 
 		Iterable<GuiEntityInfo> dropRefs(Iterable<GuiRefInfo> refs);
+		void updateTypeStructure();
 	}
 	
 	interface GuiChangeListener {

@@ -1,6 +1,7 @@
 package dust.mj02.montru.gui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -141,6 +142,36 @@ public class MontruGuiEditorModel implements MontruGuiComponents, DustProcCompon
 	
 		return changedEntities;
 	}
+	
+	public void updateTypeStructure() {
+		GuiEntityKey[] refkeys = {GuiEntityKey.attDefs, GuiEntityKey.linkDefs};
+		
+		for (GuiEntityInfo ti : arrTypes) {
+			for (GuiEntityKey k : refkeys) {
+				Object r = ti.get(k);
+				if (r instanceof Collection<?>) {
+					((Collection<?>) r).clear();
+				}
+			}
+		}
+
+		for (GuiRefInfo ri : getAllRefs()) {
+			GuiEntityInfo is = ri.get(GuiRefKey.source);
+			GuiEntityInfo it = ri.get(GuiRefKey.target);
+			GuiEntityInfo sType = is.get(GuiEntityKey.type);
+			
+			if ((null != sType) && arrTypes.contains(it)) {
+				Object tk = EntityResolver.getKey(sType.get(GuiEntityKey.entity));
+				
+				if ( DustMetaTypes.AttDef == tk ) {
+					it.add(GuiEntityKey.attDefs, is);
+				} else if ( DustMetaTypes.LinkDef == tk ) {
+					it.add(GuiEntityKey.linkDefs, is);
+				} 
+			}
+		}
+	}
+	
 	@Override
 	public void dustProcChangedAttribute(DustEntity entity, DustEntity att, Object value) throws Exception {
 		// TODO Auto-generated method stub

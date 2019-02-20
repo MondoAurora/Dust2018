@@ -79,7 +79,7 @@ class MontruGuiSwingPanelEntity extends JPanel implements MontruGuiSwingComponen
 
 	public boolean getAnchorOnScreen(EnumMap<AnchorLocation, Point> target, GuiEntityInfo link) {
 		AnchoredPanel ap = (AnchoredPanel) factRows.peek(link);
-		if (null == ap) {
+		if ((null == ap) || !ap.isShowing() ) {
 			target.clear();
 			return false;
 		} else {
