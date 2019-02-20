@@ -306,10 +306,10 @@ public class MontruGuiSwingWidgetManager extends MontruGuiWidgetManager<JCompone
 				ri.put(GuiRefKey.selected, true);
 				eiEntity.add(GuiEntityKey.models, dragEntityInfo);
 				
-				editorModel.updateTypeStructure();
-				editorPanel.pnlDesktop.updatePanels(editorModel.getAllEntities());
+//				editorModel.updateTypeStructure();
+//				editorPanel.pnlDesktop.updatePanels(editorModel.getAllEntities());
 				
-//				editorPanel.pnlDesktop.updatePanels(eiEntity, dragEntityInfo);
+				editorPanel.pnlDesktop.updatePanels(eiEntity, dragEntityInfo);
 			}
 
 			dragEntityInfo = null;

@@ -490,23 +490,13 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 				Iterable<GuiEntityInfo> toUpdate = getEditorModel().dropRefs(toDel);
 
-				editorModel.updateTypeStructure();
-				pnlDesktop.updatePanels(getEditorModel().getAllEntities());
-//				pnlDesktop.updatePanels(toUpdate);
+				// editorModel.updateTypeStructure();
+				// pnlDesktop.updatePanels(getEditorModel().getAllEntities());
+				pnlDesktop.updatePanels(toUpdate);
 
 				break;
 			case test01:
-				// DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
-				// DustCommDiscussion disc = new DustCommDiscussion();
-
-				try {
-					loadFiles(new File("MJ02Boot02.json"));
-					// disc.load(rdr, "MJ02Boot02.json");
-					// pnlDesktop.reloadData();
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				loadFiles(new File("MJ02Boot02.json"));
 
 				break;
 			case test02:
