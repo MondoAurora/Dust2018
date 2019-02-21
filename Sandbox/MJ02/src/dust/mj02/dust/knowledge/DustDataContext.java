@@ -453,7 +453,10 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				SimpleRef rr = sr.linkDef.get(DustMetaLinks.LinkDefReverse);
 				if ( null != rr ) {
 					SimpleEntity revLink = rr.target;
-					changeRef(false, cmd, eTarget, revLink, eTarget.get(revLink), se, collId);
+					SimpleRef rev = changeRef(false, cmd, eTarget, revLink, eTarget.get(revLink), se, collId);
+					
+					sr.reverse = rev;
+					rev.reverse = sr;
 				}
 			}
 
