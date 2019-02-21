@@ -9,7 +9,7 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
-		ChangeOldValue, ChangeNewValue, BinaryObjectName
+		ChangeOldValue, ChangeNewValue, BinaryObjectName, BinaryAutoInit
 	}
 	
 	enum DustProcLinks implements DustEntityKey {
@@ -19,11 +19,12 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	}
 
 	enum DustProcServices implements DustEntityKey {
-		Listener, Channel, Pocessor
+		Listener, Channel, Processor, Active
 	};
 	
 	enum DustProcMessages implements DustEntityKey {
-		ListenerProcessChange, ChannelOpen, ChannelClose, ProcessorProcess
+		ListenerProcessChange, ChannelOpen, ChannelClose, ProcessorProcess,
+		ActiveInit, ActiveRelease,
 	};
 	
 
@@ -33,8 +34,9 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 		public void dustProcPocessorPocess() throws Exception;
 	}
 	
-	interface DustProcInitable {
-		public void dustProcInitableInit() throws Exception;
+	interface DustProcActive {
+		public void dustProcActiveInit() throws Exception;
+		public void dustProcActiveRelease() throws Exception;
 	}
 	
 	interface DustProcListener {

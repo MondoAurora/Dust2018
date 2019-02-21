@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 
 import dust.mj02.dust.knowledge.DustProcComponents;
 
-public class MontruGuiSwingFrame implements MontruGuiSwingComponents, DustProcComponents.DustProcInitable {
+public class MontruGuiSwingFrame implements MontruGuiSwingComponents, DustProcComponents.DustProcActive {
 
 	class Frame extends JFrame {
 		private static final long serialVersionUID = 1L;
@@ -40,14 +40,19 @@ public class MontruGuiSwingFrame implements MontruGuiSwingComponents, DustProcCo
 	public MontruGuiSwingFrame() {
 		this.frame = new Frame();
 
-		dustProcInitableInit();
+		dustProcActiveInit();
 	};
 
 	@Override
-	public void dustProcInitableInit() {
+	public void dustProcActiveInit() {
 		frame.setTitle(getClass().getSimpleName());
 
 		pnlEditor.pnlDesktop.reloadData();
+	}
+	
+	@Override
+	public void dustProcActiveRelease() throws Exception {
+		frame.dispose();
 	}
 	
 	protected void saveState() {

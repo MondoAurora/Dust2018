@@ -10,6 +10,7 @@ import java.util.Set;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
+import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustDataContext.SimpleEntity;
 import dust.mj02.dust.knowledge.DustDataContext.SimpleRef;
 import dust.mj02.dust.tools.DustGenericComponents;
@@ -38,16 +39,29 @@ public class DustBinaryConnector
 			this.eSvc = eSvc;
 
 			id = eSvc.get(KEYS.get(DustGenericAtts.identifiedIdLocal));
-			String cn = eAssign.get(KEYS.get(DustProcAtts.BinaryObjectName));
 
-			try {
-				implClass = Class.forName(cn);
-			} catch (Throwable e) {
-				Dust.wrapAndRethrowException("Failed to create ServiceInfo", e);
+			if (null != eAssign) {
+				String cn = eAssign.get(KEYS.get(DustProcAtts.BinaryObjectName));
+
+				try {
+					implClass = Class.forName(cn);
+				} catch (Throwable e) {
+					Dust.wrapAndRethrowException("Failed to create ServiceInfo", e);
+				}
 			}
 
 			allServices = new HashSet<>();
 			allServices.add(this);
+
+			SimpleRef ext = eSvc.get(KEYS.get(DustGenericLinks.Extends));
+			if (null != ext) {
+				ext.processAll(new RefProcessor() {
+					@Override
+					public void processRef(DustRef ref) {
+						allServices.addAll(factServices.get(((SimpleRef) ref).target).allServices);
+					}
+				});
+			}
 		}
 	}
 
@@ -55,18 +69,18 @@ public class DustBinaryConnector
 		String id;
 
 		ServiceInfo si;
-		Method m;
+//		Method m;
 
 		public MethodInfo(ServiceInfo svc, String id_) {
 			super();
 			this.si = svc;
 			this.id = si.id.substring(0, 1).toLowerCase() + si.id.substring(1) + id_;
 
-			try {
-				m = svc.implClass.getMethod(id);
-			} catch (Throwable e) {
-				Dust.wrapAndRethrowException("Failed finding method", e);
-			}
+//			try {
+//				m = svc.implClass.getMethod(id);
+//			} catch (Throwable e) {
+//				Dust.wrapAndRethrowException("Failed finding method", e);
+//			}
 		}
 	}
 
@@ -85,11 +99,12 @@ public class DustBinaryConnector
 					SimpleEntity eSvc = refSvc.target;
 
 					if (key == eSvc) {
-						return new ServiceInfo(eBa, eSvc);
+						return new ServiceInfo(eBa, key);
 					}
 				}
 			}
-			return null;
+
+			return new ServiceInfo(null, key);
 		}
 	};
 
@@ -104,6 +119,29 @@ public class DustBinaryConnector
 			return new MethodInfo(si, cmdId);
 		}
 	};
+	
+	class MethodFactory extends DustUtilsFactory<SimpleEntity, Method> {
+		
+		public MethodFactory() {
+			super(false);
+		}
+		
+		@Override
+		protected Method create(SimpleEntity key, Object... hints) {
+			MethodInfo mi = factMethods.get(key);
+			Object o = hints[0];
+			Method m = null;
+			
+			try {
+				m = o.getClass().getMethod(mi.id);
+			} catch (Throwable e) {
+				Dust.wrapAndRethrowException("Command finding", e);
+			}
+
+			return m;
+		}
+	};
+
 
 	public DustBinaryConnector(DustDataContext ctx) {
 		this.ctx = ctx;
@@ -114,32 +152,47 @@ public class DustBinaryConnector
 		Throwable t = null;
 
 		try {
-			Object o = null;
-			Map<DustEntity, Object> bo = target.binObjs;
-
 			SimpleEntity cmd = ((SimpleRef) msg.get(KEYS.get(DustDataLinks.MessageCommand))).target;
 			MethodInfo mi = factMethods.get(cmd);
-
-			if (null == bo) {
-				bo = target.binObjs = new HashMap<>();
-				o = null;
-			} else {
-				o = bo.get(mi.si.eSvc);
+			Object o = DustUtils.getBinary(target, mi.si.eSvc);
+			
+			if ( null == target.factMethods ) {
+				target.factMethods = new MethodFactory();
 			}
-
-			if (null == o) {
-				ServiceInfo si = factServices.get(mi.si.eSvc);
-				o = si.implClass.newInstance();
-
-				for (ServiceInfo as : si.allServices) {
-					bo.put(as.eSvc, o);
-				}
-			}
+			
+			Method m = target.factMethods.get(cmd, o);
+			
+//			Method m = o.getClass().getMethod(mi.id);
+			
+//			Object o = null;
+//			Map<DustEntity, Object> bo = target.get(DustDataAtts.EntityBinaries);
+//
+//			SimpleEntity cmd = ((SimpleRef) msg.get(KEYS.get(DustDataLinks.MessageCommand))).target;
+//			MethodInfo mi = factMethods.get(cmd);
+//
+//			if (null == bo) {
+//				bo = new HashMap<>();
+//				target.put(DustDataAtts.EntityBinaries, bo);
+//				o = null;
+//			} else {
+//				o = bo.get(mi.si.eSvc);
+//			}
+//
+//			if (null == o) {
+//				ServiceInfo si = factServices.get(mi.si.eSvc);
+//				o = si.implClass.newInstance();
+//
+//				for (ServiceInfo as : si.allServices) {
+//					bo.put(as.eSvc, o);
+//				}
+//			}
 
 			ctx.mapCtxEntities.put(ContextRef.self, target);
 			ctx.mapCtxEntities.put(ContextRef.msg, msg);
+			
+			m.invoke(o);
 
-			mi.m.invoke(o);
+//			mi.m.invoke(o);
 		} catch (Throwable e) {
 			t = e;
 		} finally {
@@ -148,6 +201,32 @@ public class DustBinaryConnector
 
 		if (null != t) {
 			Dust.wrapAndRethrowException("Command execution", t);
+		}
+	}
+
+	public void instSvc(SimpleEntity target, SimpleEntity svc) {
+		Map<DustEntity, Object> bo = target.get(DustDataAtts.EntityBinaries);
+		Object o;
+
+		if (null == bo) {
+			bo = new HashMap<>();
+			target.put(DustDataAtts.EntityBinaries, bo);
+			o = null;
+		} else {
+			o = bo.get(svc);
+		}
+
+		if (null == o) {
+			ServiceInfo si = factServices.get(svc);
+			try {
+				o = si.implClass.newInstance();
+			} catch (Throwable e) {
+				Dust.wrapAndRethrowException("Initializing service", e);
+			}
+
+			for (ServiceInfo as : si.allServices) {
+				bo.put(as.eSvc, o);
+			}
 		}
 	}
 

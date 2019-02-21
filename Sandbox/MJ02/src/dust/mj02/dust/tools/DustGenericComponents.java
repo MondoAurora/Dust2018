@@ -14,7 +14,7 @@ public interface DustGenericComponents extends DustComponents {
 	};
 	
 	enum DustGenericLinks implements DustEntityKey {
-		Owner, Requires, Tags
+		Owner, Requires, Extends, Tags
 	};
 	
 }

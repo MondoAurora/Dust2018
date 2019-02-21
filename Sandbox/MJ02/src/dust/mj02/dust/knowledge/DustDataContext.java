@@ -1,5 +1,6 @@
 package dust.mj02.dust.knowledge;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.Dust.DustContext;
+import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.tools.DustGenericComponents;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
@@ -23,7 +25,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	class SimpleEntity implements DustEntity {
 		Map<DustEntity, Object> content = new HashMap<>();
 		DustEntity ePT;
-		Map<DustEntity, Object> binObjs;
+		DustUtilsFactory<SimpleEntity, Method> factMethods;
+//		Map<DustEntity, Object> binObjs;
 
 		public <RetType> RetType put(DustEntity key, Object value) {
 			RetType orig = (RetType) content.put(key, value);
@@ -129,7 +132,13 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		}
 
 		void initContainer(SimpleRef orig) {
-			SimpleRef refLDT = linkDef.get(EntityResolver.getEntity(DustMetaLinks.LinkDefType));
+			Object  o = linkDef.get(EntityResolver.getEntity(DustMetaLinks.LinkDefType));
+			SimpleRef refLDT;
+			if (o instanceof SimpleRef) {
+				refLDT = (SimpleRef) o;
+			} else {
+				refLDT = null;
+			}
 			lt = (null == refLDT) ? DustMetaValueLinkDefType.LinkDefSingle : EntityResolver.getKey(refLDT.target);
 
 			if ((null == orig) || (null == orig.container)) {
@@ -326,6 +335,10 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		SimpleRef actRef = cmd.isRef() ? (SimpleRef) retVal : null;
 
 		switch (cmd) {
+		case getEntity:
+			retVal = ctxGetEntity(val);
+			notifyListeners(cmd, (SimpleEntity) retVal, null, val, null);
+			break;
 		case tempSend:
 			binConn.send(se, (SimpleEntity) key);
 			break;
@@ -391,6 +404,18 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 	private void notifyListeners(DataCommand cmd, SimpleEntity entity, DustEntity key, Object newVal, Object oldVal) {
 		SimpleRef listeners = ctxSelf.get(DustProcLinks.ContextChangeListeners);
+		
+		if ((DataCommand.setRef == cmd) && (null != newVal) && (key == EntityResolver.getEntity(DustDataLinks.EntityServices))) {
+			SimpleEntity svc = ((SimpleRef)newVal).target;
+			binConn.instSvc(entity, svc);
+			if (DustUtils.isTrue(svc, DustProcAtts.BinaryAutoInit)) {
+				SimpleEntity init = new SimpleEntity();
+
+				init.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.ActiveInit);
+	
+				binConn.send(entity, init);
+			}
+		}
 
 		if (null != listeners) {
 			listeners.processAll(new RefProcessor() {

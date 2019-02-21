@@ -21,8 +21,8 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 	}
 	
 	void init() throws Exception {
-		DustKnowledgeGen.init();
 		DustToolsGen.init();
+		DustKnowledgeGen.init();
 
 //		DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
 //		DustCommDiscussion disc = new DustCommDiscussion();

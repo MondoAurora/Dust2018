@@ -11,7 +11,6 @@ import dust.mj02.dust.knowledge.DustCommComponents;
 import dust.mj02.dust.knowledge.DustCommComponents.DustCommLinks;
 import dust.mj02.dust.knowledge.DustCommDiscussion;
 import dust.mj02.dust.knowledge.DustCommJsonLoader;
-import dust.mj02.dust.knowledge.DustMetaComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.tools.DustGenericComponents;
 
@@ -58,8 +57,6 @@ public class DustSandboxJsonLoader implements DustComponents, DustGenericCompone
 			DustEntity daBinObj = EntityResolver.getEntity(DustProcComponents.DustProcAtts.BinaryObjectName);
 			DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcComponents.DustProcLinks.BinaryImplementedServices);
 			DustEntity dlCtxBin = EntityResolver.getEntity(DustProcComponents.DustProcLinks.ContextBinaryAssignments);
-			DustEntity dlLinkDefType = EntityResolver.getEntity(DustMetaComponents.DustMetaLinks.LinkDefType);
-			DustEntity dlLinkDefTypeSet = EntityResolver.getEntity(DustMetaComponents.DustMetaValueLinkDefType.LinkDefSet);
 
 			DustEntity dlGenOwner = EntityResolver.getEntity(DustGenericComponents.DustGenericLinks.Owner);
 			DustEntity dsCommStore = EntityResolver.getEntity(DustCommComponents.DustCommServices.Store);
@@ -68,9 +65,6 @@ public class DustSandboxJsonLoader implements DustComponents, DustGenericCompone
 
 			String cName = DustSandboxJsonLoader.class.getName();
 			DustEntity ba = Dust.getEntity("BinaryAssignment: " + cName);
-			
-			Dust.accessEntity(DataCommand.setRef, dlCtxBin, dlLinkDefType, dlLinkDefTypeSet, null);
-			Dust.accessEntity(DataCommand.setRef, dlBinImplSvc, dlLinkDefType, dlLinkDefTypeSet, null);
 			
 			Dust.accessEntity(DataCommand.setValue, ba, daBinObj, cName, null);
 			Dust.accessEntity(DataCommand.setRef, ba, dlBinImplSvc, dsCommStore, null);
