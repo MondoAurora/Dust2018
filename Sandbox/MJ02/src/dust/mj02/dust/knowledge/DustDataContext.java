@@ -532,7 +532,9 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		source = optResolveCtxEntity(source);
 		target = optResolveCtxEntity(target);
 
-		for (SimpleRef ref : refs) {
+		for (Object o: refs.toArray()) {
+			SimpleRef ref = (SimpleRef) o;
+			
 			if (DustUtilsJava.isEqualLenient(ref.source, source) && DustUtilsJava.isEqualLenient(ref.linkDef, linkDef)
 					&& DustUtilsJava.isEqualLenient(ref.target, target)) {
 				proc.processRef(ref);

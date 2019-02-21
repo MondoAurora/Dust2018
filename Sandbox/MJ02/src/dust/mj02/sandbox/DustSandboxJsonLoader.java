@@ -6,15 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import dust.mj02.dust.Dust;
-import dust.mj02.dust.DustComponents;
+import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustCommComponents;
-import dust.mj02.dust.knowledge.DustCommComponents.DustCommLinks;
 import dust.mj02.dust.knowledge.DustCommDiscussion;
 import dust.mj02.dust.knowledge.DustCommJsonLoader;
-import dust.mj02.dust.knowledge.DustProcComponents;
-import dust.mj02.dust.tools.DustGenericComponents;
 
-public class DustSandboxJsonLoader implements DustComponents, DustGenericComponents, DustCommComponents.DustCommStore {
+public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommComponents.DustCommStore {
 	
 	private static DustEntity DA_STREAM_FILENAME = EntityResolver.getEntity(DustGenericAtts.streamFileName);
 	private static boolean inited = false;
@@ -27,6 +24,28 @@ public class DustSandboxJsonLoader implements DustComponents, DustGenericCompone
 	public void dustCommStoreLoad() throws Exception {
 		String fileName = Dust.accessEntity(DataCommand.getValue, ContextRef.self, DA_STREAM_FILENAME, null, null);
 		disc.load(rdr, fileName);
+		
+		DustEntity eAttDef = EntityResolver.getEntity(DustMetaTypes.AttDef);
+		DustEntity eLinkDef = EntityResolver.getEntity(DustMetaTypes.LinkDef);
+		
+		Dust.processRefs(new RefProcessor() {
+			@Override
+			public void processRef(DustRef ref) {
+				DustEntity src = ref.get(RefKey.source);
+				
+				DustRef r = DustUtils.accessEntity(DataCommand.getValue, src, DustDataLinks.EntityPrimaryType);
+				
+				if ( null != r ) {
+					DustEntity t = r.get(RefKey.target);
+					if ( eAttDef == t ) {
+						DustUtils.accessEntity(DataCommand.setRef, src, DustMetaLinks.AttDefParent, ref.get(RefKey.target));
+					} else if ( eLinkDef == t ) {
+						DustUtils.accessEntity(DataCommand.setRef, src, DustMetaLinks.LinkDefParent, ref.get(RefKey.target));
+					}
+				}
+			}
+		}, null, EntityResolver.getEntity(DustGenericLinks.Owner), null);
+		
 	}
 	
 	@Override
@@ -52,16 +71,16 @@ public class DustSandboxJsonLoader implements DustComponents, DustGenericCompone
 	
 	public static void init() {
 		if ( !inited ) {
-			DustEntity daGenId = EntityResolver.getEntity(DustGenericComponents.DustGenericAtts.identifiedIdLocal);
+			DustEntity daGenId = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
 			
-			DustEntity daBinObj = EntityResolver.getEntity(DustProcComponents.DustProcAtts.BinaryObjectName);
-			DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcComponents.DustProcLinks.BinaryImplementedServices);
-			DustEntity dlCtxBin = EntityResolver.getEntity(DustProcComponents.DustProcLinks.ContextBinaryAssignments);
+			DustEntity daBinObj = EntityResolver.getEntity(DustProcAtts.BinaryObjectName);
+			DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
+			DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.ContextBinaryAssignments);
 
-			DustEntity dlGenOwner = EntityResolver.getEntity(DustGenericComponents.DustGenericLinks.Owner);
-			DustEntity dsCommStore = EntityResolver.getEntity(DustCommComponents.DustCommServices.Store);
-			DustEntity dcStoreLoad = EntityResolver.getEntity(DustCommComponents.DustCommMessages.StoreLoad);
-			DustEntity dcStoreSave = EntityResolver.getEntity(DustCommComponents.DustCommMessages.StoreSave);
+			DustEntity dlGenOwner = EntityResolver.getEntity(DustGenericLinks.Owner);
+			DustEntity dsCommStore = EntityResolver.getEntity(DustCommServices.Store);
+			DustEntity dcStoreLoad = EntityResolver.getEntity(DustCommMessages.StoreLoad);
+			DustEntity dcStoreSave = EntityResolver.getEntity(DustCommMessages.StoreSave);
 
 			String cName = DustSandboxJsonLoader.class.getName();
 			DustEntity ba = Dust.getEntity("BinaryAssignment: " + cName);
