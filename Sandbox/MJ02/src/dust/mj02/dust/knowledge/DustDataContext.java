@@ -85,17 +85,16 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		final SimpleEntity target;
 		final Object key;
 
-		final SimpleRef reverse;
+		SimpleRef reverse;
 
 		DustMetaValueLinkDefType lt;
 		Object container;
 
-		public SimpleRef(SimpleEntity linkDef, SimpleEntity source, SimpleEntity target, SimpleRef reverse, Object key,
+		public SimpleRef(SimpleEntity linkDef, SimpleEntity source, SimpleEntity target, Object key,
 				SimpleRef orig) {
 			this.linkDef = linkDef;
 			this.source = source;
 			this.target = target;
-			this.reverse = reverse;
 			this.key = key;
 
 			initContainer(orig);
@@ -194,15 +193,16 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			}
 		}
 
-		void remove(boolean all) {
+		void remove(boolean all, boolean handleReverse) {
 			boolean clear = true;
+			
 			switch (lt) {
 			case LinkDefArray:
 			case LinkDefSet:
 				Collection<SimpleRef> coll = (Collection<SimpleRef>) container;
 				if (all) {
 					for (SimpleRef r : coll) {
-						r.remove(false);
+						r.remove(false, handleReverse);
 					}
 				} else {
 					coll.remove(this);
@@ -216,7 +216,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				Map<Object, SimpleRef> map = (Map<Object, SimpleRef>) container;
 				if (all) {
 					for (SimpleRef r : map.values()) {
-						r.remove(false);
+						r.remove(false, handleReverse);
 					}
 				} else {
 					map.remove(key);
@@ -227,7 +227,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				}
 				break;
 			case LinkDefSingle:
-				return;
+				break;
 			}
 
 			if (clear) {
@@ -235,6 +235,10 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			}
 
 			refs.remove(this);
+			
+			if ( handleReverse && (null != reverse)) { 
+				reverse.remove(false, false);
+			}
 		}
 
 		@Override
@@ -332,7 +336,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		SimpleEntity se = optResolveCtxEntity(e);
 
 		Object retVal = se.get(key);
-		SimpleRef actRef = cmd.isRef() ? (SimpleRef) retVal : null;
+//		SimpleRef actRef = cmd.isRef() ? (SimpleRef) retVal : null;
 
 		switch (cmd) {
 		case getEntity:
@@ -352,32 +356,88 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				notifyListeners(cmd, se, key, val, retVal);
 			}
 			break;
+		default:
+			retVal = changeRef(true, cmd, se, key, (SimpleRef) retVal, val, collId);
+			break;
+			
+//		case removeRef:
+//			if (null != actRef) {
+//				actRef.remove(false);
+//				notifyListeners(cmd, se, key, null, actRef);
+//			}
+//			break;
+//		case setRef:
+//			actRef = (SimpleRef) retVal;
+//
+//			val = optResolveCtxEntity(val);
+//
+//			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSet == actRef.lt)) {
+//				for (SimpleRef er : ((Set<SimpleRef>) actRef.container)) {
+//					if (er.target == val) {
+//						return (RetType) er;
+//					}
+//				}
+//			}
+//			SimpleRef sr = new SimpleRef((SimpleEntity) key, se, (SimpleEntity) val, collId, actRef);
+//
+//			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSingle == sr.lt)) {
+//				if ( DustUtilsJava.isEqual(val, actRef.target) ) {
+//					return (RetType) actRef;
+//				}
+//				
+//				refs.remove(actRef);
+//				se.put(key, sr);
+//				notifyListeners(cmd, se, key, sr, actRef);
+//			} else {
+//				if (null == actRef) {
+//					se.put(key, sr);
+//				}
+//				notifyListeners(cmd, se, key, sr, actRef);
+//			}
+//			
+//			refs.add(sr);
+//
+//			retVal = sr;
+//
+//			break;
+//		case clearRefs:
+//			if (null != actRef) {
+//				actRef.remove(true);
+//			}
+//
+//			break;
+		}
+		return (RetType) retVal;
+	}
+
+	public SimpleRef changeRef(boolean handleReverse, DataCommand cmd, SimpleEntity se, DustEntity key, SimpleRef actRef, Object val, Object collId) {
+		SimpleRef sr = null;
+		
+		switch (cmd) {
 		case removeRef:
 			if (null != actRef) {
-				actRef.remove(false);
+				actRef.remove(false, true);
 				notifyListeners(cmd, se, key, null, actRef);
 			}
 			break;
 		case setRef:
-			actRef = (SimpleRef) retVal;
-
-			val = optResolveCtxEntity(val);
+			SimpleEntity eTarget = optResolveCtxEntity(val);
 
 			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSet == actRef.lt)) {
 				for (SimpleRef er : ((Set<SimpleRef>) actRef.container)) {
-					if (er.target == val) {
-						return (RetType) er;
+					if (er.target == eTarget) {
+						return er;
 					}
 				}
 			}
-			SimpleRef sr = new SimpleRef((SimpleEntity) key, se, (SimpleEntity) val, null, collId, actRef);
+			sr = new SimpleRef((SimpleEntity) key, se, (SimpleEntity) eTarget, collId, actRef);
 
 			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSingle == sr.lt)) {
-				if ( DustUtilsJava.isEqual(val, actRef.target) ) {
-					return (RetType) actRef;
+				if ( DustUtilsJava.isEqual(eTarget, actRef.target) ) {
+					return actRef;
 				}
 				
-				refs.remove(actRef);
+				actRef.remove(false, true);
 				se.put(key, sr);
 				notifyListeners(cmd, se, key, sr, actRef);
 			} else {
@@ -388,18 +448,27 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			}
 			
 			refs.add(sr);
-
-			retVal = sr;
+			
+			if ( handleReverse ) {
+				SimpleRef rr = sr.linkDef.get(DustMetaLinks.LinkDefReverse);
+				if ( null != rr ) {
+					SimpleEntity revLink = rr.target;
+					changeRef(false, cmd, eTarget, revLink, eTarget.get(revLink), se, collId);
+				}
+			}
 
 			break;
 		case clearRefs:
 			if (null != actRef) {
-				actRef.remove(true);
+				actRef.remove(true, true);
 			}
 
 			break;
+		default:
+			throw new DustException("Should not get here!");
 		}
-		return (RetType) retVal;
+		
+		return sr;
 	}
 
 	private void notifyListeners(DataCommand cmd, SimpleEntity entity, DustEntity key, Object newVal, Object oldVal) {

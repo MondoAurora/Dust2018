@@ -9,7 +9,7 @@ import dust.mj02.dust.knowledge.DustProcComponents.DustProcAtts;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcLinks;
 import dust.utils.DustUtilsJava;
 
-public class DustSwingWidgetLabel extends JLabel implements DustSwingWidgetComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
+public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiSwingComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
 	private static final long serialVersionUID = 1L;
 	
 	public static JLabel createWidget(DustEntity eEntity, DustEntity eData) {
@@ -23,7 +23,7 @@ public class DustSwingWidgetLabel extends JLabel implements DustSwingWidgetCompo
 		return DustUtils.getBinary(eWidget, eSvc);
 	}
 
-	public DustSwingWidgetLabel() {
+	public DustGuiSwingWidgetLabel() {
 		// TODO Auto-generated constructor stub
 	}
 

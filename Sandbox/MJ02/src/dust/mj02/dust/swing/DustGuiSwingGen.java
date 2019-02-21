@@ -5,7 +5,7 @@ import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.tools.DustGenericComponents;
 
-public class DustSwingWidgetGen implements DustSwingWidgetComponents, DustProcComponents, DustGenericComponents {
+public class DustGuiSwingGen implements DustGuiSwingComponents, DustProcComponents, DustGenericComponents {
 	private static boolean inited = false;
 
 	public static void init() {
@@ -13,7 +13,7 @@ public class DustSwingWidgetGen implements DustSwingWidgetComponents, DustProcCo
 			return;
 		}
 		
-		String cName = DustSwingWidgetLabel.class.getName();
+		String cName = DustGuiSwingWidgetLabel.class.getName();
 		DustEntity ba = Dust.getEntity("BinaryAssignment: " + cName);
 		
 		DustUtils.accessEntity(DataCommand.setValue, ba, DustProcAtts.BinaryObjectName, cName, null);
