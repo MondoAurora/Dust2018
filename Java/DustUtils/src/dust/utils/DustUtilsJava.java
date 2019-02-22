@@ -144,4 +144,19 @@ public class DustUtilsJava implements DustUtilsComponents {
 		target.put(o2, o1);
 	}
 
+	public static int indexOf(Object val, Object... items) {
+		if ( null != items ) {
+			int idx = 0;
+			for ( Object it : items ) {
+				if ( val == it ) {
+					return idx;
+				} else {
+					++idx;
+				}
+			}
+		}
+		
+		return -1;
+	}
+
 }

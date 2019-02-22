@@ -21,7 +21,7 @@ public interface MontruGuiComponents
 	}
 
 	enum GuiRefKey {
-		ref, source, target, linkDef, key, selected
+		ref, source, target, linkDef, key, selected, exists
 	}
 
 	enum GuiShowFlag {
@@ -29,7 +29,7 @@ public interface MontruGuiComponents
 	};
 
 	enum GuiCommands {
-		createEntity, deleteEntity, deleteRef, test01, test02
+		createEntity, deleteEntity, deleteRef, test01, test02, test03
 	};
 
 	enum WidgetType {

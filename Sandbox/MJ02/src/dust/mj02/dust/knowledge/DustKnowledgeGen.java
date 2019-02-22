@@ -52,6 +52,8 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 
 		Dust.accessEntity(DataCommand.setRef, dlCtxBin, dlLinkDefType, dlLinkDefTypeSet, null);
 		Dust.accessEntity(DataCommand.setRef, dlBinImplSvc, dlLinkDefType, dlLinkDefTypeSet, null);
+		DustUtils.accessEntity(DataCommand.setRef, DustProcLinks.ContextChangeListeners, dlLinkDefType, dlLinkDefTypeSet, null);
+		
 		Dust.accessEntity(DataCommand.setRef, dlGenExtends, dlLinkDefType, dlLinkDefTypeSet, null);
 		Dust.accessEntity(DataCommand.setRef, dlGenRequires, dlLinkDefType, dlLinkDefTypeSet, null);
 		

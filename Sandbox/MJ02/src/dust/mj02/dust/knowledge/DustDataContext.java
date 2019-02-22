@@ -56,6 +56,11 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			return (RetType) content.get(EntityResolver.getEntity(key));
 		}
 
+		public <RetType> RetType getSingleRef(DustEntityKey key) {
+			SimpleRef r = get(EntityResolver.getEntity(key));
+			return (null == r) ? null : (RetType) r.target;
+		}
+
 		public <RetType> RetType put(DustEntityKey key, Object value) {
 			return (RetType) put(EntityResolver.getEntity(key), value);
 		}
@@ -178,13 +183,13 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			switch (lt) {
 			case LinkDefArray:
 			case LinkDefSet:
-				for (SimpleRef r : (Collection<SimpleRef>) container) {
-					proc.processRef(r);
+				for (Object r : ((Collection<?>) container).toArray()) {
+					proc.processRef((SimpleRef) r);
 				}
 				break;
 			case LinkDefMap:
-				for (SimpleRef r : ((Map<Object, SimpleRef>) container).values()) {
-					proc.processRef(r);
+				for (Object r : ((Map<Object, SimpleRef>) container).values().toArray()) {
+					proc.processRef((SimpleRef) r);
 				}
 				break;
 			case LinkDefSingle:
@@ -235,6 +240,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			}
 
 			refs.remove(this);
+			notifyListeners(DataCommand.removeRef, source, linkDef, null, this);
 			
 			if ( handleReverse && (null != reverse)) { 
 				reverse.remove(false, false);
@@ -356,56 +362,14 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				notifyListeners(cmd, se, key, val, retVal);
 			}
 			break;
+		case processRef:
+			if ( null != retVal ) {
+				((SimpleRef)retVal).processAll((RefProcessor) val);
+			}
+			break;
 		default:
 			retVal = changeRef(true, cmd, se, key, (SimpleRef) retVal, val, collId);
-			break;
-			
-//		case removeRef:
-//			if (null != actRef) {
-//				actRef.remove(false);
-//				notifyListeners(cmd, se, key, null, actRef);
-//			}
-//			break;
-//		case setRef:
-//			actRef = (SimpleRef) retVal;
-//
-//			val = optResolveCtxEntity(val);
-//
-//			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSet == actRef.lt)) {
-//				for (SimpleRef er : ((Set<SimpleRef>) actRef.container)) {
-//					if (er.target == val) {
-//						return (RetType) er;
-//					}
-//				}
-//			}
-//			SimpleRef sr = new SimpleRef((SimpleEntity) key, se, (SimpleEntity) val, collId, actRef);
-//
-//			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSingle == sr.lt)) {
-//				if ( DustUtilsJava.isEqual(val, actRef.target) ) {
-//					return (RetType) actRef;
-//				}
-//				
-//				refs.remove(actRef);
-//				se.put(key, sr);
-//				notifyListeners(cmd, se, key, sr, actRef);
-//			} else {
-//				if (null == actRef) {
-//					se.put(key, sr);
-//				}
-//				notifyListeners(cmd, se, key, sr, actRef);
-//			}
-//			
-//			refs.add(sr);
-//
-//			retVal = sr;
-//
-//			break;
-//		case clearRefs:
-//			if (null != actRef) {
-//				actRef.remove(true);
-//			}
-//
-//			break;
+			break;			
 		}
 		return (RetType) retVal;
 	}
@@ -417,7 +381,6 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		case removeRef:
 			if (null != actRef) {
 				actRef.remove(false, true);
-				notifyListeners(cmd, se, key, null, actRef);
 			}
 			break;
 		case setRef:
@@ -496,9 +459,10 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				@Override
 				public void processRef(DustRef ref) {
 					SimpleEntity listener = ((SimpleRef) ref).target;
-					if (DustUtilsJava.isEqualLenient(cmd, listener.get(DustProcLinks.ChangeCmd))
-							&& DustUtilsJava.isEqualLenient(cmd, listener.get(DustProcLinks.ChangeCmd))
-							&& DustUtilsJava.isEqualLenient(cmd, listener.get(DustProcLinks.ChangeCmd))) {
+					
+					if (DustUtilsJava.isEqualLenient(cmd, listener.getSingleRef(DustProcLinks.ChangeCmd))
+							&& DustUtilsJava.isEqualLenient(entity, listener.getSingleRef(DustProcLinks.ChangeEntity))
+							&& DustUtilsJava.isEqualLenient(key, listener.getSingleRef(DustProcLinks.ChangeKey))) {
 
 						if (null == chg) {
 							chg = new SimpleEntity();

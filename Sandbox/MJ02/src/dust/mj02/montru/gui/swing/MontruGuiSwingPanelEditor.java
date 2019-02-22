@@ -45,6 +45,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import dust.mj02.dust.Dust;
+import dust.mj02.dust.gui.swing.DustGuiSwingGen;
+import dust.mj02.dust.gui.swing.DustGuiSwingPanelEntity;
 import dust.mj02.dust.knowledge.DustCommComponents;
 import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.montru.gui.MontruGuiEditorModel;
@@ -80,6 +82,24 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			key.put(GuiEntityKey.panel, pnl);
 			internal.getContentPane().add(pnl, BorderLayout.CENTER);
 			internal.setTitle(key.getTitle());
+			internal.pack();
+
+			pnlDesktop.add(internal, JDesktopPane.DEFAULT_LAYER);
+			internal.setVisible(true);
+
+			pnlDesktop.pnlLinks.followContent(internal);
+
+			return internal;
+		}
+	};
+
+	DustUtilsFactory<DustEntity, JInternalFrame> factNewFrames = new DustUtilsFactory<DustEntity, JInternalFrame>(
+			false) {
+		@Override
+		protected JInternalFrame create(DustEntity key, Object... hints) {
+			JInternalFrame internal = new JInternalFrame(key.toString(), true, false, true, true);
+			JPanel pnl = DustGuiSwingPanelEntity.createComponent(key);
+			internal.getContentPane().add(pnl, BorderLayout.CENTER);
 			internal.pack();
 
 			pnlDesktop.add(internal, JDesktopPane.DEFAULT_LAYER);
@@ -502,6 +522,16 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			case test02:
 				saveAll();
 				break;
+			case test03:
+				if ( null != pnlControl.eiSelected ) {
+					JInternalFrame jif = factNewFrames.get(pnlControl.eiSelected.get(GuiEntityKey.entity));
+					try {
+						jif.setSelected(true);
+					} catch (PropertyVetoException e1) {
+						e1.printStackTrace();
+					}
+				}
+				break;
 			}
 		}
 	};
@@ -517,6 +547,8 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 		JSplitPane spMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlControl, new JScrollPane(pnlDesktop));
 		add(spMain, BorderLayout.CENTER);
+		
+		DustGuiSwingGen.init();
 	}
 
 	public GuiEditorModel getEditorModel() {

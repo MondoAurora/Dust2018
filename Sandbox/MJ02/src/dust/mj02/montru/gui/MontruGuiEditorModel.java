@@ -65,6 +65,9 @@ public class MontruGuiEditorModel implements MontruGuiComponents, DustProcCompon
 
 	public void refreshData() {
 		arrTypes.clear();
+		for ( GuiRefInfo ri : factRefs.values()) {
+			ri.put(GuiRefKey.exists, false);
+		}
 
 		DustEntity eldPrimaryType = EntityResolver.getEntity(DustDataLinks.EntityPrimaryType);
 		DustEntity eldEntityModels = EntityResolver.getEntity(DustDataLinks.EntityModels);
@@ -73,6 +76,7 @@ public class MontruGuiEditorModel implements MontruGuiComponents, DustProcCompon
 			@Override
 			public void processRef(DustRef ref) {
 				GuiRefInfo ri = factRefs.get(ref);
+				ri.put(GuiRefKey.exists, true);
 
 				GuiEntityInfo eiSource = ri.get(GuiRefKey.source);
 				GuiEntityInfo eiTarget = ri.get(GuiRefKey.target);
@@ -85,6 +89,17 @@ public class MontruGuiEditorModel implements MontruGuiComponents, DustProcCompon
 				}
 			}
 		}, null, null, null);
+		
+		Set<GuiRefInfo> toDrop = new HashSet<>();
+		for ( GuiRefInfo ri : factRefs.values()) {
+			if ( !ri.isTrue(GuiRefKey.exists) ) {
+				toDrop.add(ri);
+			}
+		}
+		for ( GuiRefInfo ri : toDrop) {
+			factRefs.drop(ri);
+		}
+
 
 		Map<GuiEntityInfo, DustMetaTypes> mapMeta = new HashMap<>();
 		for (DustMetaTypes dmt : DustMetaTypes.values()) {
