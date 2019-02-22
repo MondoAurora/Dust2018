@@ -8,6 +8,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Line2D;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,7 +86,8 @@ class MontruGuiSwingPanelLinks extends JPanel implements MontruGuiSwingComponent
 				{AnchorLocation.Right, AnchorLocation.Left}, 
 				{AnchorLocation.Right, AnchorLocation.Right} };
 
-		for (GuiRefInfo ri : editor.getEditorModel().getAllRefs() ) {
+		for (Object o : ((Collection<?>)editor.getEditorModel().getAllRefs()).toArray() ) {
+			GuiRefInfo ri = (GuiRefInfo) o;
 			GuiEntityInfo eiSrc = ri.get(GuiRefKey.source);
 			JComponent frmSource = editor.getEntityPanel(eiSrc);
 			GuiEntityInfo eiTarg = ri.get(GuiRefKey.target);

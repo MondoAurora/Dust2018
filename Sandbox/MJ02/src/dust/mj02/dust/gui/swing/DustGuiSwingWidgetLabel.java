@@ -11,7 +11,7 @@ import dust.utils.DustUtilsJava;
 public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
 	private static final long serialVersionUID = 1L;
 	
-	public static JLabel createWidget(DustEntity eEntity, DustEntity eData) {
+	public static DustGuiSwingWidgetLabel createWidget(DustEntity eEntity, DustEntity eData) {
 		DustEntity eWidget = Dust.getEntity(null);
 		DustEntity eSvc = EntityResolver.getEntity(DustGuiServices.Label);
 

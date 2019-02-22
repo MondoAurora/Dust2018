@@ -4,18 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.gui.DustGuiComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 public class DustGuiSwingPanelEntity extends JPanel
-		implements DustGuiComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
+		implements DustGuiSwingComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
 	private static final long serialVersionUID = 1L;
 
 	public static JPanel createComponent(DustEntity eEntity) {
@@ -33,10 +35,11 @@ public class DustGuiSwingPanelEntity extends JPanel
 	private static final DustEntity DATT_ID = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
 
 	DustEntity eEntity;
+	DustGuiSwingWidgetAnchor.Connector anchorConnector = new DustGuiSwingWidgetAnchor.Connector();
 
-	DustUtilsFactory<DustEntity, JComponent> factLabel = new DustUtilsFactory<DustEntity, JComponent>(false) {
+	DustUtilsFactory<DustEntity, JLabel> factLabel = new DustUtilsFactory<DustEntity, JLabel>(false) {
 		@Override
-		protected JComponent create(DustEntity key, Object... hints) {
+		protected JLabel create(DustEntity key, Object... hints) {
 			return DustGuiSwingWidgetLabel.createWidget((null == key) ? eEntity : key, DATT_ID);
 		}
 	};
@@ -48,8 +51,29 @@ public class DustGuiSwingPanelEntity extends JPanel
 		}
 	};
 
+	DustUtilsFactory<DustEntity, DustGuiSwingWidgetAnchor.AnchoredPanel> factAnchored = new DustUtilsFactory<DustEntity, DustGuiSwingWidgetAnchor.AnchoredPanel>(false) {
+		@Override
+		protected DustGuiSwingWidgetAnchor.AnchoredPanel create(DustEntity key, Object... hints) {
+			JComponent comp = factLabel.get(key);
+			if ( null == key ) {
+				comp.setBackground(Color.LIGHT_GRAY);
+				((JLabel)comp).setHorizontalAlignment(JLabel.CENTER);
+				comp.setOpaque(true);
+			} else {
+				JPanel pnl = new JPanel(new BorderLayout(HR, 0));
+
+				pnl.add(comp, BorderLayout.WEST);
+				pnl.add(factData.get(key), BorderLayout.CENTER);
+				
+				comp = pnl;
+			}
+			return DustGuiSwingWidgetAnchor.anchorPanel(comp, anchorConnector, eEntity, key);
+		}
+	};
+
 	public DustGuiSwingPanelEntity() {
 		super(new GridLayout(0, 1));
+		setBorder(BorderFactory.createEmptyBorder(ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER));
 	}
 
 	private void updatePanel() {
@@ -60,10 +84,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 		ref = DustUtils.accessEntity(DataCommand.getValue, eEntity, DustDataLinks.EntityPrimaryType);
 		DustEntity ePrimType = (null == ref) ? null : ref.get(RefKey.target);
 
-		JComponent top = factLabel.get(null);
-		top.setBackground(Color.LIGHT_GRAY);
-		top.setOpaque(true);
-
+		JComponent top = factAnchored.get(null);
 		add(top);
 
 		DustUtils.accessEntity(DataCommand.processRef, eEntity, DustDataLinks.EntityModels, new RefProcessor() {
@@ -80,24 +101,25 @@ public class DustGuiSwingPanelEntity extends JPanel
 				DustUtils.accessEntity(DataCommand.processRef, mType, DustMetaLinks.TypeAttDefs, new RefProcessor() {
 					@Override
 					public void processRef(DustRef ref) {
-						JPanel pnl = new JPanel(new BorderLayout());
+						JPanel pnl = new JPanel(new BorderLayout(HR, 0));
 
 						DustEntity att = ref.get(RefKey.target);
 						pnl.add(factLabel.get(att), BorderLayout.WEST);
 						pnl.add(factData.get(att), BorderLayout.CENTER);
-						add(pnl);
+						
+						JPanel pnlRow = new JPanel(new BorderLayout(2*HR, 0));
+						pnlRow.add(Box.createRigidArea(ANCHOR_SIZE), BorderLayout.WEST);
+						pnlRow.add(pnl, BorderLayout.CENTER);
+
+						add(pnlRow);
 					}
 				});
 
 				DustUtils.accessEntity(DataCommand.processRef, mType, DustMetaLinks.TypeLinkDefs, new RefProcessor() {
 					@Override
 					public void processRef(DustRef ref) {
-						JPanel pnl = new JPanel(new BorderLayout());
-
 						DustEntity link = ref.get(RefKey.target);
-						pnl.add(factLabel.get(link), BorderLayout.WEST);
-						pnl.add(factData.get(link), BorderLayout.CENTER);
-
+						JPanel pnl = factAnchored.get(link);
 						add(pnl);
 					}
 				});
@@ -106,6 +128,11 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 		revalidate();
 		repaint();
+		
+//		Window w = SwingUtilities.getWindowAncestor(this);
+//		if (null != w) {
+//			w.pack();
+//		}
 	}
 
 	@Override
