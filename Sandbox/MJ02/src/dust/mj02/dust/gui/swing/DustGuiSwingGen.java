@@ -14,6 +14,7 @@ public class DustGuiSwingGen implements DustGuiComponents, DustProcComponents, D
 		}
 		
 		DustUtils.registerService(DustGuiSwingWidgetLabel.class, true, DustGuiServices.Label, DustProcServices.Listener, DustProcServices.Active);
+		DustUtils.registerService(DustGuiSwingWidgetTextField.class, true, DustGuiServices.TextField, DustProcServices.Listener, DustProcServices.Active);
 		DustUtils.registerService(DustGuiSwingPanelEntity.class, true, DustGuiServices.PropertyPanel, DustProcServices.Listener, DustProcServices.Active);
 
 		inited = true;

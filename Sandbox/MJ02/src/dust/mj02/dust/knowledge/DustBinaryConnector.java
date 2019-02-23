@@ -162,37 +162,10 @@ public class DustBinaryConnector
 			
 			Method m = target.factMethods.get(cmd, o);
 			
-//			Method m = o.getClass().getMethod(mi.id);
-			
-//			Object o = null;
-//			Map<DustEntity, Object> bo = target.get(DustDataAtts.EntityBinaries);
-//
-//			SimpleEntity cmd = ((SimpleRef) msg.get(KEYS.get(DustDataLinks.MessageCommand))).target;
-//			MethodInfo mi = factMethods.get(cmd);
-//
-//			if (null == bo) {
-//				bo = new HashMap<>();
-//				target.put(DustDataAtts.EntityBinaries, bo);
-//				o = null;
-//			} else {
-//				o = bo.get(mi.si.eSvc);
-//			}
-//
-//			if (null == o) {
-//				ServiceInfo si = factServices.get(mi.si.eSvc);
-//				o = si.implClass.newInstance();
-//
-//				for (ServiceInfo as : si.allServices) {
-//					bo.put(as.eSvc, o);
-//				}
-//			}
-
 			ctx.mapCtxEntities.put(ContextRef.self, target);
 			ctx.mapCtxEntities.put(ContextRef.msg, msg);
 			
 			m.invoke(o);
-
-//			mi.m.invoke(o);
 		} catch (Throwable e) {
 			t = e;
 		} finally {
@@ -218,10 +191,17 @@ public class DustBinaryConnector
 
 		if (null == o) {
 			ServiceInfo si = factServices.get(svc);
+			EnumMap<ContextRef, SimpleEntity> store = new EnumMap<>(ctx.mapCtxEntities);
+
 			try {
+				ctx.mapCtxEntities.put(ContextRef.self, target);
+				ctx.mapCtxEntities.put(ContextRef.msg, null);
+
 				o = si.implClass.newInstance();
 			} catch (Throwable e) {
 				Dust.wrapAndRethrowException("Initializing service", e);
+			} finally {
+				ctx.mapCtxEntities.putAll(store);
 			}
 
 			for (ServiceInfo as : si.allServices) {

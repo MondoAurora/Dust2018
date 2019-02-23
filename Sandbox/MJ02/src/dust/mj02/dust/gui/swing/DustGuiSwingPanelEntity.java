@@ -2,11 +2,13 @@ package dust.mj02.dust.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -47,7 +49,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 	DustUtilsFactory<DustEntity, JComponent> factData = new DustUtilsFactory<DustEntity, JComponent>(false) {
 		@Override
 		protected JComponent create(DustEntity key, Object... hints) {
-			return DustGuiSwingWidgetLabel.createWidget(eEntity, key);
+			return ((boolean) hints[0]) ? DustGuiSwingWidgetTextField.createWidget(eEntity, key) : DustGuiSwingWidgetLabel.createWidget(eEntity, key);
 		}
 	};
 
@@ -63,7 +65,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 				JPanel pnl = new JPanel(new BorderLayout(HR, 0));
 
 				pnl.add(comp, BorderLayout.WEST);
-				pnl.add(factData.get(key), BorderLayout.CENTER);
+				pnl.add(factData.get(key, false), BorderLayout.CENTER);
 				
 				comp = pnl;
 			}
@@ -105,7 +107,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 						DustEntity att = ref.get(RefKey.target);
 						pnl.add(factLabel.get(att), BorderLayout.WEST);
-						pnl.add(factData.get(att), BorderLayout.CENTER);
+						pnl.add(factData.get(att, true), BorderLayout.CENTER);
 						
 						JPanel pnlRow = new JPanel(new BorderLayout(2*HR, 0));
 						pnlRow.add(Box.createRigidArea(ANCHOR_SIZE), BorderLayout.WEST);
@@ -129,10 +131,12 @@ public class DustGuiSwingPanelEntity extends JPanel
 		revalidate();
 		repaint();
 		
-//		Window w = SwingUtilities.getWindowAncestor(this);
-//		if (null != w) {
-//			w.pack();
-//		}
+		for ( Container c = getParent(); null != c; c = c.getParent() ) {
+			if ( c instanceof JInternalFrame ) {
+				((JInternalFrame)c).pack();
+				break;
+			}
+		}
 	}
 
 	@Override

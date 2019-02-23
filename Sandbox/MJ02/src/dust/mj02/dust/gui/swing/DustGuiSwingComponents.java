@@ -4,8 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import dust.mj02.dust.gui.DustGuiComponents;
+import dust.utils.DustUtilsSwingComponents;
 
-public interface DustGuiSwingComponents extends DustGuiComponents {
+public interface DustGuiSwingComponents extends DustGuiComponents, DustUtilsSwingComponents {
 	Dimension ANCHOR_SIZE = new Dimension(16, 16);
 	
 	int ENTITY_PANEL_BORDER = 10;

@@ -13,7 +13,7 @@ public interface DustGuiComponents extends DustComponents, DustGenericComponents
 	};
 
 	enum DustGuiServices implements DustEntityKey {
-		Label, PropertyPanel
+		Label, TextField, PropertyPanel
 	};
 
 }
