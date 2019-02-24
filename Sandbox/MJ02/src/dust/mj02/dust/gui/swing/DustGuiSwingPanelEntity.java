@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
@@ -75,7 +76,9 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 	public DustGuiSwingPanelEntity() {
 		super(new GridLayout(0, 1));
-		setBorder(BorderFactory.createEmptyBorder(ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER));
+		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
+				BorderFactory.createEmptyBorder(ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER,
+						ENTITY_PANEL_BORDER)));
 	}
 
 	private void updatePanel() {
@@ -171,6 +174,8 @@ public class DustGuiSwingPanelEntity extends JPanel
 				DustGuiLinks.PropertyPanelEntity)).get(RefKey.target);
 
 		updatePanel();
+		
+		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, ContextRef.self);
 	}
 
 	@Override

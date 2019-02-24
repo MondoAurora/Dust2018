@@ -18,12 +18,14 @@ public class DustGuiSwingWidgetTextField extends JTextField
 			new DustSwingTextChangeProcessor() {
 				@Override
 				public void textChanged(String text, Object source, DocumentEvent e) {
-					try {
-						changing = (DustGuiSwingWidgetTextField) source;
-						Dust.accessEntity(DataCommand.setValue, changing.eEntity, changing.eData, text, null);
-						changing.requestFocus();
-					} finally {
-						changing = null;
+					if (null == changing) {
+						try {
+							changing = (DustGuiSwingWidgetTextField) source;
+							Dust.accessEntity(DataCommand.setValue, changing.eEntity, changing.eData, text, null);
+							changing.requestFocus();
+						} finally {
+							changing = null;
+						}
 					}
 				}
 			});

@@ -4,7 +4,7 @@ public class Dust implements DustComponents {
 	
 	public interface DustContext {
 		DustEntity ctxGetEntity(Object globalId);
-		<RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId);
+		<RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object hint);
 		void ctxProcessRefs(RefProcessor proc, DustEntity source, DustEntity linkDef, DustEntity target);
 		void ctxProcessEntities(EntityProcessor proc);
 	}

@@ -9,11 +9,15 @@ import dust.mj02.dust.tools.DustGenericComponents;
 public interface DustGuiComponents extends DustComponents, DustGenericComponents, DustDataComponents, DustMetaComponents, DustProcComponents {
 	
 	enum DustGuiLinks implements DustEntityKey {
-		PropertyPanelEntity
+		PropertyPanelEntity, MontruDesktopActivePanel
+	};
+
+	enum DustGuiTypes implements DustEntityKey {
+		Label, TextField, PropertyPanel, MontruDesktop
 	};
 
 	enum DustGuiServices implements DustEntityKey {
-		Label, TextField, PropertyPanel
+		Label, TextField, PropertyPanel, MontruDesktop
 	};
 
 }

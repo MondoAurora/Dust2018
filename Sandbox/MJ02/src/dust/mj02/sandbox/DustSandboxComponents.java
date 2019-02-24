@@ -8,4 +8,9 @@ import dust.mj02.dust.tools.DustGenericComponents;
 
 public interface DustSandboxComponents
 		extends DustComponents, DustMetaComponents, DustProcComponents, DustGenericComponents, DustCommComponents {
+	
+	enum DustSandboxServices implements DustEntityKey {
+		SandboxChangeDump
+	};
+
 }

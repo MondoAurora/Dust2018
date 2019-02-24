@@ -26,7 +26,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		Map<DustEntity, Object> content = new HashMap<>();
 		DustEntity ePT;
 		DustUtilsFactory<SimpleEntity, Method> factMethods;
-//		Map<DustEntity, Object> binObjs;
+		boolean justCreated = true;
 
 		public <RetType> RetType put(DustEntity key, Object value) {
 			RetType orig = (RetType) content.put(key, value);
@@ -136,7 +136,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		}
 
 		void initContainer(SimpleRef orig) {
-			Object  o = linkDef.get(EntityResolver.getEntity(DustMetaLinks.LinkDefType));
+			Object o = linkDef.get(EntityResolver.getEntity(DustMetaLinks.LinkDefType));
 			SimpleRef refLDT;
 			if (o instanceof SimpleRef) {
 				refLDT = (SimpleRef) o;
@@ -241,8 +241,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 			refs.remove(this);
 			notifyListeners(DataCommand.removeRef, source, linkDef, null, this);
-			
-			if ( handleReverse && (null != reverse)) { 
+
+			if (handleReverse && (null != reverse)) {
 				reverse.remove(false, false);
 			}
 		}
@@ -324,6 +324,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			return null;
 		} else if (e instanceof SimpleEntity) {
 			return (SimpleEntity) e;
+		} else if (e instanceof DustEntityKey) {
+			return (SimpleEntity) EntityResolver.getEntity(e);
 		} else {
 			ContextRef cr = (ContextRef) e;
 			SimpleEntity se = mapCtxEntities.get(cr);
@@ -338,16 +340,14 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	}
 
 	@Override
-	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object collId) {
+	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object hint) {
 		SimpleEntity se = optResolveCtxEntity(e);
 
 		Object retVal = se.get(key);
-//		SimpleRef actRef = cmd.isRef() ? (SimpleRef) retVal : null;
 
 		switch (cmd) {
 		case getEntity:
-			retVal = ctxGetEntity(val);
-			notifyListeners(cmd, (SimpleEntity) retVal, null, val, null);
+			retVal = invokeEntity(se, optResolveCtxEntity(key), val, (EntityProcessor) hint);
 			break;
 		case tempSend:
 			binConn.send(se, (SimpleEntity) key);
@@ -363,20 +363,57 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			}
 			break;
 		case processRef:
-			if ( null != retVal ) {
-				((SimpleRef)retVal).processAll((RefProcessor) val);
+			if (null != retVal) {
+				((SimpleRef) retVal).processAll((RefProcessor) val);
 			}
 			break;
 		default:
-			retVal = changeRef(true, cmd, se, key, (SimpleRef) retVal, val, collId);
-			break;			
+			retVal = changeRef(true, cmd, se, key, (SimpleRef) retVal, val, hint);
+			break;
 		}
 		return (RetType) retVal;
 	}
 
-	public SimpleRef changeRef(boolean handleReverse, DataCommand cmd, SimpleEntity se, DustEntity key, SimpleRef actRef, Object val, Object collId) {
+	private SimpleEntity invokeEntity(SimpleEntity type, SimpleEntity owner, Object id, EntityProcessor initializer) {
+		StringBuilder sbStoreId = null;
+		DustEntity eId = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
+
+		sbStoreId = DustUtilsJava.sbAppend(sbStoreId, "|", false, (null == type) ? null : type.get(eId),
+				(null == owner) ? null : owner.get(eId), id);
+
+		String sid = sbStoreId.toString();
+		SimpleEntity ce = ctxGetEntity(sid);
+
+		if (ce.justCreated) {
+			if (null != type) {
+				ctxAccessEntity(DataCommand.setRef, ce, EntityResolver.getEntity(DustDataLinks.EntityPrimaryType), type,
+						null);
+			}
+			if (null != owner) {
+				ctxAccessEntity(DataCommand.setRef, ce, EntityResolver.getEntity(DustGenericLinks.Owner), owner, null);
+			}
+			
+			if (null != initializer) {
+				initializer.processEntity(sid, ce);
+			}
+			
+			if (null != type) {
+				SimpleRef r = type.get(DustMetaLinks.TypeLinkedServices);
+				if ( null != r) {
+					ctxAccessEntity(DataCommand.setRef, ce, EntityResolver.getEntity(DustDataLinks.EntityServices), r.target, null);
+				}
+			}
+			
+			ce.justCreated = false;
+			notifyListeners(DataCommand.getEntity, ce, null, id, null);
+		}
+		return ce;
+	}
+
+	public SimpleRef changeRef(boolean handleReverse, DataCommand cmd, SimpleEntity se, DustEntity key,
+			SimpleRef actRef, Object val, Object collId) {
 		SimpleRef sr = null;
-		
+
 		switch (cmd) {
 		case removeRef:
 			if (null != actRef) {
@@ -396,10 +433,10 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			sr = new SimpleRef((SimpleEntity) key, se, (SimpleEntity) eTarget, collId, actRef);
 
 			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSingle == sr.lt)) {
-				if ( DustUtilsJava.isEqual(eTarget, actRef.target) ) {
+				if (DustUtilsJava.isEqual(eTarget, actRef.target)) {
 					return actRef;
 				}
-				
+
 				actRef.remove(false, true);
 				se.put(key, sr);
 				notifyListeners(cmd, se, key, sr, actRef);
@@ -409,15 +446,15 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				}
 				notifyListeners(cmd, se, key, sr, actRef);
 			}
-			
+
 			refs.add(sr);
-			
-			if ( handleReverse ) {
+
+			if (handleReverse) {
 				SimpleRef rr = sr.linkDef.get(DustMetaLinks.LinkDefReverse);
-				if ( null != rr ) {
+				if (null != rr) {
 					SimpleEntity revLink = rr.target;
 					SimpleRef rev = changeRef(false, cmd, eTarget, revLink, eTarget.get(revLink), se, collId);
-					
+
 					sr.reverse = rev;
 					rev.reverse = sr;
 				}
@@ -433,21 +470,22 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		default:
 			throw new DustException("Should not get here!");
 		}
-		
+
 		return sr;
 	}
 
 	private void notifyListeners(DataCommand cmd, SimpleEntity entity, DustEntity key, Object newVal, Object oldVal) {
 		SimpleRef listeners = ctxSelf.get(DustProcLinks.ContextChangeListeners);
-		
-		if ((DataCommand.setRef == cmd) && (null != newVal) && (key == EntityResolver.getEntity(DustDataLinks.EntityServices))) {
-			SimpleEntity svc = ((SimpleRef)newVal).target;
+
+		if ((DataCommand.setRef == cmd) && (null != newVal)
+				&& (key == EntityResolver.getEntity(DustDataLinks.EntityServices))) {
+			SimpleEntity svc = ((SimpleRef) newVal).target;
 			binConn.instSvc(entity, svc);
 			if (DustUtils.isTrue(svc, DustProcAtts.BinaryAutoInit)) {
 				SimpleEntity init = new SimpleEntity();
 
 				init.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.ActiveInit);
-	
+
 				binConn.send(entity, init);
 			}
 		}
@@ -459,7 +497,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				@Override
 				public void processRef(DustRef ref) {
 					SimpleEntity listener = ((SimpleRef) ref).target;
-					
+
 					if (DustUtilsJava.isEqualLenient(cmd, listener.getSingleRef(DustProcLinks.ChangeCmd))
 							&& DustUtilsJava.isEqualLenient(entity, listener.getSingleRef(DustProcLinks.ChangeEntity))
 							&& DustUtilsJava.isEqualLenient(key, listener.getSingleRef(DustProcLinks.ChangeKey))) {
@@ -472,11 +510,11 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 							chg.putLocalRef(DustProcLinks.ChangeCmd, cmd);
 							chg.putLocalRef(DustProcLinks.ChangeEntity, entity);
 							chg.putLocalRef(DustProcLinks.ChangeKey, (SimpleEntity) key);
-							
+
 							chg.put(DustProcAtts.ChangeOldValue, oldVal);
 							chg.put(DustProcAtts.ChangeNewValue, newVal);
 						}
-						
+
 						binConn.send(listener, chg);
 					}
 				}
@@ -496,9 +534,9 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		source = optResolveCtxEntity(source);
 		target = optResolveCtxEntity(target);
 
-		for (Object o: refs.toArray()) {
+		for (Object o : refs.toArray()) {
 			SimpleRef ref = (SimpleRef) o;
-			
+
 			if (DustUtilsJava.isEqualLenient(ref.source, source) && DustUtilsJava.isEqualLenient(ref.linkDef, linkDef)
 					&& DustUtilsJava.isEqualLenient(ref.target, target)) {
 				proc.processRef(ref);

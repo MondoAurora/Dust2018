@@ -1,7 +1,6 @@
 ** TASKS **
-type default services, configure gui elements accordingly
-entity invocation by type, owner and unique id (temp if missing)
-make MontruDesktop and MontruControl, type array for sorting, draw and update on change
+clean up drawing panels, remove factories?
+
 integrate link drawing into MontruPanel (for ordering), perhaps plain JPanel, no layers?
 
 duplicate
@@ -13,6 +12,11 @@ boot entities, change flag, save back to boot
 Java source connection info, source generator
 
 ** LOG **
+
+* 20190224 *
+type default services, configure gui elements accordingly
+entity invocation by type, owner and unique id (temp if missing)
+make MontruDesktop and MontruControl, type array for sorting, draw and update on change
 
 * 20190218 *
 context entity management added

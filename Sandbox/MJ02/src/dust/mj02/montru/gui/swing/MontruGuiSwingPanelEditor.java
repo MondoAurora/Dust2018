@@ -45,6 +45,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import dust.mj02.dust.Dust;
+import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.gui.swing.DustGuiSwingGen;
 import dust.mj02.dust.gui.swing.DustGuiSwingPanelEntity;
 import dust.mj02.dust.knowledge.DustCommComponents;
@@ -488,6 +489,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 	DesktopPanel pnlDesktop;
 	EditorControlPanel pnlControl;
+	DustEntity eMontruDesktop;
 
 	Map<Enum<?>, AbstractButton> buttons = new HashMap<>();
 	ActionListener cmdListener = new ActionListener() {
@@ -524,12 +526,15 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 				break;
 			case test03:
 				if ( null != pnlControl.eiSelected ) {
-					JInternalFrame jif = factNewFrames.get(pnlControl.eiSelected.get(GuiEntityKey.entity));
+					DustEntity eSel = pnlControl.eiSelected.get(GuiEntityKey.entity);
+					JInternalFrame jif = factNewFrames.get(eSel);
 					try {
 						jif.setSelected(true);
 					} catch (PropertyVetoException e1) {
 						e1.printStackTrace();
 					}
+					
+					DustUtils.accessEntity(DataCommand.setRef, eMontruDesktop, DustGuiLinks.MontruDesktopActivePanel, eSel);
 				}
 				break;
 			}
@@ -538,17 +543,23 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 	public MontruGuiSwingPanelEditor() {
 		super(new BorderLayout());
+		DustGuiSwingGen.init();
 
 		editorModel = new MontruGuiEditorModel();
 		widgetManager = new MontruGuiSwingWidgetManager(this);
 
 		pnlDesktop = new DesktopPanel();
 		pnlControl = new EditorControlPanel();
-
-		JSplitPane spMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlControl, new JScrollPane(pnlDesktop));
-		add(spMain, BorderLayout.CENTER);
 		
-		DustGuiSwingGen.init();
+		eMontruDesktop = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.MontruDesktop, null, "MontruDesktop");
+		
+		JComponent comp = DustUtils.getBinary(eMontruDesktop, DustGuiServices.MontruDesktop);
+		JSplitPane spRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(pnlDesktop), new JScrollPane(comp));
+
+		spRight.setResizeWeight(0.5);
+		spRight.setDividerLocation(.8);
+		JSplitPane spMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlControl, spRight);
+		add(spMain, BorderLayout.CENTER);		
 	}
 
 	public GuiEditorModel getEditorModel() {

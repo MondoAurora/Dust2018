@@ -24,10 +24,9 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 	}
 
 	public static <RetVal> RetVal accessEntity(DataCommand cmd, Object... parameters) {
-		DustEntity e = (DataCommand.getEntity == cmd) ? null : optResolve(parameters[0]);
+		DustEntity e = optResolve(parameters[0]);
 		DustEntity key = (parameters.length > 1) ? optResolve(parameters[1]) : null;
-		Object val = (DataCommand.getEntity == cmd) ? parameters[0]
-				: (parameters.length > 2) ? optResolve(parameters[2]) : null;
+		Object val = (parameters.length > 2) ? optResolve(parameters[2]) : null;
 		Object collId = (parameters.length > 3) ? parameters[3] : null;
 
 		Object ret = Dust.accessEntity(cmd, e, key, val, collId);
