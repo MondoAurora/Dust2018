@@ -79,10 +79,8 @@ public interface DustComponents {
 		public static DustEntity getEntity(Object key) {
 			DustEntity e = keyToEntity.get(key);
 
-			if ((null == e) && (key instanceof DustEntityKey)) {
-				// so that all enums will have their entity without problem
-				String kk = key.getClass().getName() +":" + ((Enum<?>) key).name();
-				e = register(kk, key);
+			if (null == e) {
+				e = DustTempHacks.loadFromEnum(key);
 			}
 
 			return e;

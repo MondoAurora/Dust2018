@@ -1,7 +1,10 @@
 ** TASKS **
 clean up drawing panels, remove factories?
 
+drag panels on new MontruDesktop
+separate Gui control logic from swing implementation
 integrate link drawing into MontruPanel (for ordering), perhaps plain JPanel, no layers?
+Factory link type?
 
 duplicate
 save area size and open entity panel location, opened sources
@@ -12,6 +15,11 @@ boot entities, change flag, save back to boot
 Java source connection info, source generator
 
 ** LOG **
+
+* 20190225 *
+Global identification seems to be a bad idea; should use local Factory link type 
+(that requires target type support and configured connection between the owner 
+and the factory create method to pass parameters before initialization, now in a callback)
 
 * 20190224 *
 type default services, configure gui elements accordingly

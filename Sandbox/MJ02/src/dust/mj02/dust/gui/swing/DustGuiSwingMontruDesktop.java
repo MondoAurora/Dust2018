@@ -21,7 +21,10 @@ public class DustGuiSwingMontruDesktop extends JPanel
 	}
 	
 	private void activateEditorPanel(DustEntity e) {
-		String id = e.toString();
+		if ( null == e ) {
+			return;
+		}
+		String id = "Desktop/" + e.toString();
 		
 		DustEntity ePanel = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.PropertyPanel, ContextRef.self, id, new EntityProcessor() {
 			@Override

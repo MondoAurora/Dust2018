@@ -20,4 +20,7 @@ public interface DustGuiComponents extends DustComponents, DustGenericComponents
 		Label, TextField, PropertyPanel, MontruDesktop
 	};
 
+	interface GuiComponentControl <ComponentType> {
+		ComponentType getComponent();
+	}
 }

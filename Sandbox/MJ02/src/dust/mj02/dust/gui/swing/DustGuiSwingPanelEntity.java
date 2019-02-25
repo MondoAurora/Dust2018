@@ -13,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
-import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.utils.DustUtilsFactory;
@@ -23,18 +22,6 @@ public class DustGuiSwingPanelEntity extends JPanel
 		implements DustGuiSwingComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
 	private static final long serialVersionUID = 1L;
 
-	public static JPanel createComponent(DustEntity eEntity) {
-		DustEntity eWidget = Dust.getEntity(null);
-		DustEntity eSvc = EntityResolver.getEntity(DustGuiServices.PropertyPanel);
-
-		DustUtils.accessEntity(DataCommand.setRef, eWidget, DustGuiLinks.PropertyPanelEntity, eEntity);
-		DustUtils.accessEntity(DataCommand.setRef, eWidget, DustDataLinks.EntityServices, eSvc);
-
-		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, eWidget);
-
-		return DustUtils.getBinary(eWidget, eSvc);
-	}
-
 	private static final DustEntity DATT_ID = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
 
 	DustEntity eEntity;
@@ -43,31 +30,59 @@ public class DustGuiSwingPanelEntity extends JPanel
 	DustUtilsFactory<DustEntity, JLabel> factLabel = new DustUtilsFactory<DustEntity, JLabel>(false) {
 		@Override
 		protected JLabel create(DustEntity key, Object... hints) {
-			return DustGuiSwingWidgetLabel.createWidget((null == key) ? eEntity : key, DATT_ID);
+			DustEntity eLabel = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.Label, ContextRef.self, null,
+					new EntityProcessor() {
+						@Override
+						public void processEntity(Object gid, DustEntity entity) {
+							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeEntity,
+									(null == key) ? eEntity : key);
+							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeKey, DATT_ID);
+						}
+					});
+
+			return DustUtils.getBinary(eLabel, DustGuiServices.Label);
+
+			// return DustGuiSwingWidgetLabel.createWidget((null == key) ? eEntity : key,
+			// DATT_ID);
 		}
 	};
 
 	DustUtilsFactory<DustEntity, JComponent> factData = new DustUtilsFactory<DustEntity, JComponent>(false) {
 		@Override
 		protected JComponent create(DustEntity key, Object... hints) {
-			return ((boolean) hints[0]) ? DustGuiSwingWidgetTextField.createWidget(eEntity, key) : DustGuiSwingWidgetLabel.createWidget(eEntity, key);
+			boolean txt = (boolean) hints[0];
+
+			DustEntity eData = DustUtils.accessEntity(DataCommand.getEntity,
+					txt ? DustGuiTypes.TextField : DustGuiTypes.Label, ContextRef.self, null, new EntityProcessor() {
+						@Override
+						public void processEntity(Object gid, DustEntity entity) {
+							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeEntity, eEntity);
+							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeKey, key);
+						}
+					});
+
+			return DustUtils.getBinary(eData, txt ? DustGuiServices.TextField : DustGuiServices.Label);
+
+			// return ((boolean) hints[0]) ? DustGuiSwingWidgetLabel.createWidget(eEntity,
+			// key) : DustGuiSwingWidgetLabel.createWidget(eEntity, key);
 		}
 	};
 
-	DustUtilsFactory<DustEntity, DustGuiSwingWidgetAnchor.AnchoredPanel> factAnchored = new DustUtilsFactory<DustEntity, DustGuiSwingWidgetAnchor.AnchoredPanel>(false) {
+	DustUtilsFactory<DustEntity, DustGuiSwingWidgetAnchor.AnchoredPanel> factAnchored = new DustUtilsFactory<DustEntity, DustGuiSwingWidgetAnchor.AnchoredPanel>(
+			false) {
 		@Override
 		protected DustGuiSwingWidgetAnchor.AnchoredPanel create(DustEntity key, Object... hints) {
 			JComponent comp = factLabel.get(key);
-			if ( null == key ) {
+			if (null == key) {
 				comp.setBackground(Color.LIGHT_GRAY);
-				((JLabel)comp).setHorizontalAlignment(JLabel.CENTER);
+				((JLabel) comp).setHorizontalAlignment(JLabel.CENTER);
 				comp.setOpaque(true);
 			} else {
 				JPanel pnl = new JPanel(new BorderLayout(HR, 0));
 
 				pnl.add(comp, BorderLayout.WEST);
 				pnl.add(factData.get(key, false), BorderLayout.CENTER);
-				
+
 				comp = pnl;
 			}
 			return DustGuiSwingWidgetAnchor.anchorPanel(comp, anchorConnector, eEntity, key);
@@ -110,9 +125,15 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 						DustEntity att = ref.get(RefKey.target);
 						pnl.add(factLabel.get(att), BorderLayout.WEST);
-						pnl.add(factData.get(att, true), BorderLayout.CENTER);
-						
-						JPanel pnlRow = new JPanel(new BorderLayout(2*HR, 0));
+
+						JComponent compData = factData.get(att, true);
+						if (null != compData) {
+							pnl.add(compData, BorderLayout.CENTER);
+						} else {
+							pnl.add(new JLabel("what?"), BorderLayout.CENTER);
+						}
+
+						JPanel pnlRow = new JPanel(new BorderLayout(2 * HR, 0));
 						pnlRow.add(Box.createRigidArea(ANCHOR_SIZE), BorderLayout.WEST);
 						pnlRow.add(pnl, BorderLayout.CENTER);
 
@@ -133,10 +154,10 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 		revalidate();
 		repaint();
-		
-		for ( Container c = getParent(); null != c; c = c.getParent() ) {
-			if ( c instanceof JInternalFrame ) {
-				((JInternalFrame)c).pack();
+
+		for (Container c = getParent(); null != c; c = c.getParent()) {
+			if (c instanceof JInternalFrame) {
+				((JInternalFrame) c).pack();
 				break;
 			}
 		}
@@ -174,8 +195,9 @@ public class DustGuiSwingPanelEntity extends JPanel
 				DustGuiLinks.PropertyPanelEntity)).get(RefKey.target);
 
 		updatePanel();
-		
-		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, ContextRef.self);
+
+		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners,
+				ContextRef.self);
 	}
 
 	@Override

@@ -47,7 +47,6 @@ import javax.swing.table.AbstractTableModel;
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.gui.swing.DustGuiSwingGen;
-import dust.mj02.dust.gui.swing.DustGuiSwingPanelEntity;
 import dust.mj02.dust.knowledge.DustCommComponents;
 import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.montru.gui.MontruGuiEditorModel;
@@ -98,9 +97,21 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			false) {
 		@Override
 		protected JInternalFrame create(DustEntity key, Object... hints) {
-			JInternalFrame internal = new JInternalFrame(key.toString(), true, false, true, true);
-			JPanel pnl = DustGuiSwingPanelEntity.createComponent(key);
-			internal.getContentPane().add(pnl, BorderLayout.CENTER);
+			String idEntity = key.toString();
+			JInternalFrame internal = new JInternalFrame(idEntity, true, false, true, true);
+			
+			DustEntity ep = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.PropertyPanel, null, "OldEditor/" + idEntity, new EntityProcessor() {
+				@Override
+				public void processEntity(Object ek, DustEntity entity) {
+					DustUtils.accessEntity(DataCommand.setRef, entity, DustGuiLinks.PropertyPanelEntity, key);
+				}
+			});
+			
+			JComponent comp = DustUtils.getBinary(ep, DustGuiServices.PropertyPanel);
+
+//			JPanel pnl = DustGuiSwingPanelEntity.createComponent(key);
+//			internal.getContentPane().add(pnl, BorderLayout.CENTER);
+			internal.getContentPane().add(comp, BorderLayout.CENTER);
 			internal.pack();
 
 			pnlDesktop.add(internal, JDesktopPane.DEFAULT_LAYER);
@@ -547,10 +558,12 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 		editorModel = new MontruGuiEditorModel();
 		widgetManager = new MontruGuiSwingWidgetManager(this);
-
-		pnlDesktop = new DesktopPanel();
-		pnlControl = new EditorControlPanel();
 		
+		JComponent cmpRight;
+
+		cmpRight = pnlDesktop = new DesktopPanel();
+		pnlControl = new EditorControlPanel();
+				
 		eMontruDesktop = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.MontruDesktop, null, "MontruDesktop");
 		
 		JComponent comp = DustUtils.getBinary(eMontruDesktop, DustGuiServices.MontruDesktop);
@@ -558,7 +571,9 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 
 		spRight.setResizeWeight(0.5);
 		spRight.setDividerLocation(.8);
-		JSplitPane spMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlControl, spRight);
+		cmpRight = spRight;
+		
+		JSplitPane spMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pnlControl, cmpRight);
 		add(spMain, BorderLayout.CENTER);		
 	}
 

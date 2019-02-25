@@ -6,6 +6,7 @@ import javax.swing.event.DocumentEvent;
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
+import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsJava;
 
 public class DustGuiSwingWidgetTextField extends JTextField
@@ -30,19 +31,6 @@ public class DustGuiSwingWidgetTextField extends JTextField
 				}
 			});
 
-	public static DustGuiSwingWidgetTextField createWidget(DustEntity eEntity, DustEntity eData) {
-		DustEntity eWidget = Dust.getEntity(null);
-		DustEntity eSvc = EntityResolver.getEntity(DustGuiServices.TextField);
-
-		DustUtils.accessEntity(DataCommand.setRef, eWidget, DustProcLinks.ChangeEntity, eEntity);
-		DustUtils.accessEntity(DataCommand.setRef, eWidget, DustProcLinks.ChangeKey, eData);
-		DustUtils.accessEntity(DataCommand.setRef, eWidget, DustDataLinks.EntityServices, eSvc);
-
-		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, eWidget);
-
-		return DustUtils.getBinary(eWidget, eSvc);
-	}
-
 	DustEntity eEntity;
 	DustEntity eData;
 
@@ -53,6 +41,7 @@ public class DustGuiSwingWidgetTextField extends JTextField
 	@Override
 	public void setText(String t) {
 		if (this != changing) {
+			DustUtilsDev.dump("updating TextField to", t);
 			super.setText(t);
 		}
 	}
@@ -60,7 +49,6 @@ public class DustGuiSwingWidgetTextField extends JTextField
 	@Override
 	public void dustProcListenerProcessChange() throws Exception {
 		Object val = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, false);
-		// DustUtilsDev.dump("updating label to", DustUtilsJava.toString(val));
 		setText(DustUtilsJava.toString(val));
 	}
 
@@ -74,6 +62,8 @@ public class DustGuiSwingWidgetTextField extends JTextField
 		String val = DustUtilsJava.toString(DustUtils.accessEntity(DataCommand.getValue, eEntity, eData));
 
 		setText(val);
+		
+		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, ContextRef.self);
 	}
 
 	@Override

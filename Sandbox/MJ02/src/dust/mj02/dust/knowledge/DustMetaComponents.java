@@ -1,11 +1,27 @@
 package dust.mj02.dust.knowledge;
 
 import dust.mj02.dust.DustComponents;
+import dust.utils.DustUtilsJava;
 
 public interface DustMetaComponents extends DustComponents {
 	
 	enum DustMetaTypes implements DustEntityKey {
-		Unit, Type, AttDef, LinkDef, Service, Command
+		Unit(null), Type("Types"), AttDef("Atts"), LinkDef("Links"), Service("Services"), Command("Messages");
+		
+		private final String enumPostfix;
+
+		private DustMetaTypes(String enumPostfix) {
+			this.enumPostfix = enumPostfix;
+		}
+		
+		public static DustMetaTypes getMetaTypeHack(String eName) {
+			for ( DustMetaTypes mt : values() ) {
+				if ( !DustUtilsJava.isEmpty(mt.enumPostfix) && eName.endsWith(mt.enumPostfix) ) {
+					return mt;
+				}
+			}
+			return null;
+		}
 	};
 	
 	enum DustMetaLinks implements DustEntityKey {

@@ -375,16 +375,28 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	}
 
 	private SimpleEntity invokeEntity(SimpleEntity type, SimpleEntity owner, Object id, EntityProcessor initializer) {
-		StringBuilder sbStoreId = null;
-		DustEntity eId = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
+		String gid = (String) id;
+//		String gid = DustUtilsJava.toString(id);
+		
+		// Conclusion: does not work this way, link factory will do later
 
-		sbStoreId = DustUtilsJava.sbAppend(sbStoreId, "|", false, (null == type) ? null : type.get(eId),
-				(null == owner) ? null : owner.get(eId), id);
+//		StringBuilder sbStoreId = null;
 
-		String sid = sbStoreId.toString();
-		SimpleEntity ce = ctxGetEntity(sid);
+		
+//		sbStoreId = DustUtilsJava.sbAppendHash(sbStoreId, "|", false, owner, type, id);
+//		sbStoreId = DustUtilsJava.sbAppend(sbStoreId, "|", false, (null == type) ? null : type.get(eId),
+//				(null == owner) ? null : owner.get(eId), id);
+//		String sid = sbStoreId.toString();		
+//		SimpleEntity ce = ctxGetEntity(sid);
+		
+		SimpleEntity ce = ctxGetEntity(gid);
 
 		if (ce.justCreated) {
+//			DustUtils.accessEntity(DataCommand.setValue, ce, DustGenericAtts.identifiedIdLocal, lid);
+//			DustUtils.accessEntity(DataCommand.setValue, ce, DustCommAtts.idStore, sid);
+			DustUtils.accessEntity(DataCommand.setValue, ce, DustCommAtts.idStore, gid);
+//			ce.put(eId, lid);
+//			ce.put(DustCommAtts.idStore, sid);
 			if (null != type) {
 				ctxAccessEntity(DataCommand.setRef, ce, EntityResolver.getEntity(DustDataLinks.EntityPrimaryType), type,
 						null);
@@ -394,7 +406,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			}
 			
 			if (null != initializer) {
-				initializer.processEntity(sid, ce);
+				initializer.processEntity(gid, ce);
 			}
 			
 			if (null != type) {
