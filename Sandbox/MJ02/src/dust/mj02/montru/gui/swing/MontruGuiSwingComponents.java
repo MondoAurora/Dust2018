@@ -9,7 +9,7 @@ import dust.utils.DustUtilsSwingComponents;
 
 public interface MontruGuiSwingComponents extends MontruGuiComponents, DustUtilsSwingComponents, DustGuiSwingComponents {
 
-	Dimension INIT_FRAME_SIZE = new Dimension(1200, 600);
+	Dimension INIT_FRAME_SIZE = new Dimension(1200, 1000);
 	
 	Color COL_REF_SEL = Color.RED;
 	Color COL_REF_NORMAL = Color.BLACK;

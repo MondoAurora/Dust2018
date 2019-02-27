@@ -1,12 +1,9 @@
 package dust.mj02.dust.gui;
 
 import dust.mj02.dust.DustComponents;
-import dust.mj02.dust.knowledge.DustDataComponents;
-import dust.mj02.dust.knowledge.DustMetaComponents;
-import dust.mj02.dust.knowledge.DustProcComponents;
-import dust.mj02.dust.tools.DustGenericComponents;
+import dust.mj02.dust.knowledge.DustKernelComponents;
 
-public interface DustGuiComponents extends DustComponents, DustGenericComponents, DustDataComponents, DustMetaComponents, DustProcComponents {
+public interface DustGuiComponents extends DustComponents, DustKernelComponents {
 	
 	enum DustGuiLinks implements DustEntityKey {
 		PropertyPanelEntity, MontruDesktopActivePanel
@@ -22,5 +19,10 @@ public interface DustGuiComponents extends DustComponents, DustGenericComponents
 
 	interface GuiComponentControl <ComponentType> {
 		ComponentType getComponent();
+	}
+
+	interface GuiDataWrapper<ComponentType> extends GuiComponentControl<ComponentType>{
+		DustEntity getEntity();
+		DustEntity getData();
 	}
 }

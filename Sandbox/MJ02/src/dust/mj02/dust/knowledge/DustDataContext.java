@@ -172,6 +172,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 						}
 					}
 					orig.container = container;
+					orig.lt = lt;
 				}
 			} else {
 				container = orig.container;
@@ -196,6 +197,32 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				proc.processRef(this);
 				return;
 			}
+		}
+
+		public SimpleRef select(DustEntity target) {
+			switch (lt) {
+			case LinkDefArray:
+			case LinkDefSet:
+				for (Object r : ((Collection<?>) container).toArray()) {
+					SimpleRef ref = (SimpleRef) r;
+					if (ref.target == target) {
+						return ref;
+					};
+				}
+				return null;
+			case LinkDefMap:
+				for (Object r : ((Map<Object, SimpleRef>) container).values().toArray()) {
+					SimpleRef ref = (SimpleRef) r;
+					if (ref.target == target) {
+						return ref;
+					};
+				}
+				return null;
+			case LinkDefSingle:
+				return this;
+			}
+			
+			return null;
 		}
 
 		void remove(boolean all, boolean handleReverse) {
@@ -343,7 +370,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object hint) {
 		SimpleEntity se = optResolveCtxEntity(e);
 
-		Object retVal = se.get(key);
+		Object retVal = (null == se) ? null : se.get(key);
 
 		switch (cmd) {
 		case getEntity:
@@ -429,7 +456,10 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		switch (cmd) {
 		case removeRef:
 			if (null != actRef) {
-				actRef.remove(false, true);
+				SimpleRef toDel = actRef.select((DustEntity) val);
+				if ( null != toDel ) {
+					toDel.remove(false, true);
+				}
 			}
 			break;
 		case setRef:

@@ -12,7 +12,16 @@ import dust.utils.DustUtilsJava;
 public class DustUtils extends DustUtilsJava implements DustComponents {
 
 	public static <RetVal> RetVal getMsgVal(DustEntityKey key, boolean resolveRef) {
-		Object ret = Dust.accessEntity(DataCommand.getValue, ContextRef.msg, EntityResolver.getEntity(key), null, null);
+//		Object ret = Dust.accessEntity(DataCommand.getValue, ContextRef.msg, EntityResolver.getEntity(key), null, null);
+//		if (resolveRef && (ret instanceof DustRef)) {
+//			ret = ((DustRef) ret).get(RefKey.target);
+//		}
+//		return (RetVal) ret;
+		return getCtxVal(ContextRef.msg, key, resolveRef);
+	}
+
+	public static <RetVal> RetVal getCtxVal(ContextRef ctxRef, DustEntityKey key, boolean resolveRef) {
+		Object ret = Dust.accessEntity(DataCommand.getValue, ctxRef, EntityResolver.getEntity(key), null, null);
 		if (resolveRef && (ret instanceof DustRef)) {
 			ret = ((DustRef) ret).get(RefKey.target);
 		}

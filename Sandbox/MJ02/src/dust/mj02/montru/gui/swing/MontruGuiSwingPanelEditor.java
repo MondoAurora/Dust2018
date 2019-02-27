@@ -47,26 +47,25 @@ import javax.swing.table.AbstractTableModel;
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.gui.swing.DustGuiSwingGen;
+import dust.mj02.dust.gui.swing.DustGuiSwingMontruDesktop;
 import dust.mj02.dust.knowledge.DustCommComponents;
-import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.montru.gui.MontruGuiEditorModel;
 import dust.mj02.sandbox.DustSandboxJsonLoader;
-import dust.mj02.sandbox.DustSandboxListenerDump;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
 
 @SuppressWarnings("serial")
 class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponents {
-	private static DustEntity DSVC_COMM_STORE = EntityResolver.getEntity(DustCommComponents.DustCommServices.Store);
-	private static DustEntity DR_ENTITY_SERVICE = EntityResolver
-			.getEntity(DustDataComponents.DustDataLinks.EntityServices);
+//	private static DustEntity DSVC_COMM_STORE = EntityResolver.getEntity(DustCommComponents.DustCommServices.Store);
+//	private static DustEntity DR_ENTITY_SERVICE = EntityResolver
+//			.getEntity(DustDataComponents.DustDataLinks.EntityServices);
 	private static DustEntity DREF_DATA_STORE = EntityResolver.getEntity(DustCommComponents.DustCommLinks.TermStore);
 
-	private static DustEntity DA_STREAM_FILENAME = EntityResolver.getEntity(DustGenericAtts.streamFileName);
+//	private static DustEntity DA_STREAM_FILENAME = EntityResolver.getEntity(DustGenericAtts.streamFileName);
 	private static DustEntity DR_MSG_CMD = EntityResolver.getEntity(DustDataLinks.MessageCommand);
-	private static DustEntity DCMD_COMMSTORE_LOAD = EntityResolver
-			.getEntity(DustCommComponents.DustCommMessages.StoreLoad);
+//	private static DustEntity DCMD_COMMSTORE_LOAD = EntityResolver
+//			.getEntity(DustCommComponents.DustCommMessages.StoreLoad);
 	private static DustEntity DCMD_COMMSTORE_SAVE = EntityResolver
 			.getEntity(DustCommComponents.DustCommMessages.StoreSave);
 
@@ -93,35 +92,35 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 		}
 	};
 
-	DustUtilsFactory<DustEntity, JInternalFrame> factNewFrames = new DustUtilsFactory<DustEntity, JInternalFrame>(
-			false) {
-		@Override
-		protected JInternalFrame create(DustEntity key, Object... hints) {
-			String idEntity = key.toString();
-			JInternalFrame internal = new JInternalFrame(idEntity, true, false, true, true);
-			
-			DustEntity ep = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.PropertyPanel, null, "OldEditor/" + idEntity, new EntityProcessor() {
-				@Override
-				public void processEntity(Object ek, DustEntity entity) {
-					DustUtils.accessEntity(DataCommand.setRef, entity, DustGuiLinks.PropertyPanelEntity, key);
-				}
-			});
-			
-			JComponent comp = DustUtils.getBinary(ep, DustGuiServices.PropertyPanel);
-
-//			JPanel pnl = DustGuiSwingPanelEntity.createComponent(key);
-//			internal.getContentPane().add(pnl, BorderLayout.CENTER);
-			internal.getContentPane().add(comp, BorderLayout.CENTER);
-			internal.pack();
-
-			pnlDesktop.add(internal, JDesktopPane.DEFAULT_LAYER);
-			internal.setVisible(true);
-
-			pnlDesktop.pnlLinks.followContent(internal);
-
-			return internal;
-		}
-	};
+//	DustUtilsFactory<DustEntity, JInternalFrame> factNewFrames = new DustUtilsFactory<DustEntity, JInternalFrame>(
+//			false) {
+//		@Override
+//		protected JInternalFrame create(DustEntity key, Object... hints) {
+//			String idEntity = key.toString();
+//			JInternalFrame internal = new JInternalFrame(idEntity, true, false, true, true);
+//			
+//			DustEntity ep = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.PropertyPanel, null, "OldEditor/" + idEntity, new EntityProcessor() {
+//				@Override
+//				public void processEntity(Object ek, DustEntity entity) {
+//					DustUtils.accessEntity(DataCommand.setRef, entity, DustGuiLinks.PropertyPanelEntity, key);
+//				}
+//			});
+//			
+//			JComponent comp = DustUtils.getBinary(ep, DustGuiServices.PropertyPanel);
+//
+////			JPanel pnl = DustGuiSwingPanelEntity.createComponent(key);
+////			iFrame.getContentPane().add(pnl, BorderLayout.CENTER);
+//			internal.getContentPane().add(comp, BorderLayout.CENTER);
+//			internal.pack();
+//
+//			pnlDesktop.add(internal, JDesktopPane.DEFAULT_LAYER);
+//			internal.setVisible(true);
+//
+//			pnlDesktop.pnlLinks.followContent(internal);
+//
+//			return internal;
+//		}
+//	};
 
 	class DesktopPanel extends JDesktopPane {
 		MontruGuiSwingPanelLinks pnlLinks;
@@ -404,6 +403,8 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 				public void mouseClicked(MouseEvent e) {
 					if (1 < e.getClickCount()) {
 						activateEntity(eiSelected, true);
+						DustEntity eSel = pnlControl.eiSelected.get(GuiEntityKey.entity);
+						DustUtils.accessEntity(DataCommand.setRef, eMontruDesktop, DustGuiLinks.MontruDesktopActivePanel, eSel);
 					}
 				}
 			});
@@ -501,6 +502,7 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 	DesktopPanel pnlDesktop;
 	EditorControlPanel pnlControl;
 	DustEntity eMontruDesktop;
+	DustGuiSwingMontruDesktop montruDesktop;
 
 	Map<Enum<?>, AbstractButton> buttons = new HashMap<>();
 	ActionListener cmdListener = new ActionListener() {
@@ -513,19 +515,20 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			case deleteEntity:
 				break;
 			case deleteRef:
-				Set<GuiRefInfo> toDel = new HashSet<>();
-
-				for (GuiRefInfo ri : getEditorModel().getAllRefs()) {
-					if (ri.isTrue(GuiRefKey.selected)) {
-						toDel.add(ri);
-					}
-				}
-
-				Iterable<GuiEntityInfo> toUpdate = getEditorModel().dropRefs(toDel);
-
-				// editorModel.updateTypeStructure();
-				// pnlDesktop.updatePanels(getEditorModel().getAllEntities());
-				pnlDesktop.updatePanels(toUpdate);
+				montruDesktop.removeSelRefs();
+//				Set<GuiRefInfo> toDel = new HashSet<>();
+//
+//				for (GuiRefInfo ri : getEditorModel().getAllRefs()) {
+//					if (ri.isTrue(GuiRefKey.selected)) {
+//						toDel.add(ri);
+//					}
+//				}
+//
+//				Iterable<GuiEntityInfo> toUpdate = getEditorModel().dropRefs(toDel);
+//
+//				// editorModel.updateTypeStructure();
+//				// pnlDesktop.updatePanels(getEditorModel().getAllEntities());
+//				pnlDesktop.updatePanels(toUpdate);
 
 				break;
 			case test01:
@@ -538,12 +541,12 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 			case test03:
 				if ( null != pnlControl.eiSelected ) {
 					DustEntity eSel = pnlControl.eiSelected.get(GuiEntityKey.entity);
-					JInternalFrame jif = factNewFrames.get(eSel);
-					try {
-						jif.setSelected(true);
-					} catch (PropertyVetoException e1) {
-						e1.printStackTrace();
-					}
+//					JInternalFrame jif = factNewFrames.get(eSel);
+//					try {
+//						jif.setSelected(true);
+//					} catch (PropertyVetoException e1) {
+//						e1.printStackTrace();
+//					}
 					
 					DustUtils.accessEntity(DataCommand.setRef, eMontruDesktop, DustGuiLinks.MontruDesktopActivePanel, eSel);
 				}
@@ -566,8 +569,8 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 				
 		eMontruDesktop = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.MontruDesktop, null, "MontruDesktop");
 		
-		JComponent comp = DustUtils.getBinary(eMontruDesktop, DustGuiServices.MontruDesktop);
-		JSplitPane spRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(pnlDesktop), new JScrollPane(comp));
+		montruDesktop = DustUtils.getBinary(eMontruDesktop, DustGuiServices.MontruDesktop);
+		JSplitPane spRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(pnlDesktop), new JScrollPane(montruDesktop));
 
 		spRight.setResizeWeight(0.5);
 		spRight.setDividerLocation(.8);
@@ -644,22 +647,24 @@ class MontruGuiSwingPanelEditor extends JPanel implements MontruGuiSwingComponen
 	}
 
 	private void loadFiles(Object... cont) {
-		DustSandboxListenerDump.init();
-		DustSandboxJsonLoader.init();
-		DustEntity msg = Dust.getEntity(null);
-		Dust.accessEntity(DataCommand.setRef, msg, DR_MSG_CMD, DCMD_COMMSTORE_LOAD, null);
-
-		for (Object of : cont) {
-
-			File f = (File) of;
-			String fp = f.getAbsolutePath();
-
-			DustEntity store = Dust.getEntity("Store: " + fp);
-			Dust.accessEntity(DataCommand.setValue, store, DA_STREAM_FILENAME, fp, null);
-			Dust.accessEntity(DataCommand.setRef, store, DR_ENTITY_SERVICE, DSVC_COMM_STORE, null);
-
-			Dust.accessEntity(DataCommand.tempSend, store, msg, null, null);
-		}
+		montruDesktop.loadFiles(cont);
+		
+//		DustSandboxListenerDump.init();
+//		DustSandboxJsonLoader.init();
+//		DustEntity msg = Dust.getEntity(null);
+//		Dust.accessEntity(DataCommand.setRef, msg, DR_MSG_CMD, DCMD_COMMSTORE_LOAD, null);
+//
+//		for (Object of : cont) {
+//
+//			File f = (File) of;
+//			String fp = f.getAbsolutePath();
+//
+//			DustEntity store = Dust.getEntity("Store: " + fp);
+//			Dust.accessEntity(DataCommand.setValue, store, DA_STREAM_FILENAME, fp, null);
+//			Dust.accessEntity(DataCommand.setRef, store, DR_ENTITY_SERVICE, DSVC_COMM_STORE, null);
+//
+//			Dust.accessEntity(DataCommand.tempSend, store, msg, null, null);
+//		}
 
 		pnlDesktop.reloadData();
 		// because title management is ugly, and this all will go away anyway :-)

@@ -25,8 +25,8 @@ public class DustGuiSwingPanelEntity extends JPanel
 	private static final DustEntity DATT_ID = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
 
 	DustEntity eEntity;
-	DustGuiSwingWidgetAnchor.Connector anchorConnector = new DustGuiSwingWidgetAnchor.Connector();
-
+	DustGuiSwingMontruDesktop desktop;
+	
 	DustUtilsFactory<DustEntity, JLabel> factLabel = new DustUtilsFactory<DustEntity, JLabel>(false) {
 		@Override
 		protected JLabel create(DustEntity key, Object... hints) {
@@ -40,14 +40,18 @@ public class DustGuiSwingPanelEntity extends JPanel
 						}
 					});
 
-			return DustUtils.getBinary(eLabel, DustGuiServices.Label);
-
-			// return DustGuiSwingWidgetLabel.createWidget((null == key) ? eEntity : key,
-			// DATT_ID);
+			DustGuiSwingWidgetLabel lbl = DustUtils.getBinary(eLabel, DustGuiServices.Label);
+			
+			if ( null != key ) {
+				desktop.mac.setLabel(lbl);
+			}
+			
+			return lbl;
 		}
 	};
 
 	DustUtilsFactory<DustEntity, JComponent> factData = new DustUtilsFactory<DustEntity, JComponent>(false) {
+		@SuppressWarnings("unchecked")
 		@Override
 		protected JComponent create(DustEntity key, Object... hints) {
 			boolean txt = (boolean) hints[0];
@@ -61,10 +65,13 @@ public class DustGuiSwingPanelEntity extends JPanel
 						}
 					});
 
-			return DustUtils.getBinary(eData, txt ? DustGuiServices.TextField : DustGuiServices.Label);
-
-			// return ((boolean) hints[0]) ? DustGuiSwingWidgetLabel.createWidget(eEntity,
-			// key) : DustGuiSwingWidgetLabel.createWidget(eEntity, key);
+			JComponent bin = DustUtils.getBinary(eData, txt ? DustGuiServices.TextField : DustGuiServices.Label);
+			
+			if ( !txt ) {
+				desktop.mac.setRefList((GuiDataWrapper<? extends JComponent>) bin);
+			}
+			
+			return bin;
 		}
 	};
 
@@ -85,12 +92,13 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 				comp = pnl;
 			}
-			return DustGuiSwingWidgetAnchor.anchorPanel(comp, anchorConnector, eEntity, key);
+			return DustGuiSwingWidgetAnchor.anchorPanel(comp, desktop.mac, eEntity, key);
 		}
 	};
 
 	public DustGuiSwingPanelEntity() {
 		super(new GridLayout(0, 1));
+		setOpaque(true);
 		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
 				BorderFactory.createEmptyBorder(ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER,
 						ENTITY_PANEL_BORDER)));
@@ -193,6 +201,9 @@ public class DustGuiSwingPanelEntity extends JPanel
 	public void dustProcActiveInit() throws Exception {
 		eEntity = ((DustRef) DustUtils.accessEntity(DataCommand.getValue, ContextRef.self,
 				DustGuiLinks.PropertyPanelEntity)).get(RefKey.target);
+		
+		DustEntity eParent = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.Owner, true);
+		desktop = DustUtils.getBinary(eParent, DustGuiServices.MontruDesktop);
 
 		updatePanel();
 

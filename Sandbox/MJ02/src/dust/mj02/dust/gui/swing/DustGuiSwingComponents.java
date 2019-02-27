@@ -25,5 +25,5 @@ public interface DustGuiSwingComponents extends DustGuiComponents, DustUtilsSwin
 		public String getSwingConst() {
 			return swingConst;
 		}
-	}
+	}	
 }
