@@ -2,8 +2,8 @@ package dust.mj02.dust.knowledge;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
-import dust.mj02.dust.gui.swing.DustGuiSwingMontruMain;
 import dust.mj02.dust.tools.DustToolsGen;
+import dust.mj02.montru.gui.swing.DustGuiSwingMontruMain;
 
 public class DustProcRuntime extends Dust implements DustComponents, DustDataComponents, Dust.DustRuntime {
 	

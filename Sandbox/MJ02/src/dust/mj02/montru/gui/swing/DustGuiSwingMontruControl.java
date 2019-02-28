@@ -1,4 +1,4 @@
-package dust.mj02.dust.gui.swing;
+package dust.mj02.montru.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -29,7 +29,7 @@ import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
 
 @SuppressWarnings("serial")
-class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents {
+class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComponents {
 	private static final long serialVersionUID = 1L;
 	
 	enum GuiCommands {
@@ -57,7 +57,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents
 				break;
 			case test03:
 				if ( null != eiSelected ) {
-					DustUtils.accessEntity(DataCommand.setRef, desktop, DustGuiLinks.MontruDesktopActivePanel, eiSelected);
+					DustUtils.accessEntity(DataCommand.setRef, desktop, MontruGuiLinks.MontruDesktopActivePanel, eiSelected);
 				}
 				break;
 			}
@@ -140,7 +140,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents
 	public DustGuiSwingMontruControl(DustGuiSwingMontruDesktop desktop) {
 		super(new BorderLayout(5, 5));
 		this.desktop = desktop;
-		desktop.control = this;
+		desktop.setControl(this);
 
 		setFilterTypes = new HashSet<>();
 		arrSearchResults = new ArrayList<>();

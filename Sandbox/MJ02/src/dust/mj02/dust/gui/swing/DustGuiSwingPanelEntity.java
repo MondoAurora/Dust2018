@@ -15,6 +15,8 @@ import javax.swing.border.EtchedBorder;
 
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
+import dust.mj02.montru.gui.MontruGuiComponents.MontruGuiServices;
+import dust.mj02.montru.gui.swing.DustGuiSwingMontruDesktop;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
@@ -25,7 +27,8 @@ public class DustGuiSwingPanelEntity extends JPanel
 	private static final DustEntity DATT_ID = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
 
 	DustEntity eEntity;
-	DustGuiSwingMontruDesktop desktop;
+	DustGuiSwingEntityActionControl eac;
+//	DustGuiSwingMontruDesktop desktop;
 	
 	DustUtilsFactory<DustEntity, JLabel> factLabel = new DustUtilsFactory<DustEntity, JLabel>(false) {
 		@Override
@@ -43,7 +46,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 			DustGuiSwingWidgetLabel lbl = DustUtils.getBinary(eLabel, DustGuiServices.Label);
 			
 			if ( null != key ) {
-				desktop.mac.setLabel(lbl);
+				eac.setLabel(lbl);
 			}
 			
 			return lbl;
@@ -68,7 +71,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 			JComponent bin = DustUtils.getBinary(eData, txt ? DustGuiServices.TextField : DustGuiServices.Label);
 			
 			if ( !txt ) {
-				desktop.mac.setRefList((GuiDataWrapper<? extends JComponent>) bin);
+				eac.setRefList((GuiDataWrapper<? extends JComponent>) bin);
 			}
 			
 			return bin;
@@ -92,7 +95,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 				comp = pnl;
 			}
-			return DustGuiSwingWidgetAnchor.anchorPanel(comp, desktop.mac, eEntity, key);
+			return DustGuiSwingWidgetAnchor.anchorPanel(comp, eac, eEntity, key);
 		}
 	};
 
@@ -102,6 +105,14 @@ public class DustGuiSwingPanelEntity extends JPanel
 		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
 				BorderFactory.createEmptyBorder(ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER,
 						ENTITY_PANEL_BORDER)));
+	}
+	
+	public void setEntityActionControl(DustGuiSwingEntityActionControl eac) {
+		this.eac = eac;
+	}
+
+	public DustGuiSwingWidgetAnchor.AnchoredPanel peekAnchored(DustEntity entity) {
+		return factAnchored.peek(entity);
 	}
 
 	private void updatePanel() {
@@ -203,7 +214,9 @@ public class DustGuiSwingPanelEntity extends JPanel
 				DustGuiLinks.PropertyPanelEntity)).get(RefKey.target);
 		
 		DustEntity eParent = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.Owner, true);
-		desktop = DustUtils.getBinary(eParent, DustGuiServices.MontruDesktop);
+		DustGuiSwingMontruDesktop desktop = DustUtils.getBinary(eParent, MontruGuiServices.MontruDesktop);
+		
+		eac = desktop.getEac();
 
 		updatePanel();
 

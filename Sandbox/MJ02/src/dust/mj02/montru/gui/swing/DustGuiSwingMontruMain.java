@@ -1,4 +1,4 @@
-package dust.mj02.dust.gui.swing;
+package dust.mj02.montru.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -47,10 +47,10 @@ public class DustGuiSwingMontruMain extends JPanel implements DustGuiSwingMontru
 
 	public DustGuiSwingMontruMain() {
 		super(new BorderLayout());
-		DustGuiSwingGen.init();
+		MontruGuiSwingGen.init();
 				
-		eMontruDesktop = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.MontruDesktop, null, "MontruDesktop");
-		montruDesktop = DustUtils.getBinary(eMontruDesktop, DustGuiServices.MontruDesktop);
+		eMontruDesktop = DustUtils.accessEntity(DataCommand.getEntity, MontruGuiTypes.MontruDesktop, null, "MontruDesktop");
+		montruDesktop = DustUtils.getBinary(eMontruDesktop, MontruGuiServices.MontruDesktop);
 		
 		pnlControl = new DustGuiSwingMontruControl(montruDesktop);
 		

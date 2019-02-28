@@ -3,7 +3,7 @@ package dust.mj02.dust.gui;
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.gui.swing.DustGuiSwingComponents;
 
-public abstract class DustGuiMontruActionControl<BaseComponentType> implements DustGuiSwingComponents {
+public abstract class DustGuiEntityActionControl<BaseComponentType> implements DustGuiSwingComponents {
 	private GuiDataWrapper<BaseComponentType> dragSource;
 	private GuiDataWrapper<BaseComponentType> dragTarget;
 	

@@ -10,9 +10,9 @@ import java.util.HashSet;
 import javax.swing.JComponent;
 
 import dust.mj02.dust.Dust;
-import dust.mj02.dust.gui.DustGuiMontruActionControl;
+import dust.mj02.dust.gui.DustGuiEntityActionControl;
 
-public abstract class DustGuiSwingMontruActionControl extends DustGuiMontruActionControl<JComponent>
+public abstract class DustGuiSwingEntityActionControl extends DustGuiEntityActionControl<JComponent>
 		implements DustGuiSwingComponents {
 	private final MouseListener mlDragTarget = new MouseAdapter() {
 		@Override

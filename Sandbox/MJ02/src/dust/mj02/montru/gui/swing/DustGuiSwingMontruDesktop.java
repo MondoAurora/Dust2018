@@ -1,4 +1,4 @@
-package dust.mj02.dust.gui.swing;
+package dust.mj02.montru.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,6 +18,8 @@ import javax.swing.JInternalFrame;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.gui.swing.DustGuiSwingEntityActionControl;
+import dust.mj02.dust.gui.swing.DustGuiSwingPanelEntity;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.sandbox.DustSandboxJsonLoader;
 import dust.mj02.sandbox.DustSandboxListenerDump;
@@ -25,7 +27,7 @@ import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 public class DustGuiSwingMontruDesktop extends JDesktopPane
-		implements DustGuiSwingComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
+		implements DustGuiSwingMontruComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
 	private static final long serialVersionUID = 1L;
 	
 	class EntityDocWindow {
@@ -46,6 +48,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 			});
 			
 			pnl = DustUtils.getBinary(ePanel, DustGuiServices.PropertyPanel);
+			pnl.setEntityActionControl(eac);
 			
 			iFrame = new JInternalFrame(DustUtilsJava.toString(eEntity), true, true, false, false);			
 			iFrame.getContentPane().add(pnl, BorderLayout.CENTER);
@@ -87,7 +90,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 		}
 	};
 
-	DustGuiSwingMontruActionControl mac = new DustGuiSwingMontruActionControl() {
+	DustGuiSwingEntityActionControl eac = new DustGuiSwingEntityActionControl() {
 		@Override
 		protected void activateEntities(DustEntity... entities) {
 			for ( DustEntity de : entities ) {
@@ -106,7 +109,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 	int posOffset = 0;
 	
 	DustGuiSwingMontruLinks links;
-	DustGuiSwingMontruControl control;
+	private DustGuiSwingMontruControl control;
 
 	public ArrayList<DustEntity> arrTypes = new ArrayList<>();
 
@@ -182,7 +185,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 		DustEntity eKey = DustUtils.getMsgVal(DustProcLinks.ChangeKey, true);
 		Object key = EntityResolver.getKey(eKey);
 		
-		if ( DustGuiLinks.MontruDesktopActivePanel == key) {
+		if ( MontruGuiLinks.MontruDesktopActivePanel == key) {
 			activateEditorPanel(DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, true));
 		} else if ( DustGenericAtts.identifiedIdLocal == key) {
 			DustEntity eChg = DustUtils.getMsgVal(DustProcLinks.ChangeEntity, true);
@@ -215,5 +218,13 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 
 	@Override
 	public void dustProcActiveRelease() throws Exception {
+	}
+
+	public DustGuiSwingEntityActionControl getEac() {
+		return eac;
+	}
+
+	public void setControl(DustGuiSwingMontruControl control) {
+		this.control = control;
 	}
 }

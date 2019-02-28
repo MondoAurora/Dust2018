@@ -19,11 +19,11 @@ public class DustGuiSwingGen implements DustGuiComponents, DustProcComponents, D
 				DustProcServices.Listener, DustProcServices.Active);
 		DustUtils.registerService(DustGuiSwingPanelEntity.class, true, DustGuiServices.PropertyPanel,
 				DustProcServices.Listener, DustProcServices.Active);
-		DustUtils.registerService(DustGuiSwingMontruDesktop.class, true, DustGuiServices.MontruDesktop,
-				DustProcServices.Listener, DustProcServices.Active);
+//		DustUtils.registerService(DustGuiSwingMontruDesktop.class, true, DustGuiServices.MontruDesktop,
+//				DustProcServices.Listener, DustProcServices.Active);
 
-		DustUtils.accessEntity(DataCommand.setRef, DustGuiTypes.MontruDesktop, DustMetaLinks.TypeLinkedServices,
-				DustGuiServices.MontruDesktop);
+//		DustUtils.accessEntity(DataCommand.setRef, DustGuiTypes.MontruDesktop, DustMetaLinks.TypeLinkedServices,
+//				DustGuiServices.MontruDesktop);
 		DustUtils.accessEntity(DataCommand.setRef, DustGuiTypes.PropertyPanel, DustMetaLinks.TypeLinkedServices,
 				DustGuiServices.PropertyPanel);
 		DustUtils.accessEntity(DataCommand.setRef, DustGuiTypes.TextField, DustMetaLinks.TypeLinkedServices,

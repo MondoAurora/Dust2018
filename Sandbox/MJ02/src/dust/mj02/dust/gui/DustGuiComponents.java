@@ -6,15 +6,15 @@ import dust.mj02.dust.knowledge.DustKernelComponents;
 public interface DustGuiComponents extends DustComponents, DustKernelComponents {
 	
 	enum DustGuiLinks implements DustEntityKey {
-		PropertyPanelEntity, MontruDesktopActivePanel
+		PropertyPanelEntity,// MontruDesktopActivePanel
 	};
 
 	enum DustGuiTypes implements DustEntityKey {
-		Label, TextField, PropertyPanel, MontruDesktop
+		Label, TextField, PropertyPanel,// MontruDesktop
 	};
 
 	enum DustGuiServices implements DustEntityKey {
-		Label, TextField, PropertyPanel, MontruDesktop
+		Label, TextField, PropertyPanel,// MontruDesktop
 	};
 
 	interface GuiComponentControl <ComponentType> {

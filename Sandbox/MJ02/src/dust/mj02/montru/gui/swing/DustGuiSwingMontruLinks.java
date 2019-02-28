@@ -1,4 +1,4 @@
-package dust.mj02.dust.gui.swing;
+package dust.mj02.montru.gui.swing;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -21,8 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import dust.mj02.dust.Dust;
-import dust.mj02.dust.gui.swing.DustGuiSwingMontruDesktop.EntityDocWindow;
 import dust.mj02.dust.gui.swing.DustGuiSwingWidgetAnchor.AnchoredPanel;
+import dust.mj02.montru.gui.swing.DustGuiSwingMontruDesktop.EntityDocWindow;
 
 class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruComponents {
 	private static final long serialVersionUID = 1L;
@@ -119,10 +119,10 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
 				EntityDocWindow edwTrg = desktop.factDocWindows.peek(eiTarg);
 
 				if ((null != edwSrc) && edwSrc.iFrame.isShowing() && (null != edwTrg) && edwTrg.iFrame.isShowing()) {
-					AnchoredPanel apSrcLink = edwSrc.pnl.factAnchored.peek(ref.get(RefKey.linkDef));
+					AnchoredPanel apSrcLink = edwSrc.pnl.peekAnchored(ref.get(RefKey.linkDef));
 					if ((null != apSrcLink) && apSrcLink.isShowing()) {
 						apSrcLink.getAnchorCentersOnScreen(aSrc);
-						edwTrg.pnl.factAnchored.peek(null).getAnchorCentersOnScreen(aTrg);
+						edwTrg.pnl.peekAnchored(null).getAnchorCentersOnScreen(aTrg);
 
 						if (!aSrc.isEmpty() && !aTrg.isEmpty()) {
 							Point pt0 = new Point();
