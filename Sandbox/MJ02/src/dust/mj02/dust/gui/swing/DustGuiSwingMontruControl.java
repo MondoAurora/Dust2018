@@ -1,7 +1,6 @@
 package dust.mj02.dust.gui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -11,10 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -26,17 +22,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.DustComponents.DataCommand;
-import dust.mj02.dust.DustComponents.DustEntity;
-import dust.mj02.dust.DustComponents.DustRef;
-import dust.mj02.dust.gui.DustGuiComponents.DustGuiLinks;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
 
+@SuppressWarnings("serial")
 class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents {
 	private static final long serialVersionUID = 1L;
 	
@@ -72,67 +64,18 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents
 		}
 	};
 
-	class EntityInfoRenderer extends DefaultListCellRenderer {
-		@Override
-		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-				boolean cellHasFocus) {
-			JLabel tc = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			tc.setText(DustUtilsJava.toString(value));
-			return tc;
-		}
-	}
-
-	class EntityInfoListModel extends AbstractListModel<DustEntity> {
-		ArrayList<DustEntity> data;
-
-		public EntityInfoListModel(ArrayList<DustEntity> data) {
-			super();
-			this.data = data;
-		}
-
-		@Override
-		public DustEntity getElementAt(int index) {
-			return data.get(index);
-		}
-
-		@Override
-		public int getSize() {
-			return data.size();
-		}
-
-		private void update() {
-			fireContentsChanged(DustGuiSwingMontruControl.this, 0, getSize());
-		}
-	}
-
 	enum TypeTableCols {
 		sel, ei
 	}
-
-	class TypeTableModel extends AbstractTableModel {
-		ArrayList<DustEntity> data;
-
+	
+	class TypeTableModel extends EntityTableModelBase {
 		public TypeTableModel(ArrayList<DustEntity> data) {
-			this.data = data;
-		}
-
-		private void update() {
-			fireTableDataChanged();
-		}
-
-		@Override
-		public int getColumnCount() {
-			return TypeTableCols.values().length;
+			super(data, TypeTableCols.values());
 		}
 
 		@Override
 		public String getColumnName(int column) {
 			return TypeTableCols.values()[column].name();
-		}
-
-		@Override
-		public int getRowCount() {
-			return data.size();
 		}
 
 		@Override
@@ -187,8 +130,8 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents
 	DustEntity eiSelected;
 
 	TypeTableModel tmTypes;
-	EntityInfoListModel lmResults;
-	EntityInfoRenderer crTypes;
+	EntityListModelDefault lmResults;
+	EntityRendererDefault crTypes;
 
 	JTextField tfSearch;
 	JTextArea taSelEntity;
@@ -197,13 +140,14 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents
 	public DustGuiSwingMontruControl(DustGuiSwingMontruDesktop desktop) {
 		super(new BorderLayout(5, 5));
 		this.desktop = desktop;
+		desktop.control = this;
 
 		setFilterTypes = new HashSet<>();
 		arrSearchResults = new ArrayList<>();
 
 		tmTypes = new TypeTableModel(desktop.arrTypes);
-		lmResults = new EntityInfoListModel(arrSearchResults);
-		crTypes = new EntityInfoRenderer();
+		lmResults = new EntityListModelDefault(arrSearchResults);
+		crTypes = new EntityRendererDefault();
 
 		JPanel pnlSearch = new JPanel(new BorderLayout());
 
@@ -237,9 +181,6 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents
 			public void mouseClicked(MouseEvent e) {
 				if (1 < e.getClickCount()) {
 					desktop.activateEditorPanel(eiSelected);
-//					DustEntity eSel = pnlControl.eiSelected.get(GuiEntityKey.entity);
-//					DustUtils.accessEntity(DataCommand.setRef, eMontruDesktop, DustGuiLinks.MontruDesktopActivePanel,
-//							eSel);
 				}
 			}
 		});
@@ -289,10 +230,31 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents
 				okValue = DustUtilsJava.isEmpty(filterText);
 				
 				if ( !okModel || !okValue ) {
-					DustUtils.accessEntity(DataCommand.processRef, ei, DustDataLinks.EntityModels, null, new RefProcessor() {
+					DustUtils.accessEntity(DataCommand.processRef, ei, DustDataLinks.EntityModels, new RefProcessor() {
 						@Override
 						public void processRef(DustRef ref) {
+							DustEntity eModel = ref.get(RefKey.target);
 							
+							if (!okModel) {
+								okModel = setFilterTypes.contains(eModel);
+							}
+							
+							if (!okValue ) {
+								DustUtils.accessEntity(DataCommand.processRef, eModel, DustMetaLinks.TypeAttDefs, new RefProcessor() {
+									@Override
+									public void processRef(DustRef ref) {
+										DustEntity eAtt = ref.get(RefKey.target);
+										
+										if (!okValue ) {
+											Object val = Dust.accessEntity(DataCommand.getValue, ei, eAtt, null, null);
+											if (val instanceof String) {
+												okValue = ((String) val).toLowerCase().contains(filterText);
+											}
+										}
+									}
+								});
+
+							}
 						}
 					});
 				
@@ -300,55 +262,6 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingComponents
 						arrSearchResults.add(ei);
 					}
 				}
-				
-//				Set<DustEntity> models = ei.get(GuiEntityKey.models);
-//				boolean ok = false;
-//
-//				if (!setFilterTypes.isEmpty()) {
-//					ok = false;
-//					for (DustEntity fm : setFilterTypes) {
-//						if (models.contains(fm)) {
-//							ok = true;
-//							break;
-//						}
-//					}
-//
-//					if (!ok) {
-//						continue;
-//					}
-//				}
-//
-//				if (!DustUtilsJava.isEmpty(filterText)) {
-//					ok = false;
-//
-//					for (DustEntity fm : models) {
-//						Set<DustEntity> atts = fm.get(GuiEntityKey.attDefs);
-//
-//						if (null != atts) {
-//							for (DustEntity ad : atts) {
-//								Object val = Dust.accessEntity(DataCommand.getValue, ei, ad.get(GuiEntityKey.entity), null,
-//										null);
-//
-//								if (val instanceof String) {
-//									ok = ((String) val).toLowerCase().contains(filterText);
-//								}
-//
-//								if (ok) {
-//									break;
-//								}
-//							}
-//						}
-//
-//						if (ok) {
-//							break;
-//						}
-//					}
-//				}
-
-//				if (ok) {
-//					arrSearchResults.add(ei);
-//				}
-			
 			}
 		});
 

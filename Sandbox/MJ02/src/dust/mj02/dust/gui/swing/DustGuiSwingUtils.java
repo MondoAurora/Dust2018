@@ -9,7 +9,7 @@ public class DustGuiSwingUtils implements DustGuiComponents, DustUtilsSwingCompo
 	
 	private static final String CLIENT_PROP_KEY = "DustCPDataWrapper";
 	
-	static void initJComponent(GuiDataWrapper<? extends JComponent> gdw) {
+	public static void initJComponent(GuiDataWrapper<? extends JComponent> gdw) {
 		gdw.getComponent().putClientProperty(CLIENT_PROP_KEY, gdw);
 	}
 	

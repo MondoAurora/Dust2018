@@ -23,9 +23,8 @@ import javax.swing.SwingUtilities;
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.gui.swing.DustGuiSwingMontruDesktop.EntityDocWindow;
 import dust.mj02.dust.gui.swing.DustGuiSwingWidgetAnchor.AnchoredPanel;
-import dust.mj02.montru.gui.swing.MontruGuiSwingFrame;
 
-class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingComponents {
+class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruComponents {
 	private static final long serialVersionUID = 1L;
 
 	DustGuiSwingMontruDesktop desktop;
@@ -81,8 +80,7 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingComponents {
 
 		Point pt = me.getPoint();
 		
-		Rectangle hit = new Rectangle(pt.x - MontruGuiSwingFrame.HR, pt.y - MontruGuiSwingFrame.HR,
-				2 * MontruGuiSwingFrame.HR, 2 * MontruGuiSwingFrame.HR);
+		Rectangle hit = new Rectangle(pt.x - HR, pt.y - HR,	2 * HR, 2 * HR);
 
 		for (Map.Entry<DustRef, Line2D> e : lines.entrySet()) {
 			if (e.getValue().intersects(hit)) {
@@ -174,7 +172,7 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingComponents {
 
 		for (Map.Entry<DustRef, Line2D> e : lines.entrySet()) {
 			Line2D line = e.getValue();
-			g.setColor(sel.contains(e.getKey()) ? MontruGuiSwingFrame.COL_REF_SEL : MontruGuiSwingFrame.COL_REF_NORMAL);
+			g.setColor(sel.contains(e.getKey()) ? COL_REF_SEL : COL_REF_NORMAL);
 			g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(), (int) line.getY2());
 		}
 

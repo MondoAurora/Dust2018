@@ -2,8 +2,8 @@ package dust.mj02.dust.knowledge;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
+import dust.mj02.dust.gui.swing.DustGuiSwingMontruMain;
 import dust.mj02.dust.tools.DustToolsGen;
-import dust.mj02.montru.gui.swing.MontruGuiSwingFrame;
 
 public class DustProcRuntime extends Dust implements DustComponents, DustDataComponents, Dust.DustRuntime {
 	
@@ -29,7 +29,8 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 //		
 //		disc.load(rdr, "MJ02Boot02.json");
 		
-		new MontruGuiSwingFrame();
+//		new MontruGuiSwingFrame();
+		new DustGuiSwingMontruMain().dustProcActiveInit();
 	}
 
 	@Override

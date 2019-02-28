@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 
 import dust.mj02.dust.Dust;
@@ -46,9 +47,10 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 			
 			pnl = DustUtils.getBinary(ePanel, DustGuiServices.PropertyPanel);
 			
-			iFrame = new JInternalFrame(DustUtilsJava.toString(eEntity), true, false, true, true);			
+			iFrame = new JInternalFrame(DustUtilsJava.toString(eEntity), true, true, false, false);			
 			iFrame.getContentPane().add(pnl, BorderLayout.CENTER);
 			iFrame.pack();
+			iFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 			add(iFrame, JDesktopPane.DEFAULT_LAYER);
 			iFrame.setVisible(true);
@@ -104,6 +106,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 	int posOffset = 0;
 	
 	DustGuiSwingMontruLinks links;
+	DustGuiSwingMontruControl control;
 
 	public ArrayList<DustEntity> arrTypes = new ArrayList<>();
 
@@ -162,11 +165,6 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 				}
 			});
 
-
-//			DustEntity store = Dust.getEntity("Store: " + fp);
-//			DustUtils.accessEntity(DataCommand.setValue, store, DustGenericAtts.streamFileName, fp);
-//			DustUtils.accessEntity(DataCommand.setRef, store, DustDataLinks.EntityServices, DustCommServices.Store);
-
 			DustUtils.accessEntity(DataCommand.tempSend, store, msg, null, null);
 		}
 	}
@@ -191,6 +189,14 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane
 			EntityDocWindow edw = factDocWindows.peek(eChg);
 			if ( null != edw ) {
 				edw.updateTitle();
+			}
+		} else if ( DustDataLinks.EntityPrimaryType == key) {
+			DustEntity eType = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, true);
+			if ( !arrTypes.contains(eType) ) {
+				arrTypes.add(eType);
+				if ( null != control ) {
+					control.tmTypes.update();
+				}				
 			}
 		}
 		
