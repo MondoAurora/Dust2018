@@ -30,12 +30,14 @@ public abstract class DustGuiSwingEntityActionControl extends DustGuiEntityActio
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			dragSourceSet(e.getSource());
+			handleDragEvent(e);
 		}
 	};
 
 	private final MouseListener mlDragSource = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			handleDragEvent(null);
 			drop();
 		}
 	};
@@ -69,6 +71,10 @@ public abstract class DustGuiSwingEntityActionControl extends DustGuiEntityActio
 			}
 		}
 	};
+	
+	protected void handleDragEvent(MouseEvent me) {
+		
+	}
 
 	@Override
 	public GuiDataWrapper<JComponent> resolveBaseComponent(Object comp) {

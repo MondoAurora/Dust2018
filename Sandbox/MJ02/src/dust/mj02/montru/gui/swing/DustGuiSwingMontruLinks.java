@@ -2,13 +2,16 @@ package dust.mj02.montru.gui.swing;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -29,7 +32,46 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
 
 	DustGuiSwingMontruDesktop desktop;
 
-	Map<DustRef, Line2D> lines = new HashMap<>();
+	// enum ShapeType {
+	// line, arc
+	// }
+	//
+	// class ShapeInfo {
+	// DustRef ref;
+	// ShapeType st;
+	// Shape shape;
+	//
+	// public ShapeInfo(DustRef ref, Line2D shape) {
+	// st = ShapeType.line;
+	// this.shape = shape;
+	// }
+	//
+	// public ShapeInfo(DustRef ref, Arc2D shape) {
+	// st = ShapeType.arc;
+	// this.shape = shape;
+	// }
+	//
+	// public void draw(Graphics g) {
+	// g.setColor(sel.contains(ref) ? COL_REF_SEL : COL_REF_NORMAL);
+	//
+	// ((Graphics2D)g).draw(shape);
+	//
+	//// switch (st) {
+	//// case arc:
+	//// Arc2D arc = (Arc2D) shape;
+	//// g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(),
+	// (int) line.getY2());
+	//// break;
+	//// case line:
+	//// Line2D line = (Line2D) shape;
+	//// g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(),
+	// (int) line.getY2());
+	//// break;
+	//// }
+	// }
+	// }
+
+	Map<DustRef, Shape> lines = new HashMap<>();
 	Set<DustRef> sel = new HashSet<>();
 
 	ComponentListener painter = new ComponentAdapter() {
@@ -79,10 +121,10 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
 		}
 
 		Point pt = me.getPoint();
-		
-		Rectangle hit = new Rectangle(pt.x - HR, pt.y - HR,	2 * HR, 2 * HR);
 
-		for (Map.Entry<DustRef, Line2D> e : lines.entrySet()) {
+		Rectangle hit = new Rectangle(pt.x - HR, pt.y - HR, 2 * HR, 2 * HR);
+
+		for (Map.Entry<DustRef, Shape> e : lines.entrySet()) {
 			if (e.getValue().intersects(hit)) {
 				DustRef r = e.getKey();
 				if (sel.contains(r)) {
@@ -104,14 +146,14 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
 		AnchorLocation[][] test = { { AnchorLocation.Left, AnchorLocation.Left },
 				{ AnchorLocation.Left, AnchorLocation.Right }, { AnchorLocation.Right, AnchorLocation.Left },
 				{ AnchorLocation.Right, AnchorLocation.Right } };
-		
+
 		Set<DustRef> lostRefs = new HashSet<>(sel);
 
 		Dust.processRefs(new RefProcessor() {
 			@Override
 			public void processRef(DustRef ref) {
 				lostRefs.remove(ref);
-				
+
 				DustEntity eiSrc = ref.get(RefKey.source);
 				DustEntity eiTarg = ref.get(RefKey.target);
 
@@ -125,42 +167,57 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
 						edwTrg.pnl.peekAnchored(null).getAnchorCentersOnScreen(aTrg);
 
 						if (!aSrc.isEmpty() && !aTrg.isEmpty()) {
-							Point pt0 = new Point();
-							Point pt1 = new Point();
-							int min = Integer.MAX_VALUE;
+							if (edwSrc != edwTrg) {
+								Point pt0 = new Point();
+								Point pt1 = new Point();
+								int min = Integer.MAX_VALUE;
 
-							for (AnchorLocation[] t : test) {
-								int diff = Math.abs(aSrc.get(t[0]).x - aTrg.get(t[1]).x);
-								if (diff < min) {
-									min = diff;
-									pt0.setLocation(aSrc.get(t[0]));
-									pt1.setLocation(aTrg.get(t[1]));
+								for (AnchorLocation[] t : test) {
+									int diff = Math.abs(aSrc.get(t[0]).x - aTrg.get(t[1]).x);
+									if (diff < min) {
+										min = diff;
+										pt0.setLocation(aSrc.get(t[0]));
+										pt1.setLocation(aTrg.get(t[1]));
+									}
 								}
+
+								SwingUtilities.convertPointFromScreen(pt0, DustGuiSwingMontruLinks.this);
+								SwingUtilities.convertPointFromScreen(pt1, DustGuiSwingMontruLinks.this);
+
+								lines.put(ref, new Line2D.Float(pt0, pt1));
+							} else {
+								Point pt0 = new Point(aTrg.get(AnchorLocation.Left));
+								Point pt1 = new Point(aSrc.get(AnchorLocation.Left));
+								Point orig = edwTrg.pnl.getLocation(null);
+								SwingUtilities.convertPointToScreen(orig, edwTrg.pnl);
+
+								int h = pt1.y - pt0.y;
+								int w = 4 * (pt0.x - orig.x);
+								
+								SwingUtilities.convertPointFromScreen(pt0, DustGuiSwingMontruLinks.this);
+								SwingUtilities.convertPointFromScreen(pt1, DustGuiSwingMontruLinks.this);
+								lines.put(ref,
+										new Arc2D.Float(pt0.x - (w / 2), pt0.y, w, h, 90.0f, 180.0f, Arc2D.OPEN));
 							}
-
-							SwingUtilities.convertPointFromScreen(pt0, DustGuiSwingMontruLinks.this);
-							SwingUtilities.convertPointFromScreen(pt1, DustGuiSwingMontruLinks.this);
-
-							lines.put(ref, new Line2D.Float(pt0, pt1));
 						}
 					}
 				}
 			}
 		}, null, null, null);
-		
-		for ( DustRef rr: lostRefs ) {
+
+		for (DustRef rr : lostRefs) {
 			sel.remove(rr);
 		}
 
 		repaint();
 	}
-	
-	
+
 	public void removeSelRefs() {
-		for ( DustRef rr : sel ) {
-			Dust.accessEntity(DataCommand.removeRef, rr.get(RefKey.source), rr.get(RefKey.linkDef), rr.get(RefKey.target), rr.get(RefKey.key));
+		for (DustRef rr : sel) {
+			Dust.accessEntity(DataCommand.removeRef, rr.get(RefKey.source), rr.get(RefKey.linkDef),
+					rr.get(RefKey.target), rr.get(RefKey.key));
 		}
-		
+
 		refreshLines();
 	}
 
@@ -170,27 +227,20 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
 
 		Color col = g.getColor();
 
-		for (Map.Entry<DustRef, Line2D> e : lines.entrySet()) {
-			Line2D line = e.getValue();
+		for (Map.Entry<DustRef, Shape> e : lines.entrySet()) {
 			g.setColor(sel.contains(e.getKey()) ? COL_REF_SEL : COL_REF_NORMAL);
-			g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(), (int) line.getY2());
+			((Graphics2D) g).draw(e.getValue());
 		}
+
+		// for (ShapeInfo si : lines.values()) {
+		// si.draw(g);
+		// // Line2D line = e.getValue();
+		// // g.setColor(sel.contains(e.getKey()) ? COL_REF_SEL : COL_REF_NORMAL);
+		// // g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(),
+		// (int)
+		// // line.getY2());
+		// }
 
 		g.setColor(col);
 	}
-
-//	// A basic implementation of redispatching events.
-//	private void redispatchMouseEvent(MouseEvent e) {
-//		Point glassPanePoint = e.getPoint();
-//		Container container = getParent();
-//		Point containerPoint = SwingUtilities.convertPoint(this, glassPanePoint, container);
-//		Component component = SwingUtilities.getDeepestComponentAt(container, containerPoint.x, containerPoint.y);
-//
-//		if ((component != null) && (this != component)) {
-//			Point componentPoint = SwingUtilities.convertPoint(this, glassPanePoint, component);
-//			component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(),
-//					componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
-//		}
-//
-//	}
 }
