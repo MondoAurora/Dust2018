@@ -25,4 +25,9 @@ public interface DustGuiComponents extends DustComponents, DustKernelComponents 
 		DustEntity getEntity();
 		DustEntity getData();
 	}
+	
+	public enum CtrlStatus {
+		alt, shift, ctrl;
+	}
+
 }

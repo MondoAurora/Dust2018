@@ -7,13 +7,12 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,6 +27,7 @@ import javax.swing.SwingUtilities;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.gui.DustGuiEntityActionControl.CollectionAction;
 import dust.mj02.dust.gui.swing.DustGuiSwingEntityActionControl;
 import dust.mj02.dust.gui.swing.DustGuiSwingPanelEntity;
 import dust.mj02.dust.knowledge.DustProcComponents;
@@ -87,6 +87,8 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 				iFrame.setSelected(true);
 			} catch (PropertyVetoException e) {
 			}
+			
+			links.refreshLines();
 		}
 
 		public void updateTitle() {
@@ -96,15 +98,11 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 
 	Point dragStart;
 	Point dragEnd;
-	int dragMode;
-	
 	JPanel dragLayer = new JPanel() {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		protected void paintComponent(Graphics g) {
-//			super.paintComponent(g);
-
 			if (null != dragStart) {
 				Color col = g.getColor();
 
@@ -126,6 +124,8 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 	};
 
 	DustGuiSwingEntityActionControl eac = new DustGuiSwingEntityActionControl() {
+		DustEntity eCreated;
+		
 		@Override
 		protected void activateEntities(DustEntity... entities) {
 			for (DustEntity de : entities) {
@@ -152,8 +152,6 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 				dragLayer.setVisible(false);
 				dragStart = dragEnd = null;
 			} else {
-				dragMode = me.getModifiersEx();
-				
 				if ( null == dragStart ) {
 					dragStart = dragEnd = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), dragLayer);
 					dragLayer.setVisible(true);
@@ -164,18 +162,34 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 				dragLayer.repaint();
 			}
 		}
-
+		
 		@Override
-		protected void dropped(GuiDataWrapper<JComponent> gdwSource, GuiDataWrapper<JComponent> gdwTarget) {
+		protected void dropped(EnumSet<CtrlStatus> ctrlStatus, GuiDataWrapper<JComponent> gdwSource,
+				GuiDataWrapper<JComponent> gdwTarget) {
 			if (null == gdwTarget) {
-				String msg;
-				if ((dragMode & InputEvent.CTRL_DOWN_MASK) == 0) {
-					msg = " clear";
+				DustEntity eDropped = gdwSource.getEntity();
+				eCreated = null;
+				
+				if (ctrlStatus.contains(CtrlStatus.ctrl)) {
+					eCreated = DustUtils.accessEntity(DataCommand.cloneEntity, eDropped);
 				} else {
-					msg = " copy";
+					DustUtils.accessEntity(DataCommand.processRef, eDropped, DustDataLinks.EntityPrimaryType, new RefProcessor() {
+						@Override
+						public void processRef(DustRef ref) {
+							if ( EntityResolver.getEntity(DustMetaTypes.Type) == ref.get(RefKey.target)) {
+								eCreated = DustUtils.accessEntity(DataCommand.getEntity, eDropped);
+							} else {
+								JOptionPane.showMessageDialog(DustGuiSwingMontruDesktop.this, "Create works for Type entities only, keep Ctrl pressed to clone");
+							}
+						}
+					});
 				}
-
-				JOptionPane.showMessageDialog(DustGuiSwingMontruDesktop.this, "Drop outside" + msg);
+				
+				if ( null != eCreated ) {
+					activateEditorPanel(eCreated);
+//				} else {
+//					JOptionPane.showMessageDialog(DustGuiSwingMontruDesktop.this, "Oops? " + (ctrlStatus.contains(CtrlStatus.ctrl) ? "clone" : "new"));
+				}
 			} else {
 				links.refreshLines();
 			}
@@ -194,10 +208,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 	DustGuiSwingMontruLinks links;
 	private DustGuiSwingMontruControl control;
 
-	public ArrayList<DustEntity> arrTypes = new ArrayList<>();
-
 	public DustGuiSwingMontruDesktop() {
-		// super(null);
 		setOpaque(true);
 		setBackground(Color.white);
 
@@ -269,6 +280,34 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 
 			DustUtils.accessEntity(DataCommand.tempSend, store, msg, null, null);
 		}
+		
+		refreshData();
+	}
+
+	public void refreshData() {
+		DustEntity tt = EntityResolver.getEntity(DustMetaTypes.Type);
+		Set<DustEntity> newTypes = new HashSet<>();
+		
+		Dust.processEntities(new EntityProcessor() {			
+			@Override
+			public void processEntity(Object key, DustEntity entity) {
+				DustEntity pt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, entity, DustDataLinks.EntityPrimaryType));
+				boolean add = tt == pt;
+				if ( !add ) {
+					DustRef rm = DustUtils.accessEntity(DataCommand.getValue, entity, DustDataLinks.EntityModels);
+					add = (null != rm) && rm.contains(tt);
+				}
+				if ( add ) {
+					if (eac.addType(entity)) {
+						newTypes.add(entity);
+					}
+				}
+			}
+		});
+		
+		if ( !newTypes.isEmpty() ) {
+			control.tmTypes.update();
+		}
 	}
 
 	public void activateEditorPanel(DustEntity e) {
@@ -294,8 +333,9 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 			}
 		} else if (DustDataLinks.EntityPrimaryType == key) {
 			DustEntity eType = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, true);
-			if (!arrTypes.contains(eType)) {
-				arrTypes.add(eType);
+			if ( eac.addType(eType)) {
+//			if (!arrTypes.contains(eType)) {
+//				arrTypes.add(eType);
 				if (null != control) {
 					control.tmTypes.update();
 				}
@@ -326,5 +366,15 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 
 	public void setControl(DustGuiSwingMontruControl control) {
 		this.control = control;
+	}
+
+	public void deleteSelected() {
+		for ( DustEntity ee : eac.getAllSelected() ) {
+			DustUtils.accessEntity(DataCommand.dropEntity, ee);
+			eac.select(CollectionAction.clear, null);
+			EntityDocWindow dw = factDocWindows.peek(ee);
+			dw.iFrame.dispose();
+			factDocWindows.drop(dw);
+		}
 	}
 }

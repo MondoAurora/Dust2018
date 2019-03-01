@@ -1,6 +1,7 @@
 package dust.mj02.dust.gui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ import dust.utils.DustUtilsSwingComponents;
 
 public interface DustGuiSwingComponents extends DustGuiComponents, DustUtilsSwingComponents {
 	Dimension ANCHOR_SIZE = new Dimension(16, 16);
+	
+	Color COL_ENTITY_HEAD_NORM = Color.LIGHT_GRAY;
+	Color COL_ENTITY_HEAD_SEL = Color.YELLOW;
 	
 	int ENTITY_PANEL_BORDER = 10;
 	

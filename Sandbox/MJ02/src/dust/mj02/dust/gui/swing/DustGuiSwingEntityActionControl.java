@@ -38,7 +38,7 @@ public abstract class DustGuiSwingEntityActionControl extends DustGuiEntityActio
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			handleDragEvent(null);
-			drop();
+			drop(DustGuiSwingUtils.getMouseStatus(e));
 		}
 	};
 

@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -33,7 +34,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 	private static final long serialVersionUID = 1L;
 	
 	enum GuiCommands {
-		createEntity, deleteEntity, deleteRef, test01, test02, test03
+		createEntity, deleteEntity, deleteRef, test01, test02, test03, test04
 	};
 
 	ActionListener cmdListener = new ActionListener() {
@@ -44,6 +45,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 			case createEntity:
 				break;
 			case deleteEntity:
+				desktop.deleteSelected();
 				break;
 			case deleteRef:
 				desktop.removeSelRefs();
@@ -59,6 +61,9 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 				if ( null != eiSelected ) {
 					DustUtils.accessEntity(DataCommand.setRef, desktop, MontruGuiLinks.MontruDesktopActivePanel, eiSelected);
 				}
+				break;
+			case test04:
+				JOptionPane.showMessageDialog(DustGuiSwingMontruControl.this, "hello");
 				break;
 			}
 		}
@@ -145,7 +150,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 		setFilterTypes = new HashSet<>();
 		arrSearchResults = new ArrayList<>();
 
-		tmTypes = new TypeTableModel(desktop.arrTypes);
+		tmTypes = new TypeTableModel((ArrayList<DustEntity>) desktop.eac.getAllTypes());
 		lmResults = new EntityListModelDefault(arrSearchResults);
 		crTypes = new EntityRendererDefault();
 

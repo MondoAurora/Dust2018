@@ -32,44 +32,6 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
 
 	DustGuiSwingMontruDesktop desktop;
 
-	// enum ShapeType {
-	// line, arc
-	// }
-	//
-	// class ShapeInfo {
-	// DustRef ref;
-	// ShapeType st;
-	// Shape shape;
-	//
-	// public ShapeInfo(DustRef ref, Line2D shape) {
-	// st = ShapeType.line;
-	// this.shape = shape;
-	// }
-	//
-	// public ShapeInfo(DustRef ref, Arc2D shape) {
-	// st = ShapeType.arc;
-	// this.shape = shape;
-	// }
-	//
-	// public void draw(Graphics g) {
-	// g.setColor(sel.contains(ref) ? COL_REF_SEL : COL_REF_NORMAL);
-	//
-	// ((Graphics2D)g).draw(shape);
-	//
-	//// switch (st) {
-	//// case arc:
-	//// Arc2D arc = (Arc2D) shape;
-	//// g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(),
-	// (int) line.getY2());
-	//// break;
-	//// case line:
-	//// Line2D line = (Line2D) shape;
-	//// g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(),
-	// (int) line.getY2());
-	//// break;
-	//// }
-	// }
-	// }
 
 	Map<DustRef, Shape> lines = new HashMap<>();
 	Set<DustRef> sel = new HashSet<>();
@@ -231,15 +193,6 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
 			g.setColor(sel.contains(e.getKey()) ? COL_REF_SEL : COL_REF_NORMAL);
 			((Graphics2D) g).draw(e.getValue());
 		}
-
-		// for (ShapeInfo si : lines.values()) {
-		// si.draw(g);
-		// // Line2D line = e.getValue();
-		// // g.setColor(sel.contains(e.getKey()) ? COL_REF_SEL : COL_REF_NORMAL);
-		// // g.drawLine((int) line.getX1(), (int) line.getY1(), (int) line.getX2(),
-		// (int)
-		// // line.getY2());
-		// }
 
 		g.setColor(col);
 	}

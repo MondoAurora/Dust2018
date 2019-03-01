@@ -1,5 +1,10 @@
 package dust.mj02.dust.gui;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.gui.swing.DustGuiSwingComponents;
 
@@ -8,8 +13,52 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 		source, target
 	}
 
+	public enum CollectionAction {
+		contains, add, remove, clear
+	}
+
 	private GuiDataWrapper<BaseComponentType> dragSource;
 	private GuiDataWrapper<BaseComponentType> dragTarget;
+
+	protected ArrayList<DustEntity> arrTypes = new ArrayList<>();
+	protected Set<DustEntity> selected = new HashSet<>();
+
+	public boolean addType(DustEntity eType) {
+		if (!arrTypes.contains(eType)) {
+			arrTypes.add(eType);
+			return true;
+		}
+
+		return false;
+	}
+
+	public Iterable<DustEntity> getAllTypes() {
+		return arrTypes;
+	}
+
+	public Iterable<DustEntity> getAllSelected() {
+		return selected;
+	}
+
+	public boolean select(CollectionAction action, DustEntity e) {
+		switch (action) {
+		case add:
+			return selected.add(e);
+		case contains:
+			return selected.contains(e);
+		case remove:
+			return selected.remove(e);
+		case clear:
+			if (selected.isEmpty()) {
+				return false;
+			} else {
+				selected.clear();
+				return true;
+			}
+		}
+
+		throw new RuntimeException("Should not get here");
+	}
 
 	protected void dragTargetEnter(Object comp) {
 		if (null != dragSource) {
@@ -29,25 +78,25 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 		setItem(DragItem.source, resolveBaseComponent(comp));
 	}
 
-	protected void drop() {
+	protected void drop(EnumSet<CtrlStatus> ctrlStatus) {
 		if (null != dragSource) {
 			if (null != dragTarget) {
 				Dust.accessEntity(DataCommand.setRef, dragTarget.getEntity(), dragTarget.getData(),
 						dragSource.getEntity(), null);
-				dropped(dragSource, dragTarget);
+				dropped(ctrlStatus, dragSource, dragTarget);
 				setItem(DragItem.target, null);
 			} else {
-				dropped(dragSource, null);
+				dropped(ctrlStatus, dragSource, null);
 			}
-			
+
 			setItem(DragItem.source, null);
 		}
 	}
-	
+
 	private void setItem(DragItem item, GuiDataWrapper<BaseComponentType> gdw) {
 		GuiDataWrapper<BaseComponentType> old = null;
-		
-		switch ( item ) {
+
+		switch (item) {
 		case source:
 			old = dragSource;
 			dragSource = gdw;
@@ -57,7 +106,7 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 			dragTarget = gdw;
 			break;
 		}
-		
+
 		dragItemChanged(item, old, gdw);
 	}
 
@@ -71,5 +120,6 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 	protected abstract void activateEntities(DustEntity... entities);
 	protected abstract void dragItemChanged(DragItem item, GuiDataWrapper<BaseComponentType> gdwOld,
 			GuiDataWrapper<BaseComponentType> gdwNew);
-	protected abstract void dropped(GuiDataWrapper<BaseComponentType> gdwSource, GuiDataWrapper<BaseComponentType> gdwTarget);
+	protected abstract void dropped(EnumSet<CtrlStatus> ctrlStatus, GuiDataWrapper<BaseComponentType> gdwSource,
+			GuiDataWrapper<BaseComponentType> gdwTarget);
 }

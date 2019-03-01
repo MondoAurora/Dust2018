@@ -4,16 +4,25 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.gui.DustGuiEntityActionControl.CollectionAction;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.montru.gui.MontruGuiComponents.MontruGuiServices;
 import dust.mj02.montru.gui.swing.DustGuiSwingMontruDesktop;
@@ -29,6 +38,13 @@ public class DustGuiSwingPanelEntity extends JPanel
 	DustEntity eEntity;
 	DustGuiSwingEntityActionControl eac;
 //	DustGuiSwingMontruDesktop desktop;
+	
+	DustUtilsFactory<DustEntity, JCheckBox> factModelSelector = new DustUtilsFactory<DustEntity, JCheckBox>(false) {
+		@Override
+		protected JCheckBox create(DustEntity key, Object... hints) {
+			return new JCheckBox();
+		}
+	};
 	
 	DustUtilsFactory<DustEntity, JLabel> factLabel = new DustUtilsFactory<DustEntity, JLabel>(false) {
 		@Override
@@ -83,21 +99,28 @@ public class DustGuiSwingPanelEntity extends JPanel
 		@Override
 		protected DustGuiSwingWidgetAnchor.AnchoredPanel create(DustEntity key, Object... hints) {
 			JComponent comp = factLabel.get(key);
+			JPanel pnl = new JPanel(new BorderLayout(HR, 0));
+
 			if (null == key) {
-				comp.setBackground(Color.LIGHT_GRAY);
+//				comp.setBackground(Color.LIGHT_GRAY);
 				((JLabel) comp).setHorizontalAlignment(JLabel.CENTER);
 				comp.setOpaque(true);
+				lblHead = comp;
+				
+				pnl.add(cbSelEntity, BorderLayout.WEST);
+				pnl.add(comp, BorderLayout.CENTER);
+				pnl.add(btDelModels, BorderLayout.EAST);
 			} else {
-				JPanel pnl = new JPanel(new BorderLayout(HR, 0));
-
 				pnl.add(comp, BorderLayout.WEST);
 				pnl.add(factData.get(key, false), BorderLayout.CENTER);
-
-				comp = pnl;
 			}
-			return DustGuiSwingWidgetAnchor.anchorPanel(comp, eac, eEntity, key);
+			return DustGuiSwingWidgetAnchor.anchorPanel(pnl, eac, eEntity, key);
 		}
 	};
+	
+	JComponent lblHead;
+	JButton btDelModels;
+	JCheckBox cbSelEntity;
 
 	public DustGuiSwingPanelEntity() {
 		super(new GridLayout(0, 1));
@@ -105,6 +128,33 @@ public class DustGuiSwingPanelEntity extends JPanel
 		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
 				BorderFactory.createEmptyBorder(ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER, ENTITY_PANEL_BORDER,
 						ENTITY_PANEL_BORDER)));
+		
+		btDelModels = new JButton("Delete models");
+		btDelModels.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Set<DustEntity> s = new HashSet<>();
+				for ( DustEntity em : factModelSelector.keys() ) {
+					if ( factModelSelector.get(em).isSelected() ) {
+						s.add(em);
+					}
+				}
+				if ( !s.isEmpty() ) {
+					DustUtils.accessEntity(DataCommand.clearRefs, eEntity, DustDataLinks.EntityModels, s);
+					updatePanel();
+				}
+			}
+		});
+		
+		cbSelEntity = new JCheckBox("Select Entity");
+		cbSelEntity.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				if ( eac.select(cbSelEntity.isSelected() ? CollectionAction.add : CollectionAction.remove, eEntity) ) {
+					updateHead();
+				}
+			}
+		});
 	}
 	
 	public void setEntityActionControl(DustGuiSwingEntityActionControl eac) {
@@ -113,6 +163,10 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 	public DustGuiSwingWidgetAnchor.AnchoredPanel peekAnchored(DustEntity entity) {
 		return factAnchored.peek(entity);
+	}
+
+	private void updateHead() {
+		lblHead.setBackground(eac.select(CollectionAction.contains, eEntity) ? COL_ENTITY_HEAD_SEL : COL_ENTITY_HEAD_NORM);
 	}
 
 	private void updatePanel() {
@@ -125,15 +179,22 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 		JComponent top = factAnchored.get(null);
 		add(top);
+		
+		updateHead();
+		cbSelEntity.setSelected(eac.select(CollectionAction.contains, eEntity));
 
-		DustUtils.accessEntity(DataCommand.processRef, eEntity, DustDataLinks.EntityModels, new RefProcessor() {
-			@Override
-			public void processRef(DustRef ref) {
-				DustEntity mType = ref.get(RefKey.target);
-
+		DustRef models = DustUtils.accessEntity(DataCommand.getValue, eEntity, DustDataLinks.EntityModels);
+		
+		for ( DustEntity mType : eac.getAllTypes() ) {
+			if ( models.contains(mType) ) {
 				JComponent head = factLabel.get(mType);
 				if (mType == ePrimType) {
 					head.setForeground(Color.RED);
+				} else {
+					JPanel pnl = new JPanel(new BorderLayout(HR, 0));
+					pnl.add(factModelSelector.get(mType), BorderLayout.EAST);
+					pnl.add(head, BorderLayout.CENTER);
+					head = pnl;
 				}
 				add(head);
 
@@ -169,7 +230,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 					}
 				});
 			}
-		});
+		}
 
 		revalidate();
 		repaint();

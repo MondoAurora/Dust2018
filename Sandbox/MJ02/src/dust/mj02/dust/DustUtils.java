@@ -12,11 +12,12 @@ import dust.utils.DustUtilsJava;
 public class DustUtils extends DustUtilsJava implements DustComponents {
 
 	public static <RetVal> RetVal getMsgVal(DustEntityKey key, boolean resolveRef) {
-//		Object ret = Dust.accessEntity(DataCommand.getValue, ContextRef.msg, EntityResolver.getEntity(key), null, null);
-//		if (resolveRef && (ret instanceof DustRef)) {
-//			ret = ((DustRef) ret).get(RefKey.target);
-//		}
-//		return (RetVal) ret;
+		// Object ret = Dust.accessEntity(DataCommand.getValue, ContextRef.msg,
+		// EntityResolver.getEntity(key), null, null);
+		// if (resolveRef && (ret instanceof DustRef)) {
+		// ret = ((DustRef) ret).get(RefKey.target);
+		// }
+		// return (RetVal) ret;
 		return getCtxVal(ContextRef.msg, key, resolveRef);
 	}
 
@@ -30,6 +31,16 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 
 	public static <RetVal> RetVal optResolve(Object ob) {
 		return (RetVal) ((ob instanceof DustEntityKey) ? EntityResolver.getEntity(ob) : ob);
+	}
+
+	public static DustEntity toEntity(Object ob) {
+		if ((null == ob) || (ob instanceof DustEntity)) {
+			return (DustEntity) ob;
+		} else if (ob instanceof DustRef) {
+			return ((DustRef) ob).get(RefKey.target);
+		} else {
+			return (DustEntity) ((ob instanceof DustEntityKey) ? EntityResolver.getEntity(ob) : ob);
+		}
 	}
 
 	public static <RetVal> RetVal accessEntity(DataCommand cmd, Object... parameters) {
@@ -69,8 +80,8 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 		if (autoInit) {
 			DustUtils.accessEntity(DataCommand.setValue, svc, DustProcAtts.BinaryAutoInit, true);
 		}
-		
-		for ( DustEntityKey impl : implServices ) {
+
+		for (DustEntityKey impl : implServices) {
 			DustUtils.accessEntity(DataCommand.setRef, svc, DustGenericLinks.Extends, impl);
 		}
 	}
