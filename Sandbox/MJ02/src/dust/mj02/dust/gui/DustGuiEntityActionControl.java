@@ -35,23 +35,6 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 
 	public boolean select(CollectionAction action, DustEntity e) {
 		return DustUtilsJava.manageCollection(action, selected, e);
-//		switch (action) {
-//		case add:
-//			return selected.add(e);
-//		case contains:
-//			return selected.contains(e);
-//		case remove:
-//			return selected.remove(e);
-//		case clear:
-//			if (selected.isEmpty()) {
-//				return false;
-//			} else {
-//				selected.clear();
-//				return true;
-//			}
-//		}
-
-//		throw new RuntimeException("Should not get here");
 	}
 
 	protected void dragTargetEnter(Object comp) {
