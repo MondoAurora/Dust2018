@@ -230,7 +230,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 			boolean okValue;
 
 			@Override
-			public void processEntity(Object key, DustEntity ei) {
+			public void processEntity(DustEntity ei) {
 				okModel = setFilterTypes.isEmpty();
 				okValue = DustUtilsJava.isEmpty(filterText);
 				

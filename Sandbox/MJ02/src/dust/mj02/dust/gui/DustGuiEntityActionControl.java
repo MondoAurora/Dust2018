@@ -1,20 +1,18 @@
 package dust.mj02.dust.gui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.gui.swing.DustGuiSwingComponents;
+import dust.utils.DustUtilsJava;
 
 public abstract class DustGuiEntityActionControl<BaseComponentType> implements DustGuiSwingComponents {
 	public enum DragItem {
 		source, target
-	}
-
-	public enum CollectionAction {
-		contains, add, remove, clear
 	}
 
 	private GuiDataWrapper<BaseComponentType> dragSource;
@@ -23,41 +21,37 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 	protected ArrayList<DustEntity> arrTypes = new ArrayList<>();
 	protected Set<DustEntity> selected = new HashSet<>();
 
-	public boolean addType(DustEntity eType) {
-		if (!arrTypes.contains(eType)) {
-			arrTypes.add(eType);
-			return true;
-		}
-
-		return false;
-	}
-
-	public Iterable<DustEntity> getAllTypes() {
+	public Collection<DustEntity> getAllTypes() {
 		return arrTypes;
 	}
 
-	public Iterable<DustEntity> getAllSelected() {
+	public Collection<DustEntity> getAllSelected() {
 		return selected;
 	}
 
-	public boolean select(CollectionAction action, DustEntity e) {
-		switch (action) {
-		case add:
-			return selected.add(e);
-		case contains:
-			return selected.contains(e);
-		case remove:
-			return selected.remove(e);
-		case clear:
-			if (selected.isEmpty()) {
-				return false;
-			} else {
-				selected.clear();
-				return true;
-			}
-		}
+	public boolean types(CollectionAction action, DustEntity e) {
+		return DustUtilsJava.manageCollection(action, arrTypes, e);
+	}
 
-		throw new RuntimeException("Should not get here");
+	public boolean select(CollectionAction action, DustEntity e) {
+		return DustUtilsJava.manageCollection(action, selected, e);
+//		switch (action) {
+//		case add:
+//			return selected.add(e);
+//		case contains:
+//			return selected.contains(e);
+//		case remove:
+//			return selected.remove(e);
+//		case clear:
+//			if (selected.isEmpty()) {
+//				return false;
+//			} else {
+//				selected.clear();
+//				return true;
+//			}
+//		}
+
+//		throw new RuntimeException("Should not get here");
 	}
 
 	protected void dragTargetEnter(Object comp) {

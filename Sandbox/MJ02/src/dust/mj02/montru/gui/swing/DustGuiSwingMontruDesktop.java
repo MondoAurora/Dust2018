@@ -27,7 +27,6 @@ import javax.swing.SwingUtilities;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.gui.DustGuiEntityActionControl.CollectionAction;
 import dust.mj02.dust.gui.swing.DustGuiSwingEntityActionControl;
 import dust.mj02.dust.gui.swing.DustGuiSwingPanelEntity;
 import dust.mj02.dust.knowledge.DustProcComponents;
@@ -53,7 +52,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 			ePanel = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.PropertyPanel, ContextRef.self, null,
 					new EntityProcessor() {
 						@Override
-						public void processEntity(Object key, DustEntity entity) {
+						public void processEntity(DustEntity entity) {
 							DustUtils.accessEntity(DataCommand.setRef, entity, DustGuiLinks.PropertyPanelEntity,
 									eEntity);
 						}
@@ -187,6 +186,14 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 				
 				if ( null != eCreated ) {
 					activateEditorPanel(eCreated);
+					
+					DustEntity ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eCreated, DustDataLinks.EntityPrimaryType));
+					if ( DustMetaTypes.Type == EntityResolver.getKey(ePt)) {
+						if ( eac.types(CollectionAction.add, eCreated)) {
+							control.tmTypes.update();
+						}
+					}
+
 //				} else {
 //					JOptionPane.showMessageDialog(DustGuiSwingMontruDesktop.this, "Oops? " + (ctrlStatus.contains(CtrlStatus.ctrl) ? "clone" : "new"));
 				}
@@ -271,7 +278,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 			DustEntity store = DustUtils.accessEntity(DataCommand.getEntity, null, null, "Store: " + fp,
 					new EntityProcessor() {
 						@Override
-						public void processEntity(Object key, DustEntity entity) {
+						public void processEntity(DustEntity entity) {
 							DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.streamFileName, fp);
 							DustUtils.accessEntity(DataCommand.setRef, entity, DustDataLinks.EntityServices,
 									DustCommServices.Store);
@@ -286,11 +293,12 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 
 	public void refreshData() {
 		DustEntity tt = EntityResolver.getEntity(DustMetaTypes.Type);
-		Set<DustEntity> newTypes = new HashSet<>();
+		Set<DustEntity> toDel = new HashSet<>(eac.getAllTypes());
+//		eac.types(CollectionAction.clear, null);
 		
 		Dust.processEntities(new EntityProcessor() {			
 			@Override
-			public void processEntity(Object key, DustEntity entity) {
+			public void processEntity(DustEntity entity) {
 				DustEntity pt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, entity, DustDataLinks.EntityPrimaryType));
 				boolean add = tt == pt;
 				if ( !add ) {
@@ -298,16 +306,22 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 					add = (null != rm) && rm.contains(tt);
 				}
 				if ( add ) {
-					if (eac.addType(entity)) {
-						newTypes.add(entity);
-					}
+					eac.types(CollectionAction.add, entity);
+					toDel.remove(entity);
+//					if (eac.addType(entity)) {
+//						newTypes.add(entity);
+//					}
 				}
 			}
 		});
 		
-		if ( !newTypes.isEmpty() ) {
-			control.tmTypes.update();
+		for ( DustEntity ed : toDel ) {
+			eac.types(CollectionAction.remove, ed);
 		}
+		
+//		if ( !newTypes.isEmpty() ) {
+			control.tmTypes.update();
+//		}
 	}
 
 	public void activateEditorPanel(DustEntity e) {
@@ -320,33 +334,42 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 
 	@Override
 	public void dustProcListenerProcessChange() throws Exception {
+		Object key;
+		
 		DustEntity eKey = DustUtils.getMsgVal(DustProcLinks.ChangeKey, true);
-		Object key = EntityResolver.getKey(eKey);
+		key = EntityResolver.getKey(eKey);
 
 		if (MontruGuiLinks.MontruDesktopActivePanel == key) {
 			activateEditorPanel(DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, true));
 		} else if (DustGenericAtts.identifiedIdLocal == key) {
 			DustEntity eChg = DustUtils.getMsgVal(DustProcLinks.ChangeEntity, true);
-			EntityDocWindow edw = factDocWindows.peek(eChg);
-			if (null != edw) {
-				edw.updateTitle();
+			DustEntity ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eChg, DustDataLinks.EntityPrimaryType));
+			if ( DustMetaTypes.Type == EntityResolver.getKey(ePt)) {
+				for ( EntityDocWindow edw : factDocWindows.values() ) {
+					edw.updateTitle();
+				}
+				control.tmTypes.update();
+			} else {
+				EntityDocWindow edw = factDocWindows.peek(eChg);
+				if (null != edw) {
+					edw.updateTitle();
+				}
 			}
 		} else if (DustDataLinks.EntityPrimaryType == key) {
 			DustEntity eType = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, true);
-			if ( eac.addType(eType)) {
-//			if (!arrTypes.contains(eType)) {
-//				arrTypes.add(eType);
+			if ( eac.types(CollectionAction.add, eType)) {
 				if (null != control) {
 					control.tmTypes.update();
 				}
 			}
 		}
-
+		
 		DustEntity cc = DustUtils.getMsgVal(DustProcLinks.ChangeCmd, true);
 		key = EntityResolver.getKey(cc);
 
 		if (-1 != DustUtilsJava.indexOf(key, DataCommand.setRef, DataCommand.removeRef)) {
 			links.refreshLines();
+			return;
 		}
 	}
 
@@ -369,12 +392,20 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 	}
 
 	public void deleteSelected() {
-		for ( DustEntity ee : eac.getAllSelected() ) {
+		if ( eac.getAllSelected().isEmpty() ) {
+			return;
+		}
+		
+		for ( Object o : eac.getAllSelected().toArray() ) {
+			DustEntity ee = (DustEntity)o;
 			DustUtils.accessEntity(DataCommand.dropEntity, ee);
 			eac.select(CollectionAction.clear, null);
 			EntityDocWindow dw = factDocWindows.peek(ee);
 			dw.iFrame.dispose();
 			factDocWindows.drop(dw);
 		}
+		
+		refreshData();
+		links.refreshLines();
 	}
 }

@@ -22,7 +22,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.gui.DustGuiEntityActionControl.CollectionAction;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.montru.gui.MontruGuiComponents.MontruGuiServices;
 import dust.mj02.montru.gui.swing.DustGuiSwingMontruDesktop;
@@ -52,7 +51,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 			DustEntity eLabel = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.Label, ContextRef.self, null,
 					new EntityProcessor() {
 						@Override
-						public void processEntity(Object gid, DustEntity entity) {
+						public void processEntity(DustEntity entity) {
 							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeEntity,
 									(null == key) ? eEntity : key);
 							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeKey, DATT_ID);
@@ -78,7 +77,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 			DustEntity eData = DustUtils.accessEntity(DataCommand.getEntity,
 					txt ? DustGuiTypes.TextField : DustGuiTypes.Label, ContextRef.self, null, new EntityProcessor() {
 						@Override
-						public void processEntity(Object gid, DustEntity entity) {
+						public void processEntity(DustEntity entity) {
 							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeEntity, eEntity);
 							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeKey, key);
 						}
@@ -140,7 +139,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 					}
 				}
 				if ( !s.isEmpty() ) {
-					DustUtils.accessEntity(DataCommand.clearRefs, eEntity, DustDataLinks.EntityModels, s);
+					DustUtils.accessEntity(DataCommand.removeRef, eEntity, DustDataLinks.EntityModels, s);
 					updatePanel();
 				}
 			}
@@ -186,7 +185,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 		DustRef models = DustUtils.accessEntity(DataCommand.getValue, eEntity, DustDataLinks.EntityModels);
 		
 		for ( DustEntity mType : eac.getAllTypes() ) {
-			if ( models.contains(mType) ) {
+			if ( ( null != models ) && models.contains(mType) ) {
 				JComponent head = factLabel.get(mType);
 				if (mType == ePrimType) {
 					head.setForeground(Color.RED);
@@ -252,19 +251,22 @@ public class DustGuiSwingPanelEntity extends JPanel
 			updatePanel();
 			return;
 		} else {
-			int ti = DustUtilsJava.indexOf(
-					DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustProcLinks.ChangeKey),
+			DustRef kr = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustProcLinks.ChangeKey);
+			int ti = DustUtilsJava.indexOf(EntityResolver.getKey(kr.get(RefKey.target)),
 					DustMetaLinks.TypeAttDefs, DustMetaLinks.TypeLinkDefs);
 			if (-1 != ti) {
-				DustRef rModels = DustUtils.accessEntity(DataCommand.getValue, eChanged, DustDataLinks.EntityModels);
-				rModels.processAll(new RefProcessor() {
-					@Override
-					public void processRef(DustRef ref) {
-						if (eChanged == ref.get(RefKey.target)) {
-							updatePanel();
-						}
-					}
-				});
+				DustRef rModels = DustUtils.accessEntity(DataCommand.getValue, eEntity, DustDataLinks.EntityModels);
+				if ( (null != rModels) && rModels.contains(eChanged)) {
+					updatePanel();
+				}
+//				rModels.processAll(new RefProcessor() {
+//					@Override
+//					public void processRef(DustRef ref) {
+//						if (eChanged == ref.get(RefKey.target)) {
+//							updatePanel();
+//						}
+//					}
+//				});
 			}
 		}
 	}

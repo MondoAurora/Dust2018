@@ -13,4 +13,9 @@ public interface DustUtilsComponents {
 		
 	}
 	
+
+	public enum CollectionAction {
+		contains, add, remove, clear
+	}
+	
 }

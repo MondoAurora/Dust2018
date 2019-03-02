@@ -62,7 +62,7 @@ public interface DustComponents {
 	}
 
 	interface EntityProcessor {
-		void processEntity(Object key, DustEntity entity);
+		void processEntity(DustEntity entity);
 	}
 
 	interface RefProcessor {

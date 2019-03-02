@@ -1,5 +1,6 @@
 package dust.utils;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -157,6 +158,31 @@ public class DustUtilsJava implements DustUtilsComponents {
 		}
 		
 		return -1;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static boolean manageCollection(CollectionAction action, Collection coll, Object obj) {
+		switch (action) {
+		case add:
+			if ( coll.contains(obj) ) {
+				return false;
+			} else {
+				return coll.add(obj);
+			}
+		case contains:
+			return coll.contains(obj);
+		case remove:
+			return coll.remove(obj);
+		case clear:
+			if (coll.isEmpty()) {
+				return false;
+			} else {
+				coll.clear();
+				return true;
+			}
+		}
+
+		throw new RuntimeException("Should not get here");
 	}
 
 }
