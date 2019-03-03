@@ -279,7 +279,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 					new EntityProcessor() {
 						@Override
 						public void processEntity(DustEntity entity) {
-							DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.streamFileName, fp);
+							DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.StreamFileName, fp);
 							DustUtils.accessEntity(DataCommand.setRef, entity, DustDataLinks.EntityServices,
 									DustCommServices.Store);
 						}
@@ -342,7 +342,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 
 		if (MontruGuiLinks.MontruDesktopActivePanel == key) {
 			activateEditorPanel(DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, true));
-		} else if (DustGenericAtts.identifiedIdLocal == key) {
+		} else if (DustGenericAtts.IdentifiedIdLocal == key) {
 			DustEntity eChg = DustUtils.getMsgVal(DustProcLinks.ChangeEntity, true);
 			DustEntity ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eChg, DustDataLinks.EntityPrimaryType));
 			if ( DustMetaTypes.Type == EntityResolver.getKey(ePt)) {

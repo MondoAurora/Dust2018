@@ -82,7 +82,7 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 		}
 
 		for (DustEntityKey impl : implServices) {
-			DustUtils.accessEntity(DataCommand.setRef, svc, DustGenericLinks.Extends, impl);
+			DustUtils.accessEntity(DataCommand.setRef, svc, DustGenericLinks.ConnectedExtends, impl);
 		}
 	}
 }

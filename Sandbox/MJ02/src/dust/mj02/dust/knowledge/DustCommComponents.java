@@ -10,7 +10,7 @@ public interface DustCommComponents extends DustComponents {
 	};
 	
 	enum DustCommAtts implements DustEntityKey {
-		idStore, idLocal
+		TermIdStore, TermIdLocal
 	}
 	
 	enum DustCommLinks implements DustEntityKey {

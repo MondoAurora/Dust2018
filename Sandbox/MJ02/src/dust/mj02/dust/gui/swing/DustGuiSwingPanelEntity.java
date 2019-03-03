@@ -32,7 +32,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 		implements DustGuiSwingComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
 	private static final long serialVersionUID = 1L;
 
-	private static final DustEntity DATT_ID = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
+	private static final DustEntity DATT_ID = EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal);
 
 	DustEntity eEntity;
 	DustGuiSwingEntityActionControl eac;
@@ -276,7 +276,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 		eEntity = ((DustRef) DustUtils.accessEntity(DataCommand.getValue, ContextRef.self,
 				DustGuiLinks.PropertyPanelEntity)).get(RefKey.target);
 		
-		DustEntity eParent = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.Owner, true);
+		DustEntity eParent = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.ConnectedOwner, true);
 		DustGuiSwingMontruDesktop desktop = DustUtils.getBinary(eParent, MontruGuiServices.MontruDesktop);
 		
 		eac = desktop.getEac();

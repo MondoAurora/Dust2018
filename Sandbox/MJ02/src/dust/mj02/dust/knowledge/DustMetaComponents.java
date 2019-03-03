@@ -22,6 +22,11 @@ public interface DustMetaComponents extends DustComponents {
 			}
 			return null;
 		}
+		
+		public String replacePostfix(String name, DustMetaTypes target) {
+			int pf = name.lastIndexOf(enumPostfix);
+			return name.substring(0, pf) + target.enumPostfix;
+		}
 	};
 	
 	enum DustMetaLinks implements DustEntityKey {

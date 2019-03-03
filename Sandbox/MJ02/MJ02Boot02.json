@@ -115,7 +115,7 @@
 		{
 			"idStore 200": "Tools:Generic:Connected.Owner",
 			"idLocal 201": "Owner 100",
-			"idLocal 202": "Owner",
+			"idLocal 202": "ConnectedOwner",
 			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
 			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSingle",
 			"Owner 100": "ToolsGenericConnected 8"
@@ -123,7 +123,7 @@
 		{
 			"idStore 200": "Tools:Generic:Connected.Requires",
 			"idLocal 201": "Requires 101",
-			"idLocal 202": "Requires",
+			"idLocal 202": "ConnectedRequires",
 			"PrimaryType 108": "KnowledgeMetaLinkDef 3",
 			"KnowledgeMetaLinkDefType" : "KnowledgeMetaLinkDefSet",
 			"Owner 100": "ToolsGenericConnected 8"
@@ -155,7 +155,7 @@
 		{
 			"idStore 200": "Knowledge:Comm:Term.idStore",
 			"idLocal 201": "idStore 200",
-			"idLocal 202": "idStore",
+			"idLocal 202": "TermIdStore",
 			"PrimaryType 108": "KnowledgeMetaAttDef 2",
 			"KnowledgeMetaAttDefType" : "KnowledgeMetaAttDefIdentifier",
 			"Owner 100": "KnowledgeCommTerm 7"
@@ -163,7 +163,7 @@
 		{
 			"idStore 200": "Knowledge:Comm:Term.idLocal",
 			"idLocal 201": "idLocal 201",
-			"idLocal 202": "idLocal",
+			"idLocal 202": "TermIdLocal",
 			"PrimaryType 108": "KnowledgeMetaAttDef 2",
 			"KnowledgeMetaAttDefType" : "KnowledgeMetaAttDefIdentifier",
 			"Owner 100": "KnowledgeCommTerm 7"
@@ -171,7 +171,7 @@
 		{
 			"idStore 200": "Tools:Generic:Identified.idLocal",
 			"idLocal 201": "idLocal 202",
-			"idLocal 202": "idLocal",
+			"idLocal 202": "IdentifiedIdLocal",
 			"PrimaryType 108": "KnowledgeMetaAttDef 2",
 			"KnowledgeMetaAttDefType" : "KnowledgeMetaAttDefIdentifier",
 			"Owner 100": "ToolsGenericIdentified 6"

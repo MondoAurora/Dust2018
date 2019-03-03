@@ -3,6 +3,7 @@ package dust.mj02.dust.java;
 import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.regex.Pattern;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
@@ -13,11 +14,13 @@ import dust.mj02.dust.knowledge.DustKernelComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 
 public class DustJavaConnector implements DustKernelComponents, DustProcComponents.DustProcActive {
-	ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	private String classPostfix = ".class";
+	private Pattern innerClass = Pattern.compile(".*\\$\\d++");
 
 	@Override
 	public void dustProcActiveInit() throws Exception {
-		String root = DustUtils.getCtxVal(ContextRef.self, DustGenericAtts.identifiedIdLocal, false);
+		String root = DustUtils.getCtxVal(ContextRef.self, DustGenericAtts.IdentifiedIdLocal, false);
 		loadPackage(root);
 	}
 
@@ -33,11 +36,10 @@ public class DustJavaConnector implements DustKernelComponents, DustProcComponen
 
 	private void initPackage(String packageName, DustEntity ePack) {
 		Package p = Package.getPackage(packageName);
-		DustUtils.accessEntity(DataCommand.setValue, ePack, DustJavaAtts.packageObj, p);
-		DustUtils.accessEntity(DataCommand.setValue, ePack, DustGenericAtts.identifiedIdLocal, packageName);
+		DustUtils.accessEntity(DataCommand.setValue, ePack, DustJavaAtts.JavaPackageObj, p);
+		DustUtils.accessEntity(DataCommand.setValue, ePack, DustGenericAtts.IdentifiedIdLocal, packageName);
 
 		String path = packageName.replace('.', '/');
-		String classPostfix = "class";
 
 		Enumeration<URL> resources;
 		try {
@@ -54,21 +56,25 @@ public class DustJavaConnector implements DustKernelComponents, DustProcComponen
 						String pathMember = packageName + "." + fm.getName();
 						
 						if (fm.isDirectory()) {
-							ldParent = DustJavaLinks.PackageParent;
+							ldParent = DustJavaLinks.JavaPackageParent;
 							eMember = loadPackage(pathMember);
 						} else if (pathMember.endsWith(classPostfix)){
-							ldParent = DustJavaLinks.ClassParentPackage;
+							ldParent = DustJavaLinks.JavaItemParentPackage;
 							String cName = pathMember.substring(0, pathMember.lastIndexOf("."));
-							eMember = DustUtils.accessEntity(DataCommand.getEntity, DustJavaTypes.JavaClass, null, cName,
+							if(innerClass.matcher(cName).matches()) {
+								continue;
+							}
+							
+							eMember = DustUtils.accessEntity(DataCommand.getEntity, DustJavaTypes.JavaItem, null, cName,
 									new EntityProcessor() {
 										@Override
 										public void processEntity(DustEntity eClass) {
 											try {
 												Class<?> c = Class.forName(cName);
 												DustUtils.accessEntity(DataCommand.setValue, eClass,
-														DustJavaAtts.classObj, c);
+														DustJavaAtts.JavaItemObj, c);
 												DustUtils.accessEntity(DataCommand.setValue, eClass, 
-														DustGenericAtts.identifiedIdLocal, cName);
+														DustGenericAtts.IdentifiedIdLocal, cName);
 
 											} catch (Exception e) {
 												Dust.wrapAndRethrowException("", e);

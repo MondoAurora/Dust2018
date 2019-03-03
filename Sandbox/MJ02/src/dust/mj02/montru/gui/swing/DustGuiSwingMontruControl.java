@@ -12,7 +12,6 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -25,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import dust.mj02.dust.Dust;
+import dust.mj02.dust.DustTempHacks;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.java.DustJavaGen;
 import dust.utils.DustUtilsJava;
@@ -66,6 +66,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 			case test04:
 				DustJavaGen.init();
 				desktop.refreshData();
+				DustTempHacks.detectMetaConnections();
 				break;
 			}
 		}

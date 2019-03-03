@@ -38,7 +38,7 @@ public class DustBinaryConnector
 		public ServiceInfo(SimpleEntity eAssign, SimpleEntity eSvc) {
 			this.eSvc = eSvc;
 
-			id = eSvc.get(KEYS.get(DustGenericAtts.identifiedIdLocal));
+			id = eSvc.get(KEYS.get(DustGenericAtts.IdentifiedIdLocal));
 
 			if (null != eAssign) {
 				String cn = eAssign.get(KEYS.get(DustProcAtts.BinaryObjectName));
@@ -53,7 +53,7 @@ public class DustBinaryConnector
 			allServices = new HashSet<>();
 			allServices.add(this);
 
-			SimpleRef ext = eSvc.get(KEYS.get(DustGenericLinks.Extends));
+			SimpleRef ext = eSvc.get(KEYS.get(DustGenericLinks.ConnectedExtends));
 			if (null != ext) {
 				ext.processAll(new RefProcessor() {
 					@Override
@@ -111,8 +111,8 @@ public class DustBinaryConnector
 	DustUtilsFactory<SimpleEntity, MethodInfo> factMethods = new DustUtilsFactory<SimpleEntity, MethodInfo>(false) {
 		@Override
 		protected MethodInfo create(SimpleEntity key, Object... hints) {
-			String cmdId = key.get(KEYS.get(DustGenericAtts.identifiedIdLocal));
-			SimpleEntity svc = ((SimpleRef) key.get(KEYS.get(DustGenericLinks.Owner))).target;
+			String cmdId = key.get(KEYS.get(DustGenericAtts.IdentifiedIdLocal));
+			SimpleEntity svc = ((SimpleRef) key.get(KEYS.get(DustGenericLinks.ConnectedOwner))).target;
 
 			ServiceInfo si = factServices.get(svc);
 

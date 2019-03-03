@@ -63,7 +63,7 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 					} else if (DustMetaLinks.LinkDefType == knownId) {
 						sVoc.keyLinkType = li;
 						sVoc.eLinkType = e;
-					} else if (DustGenericLinks.Owner == knownId) {
+					} else if (DustGenericLinks.ConnectedOwner == knownId) {
 						keyOwner = eData.getKey();
 						eOwner = e;
 					}

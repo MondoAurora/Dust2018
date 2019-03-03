@@ -49,7 +49,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				}
 
 				if (null == orig) {
-					SimpleEntity keyModel = ((SimpleEntity)key).getFirstRef(DustMetaLinks.LinkDefParent, DustMetaLinks.AttDefParent, DustGenericLinks.Owner);
+					SimpleEntity keyModel = ((SimpleEntity)key).getFirstRef(DustMetaLinks.LinkDefParent, DustMetaLinks.AttDefParent, DustGenericLinks.ConnectedOwner);
 					if ( null != keyModel ) {
 						ctxAccessEntity(DataCommand.setRef, this, EntityResolver.getEntity(DustDataLinks.EntityModels),
 								keyModel, null);						
@@ -90,11 +90,11 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 		@Override
 		public String toString() {
-			String id = get(EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal));
+			String id = get(EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal));
 
 			String type = (null == ePT) ? "?"
 					: (ePT == this) ? id
-							: ((SimpleEntity) ePT).get(EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal));
+							: ((SimpleEntity) ePT).get(EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal));
 			return type + ": " + id;
 		}
 
@@ -473,14 +473,14 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 		if (ce.justCreated) {
 			if ( null != gid ) {
-				DustUtils.accessEntity(DataCommand.setValue, ce, DustCommAtts.idStore, gid);
+				DustUtils.accessEntity(DataCommand.setValue, ce, DustCommAtts.TermIdStore, gid);
 			}
 			if (null != type) {
 				ctxAccessEntity(DataCommand.setRef, ce, EntityResolver.getEntity(DustDataLinks.EntityPrimaryType), type,
 						null);
 			}
 			if (null != owner) {
-				ctxAccessEntity(DataCommand.setRef, ce, EntityResolver.getEntity(DustGenericLinks.Owner), owner, null);
+				ctxAccessEntity(DataCommand.setRef, ce, EntityResolver.getEntity(DustGenericLinks.ConnectedOwner), owner, null);
 			}
 			
 			if (null != initializer) {
@@ -639,7 +639,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			refs.add(sr);
 			
 			if ( EntityResolver.getEntity(DustDataLinks.EntityModels) == key ) {
-				SimpleRef r = eTarget.get(DustGenericLinks.Requires);
+				SimpleRef r = eTarget.get(DustGenericLinks.ConnectedRequires);
 				if ( null != r ) {
 					r.processAll(new RefProcessor() {
 						@Override
@@ -726,8 +726,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 	@Override
 	public void ctxProcessEntities(EntityProcessor proc) {
-		for (DustEntity e : allEntities ) {
-			proc.processEntity(e);
+		for (Object e : allEntities.toArray() ) {
+			proc.processEntity((DustEntity) e);
 		}
 	}
 

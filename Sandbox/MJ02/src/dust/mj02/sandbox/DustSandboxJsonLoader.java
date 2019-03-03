@@ -13,7 +13,7 @@ import dust.mj02.dust.knowledge.DustCommJsonLoader;
 
 public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommComponents.DustCommStore {
 	
-	private static DustEntity DA_STREAM_FILENAME = EntityResolver.getEntity(DustGenericAtts.streamFileName);
+	private static DustEntity DA_STREAM_FILENAME = EntityResolver.getEntity(DustGenericAtts.StreamFileName);
 	private static boolean inited = false;
 	SimpleDateFormat sdf = new SimpleDateFormat("_yyyyMMdd_HHmmss");
 	
@@ -44,7 +44,7 @@ public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommCom
 					}
 				}
 			}
-		}, null, EntityResolver.getEntity(DustGenericLinks.Owner), null);
+		}, null, EntityResolver.getEntity(DustGenericLinks.ConnectedOwner), null);
 		
 	}
 	
@@ -71,13 +71,13 @@ public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommCom
 	
 	public static void init() {
 		if ( !inited ) {
-			DustEntity daGenId = EntityResolver.getEntity(DustGenericAtts.identifiedIdLocal);
+			DustEntity daGenId = EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal);
 			
 			DustEntity daBinObj = EntityResolver.getEntity(DustProcAtts.BinaryObjectName);
 			DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
 			DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.ContextBinaryAssignments);
 
-			DustEntity dlGenOwner = EntityResolver.getEntity(DustGenericLinks.Owner);
+			DustEntity dlGenOwner = EntityResolver.getEntity(DustGenericLinks.ConnectedOwner);
 			DustEntity dsCommStore = EntityResolver.getEntity(DustCommServices.Store);
 			DustEntity dcStoreLoad = EntityResolver.getEntity(DustCommMessages.StoreLoad);
 			DustEntity dcStoreSave = EntityResolver.getEntity(DustCommMessages.StoreSave);

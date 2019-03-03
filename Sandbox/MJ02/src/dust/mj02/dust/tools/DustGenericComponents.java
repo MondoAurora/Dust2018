@@ -9,12 +9,12 @@ public interface DustGenericComponents extends DustComponents {
 	};
 	
 	enum DustGenericAtts implements DustEntityKey {
-		identifiedIdLocal, streamFileName
+		IdentifiedIdLocal, StreamFileName
 
 	};
 	
 	enum DustGenericLinks implements DustEntityKey {
-		Owner, Requires, Extends, Tags
+		ConnectedOwner, ConnectedRequires, ConnectedExtends, TaggedTags
 	};
 	
 }

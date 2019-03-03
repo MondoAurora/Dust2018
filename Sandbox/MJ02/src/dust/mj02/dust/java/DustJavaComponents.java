@@ -9,16 +9,16 @@ public interface DustJavaComponents extends DustKernelComponents {
 	};
 	
 	enum DustJavaTypes implements DustEntityKey {
-		JavaConnector, JavaPackage, JavaClass, JavaMethod, JavaField
+		JavaConnector, JavaPackage, JavaItem, JavaMethod, JavaField
 	};
 	
 	enum DustJavaAtts implements DustEntityKey {
-		packageObj, classObj
+		JavaPackageObj, JavaItemObj
 	}
 	
 	enum DustJavaLinks implements DustEntityKey {
-		ClassParentPackage, ClassParentClass, 
-		PackageParent, PackageClasses, PackageMembers
+		JavaItemParentPackage, 
+		JavaPackageParent, JavaPackageItems, JavaPackageMembers
 	}
 
 	enum DustJavaServices implements DustEntityKey {

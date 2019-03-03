@@ -38,8 +38,8 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 
 		EntityResolver.register("Knowledge:Data:Entity", DustDataTypes.Entity);
 
-		EntityResolver.register("Knowledge:Comm:Term.idStore", DustCommAtts.idStore);
-		EntityResolver.register("Knowledge:Comm:Term.idLocal", DustCommAtts.idLocal);
+		EntityResolver.register("Knowledge:Comm:Term.idStore", DustCommAtts.TermIdStore);
+		EntityResolver.register("Knowledge:Comm:Term.idLocal", DustCommAtts.TermIdLocal);
 		EntityResolver.register("Knowledge:Comm:Term", DustCommTypes.Term);
 
 		DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
@@ -47,8 +47,8 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustEntity dlLinkDefType = EntityResolver.getEntity(DustMetaLinks.LinkDefType);
 		DustEntity dlLinkDefTypeSet = EntityResolver.getEntity(DustMetaLinkDefTypeValues.LinkDefSet);
 
-		DustEntity dlGenExtends = EntityResolver.getEntity(DustGenericLinks.Extends);
-		DustEntity dlGenRequires = EntityResolver.getEntity(DustGenericLinks.Requires);
+		DustEntity dlGenExtends = EntityResolver.getEntity(DustGenericLinks.ConnectedExtends);
+		DustEntity dlGenRequires = EntityResolver.getEntity(DustGenericLinks.ConnectedRequires);
 
 		Dust.accessEntity(DataCommand.setRef, dlCtxBin, dlLinkDefType, dlLinkDefTypeSet, null);
 		Dust.accessEntity(DataCommand.setRef, dlBinImplSvc, dlLinkDefType, dlLinkDefTypeSet, null);
@@ -57,42 +57,42 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		Dust.accessEntity(DataCommand.setRef, dlGenExtends, dlLinkDefType, dlLinkDefTypeSet, null);
 		Dust.accessEntity(DataCommand.setRef, dlGenRequires, dlLinkDefType, dlLinkDefTypeSet, null);
 		
-		DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Listener, DustGenericAtts.identifiedIdLocal, "DustProcListener");
-		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ListenerProcessChange, DustGenericAtts.identifiedIdLocal, "ProcessChange");
-		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ListenerProcessChange, DustGenericLinks.Owner, DustProcServices.Listener);
+		DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Listener, DustGenericAtts.IdentifiedIdLocal, "DustProcListener");
+		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ListenerProcessChange, DustGenericAtts.IdentifiedIdLocal, "ProcessChange");
+		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ListenerProcessChange, DustGenericLinks.ConnectedOwner, DustProcServices.Listener);
 
 		
-		DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Active, DustGenericAtts.identifiedIdLocal, "DustProcActive");
-		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ActiveInit, DustGenericAtts.identifiedIdLocal, "Init");
-		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ActiveInit, DustGenericLinks.Owner, DustProcServices.Active);
+		DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Active, DustGenericAtts.IdentifiedIdLocal, "DustProcActive");
+		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ActiveInit, DustGenericAtts.IdentifiedIdLocal, "Init");
+		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ActiveInit, DustGenericLinks.ConnectedOwner, DustProcServices.Active);
 
-		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ActiveRelease, DustGenericAtts.identifiedIdLocal, "Release");
-		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ActiveRelease, DustGenericLinks.Owner, DustProcServices.Active);
+		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ActiveRelease, DustGenericAtts.IdentifiedIdLocal, "Release");
+		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ActiveRelease, DustGenericLinks.ConnectedOwner, DustProcServices.Active);
 
 		
-		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.LinkDefReverse, DustGenericAtts.identifiedIdLocal, "Reverse");
+		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.LinkDefReverse, DustGenericAtts.IdentifiedIdLocal, "Reverse");
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefReverse, DustDataLinks.EntityPrimaryType, DustMetaTypes.LinkDef);
-		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefReverse, DustGenericLinks.Owner, DustMetaTypes.LinkDef);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefReverse, DustGenericLinks.ConnectedOwner, DustMetaTypes.LinkDef);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefReverse, DustMetaLinks.LinkDefReverse, DustMetaLinks.LinkDefReverse);
 
 
-		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.AttDefParent, DustGenericAtts.identifiedIdLocal, "ParentType");
+		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.AttDefParent, DustGenericAtts.IdentifiedIdLocal, "ParentType");
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefParent, DustDataLinks.EntityPrimaryType, DustMetaTypes.LinkDef);
-		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefParent, DustGenericLinks.Owner, DustMetaTypes.AttDef);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefParent, DustGenericLinks.ConnectedOwner, DustMetaTypes.AttDef);
 		
-		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.LinkDefParent, DustGenericAtts.identifiedIdLocal, "ParentType");
+		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.LinkDefParent, DustGenericAtts.IdentifiedIdLocal, "ParentType");
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefParent, DustDataLinks.EntityPrimaryType, DustMetaTypes.LinkDef);
-		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefParent, DustGenericLinks.Owner, DustMetaTypes.LinkDef);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefParent, DustGenericLinks.ConnectedOwner, DustMetaTypes.LinkDef);
 		
-		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.TypeAttDefs, DustGenericAtts.identifiedIdLocal, "Attributes");
+		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.TypeAttDefs, DustGenericAtts.IdentifiedIdLocal, "Attributes");
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeAttDefs, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeAttDefs, DustDataLinks.EntityPrimaryType, DustMetaTypes.LinkDef);
-		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeAttDefs, DustGenericLinks.Owner, DustMetaTypes.Type);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeAttDefs, DustGenericLinks.ConnectedOwner, DustMetaTypes.Type);
 		
-		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.TypeLinkDefs, DustGenericAtts.identifiedIdLocal, "Links");
+		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.TypeLinkDefs, DustGenericAtts.IdentifiedIdLocal, "Links");
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustDataLinks.EntityPrimaryType, DustMetaTypes.LinkDef);
-		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustGenericLinks.Owner, DustMetaTypes.Type);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustGenericLinks.ConnectedOwner, DustMetaTypes.Type);
 		
 		
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefParent, DustMetaLinks.LinkDefReverse, DustMetaLinks.TypeAttDefs);
