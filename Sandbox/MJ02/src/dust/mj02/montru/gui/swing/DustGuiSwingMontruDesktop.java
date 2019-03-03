@@ -322,6 +322,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 //		if ( !newTypes.isEmpty() ) {
 			control.tmTypes.update();
 //		}
+			links.refreshLines();
 	}
 
 	public void activateEditorPanel(DustEntity e) {

@@ -26,6 +26,7 @@ import javax.swing.event.ListSelectionListener;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.java.DustJavaGen;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
 
@@ -63,7 +64,8 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 				}
 				break;
 			case test04:
-				JOptionPane.showMessageDialog(DustGuiSwingMontruControl.this, "hello");
+				DustJavaGen.init();
+				desktop.refreshData();
 				break;
 			}
 		}
