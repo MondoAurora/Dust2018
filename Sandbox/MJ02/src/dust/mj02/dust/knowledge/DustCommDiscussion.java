@@ -125,9 +125,9 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 
 					Object value = eAtts.getValue();
 
-					if (info instanceof DustMetaValueAttDefType) {
+					if (info instanceof DustMetaAttDefTypeValues) {
 						if (null != value) {
-							switch ((DustMetaValueAttDefType) info) {
+							switch ((DustMetaAttDefTypeValues) info) {
 							case AttDefBool:
 								if (!(value instanceof Boolean)) {
 									throw new DustException("Invalid type");
@@ -143,8 +143,8 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 
 							Dust.accessEntity(DataCommand.setValue, entity, eContent, value, null);
 						}
-					} else if (info instanceof DustMetaValueLinkDefType) {
-						switch ((DustMetaValueLinkDefType) info) {
+					} else if (info instanceof DustMetaLinkDefTypeValues) {
+						switch ((DustMetaLinkDefTypeValues) info) {
 						case LinkDefSingle:
 							value = resolveEntity(sd, value);
 							Dust.accessEntity(DataCommand.setRef, entity, eContent, value, null);
@@ -165,7 +165,7 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 						}
 					}
 
-					DustUtilsDev.dump("  set", (info instanceof DustMetaValueAttDefType) ? "att" : "ref", ck, "to", value);
+					DustUtilsDev.dump("  set", (info instanceof DustMetaAttDefTypeValues) ? "att" : "ref", ck, "to", value);
 				}
 			}
 		}

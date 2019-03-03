@@ -5,6 +5,11 @@ import dust.mj02.dust.knowledge.DustKernelComponents;
 
 public interface DustGuiComponents extends DustComponents, DustKernelComponents {
 	
+	enum DustGuiUnits implements DustEntityKey {
+		DustGui, DustGuiSwing
+	};
+
+	
 	enum DustGuiLinks implements DustEntityKey {
 		PropertyPanelEntity,// MontruDesktopActivePanel
 	};

@@ -12,15 +12,15 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 			return;
 		}
 
-		EntityResolver.register("Knowledge:Meta:AttDef:Bool", DustMetaValueAttDefType.AttDefBool);
-		EntityResolver.register("Knowledge:Meta:AttDef:Identifier", DustMetaValueAttDefType.AttDefIdentifier);
-		EntityResolver.register("Knowledge:Meta:AttDef:Integer", DustMetaValueAttDefType.AttDefInteger);
-		EntityResolver.register("Knowledge:Meta:AttDef:Float", DustMetaValueAttDefType.AttDefFloat);
+		EntityResolver.register("Knowledge:Meta:AttDef:Bool", DustMetaAttDefTypeValues.AttDefBool);
+		EntityResolver.register("Knowledge:Meta:AttDef:Identifier", DustMetaAttDefTypeValues.AttDefIdentifier);
+		EntityResolver.register("Knowledge:Meta:AttDef:Integer", DustMetaAttDefTypeValues.AttDefInteger);
+		EntityResolver.register("Knowledge:Meta:AttDef:Float", DustMetaAttDefTypeValues.AttDefFloat);
 
-		EntityResolver.register("Knowledge:Meta:LinkDef:Single", DustMetaValueLinkDefType.LinkDefSingle);
-		EntityResolver.register("Knowledge:Meta:LinkDef:Set", DustMetaValueLinkDefType.LinkDefSet);
-		EntityResolver.register("Knowledge:Meta:LinkDef:Array", DustMetaValueLinkDefType.LinkDefArray);
-		EntityResolver.register("Knowledge:Meta:LinkDef:Map", DustMetaValueLinkDefType.LinkDefMap);
+		EntityResolver.register("Knowledge:Meta:LinkDef:Single", DustMetaLinkDefTypeValues.LinkDefSingle);
+		EntityResolver.register("Knowledge:Meta:LinkDef:Set", DustMetaLinkDefTypeValues.LinkDefSet);
+		EntityResolver.register("Knowledge:Meta:LinkDef:Array", DustMetaLinkDefTypeValues.LinkDefArray);
+		EntityResolver.register("Knowledge:Meta:LinkDef:Map", DustMetaLinkDefTypeValues.LinkDefMap);
 
 		EntityResolver.register("Knowledge:Meta:AttDef.Type", DustMetaLinks.AttDefType);
 		EntityResolver.register("Knowledge:Meta:LinkDef.Type", DustMetaLinks.LinkDefType);
@@ -45,7 +45,7 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
 		DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.ContextBinaryAssignments);
 		DustEntity dlLinkDefType = EntityResolver.getEntity(DustMetaLinks.LinkDefType);
-		DustEntity dlLinkDefTypeSet = EntityResolver.getEntity(DustMetaValueLinkDefType.LinkDefSet);
+		DustEntity dlLinkDefTypeSet = EntityResolver.getEntity(DustMetaLinkDefTypeValues.LinkDefSet);
 
 		DustEntity dlGenExtends = EntityResolver.getEntity(DustGenericLinks.Extends);
 		DustEntity dlGenRequires = EntityResolver.getEntity(DustGenericLinks.Requires);
@@ -85,12 +85,12 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefParent, DustGenericLinks.Owner, DustMetaTypes.LinkDef);
 		
 		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.TypeAttDefs, DustGenericAtts.identifiedIdLocal, "Attributes");
-		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeAttDefs, DustMetaLinks.LinkDefType, DustMetaValueLinkDefType.LinkDefSet);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeAttDefs, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeAttDefs, DustDataLinks.EntityPrimaryType, DustMetaTypes.LinkDef);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeAttDefs, DustGenericLinks.Owner, DustMetaTypes.Type);
 		
 		DustUtils.accessEntity(DataCommand.setValue, DustMetaLinks.TypeLinkDefs, DustGenericAtts.identifiedIdLocal, "Links");
-		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustMetaLinks.LinkDefType, DustMetaValueLinkDefType.LinkDefSet);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustDataLinks.EntityPrimaryType, DustMetaTypes.LinkDef);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustGenericLinks.Owner, DustMetaTypes.Type);
 		

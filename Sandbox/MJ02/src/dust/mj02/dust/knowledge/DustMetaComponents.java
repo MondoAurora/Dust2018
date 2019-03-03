@@ -6,7 +6,7 @@ import dust.utils.DustUtilsJava;
 public interface DustMetaComponents extends DustComponents {
 	
 	enum DustMetaTypes implements DustEntityKey {
-		Unit(null), Type("Types"), AttDef("Atts"), LinkDef("Links"), Service("Services"), Command("Messages");
+		Unit("Units"), Type("Types"), AttDef("Atts"), LinkDef("Links"), Service("Services"), Command("Messages"), Constant("Values");
 		
 		private final String enumPostfix;
 
@@ -30,18 +30,18 @@ public interface DustMetaComponents extends DustComponents {
 		TypeAttDefs, TypeLinkDefs, TypeLinkedServices
 	};
 	
-	enum DustMetaValueAttDefType implements DustEntityKey {
+	enum DustMetaAttDefTypeValues implements DustEntityKey {
 		AttDefBool, AttDefIdentifier, AttDefFloat, AttDefInteger
 	};
 	
-	enum DustMetaValueLinkDefType implements DustEntityKey {
+	enum DustMetaLinkDefTypeValues implements DustEntityKey {
 		LinkDefSet("(", ")"), LinkDefMap("{", "}"), LinkDefArray("[", "]"), LinkDefSingle("", "");
 		
 		final String sepStart;
 		final String sepEnd;
 		
 		
-		private DustMetaValueLinkDefType(String sepStart, String sepEnd) {
+		private DustMetaLinkDefTypeValues(String sepStart, String sepEnd) {
 			this.sepStart = sepStart;
 			this.sepEnd = sepEnd;
 		}

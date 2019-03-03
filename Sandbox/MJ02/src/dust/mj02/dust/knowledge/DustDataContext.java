@@ -115,7 +115,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 		SimpleRef reverse;
 
-		DustMetaValueLinkDefType lt;
+		DustMetaLinkDefTypeValues lt;
 		Object container;
 
 		public SimpleRef(SimpleEntity linkDef, SimpleEntity source, SimpleEntity target, Object key,
@@ -166,7 +166,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			} else {
 				refLDT = null;
 			}
-			lt = (null == refLDT) ? DustMetaValueLinkDefType.LinkDefSingle : EntityResolver.getKey(refLDT.target);
+			lt = (null == refLDT) ? DustMetaLinkDefTypeValues.LinkDefSingle : EntityResolver.getKey(refLDT.target);
 
 			if ((null == orig) || (null == orig.container)) {
 				switch (lt) {
@@ -185,7 +185,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				}
 
 				if (null != orig) {
-					if (DustMetaValueLinkDefType.LinkDefMap == lt) {
+					if (DustMetaLinkDefTypeValues.LinkDefMap == lt) {
 						((HashMap<Object, SimpleRef>) container).put(orig.key, orig);
 					} else {
 						if (orig.target == target) {
@@ -514,7 +514,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			if ( val instanceof SimpleRef ) {
 				SimpleRef rr = (SimpleRef) val;
 				
-				if ( (null != rr.reverse ) && (rr.reverse.lt == DustMetaValueLinkDefType.LinkDefSingle)) {
+				if ( (null != rr.reverse ) && (rr.reverse.lt == DustMetaLinkDefTypeValues.LinkDefSingle)) {
 					DustUtilsDev.dump("In clone, skipping", key, "because the reverse link is single.");
 					continue;
 				}
@@ -612,7 +612,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		case setRef:
 			SimpleEntity eTarget = optResolveCtxEntity(val);
 
-			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSet == actRef.lt)) {
+			if ((null != actRef) && (DustMetaLinkDefTypeValues.LinkDefSet == actRef.lt)) {
 				for (SimpleRef er : ((Set<SimpleRef>) actRef.container)) {
 					if (er.target == eTarget) {
 						return er;
@@ -621,7 +621,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			}
 			sr = new SimpleRef((SimpleEntity) key, se, (SimpleEntity) eTarget, collId, actRef);
 
-			if ((null != actRef) && (DustMetaValueLinkDefType.LinkDefSingle == sr.lt)) {
+			if ((null != actRef) && (DustMetaLinkDefTypeValues.LinkDefSingle == sr.lt)) {
 				if (DustUtilsJava.isEqual(eTarget, actRef.target)) {
 					return actRef;
 				}
