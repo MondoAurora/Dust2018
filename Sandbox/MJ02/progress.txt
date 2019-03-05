@@ -1,12 +1,11 @@
 ** TASKS **
+drag model off the entity panel - create entity with that primary type
+
 clean up drawing panels, remove factories?
 
-drag panels on new MontruDesktop
 separate Gui control logic from swing implementation
-integrate link drawing into MontruPanel (for ordering), perhaps plain JPanel, no layers?
 Factory link type?
 
-duplicate
 save area size and open entity panel location, opened sources
 
 resolver entity management (or: correct ID resolution?)

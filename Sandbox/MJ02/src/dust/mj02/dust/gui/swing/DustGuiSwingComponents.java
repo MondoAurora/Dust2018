@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.table.AbstractTableModel;
@@ -18,28 +19,38 @@ import dust.utils.DustUtilsSwingComponents;
 
 public interface DustGuiSwingComponents extends DustGuiComponents, DustUtilsSwingComponents {
 	Dimension ANCHOR_SIZE = new Dimension(16, 16);
-	
+
 	Color COL_ENTITY_HEAD_NORM = Color.LIGHT_GRAY;
 	Color COL_ENTITY_HEAD_SEL = Color.YELLOW;
-	
+
 	int ENTITY_PANEL_BORDER = 10;
-	
+
 	int HR = 6;
+
+	enum AnchorType {
+		EntityHead, PrimaryModel, Model, Link;
+
+		final ImageIcon icon;
+
+		private AnchorType() {
+			icon = new ImageIcon("images/" + name() + ".png");
+		}
+	}
 
 	enum AnchorLocation {
 		Left(BorderLayout.WEST), Right(BorderLayout.EAST);
-		
+
 		final String swingConst;
 
 		private AnchorLocation(String swingConst) {
 			this.swingConst = swingConst;
 		}
-		
+
 		public String getSwingConst() {
 			return swingConst;
 		}
-	}	
-	
+	}
+
 	class EntityRendererDefault extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 1L;
 
@@ -76,7 +87,7 @@ public interface DustGuiSwingComponents extends DustGuiComponents, DustUtilsSwin
 			fireContentsChanged(this, 0, getSize());
 		}
 	}
-	
+
 	abstract class EntityTableModelBase extends AbstractTableModel {
 		private static final long serialVersionUID = 1L;
 
@@ -101,6 +112,6 @@ public interface DustGuiSwingComponents extends DustGuiComponents, DustUtilsSwin
 		public int getRowCount() {
 			return data.size();
 		}
-	}	
+	}
 
 }

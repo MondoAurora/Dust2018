@@ -165,37 +165,62 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		@Override
 		protected void dropped(EnumSet<CtrlStatus> ctrlStatus, GuiDataWrapper<JComponent> gdwSource,
 				GuiDataWrapper<JComponent> gdwTarget) {
+			DustEntity ePt;
+			
 			if (null == gdwTarget) {
+				DustEntity eTypeType = EntityResolver.getEntity(DustMetaTypes.Type);
 				DustEntity eDropped = gdwSource.getEntity();
 				eCreated = null;
 				
 				if (ctrlStatus.contains(CtrlStatus.ctrl)) {
 					eCreated = DustUtils.accessEntity(DataCommand.cloneEntity, eDropped);
 				} else {
-					DustUtils.accessEntity(DataCommand.processRef, eDropped, DustDataLinks.EntityPrimaryType, new RefProcessor() {
-						@Override
-						public void processRef(DustRef ref) {
-							if ( EntityResolver.getEntity(DustMetaTypes.Type) == ref.get(RefKey.target)) {
-								eCreated = DustUtils.accessEntity(DataCommand.getEntity, eDropped);
-							} else {
-								JOptionPane.showMessageDialog(DustGuiSwingMontruDesktop.this, "Create works for Type entities only, keep Ctrl pressed to clone");
-							}
+					ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eDropped, DustDataLinks.EntityPrimaryType));
+					
+					if ( eTypeType == ePt) {
+						eCreated = DustUtils.accessEntity(DataCommand.getEntity, eDropped);
+					} else {
+						DustEntity eData = gdwSource.getData();
+						ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eData, DustDataLinks.EntityPrimaryType));
+						
+						if ( eTypeType == ePt) {
+							eCreated = DustUtils.accessEntity(DataCommand.getEntity, eData);
+							DustUtils.accessEntity(DataCommand.processRef, eData, DustMetaLinks.TypeAttDefs, new RefProcessor() {
+								@Override
+								public void processRef(DustRef ref) {
+									DustEntity eAtt = ref.get(RefKey.target);
+									Object val = DustUtils.accessEntity(DataCommand.getValue, eDropped, eAtt);
+									DustUtils.accessEntity(DataCommand.setValue, eCreated, eAtt, val);
+								}
+							});
+							DustUtils.accessEntity(DataCommand.processRef, eData, DustMetaLinks.TypeLinkDefs, new RefProcessor() {
+								@Override
+								public void processRef(DustRef ref) {
+									DustEntity eLink = ref.get(RefKey.target);
+									DustUtils.accessEntity(DataCommand.processRef, eDropped, eLink, new RefProcessor() {
+										@Override
+										public void processRef(DustRef ref1) {
+											DustUtils.accessEntity(DataCommand.setRef, eCreated, eLink, ref1.get(RefKey.target));
+										}
+									});
+								}
+							});
+							DustUtils.accessEntity(DataCommand.removeRef, eDropped, DustDataLinks.EntityModels, eData);
+						} else {
+							JOptionPane.showMessageDialog(DustGuiSwingMontruDesktop.this, "Create works for Type entities only, keep Ctrl pressed to clone");
 						}
-					});
+					}
 				}
 				
 				if ( null != eCreated ) {
 					activateEditorPanel(eCreated);
 					
-					DustEntity ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eCreated, DustDataLinks.EntityPrimaryType));
-					if ( DustMetaTypes.Type == EntityResolver.getKey(ePt)) {
+					ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eCreated, DustDataLinks.EntityPrimaryType));
+					if ( eTypeType == ePt ) {
 						if ( eac.types(CollectionAction.add, eCreated)) {
 							control.tmTypes.update();
 						}
 					}
-
-//				} else {
-//					JOptionPane.showMessageDialog(DustGuiSwingMontruDesktop.this, "Oops? " + (ctrlStatus.contains(CtrlStatus.ctrl) ? "clone" : "new"));
 				}
 			} else {
 				links.refreshLines();

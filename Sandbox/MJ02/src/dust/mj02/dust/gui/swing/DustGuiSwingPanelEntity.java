@@ -101,7 +101,6 @@ public class DustGuiSwingPanelEntity extends JPanel
 			JPanel pnl = new JPanel(new BorderLayout(HR, 0));
 
 			if (null == key) {
-//				comp.setBackground(Color.LIGHT_GRAY);
 				((JLabel) comp).setHorizontalAlignment(JLabel.CENTER);
 				comp.setOpaque(true);
 				lblHead = comp;
@@ -113,7 +112,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 				pnl.add(comp, BorderLayout.WEST);
 				pnl.add(factData.get(key, false), BorderLayout.CENTER);
 			}
-			return DustGuiSwingWidgetAnchor.anchorPanel(pnl, eac, eEntity, key);
+			return DustGuiSwingWidgetAnchor.anchorPanel(pnl, eac, eEntity, key, AnchorType.Link);
 		}
 	};
 	
@@ -186,16 +185,19 @@ public class DustGuiSwingPanelEntity extends JPanel
 		
 		for ( DustEntity mType : eac.getAllTypes() ) {
 			if ( ( null != models ) && models.contains(mType) ) {
+				JPanel pnl = new JPanel(new BorderLayout(HR, 0));
 				JComponent head = factLabel.get(mType);
-				if (mType == ePrimType) {
+				pnl.add(head, BorderLayout.CENTER);
+				boolean pm = (mType == ePrimType);
+
+				if (pm) {
 					head.setForeground(Color.RED);
 				} else {
-					JPanel pnl = new JPanel(new BorderLayout(HR, 0));
 					pnl.add(factModelSelector.get(mType), BorderLayout.EAST);
-					pnl.add(head, BorderLayout.CENTER);
-					head = pnl;
 				}
-				add(head);
+				pnl.add(new DustGuiSwingWidgetAnchor(eac, eEntity, mType, !pm, false, pm ? AnchorType.PrimaryModel : AnchorType.Model), BorderLayout.WEST);
+				pnl.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+				add(pnl);
 
 				DustUtils.accessEntity(DataCommand.processRef, mType, DustMetaLinks.TypeAttDefs, new RefProcessor() {
 					@Override

@@ -18,17 +18,17 @@ public class DustGuiSwingWidgetAnchor extends JLabel implements DustGuiSwingComp
 	public static class AnchoredPanel extends JPanel {
 		EnumMap<AnchorLocation, DustGuiSwingWidgetAnchor> anchors = new EnumMap<>(AnchorLocation.class);
 
-		public AnchoredPanel(JComponent comp, DustGuiSwingEntityActionControl conn, DustEntity eEntity, DustEntity eData) {
+		public AnchoredPanel(JComponent comp, DustGuiSwingEntityActionControl conn, DustEntity eEntity, DustEntity eData, AnchorType at) {
 			super(new BorderLayout(HR, HR));
 
 			add(comp, BorderLayout.CENTER);
 			
-			addAnchor(AnchorLocation.Left, conn, eEntity, eData);
-			addAnchor(AnchorLocation.Right, conn, eEntity, eData);
+			addAnchor(AnchorLocation.Left, conn, eEntity, eData, at);
+			addAnchor(AnchorLocation.Right, conn, eEntity, eData, at);
 		}
 
-		private void addAnchor(AnchorLocation al, DustGuiSwingEntityActionControl conn, DustEntity eEntity, DustEntity eData) {
-			DustGuiSwingWidgetAnchor a = new DustGuiSwingWidgetAnchor(conn, eEntity, eData);
+		private void addAnchor(AnchorLocation al, DustGuiSwingEntityActionControl conn, DustEntity eEntity, DustEntity eData, AnchorType at) {
+			DustGuiSwingWidgetAnchor a = new DustGuiSwingWidgetAnchor(conn, eEntity, eData, at);
 			add(a, al.getSwingConst());
 			anchors.put(al, a);
 		}
@@ -48,8 +48,8 @@ public class DustGuiSwingWidgetAnchor extends JLabel implements DustGuiSwingComp
 	final DustEntity eEntity;
 	final DustEntity eData;
 
-	private DustGuiSwingWidgetAnchor(DustGuiSwingEntityActionControl mac, DustEntity eEntity, DustEntity eData) {
-		super(new ImageIcon("images/btn_blue-t.png"));
+	private DustGuiSwingWidgetAnchor(DustGuiSwingEntityActionControl mac, DustEntity eEntity, DustEntity eData, AnchorType at) {
+		super(at.icon);
 		
 		mac.setDragTarget(this);
 
@@ -62,8 +62,22 @@ public class DustGuiSwingWidgetAnchor extends JLabel implements DustGuiSwingComp
 		this.eData = eData;
 	}
 
-	public static AnchoredPanel anchorPanel(JComponent comp, DustGuiSwingEntityActionControl conn, DustEntity eEntity, DustEntity eData) {
-		return new AnchoredPanel(comp, conn, eEntity, eData);
+	public DustGuiSwingWidgetAnchor(DustGuiSwingEntityActionControl mac, DustEntity eEntity, DustEntity eData, boolean source, boolean target, AnchorType at) {
+		super(at.icon);
+		
+		if (source) {
+			mac.setDragSource(this);			
+		}
+		if ( target ) {
+			mac.setDragTarget(this);
+		}
+		
+		this.eEntity = eEntity;
+		this.eData = eData;
+	}
+
+	public static AnchoredPanel anchorPanel(JComponent comp, DustGuiSwingEntityActionControl conn, DustEntity eEntity, DustEntity eData, AnchorType at) {
+		return new AnchoredPanel(comp, conn, eEntity, eData, at);
 	}
 
 	@Override
