@@ -99,6 +99,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 		protected DustGuiSwingWidgetAnchor.AnchoredPanel create(DustEntity key, Object... hints) {
 			JComponent comp = factLabel.get(key);
 			JPanel pnl = new JPanel(new BorderLayout(HR, 0));
+			AnchorType at;
 
 			if (null == key) {
 				((JLabel) comp).setHorizontalAlignment(JLabel.CENTER);
@@ -108,11 +109,16 @@ public class DustGuiSwingPanelEntity extends JPanel
 				pnl.add(cbSelEntity, BorderLayout.WEST);
 				pnl.add(comp, BorderLayout.CENTER);
 				pnl.add(btDelModels, BorderLayout.EAST);
+				
+				DustEntity ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eEntity, DustDataLinks.EntityPrimaryType));
+				
+				at = EntityResolver.getEntity(DustDataTypes.Message) == ePt ? AnchorType.MessageHead : AnchorType.EntityHead;
 			} else {
 				pnl.add(comp, BorderLayout.WEST);
 				pnl.add(factData.get(key, false), BorderLayout.CENTER);
+				at = AnchorType.Link;
 			}
-			return DustGuiSwingWidgetAnchor.anchorPanel(pnl, eac, eEntity, key, AnchorType.Link);
+			return DustGuiSwingWidgetAnchor.anchorPanel(pnl, eac, eEntity, key, at);
 		}
 	};
 	

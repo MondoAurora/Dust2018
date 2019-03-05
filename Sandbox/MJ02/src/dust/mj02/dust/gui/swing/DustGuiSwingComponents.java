@@ -28,7 +28,7 @@ public interface DustGuiSwingComponents extends DustGuiComponents, DustUtilsSwin
 	int HR = 6;
 
 	enum AnchorType {
-		EntityHead, PrimaryModel, Model, Link;
+		EntityHead, MessageHead, PrimaryModel, Model, Link;
 
 		final ImageIcon icon;
 
