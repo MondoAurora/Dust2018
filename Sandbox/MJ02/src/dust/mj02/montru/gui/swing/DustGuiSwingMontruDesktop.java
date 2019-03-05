@@ -300,13 +300,14 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 			File f = (File) of;
 			String fp = f.getAbsolutePath();
 
-			DustEntity store = DustUtils.accessEntity(DataCommand.getEntity, null, null, "Store: " + fp,
+			DustEntity store = DustUtils.accessEntity(DataCommand.getEntity, DustCommTypes.Store, null, "Store: " + fp,
 					new EntityProcessor() {
 						@Override
 						public void processEntity(DustEntity entity) {
 							DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.StreamFileName, fp);
-							DustUtils.accessEntity(DataCommand.setRef, entity, DustDataLinks.EntityServices,
-									DustCommServices.Store);
+							DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.IdentifiedIdLocal, f.getName());
+//							DustUtils.accessEntity(DataCommand.setRef, entity, DustDataLinks.EntityServices,
+//									DustCommServices.Store);
 						}
 					});
 

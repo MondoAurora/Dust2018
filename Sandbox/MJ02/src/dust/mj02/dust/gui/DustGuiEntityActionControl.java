@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import dust.mj02.dust.Dust;
+import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.gui.swing.DustGuiSwingComponents;
 import dust.utils.DustUtilsJava;
 
@@ -58,8 +59,15 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 	protected void drop(EnumSet<CtrlStatus> ctrlStatus) {
 		if (null != dragSource) {
 			if (null != dragTarget) {
-				Dust.accessEntity(DataCommand.setRef, dragTarget.getEntity(), dragTarget.getData(),
-						dragSource.getEntity(), null);
+				DustEntity eSrc = dragSource.getEntity();
+				
+				DustEntity ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eSrc, DustDataLinks.EntityPrimaryType));
+				if ( ePt == EntityResolver.getEntity(DustDataTypes.Message) ) {
+					DustUtils.accessEntity(DataCommand.tempSend, dragTarget.getEntity(), eSrc);
+				} else {
+					Dust.accessEntity(DataCommand.setRef, dragTarget.getEntity(), dragTarget.getData(),
+							eSrc, null);
+				}
 				dropped(ctrlStatus, dragSource, dragTarget);
 				setItem(DragItem.target, null);
 			} else {

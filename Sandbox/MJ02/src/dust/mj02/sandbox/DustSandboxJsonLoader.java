@@ -7,9 +7,13 @@ import java.util.Set;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.DustComponents.DataCommand;
+import dust.mj02.dust.gui.DustGuiComponents.DustGuiServices;
+import dust.mj02.dust.gui.DustGuiComponents.DustGuiTypes;
 import dust.mj02.dust.knowledge.DustCommComponents;
 import dust.mj02.dust.knowledge.DustCommDiscussion;
 import dust.mj02.dust.knowledge.DustCommJsonLoader;
+import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
 
 public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommComponents.DustCommStore {
 	
@@ -73,22 +77,26 @@ public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommCom
 		if ( !inited ) {
 			DustEntity daGenId = EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal);
 			
-			DustEntity daBinObj = EntityResolver.getEntity(DustProcAtts.BinaryObjectName);
-			DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
-			DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.ContextBinaryAssignments);
+//			DustEntity daBinObj = EntityResolver.getEntity(DustProcAtts.BinaryObjectName);
+//			DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
+//			DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.ContextBinaryAssignments);
 
 			DustEntity dlGenOwner = EntityResolver.getEntity(DustGenericLinks.ConnectedOwner);
 			DustEntity dsCommStore = EntityResolver.getEntity(DustCommServices.Store);
 			DustEntity dcStoreLoad = EntityResolver.getEntity(DustCommMessages.StoreLoad);
 			DustEntity dcStoreSave = EntityResolver.getEntity(DustCommMessages.StoreSave);
-
-			String cName = DustSandboxJsonLoader.class.getName();
-			DustEntity ba = Dust.getEntity("BinaryAssignment: " + cName);
 			
-			Dust.accessEntity(DataCommand.setValue, ba, daBinObj, cName, null);
-			Dust.accessEntity(DataCommand.setRef, ba, dlBinImplSvc, dsCommStore, null);
+			DustUtils.registerService(DustSandboxJsonLoader.class, false, DustCommServices.Store);
+			DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Store, DustMetaLinks.TypeLinkedServices,
+					DustCommServices.Store);
 
-			Dust.accessEntity(DataCommand.setRef, ContextRef.ctx, dlCtxBin, ba, null);
+//			String cName = DustSandboxJsonLoader.class.getName();
+//			DustEntity ba = Dust.getEntity("BinaryAssignment: " + cName);
+//			
+//			Dust.accessEntity(DataCommand.setValue, ba, daBinObj, cName, null);
+//			Dust.accessEntity(DataCommand.setRef, ba, dlBinImplSvc, dsCommStore, null);
+//
+//			Dust.accessEntity(DataCommand.setRef, ContextRef.ctx, dlCtxBin, ba, null);
 
 			Dust.accessEntity(DataCommand.setValue, dsCommStore, daGenId, "DustCommStore", null);
 			Dust.accessEntity(DataCommand.setValue, dcStoreLoad, daGenId, "Load", null);
