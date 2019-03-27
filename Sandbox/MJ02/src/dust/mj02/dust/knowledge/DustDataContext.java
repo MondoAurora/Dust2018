@@ -676,7 +676,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		return sr;
 	}
 
-	private void notifyListeners(DataCommand cmd, SimpleEntity entity, DustEntity key, Object newVal, Object oldVal) {
+	private void notifyListeners(DataCommand cmd, SimpleEntity entity, DustEntity key, 
+			Object newVal, Object oldVal) {
 		SimpleRef listeners = ctxSelf.get(DustProcLinks.ContextChangeListeners);
 
 		if ((DataCommand.setRef == cmd) && (null != newVal)

@@ -44,6 +44,7 @@ public class DustJavaConnector implements DustKernelComponents, DustProcComponen
 		Enumeration<URL> resources;
 		try {
 			resources = classLoader.getResources(path);
+//			resources = ClassLoader.getSystemResources(path);
 			while (resources.hasMoreElements()) {
 				URL resource = resources.nextElement();
 				String name = resource.getFile();

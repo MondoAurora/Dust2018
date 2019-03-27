@@ -3,6 +3,8 @@ package dust.mj02.montru.gui.swing;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -16,11 +18,13 @@ import dust.mj02.dust.knowledge.DustProcComponents;
 public class DustGuiSwingMontruMain extends JPanel implements DustGuiSwingMontruComponents, DustProcComponents.DustProcActive {
 	private static final long serialVersionUID = 1L;
 
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
 	class MainFrame extends JFrame {
 		private static final long serialVersionUID = 1L;
 
 		public MainFrame() {
-			super("Dust/Montru in Java Swing");
+			super("Dust/Montru in Java Swing " + sdf.format(new Date()));
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			
 			addWindowListener(new WindowAdapter() {

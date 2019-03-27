@@ -7,13 +7,9 @@ import java.util.Set;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.DustComponents.DataCommand;
-import dust.mj02.dust.gui.DustGuiComponents.DustGuiServices;
-import dust.mj02.dust.gui.DustGuiComponents.DustGuiTypes;
 import dust.mj02.dust.knowledge.DustCommComponents;
 import dust.mj02.dust.knowledge.DustCommDiscussion;
 import dust.mj02.dust.knowledge.DustCommJsonLoader;
-import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
 
 public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommComponents.DustCommStore {
 	
@@ -50,6 +46,8 @@ public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommCom
 			}
 		}, null, EntityResolver.getEntity(DustGenericLinks.ConnectedOwner), null);
 		
+		DustUtils.accessEntity(DataCommand.setValue, ContextRef.self, DustGenericAtts.StreamFileAccess, "Loaded at " + sdf.format(new Date()));
+
 	}
 	
 	@Override
@@ -70,7 +68,6 @@ public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommCom
 		}, null, ldStore, ContextRef.self);
 		
 		disc.save(rdr, fn, toSave);
-
 	}
 	
 	public static void init() {

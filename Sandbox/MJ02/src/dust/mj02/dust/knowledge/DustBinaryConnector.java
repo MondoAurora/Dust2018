@@ -69,18 +69,11 @@ public class DustBinaryConnector
 		String id;
 
 		ServiceInfo si;
-//		Method m;
 
 		public MethodInfo(ServiceInfo svc, String id_) {
 			super();
 			this.si = svc;
 			this.id = si.id.substring(0, 1).toLowerCase() + si.id.substring(1) + id_;
-
-//			try {
-//				m = svc.implClass.getMethod(id);
-//			} catch (Throwable e) {
-//				Dust.wrapAndRethrowException("Failed finding method", e);
-//			}
 		}
 	}
 
@@ -209,5 +202,4 @@ public class DustBinaryConnector
 			}
 		}
 	}
-
 }

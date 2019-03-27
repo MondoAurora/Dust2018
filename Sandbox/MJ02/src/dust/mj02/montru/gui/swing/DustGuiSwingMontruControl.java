@@ -35,7 +35,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 	private static final long serialVersionUID = 1L;
 	
 	enum GuiCommands {
-		createEntity, deleteEntity, deleteRef, test01, test02, test03, test04
+		createEntity, deleteEntity, deleteRef, loadFile, loadReflection, test02, test03
 	};
 
 	ActionListener cmdListener = new ActionListener() {
@@ -51,7 +51,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 			case deleteRef:
 				desktop.removeSelRefs();
 				break;
-			case test01:
+			case loadFile:
 				desktop.loadFiles(new File("MJ02Boot02.json"));
 
 				break;
@@ -63,10 +63,10 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 					DustUtils.accessEntity(DataCommand.setRef, desktop, MontruGuiLinks.MontruDesktopActivePanel, eiSelected);
 				}
 				break;
-			case test04:
-				DustJavaGen.init();
+			case loadReflection:
 				desktop.refreshData();
 				DustTempHacks.detectMetaConnections();
+				desktop.refreshData();
 				break;
 			}
 		}
@@ -218,6 +218,8 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 		}
 
 		add(tbButtons, BorderLayout.SOUTH);
+		
+		DustJavaGen.init();
 	}
 
 	private void selectEntity(DustEntity ei) {

@@ -7,7 +7,10 @@ import dust.mj02.dust.gui.DustGuiComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.utils.DustUtilsJava;
 
-public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive, DustGuiComponents.GuiDataWrapper<JLabel>  {
+public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents, 
+		DustProcComponents.DustProcListener, DustProcComponents.DustProcActive, 
+		DustGuiComponents.GuiDataWrapper<JLabel>  {
+	
 	private static final long serialVersionUID = 1L;
 	
 	DustEntity eEntity;

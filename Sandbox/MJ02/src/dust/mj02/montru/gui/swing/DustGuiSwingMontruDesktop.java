@@ -93,6 +93,11 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		public void updateTitle() {
 			iFrame.setTitle(DustUtilsJava.toString(eEntity));
 		}
+
+		public void setPos(int xScreen, int yScreen) {
+			Point pt = SwingUtilities.convertPoint(null, xScreen, yScreen, DustGuiSwingMontruDesktop.this);
+			iFrame.setLocation(pt);
+		}
 	}
 
 	Point dragStart;
@@ -164,7 +169,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		
 		@Override
 		protected void dropped(EnumSet<CtrlStatus> ctrlStatus, GuiDataWrapper<JComponent> gdwSource,
-				GuiDataWrapper<JComponent> gdwTarget) {
+				GuiDataWrapper<JComponent> gdwTarget, int xScreen, int yScreen) {
 			DustEntity ePt;
 			
 			if (null == gdwTarget) {
@@ -213,7 +218,8 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 				}
 				
 				if ( null != eCreated ) {
-					activateEditorPanel(eCreated);
+					EntityDocWindow edw = activateEditorPanel(eCreated);
+					edw.setPos(xScreen, yScreen);
 					
 					ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eCreated, DustDataLinks.EntityPrimaryType));
 					if ( eTypeType == ePt ) {
@@ -351,12 +357,14 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 			links.refreshLines();
 	}
 
-	public void activateEditorPanel(DustEntity e) {
+	public EntityDocWindow activateEditorPanel(DustEntity e) {
 		if (null == e) {
-			return;
+			return null;
 		}
 
-		factDocWindows.get(e).setSelected();
+		EntityDocWindow edw = factDocWindows.get(e);
+		edw.setSelected();
+		return edw;
 	}
 
 	@Override

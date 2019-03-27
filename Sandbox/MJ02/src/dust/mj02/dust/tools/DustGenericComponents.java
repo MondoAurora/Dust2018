@@ -9,7 +9,7 @@ public interface DustGenericComponents extends DustComponents {
 	};
 	
 	enum DustGenericAtts implements DustEntityKey {
-		IdentifiedIdLocal, StreamFileName
+		IdentifiedIdLocal, StreamFileName, StreamFileAccess
 
 	};
 	

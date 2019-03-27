@@ -56,7 +56,7 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 		setItem(DragItem.source, resolveBaseComponent(comp));
 	}
 
-	protected void drop(EnumSet<CtrlStatus> ctrlStatus) {
+	protected void drop(EnumSet<CtrlStatus> ctrlStatus, int xScreen, int yScreen) {
 		if (null != dragSource) {
 			if (null != dragTarget) {
 				DustEntity eSrc = dragSource.getEntity();
@@ -64,14 +64,16 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 				DustEntity ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eSrc, DustDataLinks.EntityPrimaryType));
 				if ( ePt == EntityResolver.getEntity(DustDataTypes.Message) ) {
 					DustUtils.accessEntity(DataCommand.tempSend, dragTarget.getEntity(), eSrc);
+				} else if ( ePt == EntityResolver.getEntity(DustMetaTypes.Service) ) {
+					DustUtils.accessEntity(DataCommand.setRef, dragTarget.getEntity(), DustDataLinks.EntityServices, eSrc);
 				} else {
 					Dust.accessEntity(DataCommand.setRef, dragTarget.getEntity(), dragTarget.getData(),
 							eSrc, null);
 				}
-				dropped(ctrlStatus, dragSource, dragTarget);
+				dropped(ctrlStatus, dragSource, dragTarget, xScreen, yScreen);
 				setItem(DragItem.target, null);
 			} else {
-				dropped(ctrlStatus, dragSource, null);
+				dropped(ctrlStatus, dragSource, null, xScreen, yScreen);
 			}
 
 			setItem(DragItem.source, null);
@@ -106,5 +108,5 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 	protected abstract void dragItemChanged(DragItem item, GuiDataWrapper<BaseComponentType> gdwOld,
 			GuiDataWrapper<BaseComponentType> gdwNew);
 	protected abstract void dropped(EnumSet<CtrlStatus> ctrlStatus, GuiDataWrapper<BaseComponentType> gdwSource,
-			GuiDataWrapper<BaseComponentType> gdwTarget);
+			GuiDataWrapper<BaseComponentType> gdwTarget, int xScreen, int yScreen);
 }

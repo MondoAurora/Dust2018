@@ -1,5 +1,6 @@
 package dust.mj02.dust.gui.swing;
 
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -38,7 +39,8 @@ public abstract class DustGuiSwingEntityActionControl extends DustGuiEntityActio
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			handleDragEvent(null);
-			drop(DustGuiSwingUtils.getMouseStatus(e));
+			Point pt = e.getLocationOnScreen();
+			drop(DustGuiSwingUtils.getMouseStatus(e), pt.x, pt.y);
 		}
 	};
 
