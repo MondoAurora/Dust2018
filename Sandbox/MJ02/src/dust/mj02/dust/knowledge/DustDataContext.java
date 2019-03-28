@@ -473,7 +473,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 		if (ce.justCreated) {
 			if ( null != gid ) {
-				DustUtils.accessEntity(DataCommand.setValue, ce, DustCommAtts.TermIdStore, gid);
+				DustUtils.accessEntity(DataCommand.setValue, ce, DustCommAtts.PersistentEntityId, gid);
 			}
 			if (null != type) {
 				ctxAccessEntity(DataCommand.setRef, ce, EntityResolver.getEntity(DustDataLinks.EntityPrimaryType), type,

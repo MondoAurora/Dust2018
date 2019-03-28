@@ -102,7 +102,7 @@ public class DustCommDiscussion implements DustCommComponents, DustDataComponent
 			}
 		}
 		
-		DustEntity ldStore = EntityResolver.getEntity(DustCommLinks.TermStore);
+		DustEntity ldStore = EntityResolver.getEntity(DustCommLinks.PersistentStore);
 
 		for (SourceVocabulary sd : srcData) {
 			for (Object o : sd.allData.values()) {

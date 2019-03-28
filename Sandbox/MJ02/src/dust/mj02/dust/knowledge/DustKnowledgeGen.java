@@ -38,9 +38,9 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 //		EntityResolver.register("Knowledge:Data:Entity", DustDataTypes.Entity);
 //
 //		EntityResolver.register("Knowledge:Comm:Unit", DustCommTypes.Unit);
-//		EntityResolver.register("Knowledge:Comm:Term", DustCommTypes.Term);
-//		EntityResolver.register("Knowledge:Comm:Term.idStore", DustCommAtts.TermIdStore);
-//		EntityResolver.register("Knowledge:Comm:Term.idLocal", DustCommAtts.TermIdLocal);
+//		EntityResolver.register("Knowledge:Comm:Persistent", DustCommTypes.Persistent);
+//		EntityResolver.register("Knowledge:Comm:Persistent.idStore", DustCommAtts.PersistentId);
+//		EntityResolver.register("Knowledge:Comm:Persistent.idLocal", DustCommAtts.TermIdLocal);
 
 		DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
 		DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.ContextBinaryAssignments);
@@ -101,8 +101,16 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		
 		
 		
-		DustUtils.accessEntity(DataCommand.setRef, DustCommAtts.TermIdLocal, DustMetaLinks.AttDefParent, DustCommTypes.Term);
-		DustUtils.accessEntity(DataCommand.setRef, DustCommAtts.TermIdStore, DustMetaLinks.AttDefParent, DustCommTypes.Term);
+		DustUtils.accessEntity(DataCommand.setRef, DustCommAtts.PersistentEntityId, DustMetaLinks.AttDefParent, DustCommTypes.Persistent);
+		DustUtils.accessEntity(DataCommand.setRef, DustCommAtts.PersistentCommitId, DustMetaLinks.AttDefParent, DustCommTypes.Persistent);
+		
+		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.PersistentStore, DustMetaLinks.LinkDefParent, DustCommTypes.Persistent);
+		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.UnitEntities, DustMetaLinks.LinkDefParent, DustCommTypes.Unit);
+		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.UnitEntities, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
+		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.PersistentStore, DustMetaLinks.LinkDefReverse, DustCommLinks.UnitEntities);
+
+		DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Unit, DustGenericLinks.ConnectedRequires, DustCommTypes.Persistent);
+		DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Unit, DustGenericLinks.ConnectedRequires, DustGenericTypes.Identified);
 
 		
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefParent, DustMetaLinks.LinkDefParent, DustMetaTypes.AttDef);

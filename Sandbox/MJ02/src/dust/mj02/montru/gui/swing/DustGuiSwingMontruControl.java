@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +34,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 	private static final long serialVersionUID = 1L;
 	
 	enum GuiCommands {
-		createEntity, deleteEntity, deleteRef, loadFile, loadReflection, test02, test03
+		deleteEntity, deleteRef, saveAll, //loadReflection, // createEntity, loadFile, test03
 	};
 
 	ActionListener cmdListener = new ActionListener() {
@@ -43,31 +42,29 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (GuiCommands.valueOf(e.getActionCommand())) {
-			case createEntity:
-				break;
+//			case createEntity:
+//				break;
 			case deleteEntity:
 				desktop.deleteSelected();
 				break;
 			case deleteRef:
 				desktop.removeSelRefs();
 				break;
-			case loadFile:
-				desktop.loadFiles(new File("MJ02Boot02.json"));
-
-				break;
-			case test02:
+			case saveAll:
 				desktop.saveAll();
 				break;
-			case test03:
-				if ( null != eiSelected ) {
-					DustUtils.accessEntity(DataCommand.setRef, desktop, MontruGuiLinks.MontruDesktopActivePanel, eiSelected);
-				}
-				break;
-			case loadReflection:
-				desktop.refreshData();
-				DustTempHacks.detectMetaConnections();
-				desktop.refreshData();
-				break;
+//			case loadFile:
+//				desktop.loadFiles(new File("MJ02Boot02.json"));
+//
+//				break;
+//			case test03:
+//				if ( null != eiSelected ) {
+//					DustUtils.accessEntity(DataCommand.setRef, desktop, MontruGuiLinks.MontruDesktopActivePanel, eiSelected);
+//				}
+//				break;
+//			case loadReflection:
+//				loadReflection();
+//				break;
 			}
 		}
 	};
@@ -220,7 +217,16 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 		add(tbButtons, BorderLayout.SOUTH);
 		
 		DustJavaGen.init();
+		
+		loadReflection();
 	}
+	
+	private void loadReflection() {
+		desktop.refreshData();
+		DustTempHacks.detectMetaConnections();
+		desktop.refreshData();
+	}
+
 
 	private void selectEntity(DustEntity ei) {
 		eiSelected = ei;

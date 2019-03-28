@@ -285,7 +285,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		DustUtils.accessEntity(DataCommand.setRef, msg, DustDataLinks.MessageCommand, DustCommMessages.StoreSave);
 
 		for (EntityDocWindow edw : factDocWindows.values()) {
-			DustRef ref = DustUtils.accessEntity(DataCommand.getValue, edw.eEntity, DustCommLinks.TermStore);
+			DustRef ref = DustUtils.accessEntity(DataCommand.getValue, edw.eEntity, DustCommLinks.PersistentStore);
 			if (null != ref) {
 				DustEntity store = ref.get(RefKey.target);
 
