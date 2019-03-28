@@ -49,7 +49,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				}
 
 				if (null == orig) {
-					SimpleEntity keyModel = ((SimpleEntity)key).getFirstRef(DustMetaLinks.LinkDefParent, DustMetaLinks.AttDefParent, DustGenericLinks.ConnectedOwner);
+					SimpleEntity keyModel = ((SimpleEntity)key).getFirstRef(DustMetaLinks.LinkDefParent, DustMetaLinks.AttDefParent);//, DustGenericLinks.ConnectedOwner);
 					if ( null != keyModel ) {
 						ctxAccessEntity(DataCommand.setRef, this, EntityResolver.getEntity(DustDataLinks.EntityModels),
 								keyModel, null);						

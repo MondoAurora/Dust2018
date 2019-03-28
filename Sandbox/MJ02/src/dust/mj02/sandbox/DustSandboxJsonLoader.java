@@ -25,26 +25,26 @@ public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommCom
 		String fileName = Dust.accessEntity(DataCommand.getValue, ContextRef.self, DA_STREAM_FILENAME, null, null);
 		disc.load(rdr, fileName);
 		
-		DustEntity eAttDef = EntityResolver.getEntity(DustMetaTypes.AttDef);
-		DustEntity eLinkDef = EntityResolver.getEntity(DustMetaTypes.LinkDef);
-		
-		Dust.processRefs(new RefProcessor() {
-			@Override
-			public void processRef(DustRef ref) {
-				DustEntity src = ref.get(RefKey.source);
-				
-				DustRef r = DustUtils.accessEntity(DataCommand.getValue, src, DustDataLinks.EntityPrimaryType);
-				
-				if ( null != r ) {
-					DustEntity t = r.get(RefKey.target);
-					if ( eAttDef == t ) {
-						DustUtils.accessEntity(DataCommand.setRef, src, DustMetaLinks.AttDefParent, ref.get(RefKey.target));
-					} else if ( eLinkDef == t ) {
-						DustUtils.accessEntity(DataCommand.setRef, src, DustMetaLinks.LinkDefParent, ref.get(RefKey.target));
-					}
-				}
-			}
-		}, null, EntityResolver.getEntity(DustGenericLinks.ConnectedOwner), null);
+//		DustEntity eAttDef = EntityResolver.getEntity(DustMetaTypes.AttDef);
+//		DustEntity eLinkDef = EntityResolver.getEntity(DustMetaTypes.LinkDef);
+//		
+//		Dust.processRefs(new RefProcessor() {
+//			@Override
+//			public void processRef(DustRef ref) {
+//				DustEntity src = ref.get(RefKey.source);
+//				
+//				DustRef r = DustUtils.accessEntity(DataCommand.getValue, src, DustDataLinks.EntityPrimaryType);
+//				
+//				if ( null != r ) {
+//					DustEntity t = r.get(RefKey.target);
+//					if ( eAttDef == t ) {
+//						DustUtils.accessEntity(DataCommand.setRef, src, DustMetaLinks.AttDefParent, ref.get(RefKey.target));
+//					} else if ( eLinkDef == t ) {
+//						DustUtils.accessEntity(DataCommand.setRef, src, DustMetaLinks.LinkDefParent, ref.get(RefKey.target));
+//					}
+//				}
+//			}
+//		}, null, EntityResolver.getEntity(DustGenericLinks.ConnectedOwner), null);
 		
 		DustUtils.accessEntity(DataCommand.setValue, ContextRef.self, DustGenericAtts.StreamFileAccess, "Loaded at " + sdf.format(new Date()));
 
