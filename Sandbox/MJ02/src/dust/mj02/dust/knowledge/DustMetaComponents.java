@@ -6,7 +6,7 @@ import dust.utils.DustUtilsJava;
 public interface DustMetaComponents extends DustComponents {
 	
 	enum DustMetaTypes implements DustEntityKey {
-		Unit("Units"), Type("Types"), AttDef("Atts"), LinkDef("Links"), Service("Services"), Command("Messages"), Constant("Values");
+		Type("Types"), AttDef("Atts"), LinkDef("Links"), Service("Services"), Command("Messages"), Constant("Values");
 		
 		private final String enumPostfix;
 

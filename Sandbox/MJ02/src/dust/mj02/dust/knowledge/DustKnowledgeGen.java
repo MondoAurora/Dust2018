@@ -12,35 +12,35 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 			return;
 		}
 
-		EntityResolver.register("Knowledge:Meta:AttDef:Bool", DustMetaAttDefTypeValues.AttDefBool);
-		EntityResolver.register("Knowledge:Meta:AttDef:Identifier", DustMetaAttDefTypeValues.AttDefIdentifier);
-		EntityResolver.register("Knowledge:Meta:AttDef:Integer", DustMetaAttDefTypeValues.AttDefInteger);
-		EntityResolver.register("Knowledge:Meta:AttDef:Float", DustMetaAttDefTypeValues.AttDefFloat);
-
-		EntityResolver.register("Knowledge:Meta:LinkDef:Single", DustMetaLinkDefTypeValues.LinkDefSingle);
-		EntityResolver.register("Knowledge:Meta:LinkDef:Set", DustMetaLinkDefTypeValues.LinkDefSet);
-		EntityResolver.register("Knowledge:Meta:LinkDef:Array", DustMetaLinkDefTypeValues.LinkDefArray);
-		EntityResolver.register("Knowledge:Meta:LinkDef:Map", DustMetaLinkDefTypeValues.LinkDefMap);
-
-		EntityResolver.register("Knowledge:Meta:AttDef.Type", DustMetaLinks.AttDefType);
-		EntityResolver.register("Knowledge:Meta:LinkDef.Type", DustMetaLinks.LinkDefType);
-
-		EntityResolver.register("Knowledge:Data:Entity.PrimaryType", DustDataLinks.EntityPrimaryType);
-		EntityResolver.register("Knowledge:Data:Entity.Models", DustDataLinks.EntityModels);
-		EntityResolver.register("Knowledge:Data:Entity.Services", DustDataLinks.EntityServices);
-
-		EntityResolver.register("Knowledge:Meta:Unit", DustMetaTypes.Unit);
-		EntityResolver.register("Knowledge:Meta:Type", DustMetaTypes.Type);
-		EntityResolver.register("Knowledge:Meta:AttDef", DustMetaTypes.AttDef);
-		EntityResolver.register("Knowledge:Meta:LinkDef", DustMetaTypes.LinkDef);
-		EntityResolver.register("Knowledge:Meta:Service", DustMetaTypes.Service);
-		EntityResolver.register("Knowledge:Meta:Command", DustMetaTypes.Command);
-
-		EntityResolver.register("Knowledge:Data:Entity", DustDataTypes.Entity);
-
-		EntityResolver.register("Knowledge:Comm:Term.idStore", DustCommAtts.TermIdStore);
-		EntityResolver.register("Knowledge:Comm:Term.idLocal", DustCommAtts.TermIdLocal);
-		EntityResolver.register("Knowledge:Comm:Term", DustCommTypes.Term);
+//		EntityResolver.register("Knowledge:Meta:AttDef:Bool", DustMetaAttDefTypeValues.AttDefBool);
+//		EntityResolver.register("Knowledge:Meta:AttDef:Identifier", DustMetaAttDefTypeValues.AttDefIdentifier);
+//		EntityResolver.register("Knowledge:Meta:AttDef:Integer", DustMetaAttDefTypeValues.AttDefInteger);
+//		EntityResolver.register("Knowledge:Meta:AttDef:Float", DustMetaAttDefTypeValues.AttDefFloat);
+//
+//		EntityResolver.register("Knowledge:Meta:LinkDef:Single", DustMetaLinkDefTypeValues.LinkDefSingle);
+//		EntityResolver.register("Knowledge:Meta:LinkDef:Set", DustMetaLinkDefTypeValues.LinkDefSet);
+//		EntityResolver.register("Knowledge:Meta:LinkDef:Array", DustMetaLinkDefTypeValues.LinkDefArray);
+//		EntityResolver.register("Knowledge:Meta:LinkDef:Map", DustMetaLinkDefTypeValues.LinkDefMap);
+//
+//		EntityResolver.register("Knowledge:Meta:AttDef.Type", DustMetaLinks.AttDefType);
+//		EntityResolver.register("Knowledge:Meta:LinkDef.Type", DustMetaLinks.LinkDefType);
+//
+//		EntityResolver.register("Knowledge:Data:Entity.PrimaryType", DustDataLinks.EntityPrimaryType);
+//		EntityResolver.register("Knowledge:Data:Entity.Models", DustDataLinks.EntityModels);
+//		EntityResolver.register("Knowledge:Data:Entity.Services", DustDataLinks.EntityServices);
+//
+//		EntityResolver.register("Knowledge:Meta:Type", DustMetaTypes.Type);
+//		EntityResolver.register("Knowledge:Meta:AttDef", DustMetaTypes.AttDef);
+//		EntityResolver.register("Knowledge:Meta:LinkDef", DustMetaTypes.LinkDef);
+//		EntityResolver.register("Knowledge:Meta:Service", DustMetaTypes.Service);
+//		EntityResolver.register("Knowledge:Meta:Command", DustMetaTypes.Command);
+//
+//		EntityResolver.register("Knowledge:Data:Entity", DustDataTypes.Entity);
+//
+//		EntityResolver.register("Knowledge:Comm:Unit", DustCommTypes.Unit);
+//		EntityResolver.register("Knowledge:Comm:Term", DustCommTypes.Term);
+//		EntityResolver.register("Knowledge:Comm:Term.idStore", DustCommAtts.TermIdStore);
+//		EntityResolver.register("Knowledge:Comm:Term.idLocal", DustCommAtts.TermIdLocal);
 
 		DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
 		DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.ContextBinaryAssignments);
@@ -98,6 +98,28 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefParent, DustMetaLinks.LinkDefReverse, DustMetaLinks.TypeAttDefs);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefParent, DustMetaLinks.LinkDefReverse, DustMetaLinks.TypeLinkDefs);
 
+		
+		
+		
+		DustUtils.accessEntity(DataCommand.setRef, DustCommAtts.TermIdLocal, DustMetaLinks.AttDefParent, DustCommTypes.Term);
+		DustUtils.accessEntity(DataCommand.setRef, DustCommAtts.TermIdStore, DustMetaLinks.AttDefParent, DustCommTypes.Term);
+
+		
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefParent, DustMetaLinks.LinkDefParent, DustMetaTypes.AttDef);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefType, DustMetaLinks.LinkDefParent, DustMetaTypes.AttDef);
+
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefParent, DustMetaLinks.LinkDefParent, DustMetaTypes.LinkDef);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefType, DustMetaLinks.LinkDefParent, DustMetaTypes.LinkDef);
+		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefReverse, DustMetaLinks.LinkDefParent, DustMetaTypes.LinkDef);
+
+		DustUtils.accessEntity(DataCommand.setRef, DustDataLinks.EntityPrimaryType, DustMetaLinks.LinkDefParent, DustDataTypes.Entity);
+		DustUtils.accessEntity(DataCommand.setRef, DustDataLinks.EntityModels, DustMetaLinks.LinkDefParent, DustDataTypes.Entity);
+		DustUtils.accessEntity(DataCommand.setRef, DustDataLinks.EntityModels, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
+		DustUtils.accessEntity(DataCommand.setRef, DustDataLinks.EntityServices, DustMetaLinks.LinkDefParent, DustDataTypes.Entity);
+		DustUtils.accessEntity(DataCommand.setRef, DustDataLinks.EntityServices, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
+
+		
+		
 		inited = true;
 	}
 }
