@@ -57,7 +57,7 @@ public class DustSandboxJsonLoader implements DustSandboxComponents, DustCommCom
 		int dot = fileName.lastIndexOf(".");
 		String fn = fileName.substring(0, dot) + sdf.format(new Date()) + fileName.substring(dot);
 		
-		DustEntity ldStore = EntityResolver.getEntity(DustCommLinks.PersistentStore);
+		DustEntity ldStore = EntityResolver.getEntity(DustCommLinks.PersistentContainingUnit);
 		Set<DustEntity> toSave = new HashSet<>();
 
 		Dust.processRefs(new RefProcessor() {

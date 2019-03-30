@@ -66,6 +66,16 @@ public abstract class DustUtilsFactory<KeyType, ValType> implements DustUtilsCom
 		return DustUtilsJava.toStringBuilder(target, content.entrySet(), true, name);
 	}
 
+	public Map<KeyType, ValType> copyShallow(Map<KeyType, ValType> target) {
+		if ( null == target ) {
+			target = new HashMap<>(content);
+		} else {
+			target.clear();
+			target.putAll(content);
+		}
+		return target;
+	}
+
 	@Override
 	public String toString() {
 		// StringBuilder sb = DustUtils.sbApend(null, "", true, "{");

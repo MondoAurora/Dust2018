@@ -26,6 +26,7 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustTempHacks;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.java.DustJavaGen;
+import dust.mj02.sandbox.DustSandboxPersistence;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
 
@@ -34,7 +35,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 	private static final long serialVersionUID = 1L;
 	
 	enum GuiCommands {
-		deleteEntity, deleteRef, saveAll, //loadReflection, // createEntity, loadFile, test03
+		deleteEntity, deleteRef, loadUnits, saveUnits,// saveAll, //loadReflection, // createEntity, loadFile, test03
 	};
 
 	ActionListener cmdListener = new ActionListener() {
@@ -50,9 +51,15 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 			case deleteRef:
 				desktop.removeSelRefs();
 				break;
-			case saveAll:
-				desktop.saveAll();
+			case loadUnits:
+				DustSandboxPersistence.loadTempUnits();
 				break;
+			case saveUnits:
+				DustSandboxPersistence.saveTempUnits();
+				break;
+//			case saveAll:
+//				desktop.saveAll();
+//				break;
 //			case loadFile:
 //				desktop.loadFiles(new File("MJ02Boot02.json"));
 //

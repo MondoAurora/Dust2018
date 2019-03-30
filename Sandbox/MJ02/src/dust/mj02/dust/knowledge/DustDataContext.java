@@ -455,6 +455,12 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				notifyListeners(cmd, se, key, val, retVal);
 			}
 			break;
+		case processContent:
+			ContentProcessor cp = (ContentProcessor) val;
+			for ( Map.Entry<DustEntity, Object> ee : se.content.entrySet() ) {
+				cp.processContent(se, ee.getKey(), ee.getValue());
+			}
+			break;
 		case processRef:
 			if (null != retVal) {
 				((SimpleRef) retVal).processAll((RefProcessor) val);

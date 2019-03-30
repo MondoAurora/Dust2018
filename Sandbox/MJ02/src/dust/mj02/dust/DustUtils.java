@@ -43,6 +43,19 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 		}
 	}
 
+	public static <RetVal> RetVal getByPath(Object ob, DustEntity... path) {
+		for ( DustEntity key : path ) {
+			DustEntity ee = toEntity(ob);
+			ob = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, ee, key));
+			
+			if ( null == ob ) {
+				return null;
+			}
+		}
+		
+		return (RetVal) ob;
+	}
+	
 	public static <RetVal> RetVal accessEntity(DataCommand cmd, Object... parameters) {
 		DustEntity e = optResolve(parameters[0]);
 		DustEntity key = (parameters.length > 1) ? optResolve(parameters[1]) : null;

@@ -34,7 +34,7 @@ public interface DustComponents {
 
 	enum DataCommand implements DustEntityKey {
 		getEntity(false), cloneEntity(false), dropEntity(false), 
-		getValue(false), setValue(false), 
+		getValue(false), setValue(false), processContent(false), 
 		processRef(false), setRef(true), removeRef(true), clearRefs(true), 
 		tempSend(false);
 
@@ -67,6 +67,10 @@ public interface DustComponents {
 
 	interface RefProcessor {
 		void processRef(DustRef ref);
+	}
+
+	interface ContentProcessor {
+		void processContent(DustEntity eOwner, DustEntity eKey, Object value);
 	}
 
 	public abstract class EntityResolver {
