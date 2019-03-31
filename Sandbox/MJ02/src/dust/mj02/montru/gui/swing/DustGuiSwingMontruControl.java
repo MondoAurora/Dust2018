@@ -35,7 +35,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 	private static final long serialVersionUID = 1L;
 	
 	enum GuiCommands {
-		deleteEntity, deleteRef, loadUnits, saveUnits,// saveAll, //loadReflection, // createEntity, loadFile, test03
+		deleteEntity, deleteRef, update, commit,// saveAll, //loadReflection, // createEntity, loadFile, test03
 	};
 
 	ActionListener cmdListener = new ActionListener() {
@@ -51,11 +51,11 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 			case deleteRef:
 				desktop.removeSelRefs();
 				break;
-			case loadUnits:
-				DustSandboxPersistence.loadTempUnits();
+			case update:
+				DustSandboxPersistence.update();
 				break;
-			case saveUnits:
-				DustSandboxPersistence.saveTempUnits();
+			case commit:
+				DustSandboxPersistence.commit();
 				break;
 //			case saveAll:
 //				desktop.saveAll();

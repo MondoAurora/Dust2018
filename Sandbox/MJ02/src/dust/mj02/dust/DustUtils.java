@@ -1,23 +1,20 @@
 package dust.mj02.dust;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import dust.mj02.dust.knowledge.DustDataComponents.DustDataAtts;
+import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcAtts;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcLinks;
 import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
-import dust.utils.DustUtilsJava;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class DustUtils extends DustUtilsJava implements DustComponents {
+public class DustUtils implements DustComponents {
 
 	public static <RetVal> RetVal getMsgVal(DustEntityKey key, boolean resolveRef) {
-		// Object ret = Dust.accessEntity(DataCommand.getValue, ContextRef.msg,
-		// EntityResolver.getEntity(key), null, null);
-		// if (resolveRef && (ret instanceof DustRef)) {
-		// ret = ((DustRef) ret).get(RefKey.target);
-		// }
-		// return (RetVal) ret;
 		return getCtxVal(ContextRef.msg, key, resolveRef);
 	}
 
@@ -43,19 +40,19 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 		}
 	}
 
-	public static <RetVal> RetVal getByPath(Object ob, DustEntity... path) {
-		for ( DustEntity key : path ) {
+	public static <RetVal> RetVal getByPath(Object ob, Object... path) {
+		for (Object key : path) {
 			DustEntity ee = toEntity(ob);
 			ob = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, ee, key));
-			
-			if ( null == ob ) {
+
+			if (null == ob) {
 				return null;
 			}
 		}
-		
+
 		return (RetVal) ob;
 	}
-	
+
 	public static <RetVal> RetVal accessEntity(DataCommand cmd, Object... parameters) {
 		DustEntity e = optResolve(parameters[0]);
 		DustEntity key = (parameters.length > 1) ? optResolve(parameters[1]) : null;
@@ -79,6 +76,28 @@ public class DustUtils extends DustUtilsJava implements DustComponents {
 		}
 
 		return null;
+	}
+
+	public static <RetVal> RetVal getColl(DustMetaLinkDefTypeValues ldt) {
+		Object coll = null;
+		
+		if (null != ldt) {
+			switch (ldt) {
+			case LinkDefArray:
+				coll = new ArrayList<String>();
+				break;
+			case LinkDefMap:
+				coll = new HashMap<String, String>();
+				break;
+			case LinkDefSet:
+				coll = new HashSet<String>();
+				break;
+			case LinkDefSingle:
+				break;
+			}
+		}
+
+		return (RetVal) coll;
 	}
 
 	public static void registerService(Class<?> implClass, boolean autoInit, DustEntityKey svc,
