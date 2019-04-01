@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -52,7 +53,11 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 				desktop.removeSelRefs();
 				break;
 			case update:
-				DustSandboxPersistence.update();
+				String name = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Unit names (comma separated list)?", "Select update", JOptionPane.QUESTION_MESSAGE);
+				if ( DustUtilsJava.isEmpty(name)) {
+					name = "VMTest01";
+				}
+				DustSandboxPersistence.update(name);
 				break;
 			case commit:
 				DustSandboxPersistence.commit();

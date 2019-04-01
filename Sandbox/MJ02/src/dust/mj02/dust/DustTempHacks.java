@@ -17,7 +17,7 @@ public class DustTempHacks extends DustUtils implements DustKernelComponents {
 			e = EntityResolver.register(kk, key);
 
 			DustUtils.accessEntity(DataCommand.setValue, e, DustGenericAtts.IdentifiedIdLocal, en);
-			DustUtils.accessEntity(DataCommand.setValue, e, DustCommAtts.PersistentEntityId, kk);
+			DustUtils.accessEntity(DataCommand.setValue, e, DustProcAtts.NativeBoundId, kk);
 
 			DustMetaTypes mt = DustMetaTypes.getMetaTypeHack(cn);
 

@@ -5,11 +5,11 @@ import dust.mj02.dust.DustComponents;
 public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	enum DustProcTypes implements DustEntityKey {
-		System, Context, Change, Binary
+		System, Context, Change, Binary, NativeBound
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
-		ChangeOldValue, ChangeNewValue, BinaryObjectName, BinaryAutoInit
+		ChangeOldValue, ChangeNewValue, BinaryObjectName, BinaryAutoInit, NativeBoundId
 	}
 	
 	enum DustProcLinks implements DustEntityKey {

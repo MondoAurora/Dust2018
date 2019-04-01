@@ -1,6 +1,7 @@
 package dust.mj02.sandbox;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
@@ -25,11 +27,14 @@ import dust.utils.DustUtilsJava;
 @SuppressWarnings("rawtypes")
 public class DustSandboxPersistence implements DustKernelComponents {
 
+	private static final String PATH_PERSISTENCE = "output/persistence";
+	private static final String PATH_HISTORY = "history";
+	private static final String EXT_JSON = ".json";
+
 	public enum TempUnit {
 		Meta(DustMetaTypes.class, DustMetaAttDefTypeValues.class, DustMetaLinkDefTypeValues.class), Data(
-				DustDataTypes.class), Proc(DustProcTypes.class,
-						DustProcServices.class), Comm(DustCommTypes.class, DustCommServices.class),
-		Generic(DustGenericTypes.class),
+				DustDataTypes.class), Proc(DustProcTypes.class, DustProcServices.class), Comm(DustCommTypes.class,
+						DustCommServices.class), Generic(DustGenericTypes.class),
 
 		;
 
@@ -77,20 +82,55 @@ public class DustSandboxPersistence implements DustKernelComponents {
 			false) {
 		@Override
 		protected DustMetaLinkDefTypeValues create(DustEntity key, Object... hints) {
+			if (EntityResolver.getEntity(DustMetaTypes.LinkDef) != DustUtils.getByPath(key,
+					DustDataLinks.EntityPrimaryType)) {
+				return null;
+			}
+
 			DustMetaLinkDefTypeValues ldt = EntityResolver.getKey(DustUtils.getByPath(key, DustMetaLinks.LinkDefType));
 			return (null == ldt) ? DustMetaLinkDefTypeValues.LinkDefSingle : ldt;
 		}
 	};
 
+	@SuppressWarnings("unchecked")
 	enum ContextKeys {
-		ThisUnit, CommitId, EntityUnit, EntityId
+		header(null), data(null), ThisUnit(null), CommitId(DustCommAtts.PersistentCommitId), EntityUnit(
+				DustCommLinks.PersistentContainingUnit), EntityId(DustCommAtts.PersistentEntityId), LocalId(
+						DustGenericAtts.IdentifiedIdLocal), NativeId(DustProcAtts.NativeBoundId);
+
+		Object key;
+
+		private ContextKeys(Object key) {
+			this.key = key;
+		}
+
+		public void put(Map m, Object value) {
+			m.put(name(), value);
+		}
+
+		public <RetType> RetType get(Map m) {
+			return (RetType) m.get(name());
+		}
+
+		public static void initMap(EnumMap<ContextKeys, String> ctxKeys, DustUtilsFactory<DustEntity, String> fact) {
+			for (ContextKeys ck : values()) {
+				if (null != ck.key) {
+					ctxKeys.put(ck, fact.get(EntityResolver.getEntity(ck.key)));
+				}
+			}
+		}
 	}
 
 	static class SaveContext {
 		private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
-		static final DustEntity eEntityId = EntityResolver.getEntity(DustCommAtts.PersistentEntityId);
-		static final DustEntity ePersUnit = EntityResolver.getEntity(DustCommLinks.PersistentContainingUnit);
-		static final DustEntity eCommitId = EntityResolver.getEntity(DustCommAtts.PersistentCommitId);
+		// static final DustEntity eEntityId =
+		// EntityResolver.getEntity(DustCommAtts.PersistentEntityId);
+		// static final DustEntity ePersUnit =
+		// EntityResolver.getEntity(DustCommLinks.PersistentContainingUnit);
+		// static final DustEntity eCommitId =
+		// EntityResolver.getEntity(DustCommAtts.PersistentCommitId);
+		// static final DustEntity eLocalId =
+		// EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal);
 
 		String commitId = SDF.format(new Date());
 
@@ -106,11 +146,13 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
 			public SaveUnitContext(DustEntity myUnit) {
 				this.myUnit = myUnit;
-
 				ctxKeys.put(ContextKeys.ThisUnit, factEntities.get(myUnit));
-				ctxKeys.put(ContextKeys.CommitId, factEntities.get(eCommitId));
-				ctxKeys.put(ContextKeys.EntityUnit, factEntities.get(ePersUnit));
-				ctxKeys.put(ContextKeys.EntityId, factEntities.get(eEntityId));
+
+				ContextKeys.initMap(ctxKeys, factEntities);
+				// ctxKeys.put(ContextKeys.CommitId, factEntities.get(eCommitId));
+				// ctxKeys.put(ContextKeys.EntityUnit, factEntities.get(ePersUnit));
+				// ctxKeys.put(ContextKeys.EntityId, factEntities.get(eEntityId));
+				// ctxKeys.put(ContextKeys.LocalId, factEntities.get(eLocalId));
 			}
 
 			DustUtilsFactory<String, Map<String, Object>> factResults = new DustUtilsFactory<String, Map<String, Object>>(
@@ -211,8 +253,9 @@ public class DustSandboxPersistence implements DustKernelComponents {
 						if (refUnits.contains(e)) {
 							data.put(ctxKeys.get(ContextKeys.EntityId),
 									DustUtils.accessEntity(DataCommand.getValue, e, DustGenericAtts.IdentifiedIdLocal));
-							data.put(ctxKeys.get(ContextKeys.CommitId),  commitId);
-//									DustUtils.accessEntity(DataCommand.getValue, e, DustCommAtts.PersistentCommitId));
+							data.put(ctxKeys.get(ContextKeys.CommitId), commitId);
+							// DustUtils.accessEntity(DataCommand.getValue, e,
+							// DustCommAtts.PersistentCommitId));
 						} else {
 							SaveUnitContext suc = factUnitCtx.get(eSaveUnit);
 							String entityId = suc.factEntities.get(e, eSaveUnit);
@@ -275,18 +318,14 @@ public class DustSandboxPersistence implements DustKernelComponents {
 				}
 
 				Map<String, Object> sm = new HashMap<>();
-				sm.put("header", suc.ctxKeys);
-				sm.put("data", suc.factResults.copyShallow(null));
+				ContextKeys.header.put(sm, suc.ctxKeys);
+				ContextKeys.data.put(sm, suc.factResults.copyShallow(null));
 
 				ret.put(uid, sm);
 			}
 
 			return ret;
 		}
-	}
-
-	public static void update() {
-		TempUnit.optInit();
 	}
 
 	public static void commit() {
@@ -308,27 +347,152 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
 		Map<String, Map> result = svctx.doSave();
 
-		File dirHistory = new File("output/persistence/history");
+		File dirPers = new File(PATH_PERSISTENCE);
+		File dirHistory = new File(dirPers, PATH_HISTORY);
 		dirHistory.mkdirs();
-
-		File dirPers = dirHistory.getParentFile();
 
 		for (Map.Entry<String, Map> r : result.entrySet()) {
 			FileWriter fw;
 			String key = r.getKey();
 			try {
-				File file = new File(dirPers, key + ".json");
+				File file = new File(dirPers, key + EXT_JSON);
 				fw = new FileWriter(file);
 				JSONObject.writeJSONString(r.getValue(), fw);
 				fw.flush();
 				fw.close();
-				
-				Files.copy(file.toPath(), new File(dirHistory, key + "_" + svctx.commitId + ".json").toPath());
+
+				Files.copy(file.toPath(), new File(dirHistory, key + "_" + svctx.commitId + EXT_JSON).toPath());
 			} catch (IOException e) {
 				Dust.wrapAndRethrowException("Saving " + key, e);
 			}
 		}
+	}
 
+	@SuppressWarnings("unchecked")
+	static class LoadContext {
+		class LoadUnitContext {
+			String unitName;
+
+			EnumMap<ContextKeys, String> ctxKeys = new EnumMap<>(ContextKeys.class);
+			Map inputData;
+
+			DustUtilsFactory<String, DustEntity> factEntities = new DustUtilsFactory<String, DustEntity>(false) {
+				@Override
+				protected DustEntity create(String key, Object... hints) {
+					Map m = (Map) inputData.get(key);
+					String unitId = (String) m.get(ctxKeys.get(ContextKeys.EntityUnit));
+					String entityId = (String) m.get(ctxKeys.get(ContextKeys.EntityId));
+					String idId = (String) m.get(ctxKeys.get(ContextKeys.LocalId));
+
+					boolean local = DustUtilsJava.isEqual(unitId, ctxKeys.get(ContextKeys.ThisUnit));
+					boolean unit = DustUtilsJava.isEqual(unitId, key);
+
+					DustEntity ret;
+
+					if (unit) {
+						ret = getUnit(local ? idId : entityId);
+					} else {
+						if (local) {
+							String nativeId = (String) m.get(ctxKeys.get(ContextKeys.NativeId));
+							ret = (null == nativeId) ? DustUtils.accessEntity(DataCommand.getEntity) : Dust.getEntity(nativeId);
+						} else {
+							Map mapUnitRefInfo = (Map) inputData.get(unitId);
+							String refUnitName = (String) mapUnitRefInfo.get(ctxKeys.get(ContextKeys.EntityId));
+
+							ret = factUctx.get(refUnitName).factEntities.get(entityId);
+						}
+					}
+
+					return ret;
+				}
+
+				@Override
+				protected void initNew(DustEntity item, String key, Object... hints) {
+					Map m = (Map) inputData.get(key);
+					String unitId = (String) m.get(ctxKeys.get(ContextKeys.EntityUnit));
+					boolean local = DustUtilsJava.isEqual(unitId, ctxKeys.get(ContextKeys.ThisUnit));
+
+					if (local) {
+						for (Map.Entry de : (Iterable<Map.Entry>) m.entrySet()) {
+							String keyId = (String) de.getKey();
+							DustEntity eKey = factEntities.get(keyId);
+
+							Object val = de.getValue();
+
+							if (val instanceof Collection) {
+								for (Object o : (Collection) val) {
+									DustEntity eTarget = factEntities.get(DustUtilsJava.toString(o));
+									DustUtils.accessEntity(DataCommand.setRef, item, eKey, eTarget);
+								}
+							} else {
+								DustMetaLinkDefTypeValues ldt = factLinkTypes.get(eKey);
+
+								if (null == ldt) {
+									DustUtils.accessEntity(DataCommand.setValue, item, eKey, val);
+								} else {
+									DustEntity eTarget = factEntities.get(DustUtilsJava.toString(val));
+									DustUtils.accessEntity(DataCommand.setRef, item, eKey, eTarget);
+								}
+							}
+						}
+					}
+				}
+			};
+
+			public LoadUnitContext(String unitName) {
+				this.unitName = unitName;
+
+				File uf = new File(PATH_PERSISTENCE, unitName + EXT_JSON);
+
+				try {
+					JSONObject jo = (JSONObject) parser.parse(new FileReader(uf));
+
+					Map m = ContextKeys.header.get(jo);
+					for (Map.Entry he : (Iterable<Map.Entry>) m.entrySet()) {
+						ctxKeys.put(ContextKeys.valueOf((String) he.getKey()), (String) he.getValue());
+					}
+
+					inputData = ContextKeys.data.get(jo);
+				} catch (Exception e) {
+					Dust.wrapAndRethrowException("Loading unit " + unitName, e);
+				}
+			}
+
+			public void load() {
+				for (Object key : inputData.keySet()) {
+					factEntities.get((String) key);
+				}
+			}
+		}
+
+		JSONParser parser = new JSONParser();
+		DustUtilsFactory<String, LoadUnitContext> factUctx = new DustUtilsFactory<String, LoadUnitContext>(false) {
+			@Override
+			protected LoadUnitContext create(String key, Object... hints) {
+				LoadUnitContext luc = new LoadUnitContext(key);
+				arrCtx.add(luc);
+				return luc;
+			}
+		};
+
+		ArrayList<LoadUnitContext> arrCtx = new ArrayList<>();
+
+		public void load() {
+			for (int li = 0; li < arrCtx.size(); ++li) {
+				arrCtx.get(li).load();
+			}
+		}
+	}
+
+	public static void update(String unitName) {
+		TempUnit.optInit();
+		LoadContext lctx = new LoadContext();
+
+		for (String un : unitName.split(",")) {
+			lctx.factUctx.get(un.trim());
+		}
+
+		lctx.load();
 	}
 
 }
