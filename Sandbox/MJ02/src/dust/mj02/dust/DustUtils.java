@@ -54,7 +54,7 @@ public class DustUtils implements DustComponents {
 	}
 
 	public static <RetVal> RetVal accessEntity(DataCommand cmd, Object... parameters) {
-		DustEntity e = optResolve(parameters[0]);
+		DustEntity e = (parameters.length > 0) ? optResolve(parameters[0]) : null;
 		DustEntity key = (parameters.length > 1) ? optResolve(parameters[1]) : null;
 		Object val = (parameters.length > 2) ? optResolve(parameters[2]) : null;
 		Object collId = (parameters.length > 3) ? parameters[3] : null;

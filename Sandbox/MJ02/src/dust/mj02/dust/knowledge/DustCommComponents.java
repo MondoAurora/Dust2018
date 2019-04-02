@@ -10,7 +10,7 @@ public interface DustCommComponents extends DustComponents {
 	};
 	
 	enum DustCommAtts implements DustEntityKey {
-		PersistentEntityId, PersistentCommitId
+		PersistentEntityId, PersistentCommitId, UnitNextEntityId
 	}
 	
 	enum DustCommLinks implements DustEntityKey {

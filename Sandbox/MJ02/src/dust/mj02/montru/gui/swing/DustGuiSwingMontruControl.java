@@ -58,6 +58,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 					name = "VMTest01";
 				}
 				DustSandboxPersistence.update(name);
+				desktop.refreshData();
 				break;
 			case commit:
 				DustSandboxPersistence.commit();

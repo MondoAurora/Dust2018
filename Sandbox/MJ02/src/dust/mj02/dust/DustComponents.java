@@ -3,6 +3,8 @@ package dust.mj02.dust;
 import java.util.HashMap;
 import java.util.Map;
 
+import dust.utils.DustUtilsJava;
+
 public interface DustComponents {
 
 	public class DustException extends RuntimeException {
@@ -98,6 +100,31 @@ public interface DustComponents {
 		public static <RetType> RetType getKey(DustEntity e) {
 			return (RetType) entityToKey.get(e);
 		}
-
 	}
+	
+	public static class FinderByAttValue implements RefProcessor {
+		private DustEntity found;
+		private final Object key;
+		private final Object value;
+
+		public FinderByAttValue(Object key, Object value) {
+			this.key = key;
+			this.value = value;
+		}
+		@Override
+		public void processRef(DustRef ref) {
+			if (null == found) {
+				DustEntity t = ref.get(RefKey.target);
+				String k = DustUtils.accessEntity(DataCommand.getValue, t, key);
+				if (DustUtilsJava.isEqual(value, k)) {
+					found = t;
+				}
+			}
+		}
+		
+		public DustEntity getFound() {
+			return found;
+		}
+	}
+
 }
