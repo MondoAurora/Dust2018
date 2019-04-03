@@ -1,5 +1,6 @@
 package dust.utils;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,4 +107,29 @@ public abstract class DustUtilsFactory<KeyType, ValType> implements DustUtilsCom
 			return validKeys.contains(key) ? super.get(key, hints) : null;
 		}
 	}
+	
+	public static class Simple<KeyType, ValType> extends DustUtilsFactory<KeyType, ValType> {
+		private final Constructor<? extends ValType> constructor;
+
+		public Simple(boolean sorted, Class<? extends ValType> clVal) {
+			super(sorted);
+			
+			try {
+				this.constructor = clVal.getConstructor();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		protected ValType create(KeyType key, Object... hints) {
+			try {
+				return constructor.newInstance();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		
+	}
+	
 }

@@ -96,7 +96,7 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
 	@SuppressWarnings("unchecked")
 	enum ContextKeys {
-		header(null), data(null), units(null), 
+		header(null), data(null), refUnits(null), 
 		ThisUnit(null), CommitId(DustCommAtts.PersistentCommitId), EntityUnit(
 				DustCommLinks.PersistentContainingUnit), EntityId(DustCommAtts.PersistentEntityId), LocalId(
 						DustGenericAtts.IdentifiedIdLocal), PrimaryType(
@@ -142,16 +142,21 @@ public class DustSandboxPersistence implements DustKernelComponents {
 			ArrayList<DustEntity> toSave = new ArrayList<>();
 
 			long nextId;
+			long nextRefId;
 
-			public SaveUnitContext(DustEntity myUnit) {
-				this.myUnit = myUnit;
-				myUnitId = factEntities.get(myUnit);
+			public SaveUnitContext(DustEntity myUnit_) {
+				this.myUnit = myUnit_;
+				toSave.add(myUnit);
+				
+//				myUnitId = factEntityLocalId.get(myUnit);
+				myUnitId = DustUtils.accessEntity(DataCommand.getValue, myUnit, DustGenericAtts.IdentifiedIdLocal);
 				ctxKeys.put(ContextKeys.ThisUnit, myUnitId);
-
-				ContextKeys.initMap(ctxKeys, factEntities);
 
 				String ni = DustUtils.accessEntity(DataCommand.getValue, myUnit, DustCommAtts.UnitNextEntityId);
 				nextId = DustUtilsJava.isEmpty(ni) ? 0 : Long.parseLong(ni);
+				nextRefId = -1;
+
+				ContextKeys.initMap(ctxKeys, factEntityLocalId);
 			}
 
 			DustUtilsFactory<String, Map<String, Object>> factResults = new DustUtilsFactory<String, Map<String, Object>>(
@@ -162,21 +167,24 @@ public class DustSandboxPersistence implements DustKernelComponents {
 				}
 			};
 
-			DustUtilsFactory<DustEntity, String> factEntities = new DustUtilsFactory<DustEntity, String>(false) {
+			DustUtilsFactory<DustEntity, String> factEntityLocalId = new DustUtilsFactory<DustEntity, String>(false) {
 				@Override
 				protected String create(DustEntity key, Object... hints) {
-					String persId = DustUtils.accessEntity(DataCommand.getValue, key, DustCommAtts.PersistentEntityId);
-					if (DustUtilsJava.isEmpty(persId)) {
-						persId = DustUtilsJava.toString(nextId++);
-					}
+					String persId;
+					
+					if (myUnit == whereToSave(key)) {
+						persId = DustUtils.accessEntity(DataCommand.getValue, key, DustCommAtts.PersistentEntityId);
+						if (DustUtilsJava.isEmpty(persId)) {
+							persId = DustUtilsJava.toString(nextId++);
+						}
 
-					if (0 < hints.length) {
 						DustUtils.accessEntity(DataCommand.setValue, key, DustCommAtts.PersistentEntityId, persId);
-						DustUtils.accessEntity(DataCommand.setRef, key, DustCommLinks.PersistentContainingUnit,
-								hints[0]);
+						DustUtils.accessEntity(DataCommand.setRef, key, DustCommLinks.PersistentContainingUnit,	myUnit);
 
 						// if changed...
 						DustUtils.accessEntity(DataCommand.setValue, key, DustCommAtts.PersistentCommitId, commitId);
+					} else {
+						persId = DustUtilsJava.toString(nextRefId--);
 					}
 
 					toSave.add(key);
@@ -190,10 +198,19 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
 				if (null != eSaveUnit) {
 					boolean local = myUnit == eSaveUnit;
-					String localId = local ? factEntities.get(e, myUnit) : factEntities.get(e);
+					
+					if ( !local ) {
+						refUnits.add(eSaveUnit);
+
+						if (refUnits.contains(e)) {
+							// referred units are saved externally
+							return;
+						}
+					}
+					
+					String localId = (e == myUnit) ? myUnitId : factEntityLocalId.get(e);
 
 					Map<String, Object> data = factResults.get(localId);
-					data.put(ctxKeys.get(ContextKeys.EntityUnit), factEntities.get(eSaveUnit));
 
 					if (local) {
 						data.put(ctxKeys.get(ContextKeys.EntityId), localId);
@@ -203,12 +220,15 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
 							@Override
 							public void processContent(DustEntity eOwner, DustEntity eKey, Object value) {
+								if ( eKey == EntityResolver.getEntity(DustCommLinks.PersistentContainingUnit)) {
+									return;
+								}
 								DustEntity uKey = whereToSave(eKey);
 
 								if (uKey != myUnit) {
 									refUnits.add(uKey);
 								}
-								String mapKey = factEntities.get(eKey);
+								String mapKey = factEntityLocalId.get(eKey);
 
 								if (value instanceof DustRef) {
 									DustMetaLinkDefTypeValues ldt = factLinkTypes
@@ -224,7 +244,7 @@ public class DustSandboxPersistence implements DustKernelComponents {
 										@SuppressWarnings("unchecked")
 										@Override
 										public void processRef(DustRef ref) {
-											String refId = factEntities.get(ref.get(RefKey.target));
+											String refId = factEntityLocalId.get(ref.get(RefKey.target));
 
 											switch (ldt) {
 											case LinkDefArray:
@@ -232,7 +252,7 @@ public class DustSandboxPersistence implements DustKernelComponents {
 												((Collection<String>) coll).add(refId);
 												break;
 											case LinkDefMap:
-												String keyId = factEntities.get(ref.get(RefKey.key));
+												String keyId = factEntityLocalId.get(ref.get(RefKey.key));
 												((Map<String, String>) coll).put(keyId, refId);
 												break;
 											case LinkDefSingle:
@@ -250,22 +270,17 @@ public class DustSandboxPersistence implements DustKernelComponents {
 							}
 						}, null);
 					} else {
-						refUnits.add(eSaveUnit);
-
-						if (!refUnits.contains(e)) {
-//							data.put(ctxKeys.get(ContextKeys.EntityId),
-//									DustUtils.accessEntity(DataCommand.getValue, e, DustGenericAtts.IdentifiedIdLocal));
-//							data.put(ctxKeys.get(ContextKeys.CommitId), commitId);
-//						} else {
 							SaveUnitContext suc = factUnitCtx.get(eSaveUnit);
-							String entityId = suc.factEntities.get(e, eSaveUnit);
+							String entityId = suc.factEntityLocalId.get(e);
 
 							data.put(ctxKeys.get(ContextKeys.EntityId), entityId);
-						}
+							data.put(ctxKeys.get(ContextKeys.EntityUnit), suc.myUnitId);
+							data.put(ctxKeys.get(ContextKeys.CommitId), commitId);
 					}
 				}
 			}
 
+			@SuppressWarnings("unchecked")
 			private void saveInto(Map<String, Map> ret) {
 				String uid = DustUtils.accessEntity(DataCommand.getValue, myUnit, DustGenericAtts.IdentifiedIdLocal);
 
@@ -275,12 +290,22 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
 				String ni = DustUtilsJava.toString(nextId);
 				DustUtils.accessEntity(DataCommand.setValue, myUnit, DustCommAtts.UnitNextEntityId, ni);
-				factResults.get(myUnitId).put(factEntities.get(EntityResolver.getEntity(DustCommAtts.UnitNextEntityId)),
+				factResults.get(myUnitId).put(factEntityLocalId.get(EntityResolver.getEntity(DustCommAtts.UnitNextEntityId)),
 						ni);
 
 				Map<String, Object> sm = new HashMap<>();
 				ContextKeys.header.put(sm, ctxKeys);
 				ContextKeys.data.put(sm, factResults.copyShallow(null));
+				
+				DustUtilsFactory<String, Map> ru = new DustUtilsFactory.Simple<String, Map>(false, HashMap.class);
+				for ( DustEntity u : refUnits ) {
+					SaveUnitContext suc = factUnitCtx.get(u);
+					
+					Map m = ru.get(suc.myUnitId);
+					m.put(ctxKeys.get(ContextKeys.EntityId), suc.myUnitId);
+					m.put(ctxKeys.get(ContextKeys.CommitId), commitId);
+				}
+				ContextKeys.refUnits.put(sm, ru.copyShallow(null));
 
 				ret.put(uid, sm);
 			}
@@ -339,6 +364,11 @@ public class DustSandboxPersistence implements DustKernelComponents {
 		TempUnit.optInit();
 
 		SaveContext svctx = new SaveContext();
+		Map<String, Map> result;
+		
+//		SaveContext.SaveUnitContext succ = svctx.factUnitCtx.get(getUnit(TempUnit.Comm));
+//		result = new HashMap<>();
+//		succ.saveInto(result);
 
 		DustEntity tu = EntityResolver.getEntity(DustCommTypes.Unit);
 
@@ -347,12 +377,12 @@ public class DustSandboxPersistence implements DustKernelComponents {
 			@Override
 			public void processEntity(DustEntity entity) {
 				if (tu == DustUtils.getByPath(entity, DustDataLinks.EntityPrimaryType)) {
-					svctx.factUnitCtx.get(entity).toSave.add(entity);
+					svctx.factUnitCtx.get(entity);
 				}
 			}
 		});
 
-		Map<String, Map> result = svctx.doSave();
+		result = svctx.doSave();
 
 		File dirPers = new File(PATH_PERSISTENCE);
 		File dirHistory = new File(dirPers, PATH_HISTORY);
@@ -382,6 +412,7 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
 			EnumMap<ContextKeys, String> ctxKeys = new EnumMap<>(ContextKeys.class);
 			Map inputData;
+			Map refUnits;
 
 			DustUtilsFactory<String, DustEntity> factEntities = new DustUtilsFactory<String, DustEntity>(false) {
 				@Override
@@ -389,20 +420,25 @@ public class DustSandboxPersistence implements DustKernelComponents {
 					Map m = (Map) inputData.get(key);
 					String unitId = (String) m.get(ctxKeys.get(ContextKeys.EntityUnit));
 					String entityId = (String) m.get(ctxKeys.get(ContextKeys.EntityId));
-					String idId = (String) m.get(ctxKeys.get(ContextKeys.LocalId));
+//					String idId = (String) m.get(ctxKeys.get(ContextKeys.LocalId));
 
-					boolean local = DustUtilsJava.isEqual(unitId, ctxKeys.get(ContextKeys.ThisUnit));
-					boolean unit = DustUtilsJava.isEqual(unitId, key);
+					boolean local = DustUtilsJava.isEmpty(unitId);
+//					boolean local = DustUtilsJava.isEqual(unitId, ctxKeys.get(ContextKeys.ThisUnit));
+//					boolean unit = DustUtilsJava.isEqual(unitId, key);
 
 					DustEntity ret = null;
+					
+					if ( DustUtilsJava.isEqual(unitName, key) ) {
+						ret = getUnit(key);
 
-					if (unit) {
-						ret = getUnit(local ? idId : entityId);
+//					if (unit) {
+//						ret = getUnit(local ? idId : entityId);
 					} else {
 						if (local) {
 							String nativeId = (String) m.get(ctxKeys.get(ContextKeys.NativeId));
 							if (null == nativeId) {
-								DustEntity eUnit = factEntities.get(unitId);
+								DustEntity eUnit = getUnit(unitName);
+//								DustEntity eUnit = factEntities.get(unitId);
 								FinderByAttValue fbav = new FinderByAttValue(DustCommAtts.PersistentEntityId, key);
 								DustUtils.accessEntity(DataCommand.processRef, eUnit, DustCommLinks.UnitEntities, fbav);
 
@@ -415,7 +451,7 @@ public class DustSandboxPersistence implements DustKernelComponents {
 								ret = Dust.getEntity(nativeId);
 							}
 						} else {
-							Map mapUnitRefInfo = (Map) inputData.get(unitId);
+							Map mapUnitRefInfo = (Map) refUnits.get(unitId);
 							String refUnitName = (String) mapUnitRefInfo.get(ctxKeys.get(ContextKeys.EntityId));
 
 							ret = factUctx.get(refUnitName).factEntities.get(entityId);
@@ -429,7 +465,10 @@ public class DustSandboxPersistence implements DustKernelComponents {
 				protected void initNew(DustEntity item, String key, Object... hints) {
 					Map m = (Map) inputData.get(key);
 					String unitId = (String) m.get(ctxKeys.get(ContextKeys.EntityUnit));
-					boolean local = DustUtilsJava.isEqual(unitId, ctxKeys.get(ContextKeys.ThisUnit));
+//					boolean local = DustUtilsJava.isEqual(unitId, ctxKeys.get(ContextKeys.ThisUnit));
+					
+					boolean local = DustUtilsJava.isEmpty(unitId);
+
 
 					if (local) {
 						for (Map.Entry de : (Iterable<Map.Entry>) m.entrySet()) {
@@ -470,8 +509,9 @@ public class DustSandboxPersistence implements DustKernelComponents {
 					for (Map.Entry he : (Iterable<Map.Entry>) m.entrySet()) {
 						ctxKeys.put(ContextKeys.valueOf((String) he.getKey()), (String) he.getValue());
 					}
-
+					
 					inputData = ContextKeys.data.get(jo);
+					refUnits = ContextKeys.refUnits.get(jo);
 				} catch (Exception e) {
 					Dust.wrapAndRethrowException("Loading unit " + unitName, e);
 				}
