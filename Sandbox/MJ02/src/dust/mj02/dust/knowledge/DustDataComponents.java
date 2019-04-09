@@ -11,6 +11,10 @@ public interface DustDataComponents extends DustComponents {
 		EntityBinaries
 	}
 	
+	enum DustDataTags implements DustEntityKey {
+		EntityChanged, EntityChanging
+	}
+	
 	enum DustDataLinks implements DustEntityKey {
 		EntityPrimaryType, EntityModels, EntityServices,
 		MessageCommand

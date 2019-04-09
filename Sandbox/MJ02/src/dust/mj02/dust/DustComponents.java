@@ -34,6 +34,10 @@ public interface DustComponents {
 		msg, self, ctx
 	}
 
+	enum TagCommand implements DustEntity {
+		set, clear, test
+	}
+
 	enum DataCommand implements DustEntityKey {
 		getEntity(false), cloneEntity(false), dropEntity(false), 
 		getValue(false), setValue(false), processContent(false), 

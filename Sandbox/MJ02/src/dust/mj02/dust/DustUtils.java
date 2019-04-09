@@ -9,6 +9,7 @@ import dust.mj02.dust.knowledge.DustDataComponents.DustDataAtts;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcAtts;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcLinks;
+import dust.mj02.dust.tools.DustGenericComponents;
 import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -53,6 +54,29 @@ public class DustUtils implements DustComponents {
 		return (RetVal) ob;
 	}
 
+	public static boolean tag(DustEntity entity, TagCommand tcmd, Object tag) {
+		DustEntity eLinkTags = EntityResolver.getEntity(DustGenericComponents.DustGenericLinks.TaggedTags);
+		DustRef ref = Dust.accessEntity(DataCommand.getValue, entity, eLinkTags, null, null);
+		boolean set = (null == ref) ? false : ref.contains(optResolve(tag));
+
+		switch (tcmd) {
+		case clear:
+			if ( set ) {
+				Dust.accessEntity(DataCommand.removeRef, entity, eLinkTags, optResolve(tag), null);
+			}
+			return set;
+		case set:
+			if ( !set ) {
+				Dust.accessEntity(DataCommand.setRef, entity, eLinkTags, optResolve(tag), null);
+			}
+			return !set;
+		case test:
+			return set;
+		}
+		
+		return set;
+	}
+
 	public static <RetVal> RetVal accessEntity(DataCommand cmd, Object... parameters) {
 		DustEntity e = (parameters.length > 0) ? optResolve(parameters[0]) : null;
 		DustEntity key = (parameters.length > 1) ? optResolve(parameters[1]) : null;
@@ -80,7 +104,7 @@ public class DustUtils implements DustComponents {
 
 	public static <RetVal> RetVal getColl(DustMetaLinkDefTypeValues ldt) {
 		Object coll = null;
-		
+
 		if (null != ldt) {
 			switch (ldt) {
 			case LinkDefArray:

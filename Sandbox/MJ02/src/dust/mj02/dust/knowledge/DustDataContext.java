@@ -729,6 +729,14 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 				}
 			});
 		}
+		
+		DustEntity eEchg = EntityResolver.getEntity(DustDataTags.EntityChanged);
+		boolean ect = ((oldVal instanceof DustRef) && (eEchg == ((DustRef)oldVal).get(RefKey.target)))
+				|| ((newVal instanceof DustRef) && (eEchg == ((DustRef)newVal).get(RefKey.target)));
+		
+		if ( !ect ) {
+			DustUtils.tag(entity, TagCommand.set, DustDataTags.EntityChanged);
+		}
 	}
 
 	@Override
