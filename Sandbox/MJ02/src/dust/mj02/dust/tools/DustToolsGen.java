@@ -24,10 +24,6 @@ public class DustToolsGen implements DustGenericComponents {
 
 		DustUtils.accessEntity(DataCommand.setRef, DustGenericAtts.StreamFileName, DustMetaLinks.AttDefParent, DustGenericTypes.Stream);
 		DustUtils.accessEntity(DataCommand.setRef, DustGenericAtts.StreamFileAccess, DustMetaLinks.AttDefParent, DustGenericTypes.Stream);
-		
-		DustUtils.accessEntity(DataCommand.setRef, DustGenericLinks.TaggedTags, DustMetaLinks.LinkDefParent, DustGenericTypes.Tagged);
-		DustUtils.accessEntity(DataCommand.setRef, DustGenericLinks.TaggedTags, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
-
 
 	}
 }

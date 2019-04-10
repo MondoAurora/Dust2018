@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.dust.knowledge.DustDataComponents.DustDataAtts;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcAtts;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcLinks;
-import dust.mj02.dust.tools.DustGenericComponents;
 import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -55,7 +55,7 @@ public class DustUtils implements DustComponents {
 	}
 
 	public static boolean tag(DustEntity entity, TagCommand tcmd, Object tag) {
-		DustEntity eLinkTags = EntityResolver.getEntity(DustGenericComponents.DustGenericLinks.TaggedTags);
+		DustEntity eLinkTags = EntityResolver.getEntity(DustDataComponents.DustDataLinks.EntityTags);
 		DustRef ref = Dust.accessEntity(DataCommand.getValue, entity, eLinkTags, null, null);
 		boolean set = (null == ref) ? false : ref.contains(optResolve(tag));
 

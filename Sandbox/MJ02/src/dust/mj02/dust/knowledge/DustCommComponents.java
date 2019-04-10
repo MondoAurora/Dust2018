@@ -17,6 +17,10 @@ public interface DustCommComponents extends DustComponents {
 		PersistentContainingUnit, PersistentStoreWith, UnitEntities, 
 	}
 
+	enum DustCommTags implements DustEntityKey {
+		PersistentNotStored
+	}
+	
 	enum DustCommServices implements DustEntityKey {
 		Store
 	};
