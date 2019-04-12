@@ -29,6 +29,10 @@ public interface DustMetaComponents extends DustComponents {
 		}
 	};
 	
+	enum DustMetaTags implements DustEntityKey {
+		NotCloned
+	};
+	
 	enum DustMetaLinks implements DustEntityKey {
 		AttDefType, AttDefParent, 
 		LinkDefType, LinkDefReverse, LinkDefParent,

@@ -55,7 +55,8 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 			case update:
 				String name = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Unit names (comma separated list)?", "Select update", JOptionPane.QUESTION_MESSAGE);
 				if ( DustUtilsJava.isEmpty(name)) {
-					name = "VMTest01";
+//                    name = "VMTest01";
+                    name = "Text";
 				}
 				DustSandboxPersistence.update(name);
 				desktop.refreshData();

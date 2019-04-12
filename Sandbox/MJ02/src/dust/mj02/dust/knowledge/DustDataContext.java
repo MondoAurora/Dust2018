@@ -512,7 +512,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 		
 		for ( Map.Entry<DustEntity, Object> se : source.content.entrySet() ) {
 			DustEntity key = se.getKey();
-			if ( EntityResolver.getEntity(DustDataLinks.EntityModels) == key ) {
+			if ( DustUtils.tag(key, TagCommand.test, DustMetaTags.NotCloned)) {
+//			if ( EntityResolver.getEntity(DustDataLinks.EntityModels) == key ) {
 				continue;
 			}
 			Object val = se.getValue();

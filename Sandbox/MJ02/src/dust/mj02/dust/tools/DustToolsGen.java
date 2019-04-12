@@ -4,7 +4,7 @@ import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
 
-public class DustToolsGen implements DustGenericComponents {
+public class DustToolsGen implements DustGenericComponents, DustCollectionComponents {
 	public static void init() {
 //		EntityResolver.register("Tools:Generic:Identified", DustGenericTypes.Identified);
 //		EntityResolver.register("Tools:Generic:Connected", DustGenericTypes.Connected);
@@ -24,6 +24,9 @@ public class DustToolsGen implements DustGenericComponents {
 
 		DustUtils.accessEntity(DataCommand.setRef, DustGenericAtts.StreamFileName, DustMetaLinks.AttDefParent, DustGenericTypes.Stream);
 		DustUtils.accessEntity(DataCommand.setRef, DustGenericAtts.StreamFileAccess, DustMetaLinks.AttDefParent, DustGenericTypes.Stream);
+
+		DustUtils.accessEntity(DataCommand.setRef, DustCollectionLinks.SequenceMembers, DustMetaLinks.LinkDefParent, DustCollectionTypes.Sequence);
+		DustUtils.accessEntity(DataCommand.setRef, DustCollectionLinks.SequenceMembers, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefArray);
 
 	}
 }
