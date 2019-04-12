@@ -27,16 +27,17 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustTempHacks;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.java.DustJavaGen;
-import dust.mj02.sandbox.DustSandboxPersistence;
+import dust.mj02.sandbox.persistence.DustPersistence;
+import dust.mj02.sandbox.persistence.DustPersistenceComponents;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
 
 @SuppressWarnings("serial")
-class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComponents {
+class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComponents, DustPersistenceComponents {
 	private static final long serialVersionUID = 1L;
 	
 	enum GuiCommands {
-		deleteEntity, deleteRef, update, commit,// saveAll, //loadReflection, // createEntity, loadFile, test03
+		deleteEntity, deleteRef, update, commit, setMaster, setSlave // saveAll, //loadReflection, // createEntity, loadFile, test03
 	};
 
 	ActionListener cmdListener = new ActionListener() {
@@ -58,12 +59,19 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 //                    name = "VMTest01";
                     name = "Text";
 				}
-				DustSandboxPersistence.update(name);
+				DustPersistence.update(PERS_STORAGE_DEF_MULTI, name);
 				desktop.refreshData();
 				break;
 			case commit:
-				DustSandboxPersistence.commit();
+				DustPersistence.commit(PERS_STORAGE_DEF_MULTI);
 				break;
+            case setMaster:
+                DustPersistence.commit(PERS_STORAGE_DEF_SINGLE);
+                break;
+            case setSlave:
+                DustPersistence.update(PERS_STORAGE_DEF_SINGLE, "Text");
+                desktop.refreshData();
+                break;
 //			case saveAll:
 //				desktop.saveAll();
 //				break;

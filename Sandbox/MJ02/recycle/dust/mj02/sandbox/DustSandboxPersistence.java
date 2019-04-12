@@ -91,8 +91,6 @@ public class DustSandboxPersistence implements DustKernelComponents {
                     public void processEntity(DustEntity entity) {
                         DustUtils.accessEntity(DataCommand.setValue, entity,
                                 DustGenericAtts.IdentifiedIdLocal, name);
-                        // DustUtils.accessEntity(DataCommand.setValue, entity,
-                        // DustCommAtts.PersistentEntityId, name);
                         DustUtils.accessEntity(DataCommand.setValue, entity,
                                 DustCommAtts.UnitNextEntityId, "0");
                     }
@@ -129,13 +127,18 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
     @SuppressWarnings("unchecked")
     enum ContextKeys {
-        header(null), data(null), refUnits(null), unitCommitId(null), ThisUnit(
-                null), CommitId(DustCommAtts.PersistentCommitId), EntityUnit(
-                        DustCommLinks.PersistentContainingUnit), EntityId(
-                                DustCommAtts.PersistentEntityId), LocalId(
-                                        DustGenericAtts.IdentifiedIdLocal), PrimaryType(
-                                                DustDataLinks.EntityPrimaryType), NativeId(
-                                                        DustProcAtts.NativeBoundId);
+        /* @formatter:off */
+        header(null), data(null), refUnits(null), unitCommitId(null), ThisUnit(null),
+        
+        CommitId(DustCommAtts.PersistentCommitId), 
+        EntityUnit(DustCommLinks.PersistentContainingUnit), 
+        EntityId(DustCommAtts.PersistentEntityId), 
+        LocalId(DustGenericAtts.IdentifiedIdLocal), 
+        PrimaryType(DustDataLinks.EntityPrimaryType), 
+        NativeId(DustProcAtts.NativeBoundId)
+        
+        ;
+        /* @formatter:on */
 
         Object key;
 
@@ -510,6 +513,10 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
         result = svctx.doSave();
 
+        saveToJson(result, svctx.commitId);
+    }
+
+    private static void saveToJson(Map<String, Map> result, String commitId) {
         File dirPers = new File(PATH_PERSISTENCE);
         File dirHistory = new File(dirPers, PATH_HISTORY);
         dirHistory.mkdirs();
@@ -526,7 +533,7 @@ public class DustSandboxPersistence implements DustKernelComponents {
 
                 Files.copy(file.toPath(),
                         new File(dirHistory,
-                                key + "_" + svctx.commitId + EXT_JSON)
+                                key + "_" + commitId + EXT_JSON)
                                         .toPath());
             } catch (IOException e) {
                 Dust.wrapAndRethrowException("Saving " + key, e);
