@@ -1,19 +1,32 @@
 ** TASKS **
-drag model off the entity panel - create entity with that primary type
 
-clean up drawing panels, remove factories?
+*SHORT
+fix command name / function call name generation
 
-separate Gui control logic from swing implementation
-Factory link type?
+
+
+System is a unit, has unit refs
+store hierarchy on units - one unit loader on system level (internal relay)
+
+No map but factory, where the KEY is entity too (because it has meaning!)
 
 save area size and open entity panel location, opened sources
 
-resolver entity management (or: correct ID resolution?)
-Unit introduction
-boot entities, change flag, save back to boot
 Java source connection info, source generator
 
 ** LOG **
+
+* 20190416 * dump
+
+NO  resolver entity management (or: correct ID resolution?) - global ID idea dropped
+YES Unit introduction - but moved from Meta to Comm as "document"
+YES boot entities, change flag, save back to boot - in part, boot changed to separate units
+
+Done during Montru coplete refactor
+ - drag model off the entity panel - create entity with that primary type
+ - clean up drawing panels, remove factories?
+ - separate Gui control logic from swing implementation
+
 
 * 20190225 *
 Global identification seems to be a bad idea; should use local Factory link type 
