@@ -28,13 +28,16 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 		DustKnowledgeGen.init();
 		DustToolsGen.init();
 
+//	    DustJavaGen.init();
+//		DustTempHacks.detectMetaConnections();
+
 //		DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
 //		DustCommDiscussion disc = new DustCommDiscussion();
 //		
 //		disc.load(rdr, "MJ02Boot02.json");
 		
 //		new MontruGuiSwingFrame();
-		new DustGuiSwingMontruMain().dustProcActiveInit();
+		new DustGuiSwingMontruMain().activeInit();
 	}
 
 	@Override

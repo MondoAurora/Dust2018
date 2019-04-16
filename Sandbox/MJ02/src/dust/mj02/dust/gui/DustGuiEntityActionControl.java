@@ -62,12 +62,16 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 				DustEntity eSrc = dragSource.getEntity();
 				
 				DustEntity ePt = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, eSrc, DustDataLinks.EntityPrimaryType));
-				if ( ePt == EntityResolver.getEntity(DustDataTypes.Message) ) {
+                DustEntity targetData = dragTarget.getData();
+				
+                boolean head = EntityResolver.getEntity(DustDataLinks.EntityModels) == targetData;
+				
+				if ( head && (ePt == EntityResolver.getEntity(DustDataTypes.Message)) ) {
 					DustUtils.accessEntity(DataCommand.tempSend, dragTarget.getEntity(), eSrc);
-				} else if ( ePt == EntityResolver.getEntity(DustMetaTypes.Service) ) {
+				} else if ( head && (ePt == EntityResolver.getEntity(DustMetaTypes.Service)) ) {
 					DustUtils.accessEntity(DataCommand.setRef, dragTarget.getEntity(), DustDataLinks.EntityServices, eSrc);
 				} else {
-					Dust.accessEntity(DataCommand.setRef, dragTarget.getEntity(), dragTarget.getData(),
+                    Dust.accessEntity(DataCommand.setRef, dragTarget.getEntity(), targetData,
 							eSrc, null);
 				}
 				dropped(ctrlStatus, dragSource, dragTarget, xScreen, yScreen);

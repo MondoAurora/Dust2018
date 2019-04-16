@@ -8,7 +8,7 @@ import java.net.URLConnection;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 
-public class HttpPinger implements HttpComponents, DustProcComponents.DustProcPocessor {
+public class DustHttpClient implements DustHttpComponents, DustProcComponents.DustProcPocessor {
     
     URL url;
 

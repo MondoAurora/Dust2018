@@ -28,7 +28,7 @@ public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents
 	}
 
 	@Override
-	public void dustProcActiveInit() throws Exception {
+	public void activeInit() throws Exception {
 		DustRef e = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustProcLinks.ChangeEntity);
 		DustRef a = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustProcLinks.ChangeKey);
 
@@ -43,7 +43,7 @@ public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents
 	}
 
 	@Override
-	public void dustProcActiveRelease() throws Exception {
+	public void activeRelease() throws Exception {
 		
 	}
 	

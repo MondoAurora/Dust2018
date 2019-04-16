@@ -405,13 +405,13 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 	}
 
 	@Override
-	public void dustProcActiveInit() throws Exception {
+	public void activeInit() throws Exception {
 		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners,
 				ContextRef.self);
 	}
 
 	@Override
-	public void dustProcActiveRelease() throws Exception {
+	public void activeRelease() throws Exception {
 	}
 
 	public DustGuiSwingEntityActionControl getEac() {

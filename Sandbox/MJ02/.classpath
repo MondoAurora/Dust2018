@@ -5,5 +5,13 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SandboxExtLib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/DustUtils"/>
 	<classpathentry kind="lib" path="/SandboxExtLib/lib/json/json-simple-1.1.1.jar" sourcepath="/SandboxExtLib/lib/json/json-simple-1.1.1-sources.jar"/>
+	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/jetty-http-9.3.7.v20160115.jar"/>
+	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/jetty-io-9.3.7.v20160115.jar"/>
+	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/jetty-security-9.3.7.v20160115.jar"/>
+	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/jetty-server-9.3.7.v20160115.jar"/>
+	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/jetty-servlet-9.3.7.v20160115.jar"/>
+	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/jetty-util-9.3.7.v20160115.jar"/>
+	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/jetty-webapp-9.3.7.v20160115.jar"/>
+	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/servlet-api-3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

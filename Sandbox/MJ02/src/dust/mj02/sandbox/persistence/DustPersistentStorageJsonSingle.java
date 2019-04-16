@@ -27,11 +27,11 @@ public class DustPersistentStorageJsonSingle implements
     }
     
     @Override
-    public void dustProcActiveInit() throws Exception {
+    public void activeInit() throws Exception {
     }
 
     @Override
-    public void dustProcActiveRelease() throws Exception {
+    public void activeRelease() throws Exception {
         map = null;
     }
 

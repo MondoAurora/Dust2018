@@ -6,6 +6,7 @@ import java.util.Map;
 import dust.utils.DustUtilsJava;
 
 public interface DustComponents {
+    String UTF8 = "UTF-8";
 
 	public class DustException extends RuntimeException {
 		private static final long serialVersionUID = 1L;

@@ -38,11 +38,11 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ListenerProcessChange, DustGenericLinks.ConnectedOwner, DustProcServices.Listener);
 
 		
-		DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Active, DustGenericAtts.IdentifiedIdLocal, "DustProcActive");
-		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ActiveInit, DustGenericAtts.IdentifiedIdLocal, "Init");
+		DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Active, DustGenericAtts.IdentifiedIdLocal, "Active");
+		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ActiveInit, DustGenericAtts.IdentifiedIdLocal, "ActiveInit");
 		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ActiveInit, DustGenericLinks.ConnectedOwner, DustProcServices.Active);
 
-		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ActiveRelease, DustGenericAtts.IdentifiedIdLocal, "Release");
+		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ActiveRelease, DustGenericAtts.IdentifiedIdLocal, "ActiveRelease");
 		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ActiveRelease, DustGenericLinks.ConnectedOwner, DustProcServices.Active);
 
 		

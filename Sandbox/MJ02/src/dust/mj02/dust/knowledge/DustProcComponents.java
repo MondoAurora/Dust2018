@@ -35,8 +35,8 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	}
 	
 	interface DustProcActive {
-		public void dustProcActiveInit() throws Exception;
-		public void dustProcActiveRelease() throws Exception;
+		public void activeInit() throws Exception;
+		public void activeRelease() throws Exception;
 	}
 	
 	interface DustProcListener {

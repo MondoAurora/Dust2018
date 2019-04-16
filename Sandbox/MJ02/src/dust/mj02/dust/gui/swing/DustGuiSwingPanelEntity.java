@@ -291,7 +291,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 	}
 
 	@Override
-	public void dustProcActiveInit() throws Exception {
+	public void activeInit() throws Exception {
 		eEntity = ((DustRef) DustUtils.accessEntity(DataCommand.getValue, ContextRef.self,
 				DustGuiLinks.PropertyPanelEntity)).get(RefKey.target);
 		
@@ -307,6 +307,6 @@ public class DustGuiSwingPanelEntity extends JPanel
 	}
 
 	@Override
-	public void dustProcActiveRelease() throws Exception {
+	public void activeRelease() throws Exception {
 	}
 }

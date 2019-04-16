@@ -554,18 +554,24 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
         });
 
         result = svctx.doSave();
-
-        try {
-            storage.save(svctx.commitId, result);
-        } catch (Exception e) {
-            Dust.wrapAndRethrowException("Saving " + svctx.commitId, e);
+        
+        if (svctx.refEntitiesWithNoUnit.isEmpty()) {
+            try {
+                storage.save(svctx.commitId, result);
+            } catch (Exception e) {
+                Dust.wrapAndRethrowException("Saving " + svctx.commitId, e);
+            }
+        } else {
+            StringBuilder sb = new StringBuilder();
+            DustUtilsJava.toStringBuilder(sb, svctx.refEntitiesWithNoUnit, false, "Missing unit");
+            throw new DustException(sb.toString());
         }
     }
 
     public static void update(PersistentStorage storage, String unitName) {
         try {
             TempUnit.optInit();
-            storage.dustProcActiveInit();
+            storage.activeInit();
             LoadContext lctx = new LoadContext(storage);
 
             for (String un : unitName.split(",")) {
@@ -573,7 +579,7 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
             }
 
             lctx.load();
-            storage.dustProcActiveRelease();
+            storage.activeRelease();
         } catch (Throwable e) {
             Dust.wrapAndRethrowException("update", e);
         }

@@ -32,11 +32,11 @@ public class DustPersistentStorageJsonMulti implements
     }
     
     @Override
-    public void dustProcActiveInit() throws Exception {
+    public void activeInit() throws Exception {
     }
 
     @Override
-    public void dustProcActiveRelease() throws Exception {
+    public void activeRelease() throws Exception {
     }
 
     private File getFile(String unitId, String commitId) {

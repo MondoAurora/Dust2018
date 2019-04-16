@@ -65,12 +65,12 @@ public class DustGuiSwingMontruMain extends JPanel implements DustGuiSwingMontru
 	};
 
 	@Override
-	public void dustProcActiveInit() {
+	public void activeInit() {
 		appFrame = new MainFrame();
 	}
 	
 	@Override
-	public void dustProcActiveRelease() throws Exception {
+	public void activeRelease() throws Exception {
 		if ( null != appFrame ) {
 			appFrame.dispose();
 			appFrame = null;

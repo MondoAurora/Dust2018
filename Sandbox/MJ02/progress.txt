@@ -1,10 +1,18 @@
 ** TASKS **
 
-*SHORT
-fix command name / function call name generation
+* IMMEDIATE
+check "Net" unit creation
+"Raw" att should not persist
 
 
+* NEXT
+NetTest save and load on separate machines, 
+work with from TestSimple.json: read single from stream, test update
+direct stream using write single
+send and process last known commit id
 
+
+* LONGER
 System is a unit, has unit refs
 store hierarchy on units - one unit loader on system level (internal relay)
 
@@ -16,13 +24,16 @@ Java source connection info, source generator
 
 ** LOG **
 
+* 20190416 * 
+YES allow saving messages (send only if dropped on head)
+
 * 20190416 * dump
 
 NO  resolver entity management (or: correct ID resolution?) - global ID idea dropped
 YES Unit introduction - but moved from Meta to Comm as "document"
 YES boot entities, change flag, save back to boot - in part, boot changed to separate units
 
-Done during Montru coplete refactor
+Done during Montru complete refactor
  - drag model off the entity panel - create entity with that primary type
  - clean up drawing panels, remove factories?
  - separate Gui control logic from swing implementation

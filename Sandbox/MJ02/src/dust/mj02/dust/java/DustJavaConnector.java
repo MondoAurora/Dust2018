@@ -19,7 +19,7 @@ public class DustJavaConnector implements DustKernelComponents, DustProcComponen
 	private Pattern innerClass = Pattern.compile(".*\\$\\d++");
 
 	@Override
-	public void dustProcActiveInit() throws Exception {
+	public void activeInit() throws Exception {
 		String root = DustUtils.getCtxVal(ContextRef.self, DustGenericAtts.IdentifiedIdLocal, false);
 		loadPackage(root);
 	}
@@ -96,7 +96,7 @@ public class DustJavaConnector implements DustKernelComponents, DustProcComponen
 	}
 
 	@Override
-	public void dustProcActiveRelease() throws Exception {
+	public void activeRelease() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
