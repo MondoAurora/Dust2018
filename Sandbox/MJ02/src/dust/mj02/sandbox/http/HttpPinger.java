@@ -13,7 +13,7 @@ public class HttpPinger implements HttpComponents, DustProcComponents.DustProcPo
     URL url;
 
     @Override
-    public void processorProcessorProcess() throws Exception {
+    public void processorProcess() throws Exception {
 //        if ( null == url ) 
         {
             String urlAddr = DustUtils.getCtxVal(ContextRef.self, DustNetAtts.NetAddressUrl, false);

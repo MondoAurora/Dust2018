@@ -21,6 +21,11 @@ public interface DustGuiComponents extends DustComponents, DustKernelComponents 
 	enum DustGuiServices implements DustEntityKey {
 		Label, TextField, PropertyPanel,// MontruDesktop
 	};
+	
+    enum DustGuiTags implements DustEntityKey {
+        ItemHidden
+    }
+
 
 	interface GuiComponentControl <ComponentType> {
 		ComponentType getComponent();

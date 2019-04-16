@@ -111,7 +111,9 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustUtils.tag(EntityResolver.getEntity(DustCommAtts.PersistentEntityId), TagCommand.set, DustMetaTags.NotCloned);
         DustUtils.tag(EntityResolver.getEntity(DustCommAtts.PersistentCommitId), TagCommand.set, DustMetaTags.NotCloned);
         DustUtils.tag(EntityResolver.getEntity(DustDataLinks.EntityModels), TagCommand.set, DustMetaTags.NotCloned);
-		
+        
+        DustUtils.tag(EntityResolver.getEntity(DustDataAtts.EntityBinaries), TagCommand.set, DustMetaTags.AttRaw);
+        
 		for ( DustMetaTypes mt : DustMetaTypes.values() ) {
 			DustUtils.accessEntity(DataCommand.setRef, mt, DustGenericLinks.ConnectedRequires, DustGenericTypes.Identified);			
 		}

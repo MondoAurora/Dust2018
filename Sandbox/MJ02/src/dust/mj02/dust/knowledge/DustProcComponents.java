@@ -31,7 +31,7 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 
 	
 	interface DustProcPocessor {
-		public void processorProcessorProcess() throws Exception;
+		public void processorProcess() throws Exception;
 	}
 	
 	interface DustProcActive {

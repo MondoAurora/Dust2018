@@ -68,30 +68,37 @@ public class DustGuiSwingPanelEntity extends JPanel
 		}
 	};
 
-	DustUtilsFactory<DustEntity, JComponent> factData = new DustUtilsFactory<DustEntity, JComponent>(false) {
-		@SuppressWarnings("unchecked")
-		@Override
-		protected JComponent create(DustEntity key, Object... hints) {
-			boolean txt = (boolean) hints[0];
+    DustUtilsFactory<DustEntity, JComponent> factData = new DustUtilsFactory<DustEntity, JComponent>(false) {
+        @SuppressWarnings("unchecked")
+        @Override
+        protected JComponent create(DustEntity key, Object... hints) {
+            boolean attValue = (boolean) hints[0];
+            boolean txt = attValue;
 
-			DustEntity eData = DustUtils.accessEntity(DataCommand.getEntity,
-					txt ? DustGuiTypes.TextField : DustGuiTypes.Label, ContextRef.self, null, new EntityProcessor() {
-						@Override
-						public void processEntity(DustEntity entity) {
-							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeEntity, eEntity);
-							DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeKey, key);
-						}
-					});
+            if (attValue) {
+                if (DustUtils.tag(key, TagCommand.test, DustMetaTags.AttRaw)) {
+                    txt = false;
+                }
+            }
 
-			JComponent bin = DustUtils.getBinary(eData, txt ? DustGuiServices.TextField : DustGuiServices.Label);
-			
-			if ( !txt ) {
-				eac.setRefList((GuiDataWrapper<? extends JComponent>) bin);
-			}
-			
-			return bin;
-		}
-	};
+            DustEntity eData = DustUtils.accessEntity(DataCommand.getEntity, txt ? DustGuiTypes.TextField : DustGuiTypes.Label, ContextRef.self, null,
+                    new EntityProcessor() {
+                        @Override
+                        public void processEntity(DustEntity entity) {
+                            DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeEntity, eEntity);
+                            DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeKey, key);
+                        }
+                    });
+
+            JComponent bin = DustUtils.getBinary(eData, txt ? DustGuiServices.TextField : DustGuiServices.Label);
+
+            if (!attValue) {
+                eac.setRefList((GuiDataWrapper<? extends JComponent>) bin);
+            }
+
+            return bin;
+        }
+    };
 
 	DustUtilsFactory<DustEntity, DustGuiSwingWidgetAnchor.AnchoredPanel> factAnchored = new DustUtilsFactory<DustEntity, DustGuiSwingWidgetAnchor.AnchoredPanel>(
 			false) {
@@ -208,9 +215,13 @@ public class DustGuiSwingPanelEntity extends JPanel
 				DustUtils.accessEntity(DataCommand.processRef, mType, DustMetaLinks.TypeAttDefs, new RefProcessor() {
 					@Override
 					public void processRef(DustRef ref) {
+                        DustEntity att = ref.get(RefKey.target);
+                        if ( DustUtils.tag(att, TagCommand.test, DustGuiTags.ItemHidden)) {
+                            return;
+                        }
+                        
 						JPanel pnl = new JPanel(new BorderLayout(HR, 0));
 
-						DustEntity att = ref.get(RefKey.target);
 						pnl.add(factLabel.get(att), BorderLayout.WEST);
 
 						JComponent compData = factData.get(att, true);

@@ -73,7 +73,13 @@ public class DustBinaryConnector
 		public MethodInfo(ServiceInfo svc, String id_) {
 			super();
 			this.si = svc;
-			this.id = si.id.substring(0, 1).toLowerCase() + si.id.substring(1) + id_;
+			
+			String methodName = id_;
+			if ( !methodName.startsWith(svc.id) ) {
+			    methodName = si.id + id_;
+			}
+			
+			this.id = methodName.substring(0, 1).toLowerCase() + methodName.substring(1);
 		}
 	}
 
