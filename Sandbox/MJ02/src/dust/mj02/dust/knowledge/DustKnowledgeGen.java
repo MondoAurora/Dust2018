@@ -118,6 +118,9 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 			DustUtils.accessEntity(DataCommand.setRef, mt, DustGenericLinks.ConnectedRequires, DustGenericTypes.Identified);			
 		}
 		
+	      DustUtils.accessEntity(DataCommand.setRef, DustProcTypes.Scheduler, DustMetaLinks.TypeLinkedServices, DustProcServices.Scheduler);
+
+		
 		inited = true;
 	}
 }

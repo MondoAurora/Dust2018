@@ -17,6 +17,8 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
             initDumpListener();
             // initJsonLoader();
 
+            initScheduler();
+            
             inited = true;
         }
     }
@@ -36,6 +38,12 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
         DustUtils.accessEntity(DataCommand.setRef, listener, DustDataLinks.EntityServices, DustSandboxServices.SandboxChangeDump);
         DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, listener);
     }
+
+    public static void initScheduler() {
+        DustUtils.registerService(DustSandboxScheduler.class, true, DustProcServices.Scheduler, DustProcServices.Active, DustProcServices.Listener);
+        DustEntity sch = DustUtils.accessEntity(DataCommand.getEntity, DustProcTypes.Scheduler);
+        DustUtils.accessEntity(DataCommand.setValue, sch, DustGenericAtts.IdentifiedIdLocal, "Default Scheduler");
+   }
 
     // public static void initJsonLoader() {
     // DustEntity daGenId =

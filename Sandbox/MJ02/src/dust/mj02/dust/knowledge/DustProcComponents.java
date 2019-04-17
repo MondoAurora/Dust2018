@@ -5,21 +5,23 @@ import dust.mj02.dust.DustComponents;
 public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	enum DustProcTypes implements DustEntityKey {
-		System, Context, Change, Binary, NativeBound
+		System, Context, Change, Binary, NativeBound, Scheduler, Task
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
-		ChangeOldValue, ChangeNewValue, BinaryObjectName, BinaryAutoInit, NativeBoundId
+		ChangeOldValue, ChangeNewValue, BinaryObjectName, BinaryAutoInit, NativeBoundId,
+		TaskRepeatSec, TaskNextRun
 	}
 	
 	enum DustProcLinks implements DustEntityKey {
 		ContextChangeListeners, ContextBinaryAssignments, 
 		BinaryImplementedServices,
-		ChangeCmd, ChangeEntity, ChangeKey, 
+		ChangeCmd, ChangeEntity, ChangeKey,
+		SchedulerTasks, TaskEntity, TaskMessage
 	}
 
 	enum DustProcServices implements DustEntityKey {
-		Listener, Channel, Processor, Active
+		Listener, Channel, Processor, Active, Scheduler
 	};
 	
 	enum DustProcMessages implements DustEntityKey {

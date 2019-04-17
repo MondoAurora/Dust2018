@@ -467,7 +467,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			}
 			break;
 		default:
-			retVal = changeRef(true, cmd, se, key, (SimpleRef) retVal, val, hint);
+			retVal = changeRef(true, cmd, se, key, (SimpleRef) retVal, optResolveCtxEntity(val), hint);
 			break;
 		}
 		return (RetType) retVal;
