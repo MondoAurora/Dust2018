@@ -23,6 +23,8 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
+import dust.mj02.sandbox.persistence.DustPersistence;
+import dust.mj02.sandbox.persistence.DustPersistentStorageJsonSingle;
 
 public class DustHttpServer implements DustHttpComponents, DustProcComponents.DustProcActive {
 
@@ -94,17 +96,23 @@ public class DustHttpServer implements DustHttpComponents, DustProcComponents.Du
                 response.setStatus(HttpServletResponse.SC_OK);
                 baseRequest.setHandled(true);
                 
-                InputStream is = new FileInputStream("output/temp/TestSingle.json");
+                DustPersistentStorageJsonSingle st = new DustPersistentStorageJsonSingle(null);
                 
-                OutputStream outStream = response.getOutputStream();
+                st.writer = response.getWriter();
                 
-                byte[] buffer = new byte[8 * 1024];
-                int bytesRead;
-                while ((bytesRead = is.read(buffer)) != -1) {
-                    outStream.write(buffer, 0, bytesRead);
-                }       
+                DustPersistence.commit(st);
                 
-                is.close();
+//                InputStream is = new FileInputStream("output/temp/TestSingle.json");
+//                
+//                OutputStream outStream = response.getwOutputStream();
+//                
+//                byte[] buffer = new byte[8 * 1024];
+//                int bytesRead;
+//                while ((bytesRead = is.read(buffer)) != -1) {
+//                    outStream.write(buffer, 0, bytesRead);
+//                }       
+//                
+//                is.close();
             }
         };
         

@@ -3,6 +3,9 @@ package dust.mj02.sandbox.persistence;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.Map;
 
@@ -10,8 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class DustPersistentStorageJsonSingle implements
-        DustPersistenceComponents, DustPersistenceComponents.PersistentStorage {
+public class DustPersistentStorageJsonSingle implements DustPersistenceComponents, DustPersistenceComponents.PersistentStorage {
 
     private static final String DEF_PATH = "output/temp";
 
@@ -22,10 +24,13 @@ public class DustPersistentStorageJsonSingle implements
 
     public static DustPersistentStorageJsonSingle DEFAULT = new DustPersistentStorageJsonSingle(DEF_PATH);
 
+    public InputStream is;
+    public Writer writer;
+
     public DustPersistentStorageJsonSingle(String path) {
         this.path = path;
     }
-    
+
     @Override
     public void activeInit() throws Exception {
     }
@@ -38,28 +43,43 @@ public class DustPersistentStorageJsonSingle implements
     private File getFile(String commitId) {
         File dir = new File(path);
         dir.mkdirs();
-        
+
         commitId = "TestSingle";
 
         return new File(dir, commitId + EXT_JSON);
     }
 
     @Override
-    public void save(String commitId, Map<String, Map> result)
-            throws Exception {
-        File file = getFile(commitId);
-        Writer fw = new FileWriter(file);
-        JSONObject.writeJSONString(result, fw);
-        fw.flush();
-        fw.close();
+    public void save(String commitId, Map<String, Map> result) throws Exception {
+        boolean close = true;
+
+        if (null == writer) {
+            File file = getFile(commitId);
+            writer = new FileWriter(file);
+            close = true;
+        }
+        
+        JSONObject.writeJSONString(result, writer);
+        
+        if (close) {
+            writer.flush();
+            writer.close();
+        }
+        writer = null;
     }
 
     @Override
-    public Map<String, Map> load(String unitId, String commitId)
-            throws Exception {
-        if ( null == map ) {
-            File uf = getFile(commitId);
-            map = (JSONObject) parser.parse(new FileReader(uf));
+    public Map<String, Map> load(String unitId, String commitId) throws Exception {
+        if (null == map) {
+            Reader r;
+            if (null == is) {
+                File uf = getFile(commitId);
+                r = new FileReader(uf);
+            } else {
+                r = new InputStreamReader(is);
+            }
+            map = (JSONObject) parser.parse(r);
+
         }
         return map.get(unitId);
     }

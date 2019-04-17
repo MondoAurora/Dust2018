@@ -1,9 +1,11 @@
 package dust.mj02.dust;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.dust.knowledge.DustDataComponents.DustDataAtts;
@@ -11,6 +13,7 @@ import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcAtts;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcLinks;
 import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
+import dust.utils.DustUtilsFactory;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class DustUtils implements DustComponents {
@@ -140,5 +143,42 @@ public class DustUtils implements DustComponents {
 		for (DustEntityKey impl : implServices) {
 			DustUtils.accessEntity(DataCommand.setRef, svc, DustGenericLinks.ConnectedExtends, impl);
 		}
+	}
+	
+	public static class TagWatcher {
+	    private Object[] flags;
+	    
+	    private DustUtilsFactory<DustEntity, Set<Object>> factFlags = new DustUtilsFactory<DustEntity, Set<Object>>(false) {
+	        @Override
+	        protected Set<Object> create(DustEntity key, Object... hints) {
+	            Set<Object> ret = new HashSet<>();
+	            
+	            for ( Object f : flags ) {
+	                if (DustUtils.tag(key, TagCommand.test, f) ) {
+	                    ret.add(f);
+	                }
+	            }
+	            
+	            return ret;
+	        }
+	    };
+	    
+	    public TagWatcher(Object... flags) {
+            super();
+            this.flags = Arrays.copyOf(flags, flags.length);
+        }
+
+        public boolean hasFlag(DustEntity e, Object... fl) {
+	        Set<Object> ret = factFlags.get(e);
+	        
+            for ( Object f : fl ) {
+                if (ret.contains(f)) {
+                    return true;
+                }
+            }
+
+	        return false;
+	    }
+	    
 	}
 }

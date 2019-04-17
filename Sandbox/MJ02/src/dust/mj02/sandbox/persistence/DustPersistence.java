@@ -95,12 +95,13 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
         }
     };
 
-    static DustUtilsFactory<DustEntity, Boolean> factNotStoredFlag = new DustUtilsFactory<DustEntity, Boolean>(false) {
-        @Override
-        protected Boolean create(DustEntity key, Object... hints) {
-            return DustUtils.tag(key, TagCommand.test, DustCommTags.PersistentNotStored);
-        }
-    };
+    static DustUtils.TagWatcher metaFlags = new DustUtils.TagWatcher(DustCommTags.PersistentNotStored, DustMetaTags.AttRaw);
+//    static DustUtilsFactory<DustEntity, Set<Object>> factNotStoredFlag = new DustUtilsFactory<DustEntity, Boolean>(false) {
+//        @Override
+//        protected Boolean create(DustEntity key, Object... hints) {
+//            return DustUtils.tag(key, TagCommand.test, DustCommTags.PersistentNotStored);
+//        }
+//    };
 
     static class SaveContext {
         private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
@@ -239,6 +240,11 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                                 if (eKey == EntityResolver.getEntity(DustCommLinks.PersistentContainingUnit)) {
                                     return;
                                 }
+                                if (metaFlags.hasFlag(eKey, DustMetaTags.AttRaw)) {
+                                    DustUtilsDev.dump("Skip saving raw att", eKey, value);
+                                    return;
+                                }
+                                
                                 DustEntity uKey = whereToSave(eKey);
 
                                 if (uKey != myUnit) {
@@ -260,7 +266,8 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                                         @Override
                                         public void processRef(DustRef ref) {
                                             DustEntity eTarget = ref.get(RefKey.target);
-                                            if (factNotStoredFlag.get(eTarget)) {
+                                            if (metaFlags.hasFlag(eTarget, DustCommTags.PersistentNotStored)) {
+//                                                if (factNotStoredFlag.get(eTarget)) {
                                                 DustUtilsDev.dump("Skip saving", e, eKey, eTarget);
                                                 return;
                                             }
