@@ -1,6 +1,7 @@
 package dust.mj02.sandbox.http;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -10,6 +11,7 @@ import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.sandbox.persistence.DustPersistence;
 import dust.mj02.sandbox.persistence.DustPersistentStorageJsonSingle;
+import dust.utils.DustUtilsJava;
 
 public class DustHttpClient implements DustHttpComponents, DustProcComponents.DustProcPocessor {
 
@@ -26,24 +28,30 @@ public class DustHttpClient implements DustHttpComponents, DustProcComponents.Du
 
         InputStream is = conn.getInputStream();
 
-        DustPersistentStorageJsonSingle st = new DustPersistentStorageJsonSingle(null);
-        st.is = is;
+        String modToUpdate = DustUtils.getCtxVal(ContextRef.self, DustNetAtts.NetClientModuleToUpdate, false);
 
-        SwingUtilities.invokeLater(new Runnable() {
+        if (DustUtilsJava.isEmpty(modToUpdate)) {
+            OutputStream outStream = System.out;
 
-            @Override
-            public void run() {
-                DustPersistence.update(st, "NetTest");
+            byte[] buffer = new byte[8 * 1024];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
             }
-        });
+        } else {
 
-        // OutputStream outStream = System.out;
-        //
-        // byte[] buffer = new byte[8 * 1024];
-        // int bytesRead;
-        // while ((bytesRead = is.read(buffer)) != -1) {
-        // outStream.write(buffer, 0, bytesRead);
-        // }
+            DustPersistentStorageJsonSingle st = new DustPersistentStorageJsonSingle(null);
+            st.is = is;
+
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    DustPersistence.update(st, modToUpdate);
+                }
+            });
+        }
+
     }
 
 }

@@ -1,8 +1,12 @@
 package dust.mj02.sandbox.persistence;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.util.Map;
 
@@ -53,10 +57,12 @@ public class DustPersistentStorageJsonMulti implements
     public void save(String commitId, Map<String, Map> result)
             throws Exception {
         for (Map.Entry<String, Map> r : result.entrySet()) {
-            FileWriter fw;
+            Writer fw;
             String key = r.getKey();
             File file = getFile(key, null);
-            fw = new FileWriter(file);
+//            fw = new FileWriter(file);
+            fw = new OutputStreamWriter(new FileOutputStream(file), UTF8);
+
             JSONObject.writeJSONString(r.getValue(), fw);
             fw.flush();
             fw.close();
@@ -69,6 +75,8 @@ public class DustPersistentStorageJsonMulti implements
     public Map<String, Map> load(String unitId, String commitId)
             throws Exception {
         File uf = getFile(unitId, commitId);
-        return (JSONObject) parser.parse(new FileReader(uf));
+        Reader r = new InputStreamReader(new FileInputStream(uf), UTF8);
+
+        return (JSONObject) parser.parse(r);
     }
 }

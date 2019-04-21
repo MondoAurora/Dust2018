@@ -1,38 +1,13 @@
 package dust.mj02.sandbox;
 
+import javax.swing.SwingUtilities;
+
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 
 public class DustSandboxScheduler implements DustSandboxComponents, DustProcComponents.DustProcActive, DustProcComponents.DustProcListener {
 
-    // class TaskInfo {
-    // DustEntity eTask;
-    //
-    // long nextRun;
-    // boolean removed;
-    //
-    // public TaskInfo(DustEntity eTask) {
-    // super();
-    // this.eTask = eTask;
-    //
-    // setTime(System.currentTimeMillis());
-    // }
-    //
-    // void setTime(long now) {
-    // nextRun = now + 2000;
-    // }
-    // }
-
-    // DustUtilsFactory<DustEntity, TaskInfo> factTasks = new
-    // DustUtilsFactory<DustEntity, TaskInfo>(false) {
-    // @Override
-    // protected TaskInfo create(DustEntity key, Object... hints) {
-    // return new TaskInfo(key);
-    // }
-    // };
-
-    // TaskInfo next;
-
+    DustEntity eSelf;
     DustEntity eNextTask;
     long nextTs = Long.MAX_VALUE;
 
@@ -60,6 +35,8 @@ public class DustSandboxScheduler implements DustSandboxComponents, DustProcComp
 
     @Override
     public void activeInit() throws Exception {
+//        eSelf = DustUtils.getByPath(ContextRef.self);
+        eSelf = DustUtils.getCtxVal(ContextRef.self, null, false);
         DustUtils.accessEntity(DataCommand.setRef, ContextRef.self, DustProcLinks.ChangeEntity, ContextRef.self);
         DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, ContextRef.self);
 
@@ -99,11 +76,11 @@ public class DustSandboxScheduler implements DustSandboxComponents, DustProcComp
     }
 
     synchronized void setNext() {
-        long now = System.currentTimeMillis();
+//        long now = System.currentTimeMillis();
         nextTs = Long.MAX_VALUE;
         eNextTask = null;
 
-        DustUtils.accessEntity(DataCommand.processRef, ContextRef.self, DustProcLinks.SchedulerTasks, new RefProcessor() {
+        DustUtils.accessEntity(DataCommand.processRef, eSelf, DustProcLinks.SchedulerTasks, new RefProcessor() {
             @Override
             public void processRef(DustRef ref) {
                 DustEntity eTask = ref.get(RefKey.target);
@@ -113,8 +90,14 @@ public class DustSandboxScheduler implements DustSandboxComponents, DustProcComp
                 if (null == nextRun) {
                     String s = DustUtils.accessEntity(DataCommand.getValue, eTask, DustProcAtts.TaskRepeatSec);
                     long delay = Long.parseLong(s);
-                    nextRun = now + 1000 * delay;
-                    DustUtils.accessEntity(DataCommand.setValue, eTask, DustProcAtts.TaskNextRun, nextRun);
+//                    Long nr = nextRun = now + 1000 * delay;
+                    Long nr = nextRun = 1000 * delay;
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            DustUtils.accessEntity(DataCommand.setValue, eTask, DustProcAtts.TaskNextRun, nr);
+                        }
+                    });
                 }
 
                 if (nextTs > nextRun) {

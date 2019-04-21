@@ -424,7 +424,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object hint) {
 		SimpleEntity se = optResolveCtxEntity(e);
 
-		Object retVal = (null == se) ? null : se.get(key);
+		Object retVal = (null == se) ? null : (null == key) ? se : se.get(key);
 
 		switch (cmd) {
 		case getEntity:

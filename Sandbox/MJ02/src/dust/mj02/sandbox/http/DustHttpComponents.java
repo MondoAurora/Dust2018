@@ -12,7 +12,8 @@ public interface DustHttpComponents extends DustKernelComponents {
     enum DustNetAtts implements DustEntityKey {
         NetAddressUrl, 
         NetServerPublicPort, NetServerSslPort, 
-        NetSSLStorePath, NetSSLStorePass, NetSSLManagerPass
+        NetSSLStorePath, NetSSLStorePass, NetSSLManagerPass,
+        NetClientModuleToUpdate
     }
     
     enum DustNetServices implements DustEntityKey {

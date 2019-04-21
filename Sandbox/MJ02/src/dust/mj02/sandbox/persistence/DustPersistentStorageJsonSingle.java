@@ -1,10 +1,11 @@
 package dust.mj02.sandbox.persistence;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class DustPersistentStorageJsonSingle implements DustPersistenceComponent
 
         if (null == writer) {
             File file = getFile(commitId);
-            writer = new FileWriter(file);
+            writer = new OutputStreamWriter(new FileOutputStream(file), UTF8);
             close = true;
         }
         
@@ -74,9 +75,9 @@ public class DustPersistentStorageJsonSingle implements DustPersistenceComponent
             Reader r;
             if (null == is) {
                 File uf = getFile(commitId);
-                r = new FileReader(uf);
+                r = new InputStreamReader(new FileInputStream(uf), UTF8);
             } else {
-                r = new InputStreamReader(is);
+                r = new InputStreamReader(is, UTF8);
             }
             map = (JSONObject) parser.parse(r);
 
