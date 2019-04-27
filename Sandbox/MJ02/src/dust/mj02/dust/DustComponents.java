@@ -35,25 +35,31 @@ public interface DustComponents {
 		msg, self, ctx
 	}
 
-	enum TagCommand implements DustEntity {
+	enum TagCommand implements DustEntityKey {
 		set, clear, test
 	}
 
 	enum DataCommand implements DustEntityKey {
-		getEntity(false), cloneEntity(false), dropEntity(false), 
-		getValue(false), setValue(false), processContent(false), 
-		processRef(false), setRef(true), removeRef(true), clearRefs(true), 
-		tempSend(false);
+		getEntity(false, false), cloneEntity(false, false), dropEntity(false, true), 
+		getValue(false, false), setValue(false, true), processContent(false, false), 
+		processRef(false, false), setRef(true, true), removeRef(true, true), clearRefs(true, true), 
+		tempSend(false, false);
 
-		private final boolean ref;
+        private final boolean ref;
+        private final boolean change;
 
-		private DataCommand(boolean ref) {
-			this.ref = ref;
+		private DataCommand(boolean ref, boolean change) {
+            this.ref = ref;
+            this.change = change;
 		}
 
 		public boolean isRef() {
 			return ref;
 		}
+		
+		public boolean isChange() {
+            return change;
+        }
 	}
 
 	public interface DustEntity {

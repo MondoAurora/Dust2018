@@ -11,6 +11,11 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		if (inited) {
 			return;
 		}
+		
+        for (DustMetaTypes mt : DustMetaTypes.values()) {
+            DustUtils.accessEntity(DataCommand.setRef, mt, DustGenericLinks.ConnectedRequires,
+                    (mt == DustMetaTypes.Meta) ? DustGenericTypes.Identified : DustMetaTypes.Meta);
+        }
 
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefReverse, DustMetaLinks.LinkDefReverse, DustMetaLinks.LinkDefReverse);
 
@@ -114,9 +119,6 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
         
         DustUtils.tag(EntityResolver.getEntity(DustDataAtts.EntityBinaries), TagCommand.set, DustMetaTags.AttRaw);
         
-		for ( DustMetaTypes mt : DustMetaTypes.values() ) {
-			DustUtils.accessEntity(DataCommand.setRef, mt, DustGenericLinks.ConnectedRequires, DustGenericTypes.Identified);			
-		}
 		
 	      DustUtils.accessEntity(DataCommand.setRef, DustProcTypes.Scheduler, DustMetaLinks.TypeLinkedServices, DustProcServices.Scheduler);
 

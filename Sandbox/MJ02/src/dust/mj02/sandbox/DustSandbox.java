@@ -2,8 +2,8 @@ package dust.mj02.sandbox;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.sandbox.http.DustHttpComponents;
 import dust.mj02.sandbox.http.DustHttpClient;
+import dust.mj02.sandbox.http.DustHttpComponents;
 import dust.mj02.sandbox.http.DustHttpServer;
 
 public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
@@ -18,9 +18,17 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
             // initJsonLoader();
 
             initScheduler();
+            initFinderTest();
             
             inited = true;
         }
+    }
+
+    public static void initFinderTest() {
+        DustUtils.registerService(DustSandboxFinder.class, false, DustSandboxServices.SandboxFinder, DustProcServices.Evaluator);
+        DustUtils.accessEntity(DataCommand.setRef, DustSandboxTypes.SandboxFinder, DustMetaLinks.TypeLinkedServices, DustSandboxServices.SandboxFinder);
+
+        DustUtils.accessEntity(DataCommand.setRef, DustSandboxLinks.SandboxFinderPath, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefArray);
     }
 
     public static void initHttpTest() {
@@ -29,6 +37,8 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
 
         DustUtils.registerService(DustHttpServer.class, false, DustNetServices.NetServer, DustProcServices.Active);
         DustUtils.accessEntity(DataCommand.setRef, DustNetTypes.NetServer, DustMetaLinks.TypeLinkedServices, DustNetServices.NetServer);
+        
+        DustUtils.accessEntity(DataCommand.setRef, DustNetLinks.NetClientProxyEntities, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
     }
 
     public static void initDumpListener() {

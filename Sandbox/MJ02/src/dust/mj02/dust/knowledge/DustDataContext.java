@@ -68,10 +68,23 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 			return (RetType) content.get(EntityResolver.getEntity(key));
 		}
 
-		public SimpleEntity getSingleRef(DustEntityKey key) {
-			SimpleRef r = get(EntityResolver.getEntity(key));
-			return (null == r) ? null : r.target;
-		}
+        public SimpleEntity getSingleRef(DustEntityKey key) {
+            SimpleRef r = get(EntityResolver.getEntity(key));
+            return (null == r) ? null : r.target;
+        }
+
+        public SimpleEntity getSingleRefByPath(DustEntityKey... keys) {
+            SimpleEntity e = this;
+            for (DustEntityKey key : keys ) {
+                SimpleRef r = e.get(EntityResolver.getEntity(key));
+                if ( null == r ) {
+                    return null;
+                } else {
+                    e = r.target;
+                }
+            }
+            return e;
+        }
 
 		public SimpleEntity getFirstRef(DustEntityKey... keys) {
 			SimpleEntity ret = null;
@@ -392,7 +405,8 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 	EnumMap<ContextRef, SimpleEntity> mapCtxEntities = new EnumMap<>(ContextRef.class);
 
-	DustBinaryConnector binConn = new DustBinaryConnector(this);
+    DustAccessControl accCtrl = new DustAccessControl(this);
+    DustBinaryConnector binConn = new DustBinaryConnector(this);
 	SimpleEntity ctxSelf = new SimpleEntity(true);
 
 	public DustDataContext(DustContext ctxParent) {
@@ -422,13 +436,18 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 	@Override
 	public <RetType> RetType ctxAccessEntity(DataCommand cmd, DustEntity e, DustEntity key, Object val, Object hint) {
-		SimpleEntity se = optResolveCtxEntity(e);
+        SimpleEntity se = optResolveCtxEntity(e);
+        SimpleEntity sKey = optResolveCtxEntity(key);
 
 		Object retVal = (null == se) ? null : (null == key) ? se : se.get(key);
-
+		
+        if ( !accCtrl.isAccessAllowed(mapCtxEntities.get(ContextRef.self), se, sKey, cmd)) {
+            throw new DustException("Access denied");
+        }
+        
 		switch (cmd) {
 		case getEntity:
-			retVal = invokeEntity(se, optResolveCtxEntity(key), val, (EntityProcessor) hint);
+			retVal = invokeEntity(se, sKey, val, (EntityProcessor) hint);
 			break;
 		case cloneEntity:
 			retVal = cloneEntity(se);

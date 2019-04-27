@@ -5,7 +5,7 @@ import dust.mj02.dust.DustComponents;
 public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	enum DustProcTypes implements DustEntityKey {
-		System, Context, Change, Binary, NativeBound, Scheduler, Task
+		System, Context, Change, Binary, NativeBound, Scheduler, Task, AccessControl,
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
@@ -16,26 +16,29 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	enum DustProcLinks implements DustEntityKey {
 		ContextChangeListeners, ContextBinaryAssignments, 
 		BinaryImplementedServices,
-		ChangeCmd, ChangeEntity, ChangeKey,
-		SchedulerTasks, TaskEntity, TaskMessage
+		ChangeCmd, ChangeEntity, ChangeKey, ChangeSource,
+		SchedulerTasks, TaskEntity, TaskMessage, TaskInitiator,
+		AccessControlAccess, AccessControlChange,
 	}
 
 	enum DustProcServices implements DustEntityKey {
-		Listener, Channel, Processor, Active, Scheduler
+		Listener, Channel, Processor, Active, Scheduler, Evaluator, AccessControl
 	};
 	
 	enum DustProcMessages implements DustEntityKey {
-		ListenerProcessChange, ChannelOpen, ChannelClose, ProcessorProcess,
+		ListenerProcessChange, ChannelOpen, ChannelClose, ProcessorProcess, EvaluatorEvaluate, 
 		ActiveInit, ActiveRelease,
 	};
 	
-
-
 	
-	interface DustProcPocessor {
-		public void processorProcess() throws Exception;
-	}
-	
+    interface DustProcPocessor {
+        public void processorProcess() throws Exception;
+    }
+    
+    interface DustProcEvaluator {
+        public Object evaluatorEvaluate() throws Exception;
+    }
+    
 	interface DustProcActive {
 		public void activeInit() throws Exception;
 		public void activeRelease() throws Exception;

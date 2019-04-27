@@ -20,11 +20,15 @@ public class DustGuiSwingWidgetTextField extends JTextField
 				@Override
 				public void textChanged(String text, Object source, DocumentEvent e) {
 					if (null == changing) {
+//					    String orig = null;
 						try {
 							changing = (DustGuiSwingWidgetTextField) source;
-							Dust.accessEntity(DataCommand.setValue, changing.eEntity, changing.eData, text, null);
+//                            orig = Dust.accessEntity(DataCommand.getValue, changing.eEntity, changing.eData, null, null);
+                            Dust.accessEntity(DataCommand.setValue, changing.eEntity, changing.eData, text, null);
 							changing.requestFocus();
-						} finally {
+//                        } catch (Throwable t) {
+//                            changing.setTextDirect(orig);
+                        } finally {
 							changing = null;
 						}
 					}
@@ -38,7 +42,11 @@ public class DustGuiSwingWidgetTextField extends JTextField
 		DOC_LISTENER.listen(this);
 	}
 
-	@Override
+	protected void setTextDirect(String t) {
+	    super.setText(t);
+    }
+
+    @Override
 	public void setText(String t) {
 		if (this != changing) {
 			DustUtilsDev.dump("updating TextField to", t);

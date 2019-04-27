@@ -8,7 +8,7 @@ public interface DustDataComponents extends DustComponents {
 	};
 	
 	enum DustDataAtts implements DustEntityKey {
-		EntityBinaries
+		EntityBinaries, MessageReturn
 	}
 	
 	enum DustDataTags implements DustEntityKey {
@@ -16,7 +16,7 @@ public interface DustDataComponents extends DustComponents {
 	}
 	
 	enum DustDataLinks implements DustEntityKey {
-		EntityPrimaryType, EntityModels, EntityServices, EntityTags, 
-		MessageCommand
+		EntityPrimaryType, EntityModels, EntityServices, EntityTags, EntityAccessControl, 
+		MessageCommand, MessageSource
 	}
 }

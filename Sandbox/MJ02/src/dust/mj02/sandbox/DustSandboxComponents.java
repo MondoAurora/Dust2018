@@ -7,11 +7,19 @@ public interface DustSandboxComponents
 	
 	enum DustSandboxUnits implements DustEntityKey {
 		DustSandbox
-	};
+    };
+    
+    enum DustSandboxTypes implements DustEntityKey {
+        SandboxFinder
+    };
+
+    enum DustSandboxLinks implements DustEntityKey {
+        SandboxFinderPath, SandboxFinderEntity
+    };
 
 
 	enum DustSandboxServices implements DustEntityKey {
-		SandboxChangeDump
+		SandboxChangeDump, SandboxFinder
 	};
 
 }

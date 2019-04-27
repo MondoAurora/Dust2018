@@ -152,6 +152,11 @@ public class DustBinaryConnector
 
 		try {
 			SimpleEntity cmd = ((SimpleRef) msg.get(KEYS.get(DustDataLinks.MessageCommand))).target;
+			
+			if ( !ctx.accCtrl.isCommandAllowed(ctx.mapCtxEntities.get(ContextRef.self), target, msg)) {
+			    throw new DustException("Access denied");
+			}
+			
 			MethodInfo mi = factMethods.get(cmd);
 			Object o = DustUtils.getBinary(target, mi.si.eSvc);
 			
@@ -164,7 +169,8 @@ public class DustBinaryConnector
 			ctx.mapCtxEntities.put(ContextRef.self, target);
 			ctx.mapCtxEntities.put(ContextRef.msg, msg);
 			
-			m.invoke(o);
+			Object ret = m.invoke(o);
+			msg.put(KEYS.get(DustDataAtts.MessageReturn), ret);
 		} catch (Throwable e) {
 			t = e;
 		} finally {
