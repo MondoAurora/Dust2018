@@ -16,6 +16,11 @@ public interface DustHttpComponents extends DustKernelComponents {
         NetClientModuleToUpdate
     }
     
+    enum DustNetLinks implements DustEntityKey {
+        NetClientProxyEntities
+    };
+
+    
     enum DustNetServices implements DustEntityKey {
         NetClient, NetServer
     };

@@ -19,6 +19,14 @@ public class DustHttpClient implements DustHttpComponents, DustProcComponents.Du
 
     @Override
     public void processorProcess() throws Exception {
+        boolean dumpOnly = false;
+        String modToUpdate = DustUtils.getCtxVal(ContextRef.self, DustNetAtts.NetClientModuleToUpdate, false);
+        if (DustUtilsJava.isEmpty(modToUpdate)) {
+            
+        } else {
+            
+        }
+        
         String urlAddr = DustUtils.getCtxVal(ContextRef.self, DustNetAtts.NetAddressUrl, false);
         url = new URL(urlAddr);
         URLConnection conn = url.openConnection();
@@ -28,7 +36,6 @@ public class DustHttpClient implements DustHttpComponents, DustProcComponents.Du
 
         InputStream is = conn.getInputStream();
 
-        String modToUpdate = DustUtils.getCtxVal(ContextRef.self, DustNetAtts.NetClientModuleToUpdate, false);
 
         if (DustUtilsJava.isEmpty(modToUpdate)) {
             OutputStream outStream = System.out;
