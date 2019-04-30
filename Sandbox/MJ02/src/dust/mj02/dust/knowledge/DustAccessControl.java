@@ -2,32 +2,16 @@ package dust.mj02.dust.knowledge;
 
 import dust.mj02.dust.knowledge.DustDataContext.SimpleEntity;
 
-public class DustAccessControl implements DustKernelComponents {
-    abstract class TestBase {
-        private SimpleEntity msgChk = null;
-        // DustProcLinks acLink;
-        //
-        // public TestBase(boolean change) {
-        // acLink = change ? DustProcLinks.AccessControlChange :
-        // DustProcLinks.AccessControlAccess;
-        // }
-
-        SimpleEntity getMsgChk() {
-            if (null == msgChk) {
-                msgChk = createMsg();
-            }
-            return msgChk;
-        }
-
-        protected abstract SimpleEntity createMsg();
-
+public class DustAccessControl implements DustKernelImplComponents {
+    abstract class TestBase extends LazyMsgContainer {
         boolean test(SimpleEntity root, DustEntityKey... path) {
             if ( null == root ) {
                 return true;
             }
             SimpleEntity ac = root.getSingleRefByPath(path);
             if (null != ac) {
-                ctx.binConn.send(ac, getMsgChk());
+                SimpleEntity msgChk = getMsg();
+                ctx.binConn.send(ac, msgChk);
                 return Boolean.TRUE.equals(msgChk.get(DustDataAtts.MessageReturn));
             }
             return true;

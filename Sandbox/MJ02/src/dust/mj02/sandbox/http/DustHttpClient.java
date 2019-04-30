@@ -19,7 +19,7 @@ public class DustHttpClient implements DustHttpComponents, DustProcComponents.Du
 
     @Override
     public void processorProcess() throws Exception {
-        boolean dumpOnly = false;
+//        boolean dumpOnly = false;
         String modToUpdate = DustUtils.getCtxVal(ContextRef.self, DustNetAtts.NetClientModuleToUpdate, false);
         if (DustUtilsJava.isEmpty(modToUpdate)) {
             

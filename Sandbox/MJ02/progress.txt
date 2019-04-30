@@ -6,9 +6,10 @@ check "Net" unit creation
 
 
 * NEXT
-NetTest save and load on separate machines, 
-work with from TestSimple.json: read single from stream, test update
-direct stream using write single
+proxy subnet with child contexts
+ - online (direct view of parent entities) / offline (clone all seen entities immediately)
+ - commit into parent context (down) and child (up) on request
+
 send and process last known commit id
 
 

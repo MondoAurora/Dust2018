@@ -14,14 +14,12 @@ import java.util.Set;
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.Dust.DustContext;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.tools.DustGenericComponents;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("unchecked")
-public class DustDataContext implements DustDataComponents, DustCommComponents, DustMetaComponents, DustProcComponents,
-		DustGenericComponents, Dust.DustContext {
+public class DustDataContext implements DustKernelImplComponents, Dust.DustContext {
 
 	class SimpleEntity implements DustEntity {
 		Map<DustEntity, Object> content = new HashMap<>();
@@ -721,7 +719,23 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 
 		if (null != listeners) {
 			listeners.processAll(new RefProcessor() {
-				SimpleEntity chg = null;
+			    
+			    LazyMsgContainer lmc = new LazyMsgContainer() {
+                    @Override
+                    protected SimpleEntity createMsg() {
+                        SimpleEntity chg = new SimpleEntity(true);
+
+                        chg.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.ListenerProcessChange);
+
+                        chg.putLocalRef(DustProcLinks.ChangeCmd, cmd);
+                        chg.putLocalRef(DustProcLinks.ChangeEntity, entity);
+                        chg.putLocalRef(DustProcLinks.ChangeKey, (SimpleEntity) key);
+
+                        chg.put(DustProcAtts.ChangeOldValue, oldVal);
+                        chg.put(DustProcAtts.ChangeNewValue, newVal);
+                        
+                        return chg;
+                    }};
 
 				@Override
 				public void processRef(DustRef ref) {
@@ -731,20 +745,7 @@ public class DustDataContext implements DustDataComponents, DustCommComponents, 
 							&& DustUtilsJava.isEqualLenient(entity, listener.getSingleRef(DustProcLinks.ChangeEntity))
 							&& DustUtilsJava.isEqualLenient(key, listener.getSingleRef(DustProcLinks.ChangeKey))) {
 
-						if (null == chg) {
-							chg = new SimpleEntity(true);
-
-							chg.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.ListenerProcessChange);
-
-							chg.putLocalRef(DustProcLinks.ChangeCmd, cmd);
-							chg.putLocalRef(DustProcLinks.ChangeEntity, entity);
-							chg.putLocalRef(DustProcLinks.ChangeKey, (SimpleEntity) key);
-
-							chg.put(DustProcAtts.ChangeOldValue, oldVal);
-							chg.put(DustProcAtts.ChangeNewValue, newVal);
-						}
-
-						binConn.send(listener, chg);
+						binConn.send(listener, lmc.getMsg());
 					}
 				}
 			});

@@ -163,6 +163,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 	JTextField tfSearch;
 	JTextArea taSelEntity;
 	DustGuiSwingMontruDesktop desktop;
+    private JList<DustEntity> lstResults;
 
 	public DustGuiSwingMontruControl(DustGuiSwingMontruDesktop desktop) {
 		super(new BorderLayout(5, 5));
@@ -193,7 +194,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 		JTable tblTypes = new JTable(tmTypes);
 		pnlSearch.add(DustUtilsJavaSwing.setBorderScroll(tblTypes, "Type filter"), BorderLayout.CENTER);
 
-		JList<DustEntity> lstResults = new JList<DustEntity>(lmResults);
+		lstResults = new JList<DustEntity>(lmResults);
 
 		lstResults.setCellRenderer(crTypes);
 		lstResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -206,7 +207,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 		lstResults.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (1 < e.getClickCount()) {
+				if ((null != eiSelected) && (1 < e.getClickCount())) {
 					desktop.activateEditorPanel(eiSelected);
 				}
 			}
@@ -252,7 +253,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 
 	private void selectEntity(DustEntity ei) {
 		eiSelected = ei;
-		taSelEntity.setText(eiSelected.toString());
+		taSelEntity.setText(( null == ei ) ? "<no selected item>" : eiSelected.toString());
 	}
 
 	private void doSearch() {
@@ -304,5 +305,10 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 		});
 
 		lmResults.update();
+		
+		lstResults.setSelectedIndices(new int[]{});
+		if ( 0 < lmResults.getSize() ) {
+		    lstResults.setSelectedIndex(0);
+		}
 	}
 }

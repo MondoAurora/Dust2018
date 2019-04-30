@@ -21,22 +21,12 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 	}
 	
 	void init() throws Exception {
-//		for ( DustMetaTypes mt : DustMetaTypes.values() ) {
-//			EntityResolver.getEntity(mt);
-//		}
-		
 		DustKnowledgeGen.init();
 		DustToolsGen.init();
 
 //	    DustJavaGen.init();
 //		DustTempHacks.detectMetaConnections();
 
-//		DustCommComponents.DustCommSource rdr = new DustCommJsonLoader();
-//		DustCommDiscussion disc = new DustCommDiscussion();
-//		
-//		disc.load(rdr, "MJ02Boot02.json");
-		
-//		new MontruGuiSwingFrame();
 		new DustGuiSwingMontruMain().activeInit();
 	}
 
