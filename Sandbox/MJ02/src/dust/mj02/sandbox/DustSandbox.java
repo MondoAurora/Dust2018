@@ -46,7 +46,7 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
 
         DustEntity listener = Dust.getEntity("Dumper");
         DustUtils.accessEntity(DataCommand.setRef, listener, DustDataLinks.EntityServices, DustSandboxServices.SandboxChangeDump);
-        DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, listener);
+        DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeListeners, listener);
     }
 
     public static void initScheduler() {

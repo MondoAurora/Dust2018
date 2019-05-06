@@ -32,7 +32,7 @@ public interface DustComponents {
 	}
 
 	enum ContextRef implements DustEntity {
-		msg, self, ctx
+		msg, self, session
 	}
 
 	enum TagCommand implements DustEntityKey {

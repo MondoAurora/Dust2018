@@ -302,7 +302,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 
 		updatePanel();
 
-		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners,
+		DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeListeners,
 				ContextRef.self);
 	}
 

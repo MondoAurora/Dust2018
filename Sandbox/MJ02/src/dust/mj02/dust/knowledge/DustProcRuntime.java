@@ -7,8 +7,8 @@ import dust.mj02.montru.gui.swing.DustGuiSwingMontruMain;
 
 public class DustProcRuntime extends Dust implements DustComponents, DustDataComponents, Dust.DustRuntime {
 	
-	private ThreadLocal<DustContext> ctxThread = new ThreadLocal<>();
-	private DustContext ctxRoot;
+	private ThreadLocal<DustContext> threadSessions = new ThreadLocal<>();
+	private DustContext rootSession;
 	
 	public static void main(String[] args) throws Exception {
 		DustProcRuntime rt = new DustProcRuntime();
@@ -17,7 +17,7 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 	}
 	
 	public DustProcRuntime() {
-		ctxThread.set(ctxRoot = new DustDataContext(null));
+		threadSessions.set(rootSession = new DustProcSession(null));
 	}
 	
 	void init() throws Exception {
@@ -52,8 +52,8 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 	
 
 	private DustContext getCtx() {
-		DustContext ctx = ctxThread.get();
-		return (null == ctx) ? ctxRoot : ctx;
+		DustContext ctx = threadSessions.get();
+		return (null == ctx) ? rootSession : ctx;
 	}
 
 }

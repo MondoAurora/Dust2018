@@ -24,7 +24,7 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 
 
 		DustEntity dlBinImplSvc = EntityResolver.getEntity(DustProcLinks.BinaryImplementedServices);
-		DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.ContextBinaryAssignments);
+		DustEntity dlCtxBin = EntityResolver.getEntity(DustProcLinks.SessionBinaryAssignments);
 		DustEntity dlLinkDefType = EntityResolver.getEntity(DustMetaLinks.LinkDefType);
 		DustEntity dlLinkDefTypeSet = EntityResolver.getEntity(DustMetaLinkDefTypeValues.LinkDefSet);
 
@@ -33,7 +33,7 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 
 		Dust.accessEntity(DataCommand.setRef, dlCtxBin, dlLinkDefType, dlLinkDefTypeSet, null);
 		Dust.accessEntity(DataCommand.setRef, dlBinImplSvc, dlLinkDefType, dlLinkDefTypeSet, null);
-		DustUtils.accessEntity(DataCommand.setRef, DustProcLinks.ContextChangeListeners, dlLinkDefType, dlLinkDefTypeSet, null);
+		DustUtils.accessEntity(DataCommand.setRef, DustProcLinks.SessionChangeListeners, dlLinkDefType, dlLinkDefTypeSet, null);
 		
 		Dust.accessEntity(DataCommand.setRef, dlGenExtends, dlLinkDefType, dlLinkDefTypeSet, null);
 		Dust.accessEntity(DataCommand.setRef, dlGenRequires, dlLinkDefType, dlLinkDefTypeSet, null);

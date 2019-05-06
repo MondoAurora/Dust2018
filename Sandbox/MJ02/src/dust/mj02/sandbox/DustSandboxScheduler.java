@@ -38,7 +38,7 @@ public class DustSandboxScheduler implements DustSandboxComponents, DustProcComp
 //        eSelf = DustUtils.getByPath(ContextRef.self);
         eSelf = DustUtils.getCtxVal(ContextRef.self, null, false);
         DustUtils.accessEntity(DataCommand.setRef, ContextRef.self, DustProcLinks.ChangeEntity, ContextRef.self);
-        DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, ContextRef.self);
+        DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeListeners, ContextRef.self);
 
         thSched.start();
     }

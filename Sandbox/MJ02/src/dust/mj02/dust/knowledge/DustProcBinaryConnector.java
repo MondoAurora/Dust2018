@@ -11,12 +11,10 @@ import java.util.Set;
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.knowledge.DustDataContext.SimpleEntity;
-import dust.mj02.dust.knowledge.DustDataContext.SimpleRef;
 import dust.mj02.dust.tools.DustGenericComponents;
 import dust.utils.DustUtilsFactory;
 
-public class DustBinaryConnector
+public class DustProcBinaryConnector
 		implements DustComponents, DustGenericComponents, DustProcComponents, DustDataComponents {
 	private static DustUtilsFactory<Object, DustEntity> KEYS = new DustUtilsFactory<Object, DustComponents.DustEntity>(
 			false) {
@@ -26,16 +24,16 @@ public class DustBinaryConnector
 		}
 	};
 
-	DustDataContext ctx;
+	DustProcSession ctx;
 
 	class ServiceInfo {
 		String id;
 
-		SimpleEntity eSvc;
+		DustDataEntity eSvc;
 		Class<?> implClass;
 		Set<ServiceInfo> allServices;
 
-		public ServiceInfo(SimpleEntity eAssign, SimpleEntity eSvc) {
+		public ServiceInfo(DustDataEntity eAssign, DustDataEntity eSvc) {
 			this.eSvc = eSvc;
 
 			id = eSvc.get(KEYS.get(DustGenericAtts.IdentifiedIdLocal));
@@ -53,12 +51,12 @@ public class DustBinaryConnector
 			allServices = new HashSet<>();
 			allServices.add(this);
 
-			SimpleRef ext = eSvc.get(KEYS.get(DustGenericLinks.ConnectedExtends));
+			DustDataRef ext = eSvc.get(KEYS.get(DustGenericLinks.ConnectedExtends));
 			if (null != ext) {
 				ext.processAll(new RefProcessor() {
 					@Override
 					public void processRef(DustRef ref) {
-						allServices.addAll(factServices.get(((SimpleRef) ref).target).allServices);
+						allServices.addAll(factServices.get(((DustDataRef) ref).target).allServices);
 					}
 				});
 			}
@@ -83,19 +81,19 @@ public class DustBinaryConnector
 		}
 	}
 
-	DustUtilsFactory<SimpleEntity, ServiceInfo> factServices = new DustUtilsFactory<SimpleEntity, ServiceInfo>(false) {
+	DustUtilsFactory<DustDataEntity, ServiceInfo> factServices = new DustUtilsFactory<DustDataEntity, ServiceInfo>(false) {
 		@SuppressWarnings("unchecked")
 		@Override
-		protected ServiceInfo create(SimpleEntity key, Object... hints) {
-			SimpleRef ec = ctx.mapCtxEntities.get(ContextRef.ctx).get(KEYS.get(DustProcLinks.ContextBinaryAssignments));
+		protected ServiceInfo create(DustDataEntity key, Object... hints) {
+			DustDataRef ec = ctx.mapCtxEntities.get(ContextRef.session).get(KEYS.get(DustProcLinks.SessionBinaryAssignments));
 
-			for (SimpleRef refBa : (Collection<SimpleRef>) ec.container) {
-				SimpleEntity eBa = refBa.target;
+			for (DustDataRef refBa : (Collection<DustDataRef>) ec.container) {
+				DustDataEntity eBa = refBa.target;
 
-				SimpleRef refImpl = eBa.get(KEYS.get(DustProcLinks.BinaryImplementedServices));
+				DustDataRef refImpl = eBa.get(KEYS.get(DustProcLinks.BinaryImplementedServices));
 
-				for (SimpleRef refSvc : (Collection<SimpleRef>) refImpl.container) {
-					SimpleEntity eSvc = refSvc.target;
+				for (DustDataRef refSvc : (Collection<DustDataRef>) refImpl.container) {
+					DustDataEntity eSvc = refSvc.target;
 
 					if (key == eSvc) {
 						return new ServiceInfo(eBa, key);
@@ -107,11 +105,11 @@ public class DustBinaryConnector
 		}
 	};
 
-	DustUtilsFactory<SimpleEntity, MethodInfo> factMethods = new DustUtilsFactory<SimpleEntity, MethodInfo>(false) {
+	DustUtilsFactory<DustDataEntity, MethodInfo> factMethods = new DustUtilsFactory<DustDataEntity, MethodInfo>(false) {
 		@Override
-		protected MethodInfo create(SimpleEntity key, Object... hints) {
+		protected MethodInfo create(DustDataEntity key, Object... hints) {
 			String cmdId = key.get(KEYS.get(DustGenericAtts.IdentifiedIdLocal));
-			SimpleEntity svc = ((SimpleRef) key.get(KEYS.get(DustGenericLinks.ConnectedOwner))).target;
+			DustDataEntity svc = ((DustDataRef) key.get(KEYS.get(DustGenericLinks.ConnectedOwner))).target;
 
 			ServiceInfo si = factServices.get(svc);
 
@@ -119,14 +117,14 @@ public class DustBinaryConnector
 		}
 	};
 	
-	class MethodFactory extends DustUtilsFactory<SimpleEntity, Method> {
+	class MethodFactory extends DustUtilsFactory<DustDataEntity, Method> {
 		
 		public MethodFactory() {
 			super(false);
 		}
 		
 		@Override
-		protected Method create(SimpleEntity key, Object... hints) {
+		protected Method create(DustDataEntity key, Object... hints) {
 			MethodInfo mi = factMethods.get(key);
 			Object o = hints[0];
 			Method m = null;
@@ -142,16 +140,16 @@ public class DustBinaryConnector
 	};
 
 
-	public DustBinaryConnector(DustDataContext ctx) {
+	public DustProcBinaryConnector(DustProcSession ctx) {
 		this.ctx = ctx;
 	}
 
-	public void send(SimpleEntity target, SimpleEntity msg) {
-		EnumMap<ContextRef, SimpleEntity> store = new EnumMap<>(ctx.mapCtxEntities);
+	public void send(DustDataEntity target, DustDataEntity msg) {
+		EnumMap<ContextRef, DustDataEntity> store = new EnumMap<>(ctx.mapCtxEntities);
 		Throwable t = null;
 
 		try {
-			SimpleEntity cmd = ((SimpleRef) msg.get(KEYS.get(DustDataLinks.MessageCommand))).target;
+			DustDataEntity cmd = ((DustDataRef) msg.get(KEYS.get(DustDataLinks.MessageCommand))).target;
 			
 			if ( !ctx.accCtrl.isCommandAllowed(ctx.mapCtxEntities.get(ContextRef.self), target, msg)) {
 			    throw new DustException("Access denied");
@@ -182,7 +180,7 @@ public class DustBinaryConnector
 		}
 	}
 
-	public void instSvc(SimpleEntity target, SimpleEntity svc) {
+	public void instSvc(DustDataEntity target, DustDataEntity svc) {
 		Map<DustEntity, Object> bo = target.get(DustDataAtts.EntityBinaries);
 		Object o;
 
@@ -196,7 +194,7 @@ public class DustBinaryConnector
 
 		if (null == o) {
 			ServiceInfo si = factServices.get(svc);
-			EnumMap<ContextRef, SimpleEntity> store = new EnumMap<>(ctx.mapCtxEntities);
+			EnumMap<ContextRef, DustDataEntity> store = new EnumMap<>(ctx.mapCtxEntities);
 
 			try {
 				ctx.mapCtxEntities.put(ContextRef.self, target);

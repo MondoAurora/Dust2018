@@ -134,7 +134,7 @@ public class DustUtils implements DustComponents {
 
 		DustUtils.accessEntity(DataCommand.setValue, ba, DustProcAtts.BinaryObjectName, cName, null);
 		DustUtils.accessEntity(DataCommand.setRef, ba, DustProcLinks.BinaryImplementedServices, svc, null);
-		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextBinaryAssignments, ba, null);
+		DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionBinaryAssignments, ba, null);
 
 		if (autoInit) {
 			DustUtils.accessEntity(DataCommand.setValue, svc, DustProcAtts.BinaryAutoInit, true);

@@ -71,7 +71,7 @@ public class DustGuiSwingWidgetTextField extends JTextField
 
 		setText(val);
 		
-		DustUtils.accessEntity(DataCommand.setRef, ContextRef.ctx, DustProcLinks.ContextChangeListeners, ContextRef.self);
+		DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeListeners, ContextRef.self);
 	}
 
 	@Override

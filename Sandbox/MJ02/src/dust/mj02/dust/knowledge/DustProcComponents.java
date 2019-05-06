@@ -5,7 +5,7 @@ import dust.mj02.dust.DustComponents;
 public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	enum DustProcTypes implements DustEntityKey {
-		System, Context, Change, Binary, NativeBound, Scheduler, Task, AccessControl,
+		System, Session, Change, Binary, NativeBound, Scheduler, Task, AccessControl,
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
@@ -14,7 +14,7 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	}
 	
 	enum DustProcLinks implements DustEntityKey {
-		ContextChangeListeners, ContextBinaryAssignments, 
+		SessionChangeListeners, SessionBinaryAssignments, 
 		BinaryImplementedServices,
 		ChangeCmd, ChangeEntity, ChangeKey, ChangeSource,
 		SchedulerTasks, TaskEntity, TaskMessage, TaskInitiator,

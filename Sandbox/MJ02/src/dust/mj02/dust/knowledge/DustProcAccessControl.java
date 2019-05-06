@@ -1,16 +1,14 @@
 package dust.mj02.dust.knowledge;
 
-import dust.mj02.dust.knowledge.DustDataContext.SimpleEntity;
-
-public class DustAccessControl implements DustKernelImplComponents {
+public class DustProcAccessControl implements DustKernelImplComponents {
     abstract class TestBase extends LazyMsgContainer {
-        boolean test(SimpleEntity root, DustEntityKey... path) {
+        boolean test(DustDataEntity root, DustEntityKey... path) {
             if ( null == root ) {
                 return true;
             }
-            SimpleEntity ac = root.getSingleRefByPath(path);
+            DustDataEntity ac = root.getSingleRefByPath(path);
             if (null != ac) {
-                SimpleEntity msgChk = getMsg();
+                DustDataEntity msgChk = getMsg();
                 ctx.binConn.send(ac, msgChk);
                 return Boolean.TRUE.equals(msgChk.get(DustDataAtts.MessageReturn));
             }
@@ -18,20 +16,20 @@ public class DustAccessControl implements DustKernelImplComponents {
         }
     }
 
-    DustDataContext ctx;
+    DustProcSession ctx;
 
-    public DustAccessControl(DustDataContext ctx) {
+    public DustProcAccessControl(DustProcSession ctx) {
         this.ctx = ctx;
     }
 
-    public boolean isCommandAllowed(SimpleEntity source, SimpleEntity target, SimpleEntity message) {
+    public boolean isCommandAllowed(DustDataEntity source, DustDataEntity target, DustDataEntity message) {
         DustProcLinks acLink = DustProcLinks.AccessControlAccess;
 
         TestBase tb = new TestBase() {
             @Override
-            protected SimpleEntity createMsg() {
-                SimpleEntity msgChk = null;
-                msgChk = ctx.new SimpleEntity(true);
+            protected DustDataEntity createMsg() {
+                DustDataEntity msgChk = null;
+                msgChk = new DustDataEntity(ctx, true);
 
                 msgChk.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.EvaluatorEvaluate);
 
@@ -47,7 +45,7 @@ public class DustAccessControl implements DustKernelImplComponents {
             return false;
         }
         
-        SimpleEntity cmd = message.getSingleRef(DustDataLinks.MessageCommand);
+        DustDataEntity cmd = message.getSingleRef(DustDataLinks.MessageCommand);
 
         if (!tb.test(cmd, DustMetaLinks.MetaAccessControl, acLink)) {
             return false;
@@ -60,20 +58,20 @@ public class DustAccessControl implements DustKernelImplComponents {
         return true;
     }
 
-    public boolean isAccessAllowed(SimpleEntity source, SimpleEntity target, SimpleEntity key, DataCommand cmd) {
+    public boolean isAccessAllowed(DustDataEntity source, DustDataEntity target, DustDataEntity key, DataCommand cmd) {
         DustProcLinks acLink = cmd.isChange() ? DustProcLinks.AccessControlChange : DustProcLinks.AccessControlAccess;
 
         TestBase tb = new TestBase() {
             @Override
-            protected SimpleEntity createMsg() {
-                SimpleEntity msgChk = null;
-                msgChk = ctx.new SimpleEntity(true);
+            protected DustDataEntity createMsg() {
+                DustDataEntity msgChk = null;
+                msgChk = new DustDataEntity(ctx, true);
 
                 msgChk.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.EvaluatorEvaluate);
 
                 msgChk.putLocalRef(DustProcLinks.ChangeCmd, cmd);
                 msgChk.putLocalRef(DustProcLinks.ChangeEntity, target);
-                msgChk.putLocalRef(DustProcLinks.ChangeKey, (SimpleEntity) key);
+                msgChk.putLocalRef(DustProcLinks.ChangeKey, (DustDataEntity) key);
                 msgChk.putLocalRef(DustProcLinks.ChangeSource, source);
 
                 return msgChk;
