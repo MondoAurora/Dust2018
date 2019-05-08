@@ -1,0 +1,25 @@
+Levels
+ - Runtime: thread, memory, binary connection
+ - System: Unit loading, compiled elements connection (method resolver)
+ - Session: Entity, ref container, load/commit
+ 
+ Session, data instances
+ - ref should stay as returned instance, external codes may need them (like lines)
+   + against: that's only Montru GUI, on the other hand, ext codes may store/pass ref instances
+   + Montru can solve it by generating unique IDs in the callback
+   + separate processor interface for atts and links (but may implement both)
+ - numeric value access: measurement unit must be passed with getValue/setValue, provided in processor interface
+ 
+Class loading, unit management
+ - separate projects, probably the kernel should be loaded by child classloader
+ - the Runtime is loaded with local classes providing functionality
+ - "abstract" units, like Servlet unit used by Jetty or GUI used by Swing
+ 
+Tasks
+ - global ID total removal, EntityResolver into DustUtils, only Meta things!
+ - remove root level Entity and Ref processing - that goes into Session
+ - diff management
+ - separate generated sources completely
+ - form "final" Dust interface
+ - Meta instances with unitRefIds: if not set, is negative; loaded from persistent stores
+ - source code generation with IDs, update negative IDs and save unit

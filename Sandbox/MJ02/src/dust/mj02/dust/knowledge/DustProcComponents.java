@@ -14,12 +14,17 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	}
 	
 	enum DustProcLinks implements DustEntityKey {
-		SessionChangeListeners, SessionBinaryAssignments, 
+		SessionRootEntity, SessionType, SessionChangeListeners, SessionBinaryAssignments, 
 		BinaryImplementedServices,
 		ChangeCmd, ChangeEntity, ChangeKey, ChangeSource,
 		SchedulerTasks, TaskEntity, TaskMessage, TaskInitiator,
 		AccessControlAccess, AccessControlChange,
 	}
+	
+    enum DustProcSessionTypeValues implements DustEntityKey {
+        SessionTypeDirect, SessionTypeCloneShallow, SessionTypeCloneDeep
+    };
+
 
 	enum DustProcServices implements DustEntityKey {
 		Listener, Channel, Processor, Active, Scheduler, Evaluator, AccessControl
