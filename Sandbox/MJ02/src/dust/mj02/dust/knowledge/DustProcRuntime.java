@@ -2,13 +2,16 @@ package dust.mj02.dust.knowledge;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
+import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.knowledge.DustProcComponents.DustProcTypes;
+import dust.mj02.dust.tools.DustGenericComponents;
 import dust.mj02.dust.tools.DustToolsGen;
 import dust.mj02.montru.gui.swing.DustGuiSwingMontruMain;
 
-public class DustProcRuntime extends Dust implements DustComponents, DustDataComponents, Dust.DustRuntime {
+public class DustProcRuntime extends Dust implements DustComponents, DustDataComponents, DustGenericComponents, Dust.DustRuntime {
 	
 	private ThreadLocal<DustContext> threadSessions = new ThreadLocal<>();
-	private DustContext rootSession;
+	private DustProcSession rootSession;
 	
 	public static void main(String[] args) throws Exception {
 		DustProcRuntime rt = new DustProcRuntime();
@@ -27,6 +30,11 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 //	    DustJavaGen.init();
 //		DustTempHacks.detectMetaConnections();
 
+        DustUtils.accessEntity(DataCommand.setRef, rootSession.ctxSelf, DustDataLinks.EntityPrimaryType, DustProcTypes.Session);
+        DustUtils.accessEntity(DataCommand.setRef, rootSession.ctxSelf, DustDataLinks.EntityModels, DustProcTypes.Session);
+        DustUtils.accessEntity(DataCommand.setRef, rootSession.ctxSelf, DustDataLinks.EntityModels, DustGenericTypes.Identified);
+        DustUtils.accessEntity(DataCommand.setValue, rootSession.ctxSelf, DustGenericAtts.IdentifiedIdLocal, "RootSession");
+		
 		new DustGuiSwingMontruMain().activeInit();
 	}
 

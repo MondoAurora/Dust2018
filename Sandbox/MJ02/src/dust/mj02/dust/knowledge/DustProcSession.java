@@ -38,6 +38,8 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 	public DustProcSession(DustContext ctxParent) {
 		this.ctxParent = ctxParent;
 		mapCtxEntities.put(ContextRef.session, ctxSelf);
+		
+		allEntities.add(ctxSelf);
 	}
 
 	private DustDataEntity optResolveCtxEntity(Object e) {

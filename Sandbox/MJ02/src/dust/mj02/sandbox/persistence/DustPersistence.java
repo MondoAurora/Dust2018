@@ -161,8 +161,9 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                             DustUtils.accessEntity(DataCommand.setValue, key, DustCommAtts.PersistentEntityId, persId);
                         }
 
-                        DustUtils.accessEntity(DataCommand.setRef, key, DustCommLinks.PersistentContainingUnit, myUnit);
-
+                        if ( myUnit != key ) {
+                            DustUtils.accessEntity(DataCommand.setRef, key, DustCommLinks.PersistentContainingUnit, myUnit);
+                        }
                         // if (DustUtils.tag(key, TagCommand.test, DustDataTags.EntityChanged)) {
                         if (shouldSave(key)) {
                             setUpdated();
@@ -221,7 +222,8 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                         if (e == eSaveUnit) {
                             // if (refUnits.contains(e)) {
                             // referred units are saved externally
-                            return;
+                            DustUtilsDev.dump("Now saving a ref to unit", e);
+//                            return;
                         }
                     }
 
@@ -301,7 +303,7 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                         SaveUnitContext suc = factUnitCtx.get(eSaveUnit);
                         String entityId = suc.factEntityLocalId.get(e);
 
-                        data.put(ctxKeys.get(ContextKeys.EntityId), entityId);
+                        data.put(ctxKeys.get(ContextKeys.EntityId), (e == eSaveUnit) ? suc.myUnitId : entityId);
                         data.put(ctxKeys.get(ContextKeys.EntityUnit), suc.myUnitId);
                         data.put(ctxKeys.get(ContextKeys.CommitId), DustUtils.accessEntity(DataCommand.getValue, e, DustCommAtts.PersistentCommitId));
                     }
