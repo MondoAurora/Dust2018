@@ -24,7 +24,24 @@ public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents
 	public void dustProcListenerProcessChange() throws Exception {
 		Object val = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, false);
 //		DustUtilsDev.dump("updating label to", DustUtilsJava.toString(val));
-		setText(DustUtilsJava.toString(val));
+		
+		updateLabel(val);
+	}
+	
+	private void updateLabel(Object val) {
+	    String txt = DustUtilsJava.toString(val);
+        
+        if ( val instanceof DustRef ) {
+            DustRef r = (DustRef) val;
+            
+            DustMetaLinkDefTypeValues linkType = DustUtils.getLinkType(r);
+            if ( DustMetaLinkDefTypeValues.LinkDefSingle != linkType ) {
+                setToolTipText(txt);
+                txt = linkType.getSepStart() + r.count() + linkType.getSepEnd();
+            }
+        }
+        
+        setText(txt);
 	}
 
 	@Override
@@ -35,11 +52,10 @@ public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents
 		eEntity = e.get(RefKey.target);
 		eData = a.get(RefKey.target);
 
-		String val = DustUtilsJava.toString(DustUtils.accessEntity(DataCommand.getValue, e.get(RefKey.target), a.get(RefKey.target)));
-		
-		setText(val);
-		
 		DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeListeners, ContextRef.self);
+
+		Object value = DustUtils.accessEntity(DataCommand.getValue, e.get(RefKey.target), a.get(RefKey.target));
+		updateLabel(value);
 	}
 
 	@Override

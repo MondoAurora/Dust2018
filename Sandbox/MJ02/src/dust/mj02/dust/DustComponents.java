@@ -71,7 +71,8 @@ public interface DustComponents {
 	public interface DustRef {
 		<InfoType> InfoType get(RefKey ref);
 		void processAll(RefProcessor proc);
-		boolean contains(DustEntity entity);
+        boolean contains(DustEntity entity);
+        int count();
 	}
 
 	interface EntityProcessor {

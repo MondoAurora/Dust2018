@@ -82,19 +82,6 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
         return eu;
     }
 
-    static DustUtilsFactory<DustEntity, DustMetaLinkDefTypeValues> factLinkTypes = new DustUtilsFactory<DustEntity, DustMetaLinkDefTypeValues>(
-            false) {
-        @Override
-        protected DustMetaLinkDefTypeValues create(DustEntity key, Object... hints) {
-            if (EntityResolver.getEntity(DustMetaTypes.LinkDef) != DustUtils.getByPath(key, DustDataLinks.EntityPrimaryType)) {
-                return null;
-            }
-
-            DustMetaLinkDefTypeValues ldt = EntityResolver.getKey(DustUtils.getByPath(key, DustMetaLinks.LinkDefType));
-            return (null == ldt) ? DustMetaLinkDefTypeValues.LinkDefSingle : ldt;
-        }
-    };
-
     static DustUtils.TagWatcher metaFlags = new DustUtils.TagWatcher(DustCommTags.PersistentNotStored, DustMetaTags.AttRaw);
 //    static DustUtilsFactory<DustEntity, Set<Object>> factNotStoredFlag = new DustUtilsFactory<DustEntity, Boolean>(false) {
 //        @Override
@@ -255,7 +242,7 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                                 String mapKey = factEntityLocalId.get(eKey);
 
                                 if (value instanceof DustRef) {
-                                    DustMetaLinkDefTypeValues ldt = factLinkTypes.get(((DustRef) value).get(RefKey.linkDef));
+                                    DustMetaLinkDefTypeValues ldt = DustUtils.getLinkType((DustRef) value);
 
                                     coll = DustUtils.getColl(ldt);
 
@@ -474,7 +461,7 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                                     DustUtils.accessEntity(DataCommand.setRef, item, eKey, eTarget);
                                 }
                             } else {
-                                DustMetaLinkDefTypeValues ldt = factLinkTypes.get(eKey);
+                                DustMetaLinkDefTypeValues ldt = DustUtils.getLinkType(eKey);
 
                                 if (null == ldt) {
                                     DustUtils.accessEntity(DataCommand.setValue, item, eKey, val);

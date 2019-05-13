@@ -271,6 +271,15 @@ class DustDataRef implements DustRef {
         }
         return null;
     }
+    
+    @Override
+    public int count() {
+        if ( null == container ) {
+            return ((null == lt) || (DustMetaLinkDefTypeValues.LinkDefSingle == lt)) ? 1 : 0;
+        } else {
+            return (DustMetaLinkDefTypeValues.LinkDefMap == lt) ? ((Map<?,?>)container).size() : ((Collection<?>)container).size();
+        }
+    }
 
     @Override
     public String toString() {

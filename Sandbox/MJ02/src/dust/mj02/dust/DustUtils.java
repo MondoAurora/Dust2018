@@ -9,7 +9,10 @@ import java.util.Set;
 
 import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.dust.knowledge.DustDataComponents.DustDataAtts;
+import dust.mj02.dust.knowledge.DustDataComponents.DustDataLinks;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
+import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
+import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaTypes;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcAtts;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcLinks;
 import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
@@ -145,6 +148,31 @@ public class DustUtils implements DustComponents {
 		}
 	}
 	
+    private static DustUtilsFactory<DustEntity, DustMetaLinkDefTypeValues> factLinkTypes = new DustUtilsFactory<DustEntity, DustMetaLinkDefTypeValues>(
+            false) {
+        @Override
+        protected DustMetaLinkDefTypeValues create(DustEntity key, Object... hints) {
+            if (EntityResolver.getEntity(DustMetaTypes.LinkDef) != DustUtils.getByPath(key, DustDataLinks.EntityPrimaryType)) {
+                return null;
+            }
+
+            DustMetaLinkDefTypeValues ldt = EntityResolver.getKey(DustUtils.getByPath(key, DustMetaLinks.LinkDefType));
+            return (null == ldt) ? DustMetaLinkDefTypeValues.LinkDefSingle : ldt;
+        }
+    };
+
+    public static DustMetaLinkDefTypeValues getLinkType(DustRef ref) {
+        return getLinkType((DustEntity) ref.get(RefKey.linkDef));
+    };
+
+    public static DustMetaLinkDefTypeValues getLinkType(DustEntity eLinkType) {
+        return factLinkTypes.get(eLinkType);
+    }
+    
+    public static boolean isMultiLink(DustEntity eLinkType) {
+        return DustMetaLinkDefTypeValues.LinkDefSingle != factLinkTypes.get(eLinkType);
+    }
+    
 	public static class TagWatcher {
 	    private Object[] flags;
 	    
