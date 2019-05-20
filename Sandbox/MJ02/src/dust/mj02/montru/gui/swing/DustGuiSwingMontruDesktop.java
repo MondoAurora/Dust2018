@@ -129,7 +129,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		DustEntity eCreated;
 		
 		@Override
-		protected void activateEntities(DustEntity... entities) {
+        public void activateEntities(DustEntity... entities) {
 			for (DustEntity de : entities) {
 				activateEditorPanel(de);
 			}

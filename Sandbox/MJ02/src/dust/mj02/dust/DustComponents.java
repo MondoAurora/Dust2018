@@ -42,7 +42,7 @@ public interface DustComponents {
 	enum DataCommand implements DustEntityKey {
 		getEntity(false, false), cloneEntity(false, false), dropEntity(false, true), 
 		getValue(false, false), setValue(false, true), processContent(false, false), 
-		processRef(false, false), setRef(true, true), removeRef(true, true), clearRefs(true, true), 
+		processRef(false, false), setRef(true, true), updateRef(true, true), removeRef(true, true), clearRefs(true, true), 
 		tempSend(false, false);
 
         private final boolean ref;

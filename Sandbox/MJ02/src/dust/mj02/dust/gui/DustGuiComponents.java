@@ -2,8 +2,9 @@ package dust.mj02.dust.gui;
 
 import dust.mj02.dust.DustComponents;
 import dust.mj02.dust.knowledge.DustKernelComponents;
+import dust.utils.DustUtilsSwingComponents;
 
-public interface DustGuiComponents extends DustComponents, DustKernelComponents {
+public interface DustGuiComponents extends DustComponents, DustKernelComponents, DustUtilsSwingComponents {
 	
 	enum DustGuiUnits implements DustEntityKey {
 		DustGui, DustGuiSwing

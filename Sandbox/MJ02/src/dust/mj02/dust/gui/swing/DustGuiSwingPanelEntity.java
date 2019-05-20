@@ -6,7 +6,10 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -22,24 +25,67 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
+import dust.mj02.dust.text.DustTextComponents;
 import dust.mj02.montru.gui.MontruGuiComponents.MontruGuiServices;
 import dust.mj02.montru.gui.swing.DustGuiSwingMontruDesktop;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 public class DustGuiSwingPanelEntity extends JPanel
-        implements DustGuiSwingComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
+        implements DustGuiSwingComponents, DustTextComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
     private static final long serialVersionUID = 1L;
 
     private static final Object RB_LINK_KEY = new Object();
 
     private static final DustEntity DATT_ID = EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal);
+
+    static abstract class TextPanelBase extends JPanel {
+        private static final long serialVersionUID = 1L;
+
+        DustEntity entity;
+        JTextArea textArea;
+
+        public TextPanelBase(DustEntity entity, boolean editable) {
+            super(new BorderLayout());
+
+            textArea = new JTextArea();
+            textArea.setEditable(editable);
+
+            add(new JScrollPane(textArea), BorderLayout.CENTER);
+        }
+    }
+
+    static class TextSpanPanel extends TextPanelBase {
+        private static final long serialVersionUID = 1L;
+
+        public TextSpanPanel(DustEntity entity) {
+            super(entity, true);
+        }
+
+    }
+
+    static class TextRendererPanel extends TextPanelBase {
+        private static final long serialVersionUID = 1L;
+
+        public TextRendererPanel(DustEntity entity) {
+            super(entity, false);
+        }
+    }
+    
+    private static final Map<DustEntity, Class<? extends TextPanelBase>> SPEC_PANELS = new HashMap<>();
+    
+    static {
+        SPEC_PANELS.put(EntityResolver.getEntity(DustTextTypes.TextSpan), TextSpanPanel.class);
+        SPEC_PANELS.put(EntityResolver.getEntity(DustTextTypes.TextRenderer), TextRendererPanel.class);
+    }
 
     DustEntity eEntity;
     DustGuiSwingEntityActionControl eac;
@@ -198,9 +244,33 @@ public class DustGuiSwingPanelEntity extends JPanel
             }
         });
 
-        refCollEd = new DustGuiSwingWidgetRefCollEditor();
+        refCollEd = new DustGuiSwingWidgetRefCollEditor() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void process(Cmds cmd, Collection<DustRef> refs) {
+                switch (cmd) {
+                case Show:
+                    Set<DustEntity> e = new HashSet<>();
+                    for (DustRef r : refs) {
+                        e.add(r.get(RefKey.target));
+                    }
+                    eac.activateEntities(e.toArray(new DustEntity[e.size()]));
+                    break;
+                case Del:
+                    for (DustRef r : refs) {
+                        Dust.accessEntity(DataCommand.removeRef, eEntity, eLinkDef, r.get(RefKey.target), null);
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        };
 
         JSplitPane spMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tpCenter, refCollEd);
+
+        spMain.setResizeWeight(1.0);
 
         add(spMain, BorderLayout.CENTER);
     }
@@ -223,7 +293,7 @@ public class DustGuiSwingPanelEntity extends JPanel
             add(top, BorderLayout.NORTH);
 
             tpCenter.addTab("Generic", new JScrollPane(pnlGeneric));
-            
+
             refCollEd.setEntity(eEntity);
         }
 
@@ -261,6 +331,25 @@ public class DustGuiSwingPanelEntity extends JPanel
                         BorderLayout.WEST);
                 pnl.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
                 pnlGeneric.add(pnl);
+                
+                Class<? extends TextPanelBase> ct = SPEC_PANELS.get(mType);
+                if ( null != ct ) {
+                    String lbl = ct.getSimpleName();
+                    for ( int i = tpCenter.getTabCount(); i-->0; ) {
+                        if ( lbl.equals(tpCenter.getTitleAt(i))) {
+                            lbl = null;
+                        }
+                    }
+                    
+                    if ( null != lbl ) {
+                        try {
+                            TextPanelBase tpb = ct.getConstructor(DustEntity.class).newInstance(eEntity);
+                            tpCenter.addTab(lbl, tpb);
+                        } catch (Exception e) {
+                            Dust.wrapAndRethrowException("", e);
+                        }
+                    }
+                }
 
                 DustUtils.accessEntity(DataCommand.processRef, mType, DustMetaLinks.TypeAttDefs, new RefProcessor() {
                     @Override
@@ -307,6 +396,8 @@ public class DustGuiSwingPanelEntity extends JPanel
 
         revalidate();
         repaint();
+
+        refCollEd.updateListContent();
 
         for (Container c = getParent(); null != c; c = c.getParent()) {
             if (c instanceof JInternalFrame) {

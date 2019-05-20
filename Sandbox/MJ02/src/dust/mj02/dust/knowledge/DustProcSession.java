@@ -1,5 +1,6 @@
 package dust.mj02.dust.knowledge;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -317,6 +318,20 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			}
 
 			break;
+		case updateRef:
+		    ArrayList<DustDataRef> rl = (ArrayList<DustDataRef>) actRef.container;
+		    DustDataRef rToMove = null;
+		    for ( DustDataRef r : rl ) {
+		        if ( val == r.target ) {
+		            rToMove = r;
+		            break;
+		        }
+		    }
+            if (null != rToMove) {
+                rl.remove(rToMove);
+                rl.add((int) collId, rToMove);
+            }
+		    break;
 		default:
 			throw new DustException("Should not get here!");
 		}

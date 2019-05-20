@@ -108,7 +108,7 @@ public abstract class DustGuiEntityActionControl<BaseComponentType> implements D
 	public abstract void setLabel(GuiDataWrapper<? extends BaseComponentType> gdw);
 	public abstract void setRefList(GuiDataWrapper<? extends BaseComponentType> gdw);
 
-	protected abstract void activateEntities(DustEntity... entities);
+	public abstract void activateEntities(DustEntity... entities);
 	protected abstract void dragItemChanged(DragItem item, GuiDataWrapper<BaseComponentType> gdwOld,
 			GuiDataWrapper<BaseComponentType> gdwNew);
 	protected abstract void dropped(EnumSet<CtrlStatus> ctrlStatus, GuiDataWrapper<BaseComponentType> gdwSource,

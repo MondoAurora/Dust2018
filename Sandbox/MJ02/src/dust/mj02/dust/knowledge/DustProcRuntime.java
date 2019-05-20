@@ -4,6 +4,7 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcTypes;
+import dust.mj02.dust.text.DustTextGen;
 import dust.mj02.dust.tools.DustGenericComponents;
 import dust.mj02.dust.tools.DustToolsGen;
 import dust.mj02.montru.gui.swing.DustGuiSwingMontruMain;
@@ -26,6 +27,7 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
 	void init() throws Exception {
 		DustKnowledgeGen.init();
 		DustToolsGen.init();
+		DustTextGen.init();
 
 //	    DustJavaGen.init();
 //		DustTempHacks.detectMetaConnections();

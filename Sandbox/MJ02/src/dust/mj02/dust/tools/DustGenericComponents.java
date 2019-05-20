@@ -5,7 +5,7 @@ import dust.mj02.dust.DustComponents;
 public interface DustGenericComponents extends DustComponents {
 	
 	enum DustGenericTypes implements DustEntityKey {
-		Identified, Connected, Tag, Stream
+		Identified, Connected, Tag, Stream, ContextAware
 	};
 	
 	enum DustGenericAtts implements DustEntityKey {
@@ -14,7 +14,7 @@ public interface DustGenericComponents extends DustComponents {
 	};
 	
 	enum DustGenericLinks implements DustEntityKey {
-		ConnectedOwner, ConnectedRequires, ConnectedExtends
+		ConnectedOwner, ConnectedRequires, ConnectedExtends, ContextAwareEntity
 	};
 	
 }
