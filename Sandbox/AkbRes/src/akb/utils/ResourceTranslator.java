@@ -3,6 +3,7 @@ package akb.utils;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +35,7 @@ import javax.swing.table.AbstractTableModel;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
 import dust.utils.DustUtilsSwingComponents;
 
@@ -143,6 +145,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
 
         JLabel lbKey;
 
+        Font fntTA;
         JTextArea taRef;
         JTextArea taSrc;
         JTextArea taValid;
@@ -189,6 +192,9 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             }
 
             public void updateStates() {
+                boolean noManTxt = DustUtilsJava.isEmpty(taValid.getText());
+                setEnabled(noManTxt, Commands.AcceptSrc);
+                setEnabled(!noManTxt, Commands.Update, Commands.Invalidate);
             };
         };
 
@@ -196,6 +202,13 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             @Override
             public void textChanged(String text, Object source, DocumentEvent e) {
                 updateDisplay();
+            }
+        });
+
+        DustSwingTextListener tlValid = new DustSwingTextListener(new DustSwingTextChangeProcessor() {
+            @Override
+            public void textChanged(String text, Object source, DocumentEvent e) {
+                cm.updateStates();
             }
         });
 
@@ -291,10 +304,16 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             lbKey = new JLabel();
             pnlChild.add(lbKey, BorderLayout.CENTER);
             pnlRight.add(pnlChild, BorderLayout.NORTH);
+            
+            fntTA = lbKey.getFont();
+            
+            fntTA = fntTA.deriveFont((float) 2*fntTA.getSize());
 
             taRef = createTA(false);
             taSrc = createTA(false);
             taValid = createTA(true);
+            
+            tlValid.listen(taValid);
 
             JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, DustUtilsJavaSwing.setBorderScroll(taRef, "Reference"),
                     DustUtilsJavaSwing.setBorderScroll(taSrc, "Original"));
@@ -309,7 +328,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
 
             pnlChild = new JPanel(new FlowLayout());
 
-            addCmdBtn(pnlChild, Commands.AcceptSrc, Commands.LoadRef, Commands.LoadSrc, Commands.Update, Commands.Invalidate);
+            addCmdBtn(pnlChild, Commands.AcceptSrc, Commands.Update, Commands.LoadSrc, Commands.LoadRef, Commands.Invalidate);
 
             pnlRight.add(pnlChild, BorderLayout.SOUTH);
 
@@ -333,6 +352,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             ta.setEditable(editable);
             ta.setWrapStyleWord(true);
             ta.setLineWrap(true);
+            ta.setFont(fntTA);
             return ta;
         }
 
@@ -348,6 +368,8 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             }
 
             lbCounts.setText(MessageFormat.format("({0}/{1}", filteredCount, src.keyLines.size()));
+            
+            cm.updateStates();
         }
 
         private void setSelectedKey(String key) {
@@ -438,7 +460,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             String f = filter.trim().toLowerCase();
 
             if (0 != f.length()) {
-                if (!key.toLowerCase().contains(f) && !src.valueOfKey(key).toLowerCase().contains(f)
+                if (!key.toLowerCase().contains(f) && !ref.valueOfKey(key).toLowerCase().contains(f)
                         && !src.valueOfKey(key).toLowerCase().contains(f)) {
                     continue;
                 }
@@ -466,12 +488,13 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
                     }
 
                     String k = src.keyOfLine(st);
-                    if ((null == k) || !validated.containsKey(k)) {
+                    if (null == k) {
                         w.write(st);
                     } else {
                         w.write(k);
                         w.write("=");
-                        w.write(validated.get(k));
+                        String vv = validated.get(k);
+                        w.write((null == vv) ? "XX " + src.valueOfKey(k) : vv);
                     }
                 }
 
@@ -496,6 +519,12 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
 
         diff(ref, src, "Missing en line for hu key ");
         diff(src, ref, "Missing hu line for en key ");
+        
+        ResFile t = new ResFile(src.lang, "Translation.properties");
+        
+        diff(t, ref, "Missing translated line for en key ");
+        diff(t, src, "Missing translated line for hu key ");
+
     }
 
     private void showGui() {
@@ -525,132 +554,4 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             }
         }
     }
-
-    // private static void reload() throws Exception {
-    // ResFile en = new ResFile(Language.en,
-    // "_ApplicationResources_en_final_1.2.properties");
-    // ResFile hu = new ResFile(Language.hu,
-    // "_ApplicationResources_hu_final_3.4.properties");
-    //
-    // System.out.println(en);
-    // System.out.println(hu);
-    //
-    // diff(en, hu, "Missing en line for hu key ");
-    // diff(hu, en, "Missing hu line for en key ");
-    //
-    // StringBuilder sb = new StringBuilder(
-    // "<html> <head> <meta charset=\"utf-8\"/> </head> " + "<body
-    // style=\"font-family:Arial; font-size:20px\"> "
-    // // + " <font size = \"8\"> "
-    // // + "<table style=\"width:100%\" border=\"1\"> "
-    // + "<table border=\"1\" >"
-    // // + "<tr> <th style=\"width:20px\">row</th> <th
-    // style=\"width:50px\">key</th>
-    // // <th width=\"40%\">en</th> <th width=\"40%\">hu</th> </tr> \n");
-    // + "<tr> <th style=\"width:20px\">row</th> <th style=\"width:50%\">en</th> <th
-    // style=\"width:50%\">hu</th> </tr> \n");
-    //
-    // int i = 0;
-    // for (String st : hu.lines) {
-    // String k = hu.keyOfLine(st);
-    // if (null == k) {
-    // // System.out.println(st);
-    // } else {
-    // String vHu = hu.valueOfKey(k);
-    // String vEn = en.valueOfKey(k);
-    //
-    // // System.out.println(MessageFormat.format("<tr> <td>{0}</td> <td>{1}</td>
-    // // <td><span id=\"{0}\">{2}</span></td> </tr>", k, vEn, vHu));
-    // // sb.append(MessageFormat.format("<tr> <td>{3}</td> <td>{0}</td>
-    // <td>{1}</td>
-    // // <td><span id=\"{0}\">{2}</span></td> </tr>\n",
-    // sb.append(MessageFormat.format("<tr> <td>{3}</td> <td><span>{1}</span></td>
-    // <td><span id=\\\"{0}\\\">{2}</span></td> </tr>\n", k,
-    // StringEscapeUtils.escapeHtml4(vEn), StringEscapeUtils.escapeHtml4(vHu),
-    // ++i));
-    // }
-    // }
-    //
-    // sb.append("</table> "
-    // // + "</font> "
-    // + "</body> </html>");
-    //
-    // }
-
-    // private static void writeToFile() throws Exception {
-    // try (OutputStreamWriter writer = new OutputStreamWriter(new
-    // FileOutputStream("translate.html"), StandardCharsets.UTF_8)) {
-    // writer.write(text);
-    // writer.flush();
-    // writer.close();
-    // }
-    // }
-
-    // private static void createAndShowGUI() {
-    // // Create and set up the window.
-    // JFrame frame = new JFrame("TextDemo");
-    // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //
-    // // JLabel lbl = new JLabel("");
-    // JEditorPane jp = new JTextPane();
-    // // jp.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
-    //
-    // jp.setContentType("text/html; charset=utf-8");
-    // // jp.setFont(new Font(lbl.getFont().getFontName(), Font.PLAIN, 24));
-    //
-    // JPanel pnlMain = new JPanel(new BorderLayout());
-    //
-    // pnlMain.add(new JScrollPane(jp), BorderLayout.CENTER);
-    //
-    // JToolBar tb = new JToolBar();
-    //
-    // ActionListener al = new ActionListener() {
-    //
-    // @Override
-    // public void actionPerformed(ActionEvent e) {
-    // try {
-    // switch (Commands.valueOf(e.getActionCommand())) {
-    // case Export:
-    // break;
-    // case Reload:
-    // reload();
-    // jp.setText(text);
-    // break;
-    // case Save:
-    // text = jp.getText();
-    // writeToFile();
-    // break;
-    // case Search:
-    // break;
-    // }
-    // ;
-    // } catch (Exception e1) {
-    // e1.printStackTrace();
-    // }
-    //
-    // }
-    // };
-    //
-    // for (Commands cmd : Commands.values()) {
-    // JButton bt = new JButton(cmd.name());
-    // bt.setActionCommand(cmd.name());
-    // bt.addActionListener(al);
-    // tb.add(bt);
-    // }
-    //
-    // pnlMain.add(tb, BorderLayout.NORTH);
-    //
-    // // Add contents to the window.
-    // frame.add(pnlMain);
-    //
-    // // Display the window.
-    // frame.pack();
-    // frame.setVisible(true);
-    //
-    // jp.setText(text);
-    //
-    // frame.setSize(1000, 800);
-    // frame.setLocation(10, 10);
-    // }
-
 }
