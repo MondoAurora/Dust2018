@@ -15,7 +15,7 @@ public class DustTextGen implements DustTextComponents, DustProcComponents, Dust
             DustUtils.accessEntity(DataCommand.setRef, DustTextTypes.TextStatement, DustMetaLinks.TypeLinkedServices, DustTextServices.TextSource);
             DustUtils.accessEntity(DataCommand.setRef, DustTextTypes.TextSpan, DustMetaLinks.TypeLinkedServices, DustTextServices.TextSource);
             
-            DustUtils.registerService(DustTextSource.class, false, DustTextServices.TextRendererPlain, DustProcServices.Processor);
+            DustUtils.registerService(DustTextRendererPlain.class, false, DustTextServices.TextRendererPlain, DustProcServices.Processor, DustProcServices.Evaluator);
             DustUtils.accessEntity(DataCommand.setRef, DustTextTypes.TextRenderer, DustMetaLinks.TypeLinkedServices, DustTextServices.TextRendererPlain);
             
             inited = true;

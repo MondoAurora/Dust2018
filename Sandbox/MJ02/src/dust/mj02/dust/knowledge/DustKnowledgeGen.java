@@ -120,9 +120,14 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
         DustUtils.tag(EntityResolver.getEntity(DustDataAtts.EntityBinaries), TagCommand.set, DustMetaTags.AttRaw);
         
 		
-	      DustUtils.accessEntity(DataCommand.setRef, DustProcTypes.Scheduler, DustMetaLinks.TypeLinkedServices, DustProcServices.Scheduler);
+        DustUtils.accessEntity(DataCommand.setRef, DustProcTypes.Scheduler, DustMetaLinks.TypeLinkedServices, DustProcServices.Scheduler);
 
 		
+        DustUtils.accessEntity(DataCommand.setRef, DustProcTypes.Iterator, DustGenericLinks.ConnectedRequires, DustProcTypes.Relay);
+        DustUtils.accessEntity(DataCommand.setRef, DustProcTypes.Iterator, DustGenericLinks.ConnectedRequires, DustGenericTypes.ContextAware);
+        DustUtils.registerService(DustProcCoreServices.DustIterator.class, false, DustProcServices.Iterator, DustProcServices.Processor);
+        DustUtils.accessEntity(DataCommand.setRef, DustProcTypes.Iterator, DustMetaLinks.TypeLinkedServices, DustProcServices.Iterator);
+
 		inited = true;
 	}
 }

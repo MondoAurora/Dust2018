@@ -57,7 +57,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 				String name = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Unit names (comma separated list)?", "Select update", JOptionPane.QUESTION_MESSAGE);
 				if ( DustUtilsJava.isEmpty(name)) {
 //                    name = "VMTest01";
-                    name = "Text";
+                    name = "TextTest";
 				}
 				DustPersistence.update(PERS_STORAGE_DEF_MULTI, name);
 				desktop.refreshData();

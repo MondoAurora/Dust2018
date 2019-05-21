@@ -24,14 +24,14 @@ public class DustTextRendererPlain implements DustTextComponents, DustDataCompon
         sbContent = new StringBuilder();
 
         DustEntity eMsgCallback = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
-        DustUtils.accessEntity(DataCommand.setValue, eMsgCallback, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
+        DustUtils.accessEntity(DataCommand.setRef, eMsgCallback, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
         
         DustEntity eMsgRelay = DustUtils.accessEntity(DataCommand.cloneEntity, ContextRef.msg);
-        DustUtils.accessEntity(DataCommand.setValue, eMsgRelay, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
+        DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
 
         DustEntity eSelf = DustUtils.getCtxVal(ContextRef.self, null, false);
-        DustUtils.accessEntity(DataCommand.setValue, eMsgRelay, DustTextLinks.TextRenderContextTarget, eSelf);
-        DustUtils.accessEntity(DataCommand.setValue, eMsgRelay, DustTextLinks.TextRenderContextMessage, eMsgCallback);
+        DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustTextLinks.TextRenderContextTarget, eSelf);
+        DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustTextLinks.TextRenderContextMessage, eMsgCallback);
         
         DustEntity eRoot = DustUtils.getCtxVal(ContextRef.self, DustTextLinks.TextRendererRoot, true);
 

@@ -12,6 +12,7 @@ import java.util.Set;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.gui.DustGuiComponents;
 import dust.mj02.dust.knowledge.DustKernelComponents;
 import dust.mj02.dust.text.DustTextComponents;
 import dust.utils.DustUtilsDev;
@@ -19,7 +20,7 @@ import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("rawtypes")
-public class DustPersistence implements DustKernelComponents, DustPersistenceComponents, DustTextComponents {
+public class DustPersistence implements DustKernelComponents, DustPersistenceComponents, DustTextComponents, DustGuiComponents {
 
     private static final String SAVEFILTER_PERSCOMMIT = "SAVEFILTER_PERSCOMMIT";
 
@@ -32,6 +33,7 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
 		Generic(DustGenericTypes.class), 
 		Collection(DustCollectionTypes.class),
         Text(DustTextTypes.class, DustTextServices.class), 
+        Gui(DustGuiTypes.class, DustGuiServices.class, DustGuiTags.class), 
 
 		;
 		/* @formatter:on */

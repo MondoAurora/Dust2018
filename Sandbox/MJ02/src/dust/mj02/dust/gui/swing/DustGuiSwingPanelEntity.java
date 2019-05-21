@@ -3,6 +3,7 @@ package dust.mj02.dust.gui.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
@@ -56,6 +58,8 @@ public class DustGuiSwingPanelEntity extends JPanel
         public TextPanelBase(DustEntity entity, boolean editable) {
             super(new BorderLayout());
 
+            this.entity = entity;
+
             textArea = new JTextArea();
             textArea.setEditable(editable);
 
@@ -63,25 +67,70 @@ public class DustGuiSwingPanelEntity extends JPanel
         }
     }
 
-    static class TextSpanPanel extends TextPanelBase {
+    static class TextSpanPanel extends TextPanelBase implements DustSwingTextChangeProcessor {
         private static final long serialVersionUID = 1L;
+
+        DustSwingTextListener al = new DustSwingTextListener(this);
 
         public TextSpanPanel(DustEntity entity) {
             super(entity, true);
+            
+            String text = DustUtils.accessEntity(DataCommand.getValue, entity, DustTextAtts.TextSpanString);
+            textArea.setText(text);
+
+            al.listen(textArea);
         }
 
+        @Override
+        public void textChanged(String text, Object source, DocumentEvent e) {
+            text = textArea.getText();
+            DustUtils.accessEntity(DataCommand.setValue, entity, DustTextAtts.TextSpanString, text);
+        }
+    }
+
+    enum RendererPanelCmds {
+        Refresh
     }
 
     static class TextRendererPanel extends TextPanelBase {
         private static final long serialVersionUID = 1L;
+        
+        DustEntity eMgsEval;
+
+        DustSwingCommandManager<RendererPanelCmds> cm = new DustSwingCommandManager<RendererPanelCmds>(RendererPanelCmds.class) {
+            @Override
+            protected void execute(RendererPanelCmds cmd) throws Exception {
+                switch (cmd) {
+                case Refresh:
+                    if (null == eMgsEval) {
+                        eMgsEval = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
+                        DustUtils.accessEntity(DataCommand.setRef, eMgsEval, DustDataLinks.MessageCommand, DustProcMessages.EvaluatorEvaluate);
+                    }
+
+                    DustUtils.accessEntity(DataCommand.tempSend, entity, eMgsEval);
+
+                    String txt = DustUtils.accessEntity(DataCommand.getValue, eMgsEval, DustDataAtts.MessageReturn);
+
+                    textArea.setText(txt);
+                    textArea.setCaretPosition(0);
+                    
+                    break;
+                }
+            }
+        };
 
         public TextRendererPanel(DustEntity entity) {
             super(entity, false);
+
+            JPanel pnlBtns = new JPanel(new FlowLayout());
+            cm.loadAll(pnlBtns);
+
+            add(pnlBtns, BorderLayout.SOUTH);
         }
     }
-    
+
     private static final Map<DustEntity, Class<? extends TextPanelBase>> SPEC_PANELS = new HashMap<>();
-    
+
     static {
         SPEC_PANELS.put(EntityResolver.getEntity(DustTextTypes.TextSpan), TextSpanPanel.class);
         SPEC_PANELS.put(EntityResolver.getEntity(DustTextTypes.TextRenderer), TextRendererPanel.class);
@@ -331,17 +380,18 @@ public class DustGuiSwingPanelEntity extends JPanel
                         BorderLayout.WEST);
                 pnl.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
                 pnlGeneric.add(pnl);
-                
+
                 Class<? extends TextPanelBase> ct = SPEC_PANELS.get(mType);
-                if ( null != ct ) {
+                if (null != ct) {
                     String lbl = ct.getSimpleName();
-                    for ( int i = tpCenter.getTabCount(); i-->0; ) {
-                        if ( lbl.equals(tpCenter.getTitleAt(i))) {
+                    for (int i = tpCenter.getTabCount(); i-- > 0;) {
+                        if (lbl.equals(tpCenter.getTitleAt(i))) {
                             lbl = null;
+                            break;
                         }
                     }
-                    
-                    if ( null != lbl ) {
+
+                    if (null != lbl) {
                         try {
                             TextPanelBase tpb = ct.getConstructor(DustEntity.class).newInstance(eEntity);
                             tpCenter.addTab(lbl, tpb);

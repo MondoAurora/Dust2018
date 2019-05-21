@@ -5,7 +5,6 @@ import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.tools.DustCollectionComponents;
 import dust.mj02.dust.tools.DustGenericComponents;
-import dust.utils.DustUtilsJava;
 
 public class DustTextSource implements DustTextComponents, DustCollectionComponents, DustGenericComponents, DustDataComponents, DustProcComponents,
         DustProcComponents.DustProcPocessor {
@@ -14,9 +13,9 @@ public class DustTextSource implements DustTextComponents, DustCollectionCompone
     public void processorProcess() throws Exception {
         DustEntity eSelf = DustUtils.getCtxVal(ContextRef.self, null, false);
         DustEntity eMsgCallback = DustUtils.getMsgVal(DustTextLinks.TextRenderContextMessage, true);
-        DustEntity renderer = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustTextLinks.TextRenderContextTarget);
+        DustEntity renderer = DustUtils.getCtxVal(ContextRef.msg, DustTextLinks.TextRenderContextTarget, true);
 
-        if (!optCallbackWithSpan(eSelf, eMsgCallback, renderer)) {
+        if (DustUtils.hasRef(eSelf, DustDataLinks.EntityModels, DustCollectionTypes.Sequence)) {
             DustEntity eMsgRelay = DustUtils.getCtxVal(ContextRef.msg, null, false);
 
             DustUtils.accessEntity(DataCommand.processRef, eSelf, DustCollectionLinks.SequenceMembers, new RefProcessor() {
@@ -44,6 +43,8 @@ public class DustTextSource implements DustTextComponents, DustCollectionCompone
                     }
                 }
             });
+        } else {
+            optCallbackWithSpan(eSelf, eMsgCallback, renderer);
         }
     }
 
@@ -54,7 +55,7 @@ public class DustTextSource implements DustTextComponents, DustCollectionCompone
     private boolean optCallbackWithSpan(DustEntity source, DustEntity eMsg, DustEntity renderer, Object txtKey) {
         String txt = DustUtils.accessEntity(DataCommand.getValue, source, txtKey);
 
-        if (!DustUtilsJava.isEmpty(txt)) {
+        if (null != txt) {
             DustUtils.accessEntity(DataCommand.setValue, eMsg, DustTextAtts.TextSpanString, txt);
             DustUtils.accessEntity(DataCommand.setRef, eMsg, DustTextLinks.TextRenderContextSpanSource, source);
             DustUtils.accessEntity(DataCommand.tempSend, renderer, eMsg);

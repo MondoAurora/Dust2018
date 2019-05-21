@@ -93,7 +93,8 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		}
 
 		public void setPos(int xScreen, int yScreen) {
-			Point pt = SwingUtilities.convertPoint(null, xScreen, yScreen, DustGuiSwingMontruDesktop.this);
+            Point pt = SwingUtilities.convertPoint(null, xScreen, yScreen, null);
+            SwingUtilities.convertPointFromScreen(pt, DustGuiSwingMontruDesktop.this);
 			iFrame.setLocation(pt);
 		}
 	}

@@ -60,7 +60,13 @@ public class DustUtils implements DustComponents {
 		return (RetVal) ob;
 	}
 
-	public static boolean tag(DustEntity entity, TagCommand tcmd, Object tag) {
+    public static boolean hasRef(DustEntity entity, DustEntityKey key, Object val) {
+        DustEntity eLink = EntityResolver.getEntity(key);
+        DustRef ref = Dust.accessEntity(DataCommand.getValue, entity, eLink, null, null);
+        return (null == ref) ? false : ref.contains(optResolve(val));
+    }
+
+    public static boolean tag(DustEntity entity, TagCommand tcmd, Object tag) {
 		DustEntity eLinkTags = EntityResolver.getEntity(DustDataComponents.DustDataLinks.EntityTags);
 		DustRef ref = Dust.accessEntity(DataCommand.getValue, entity, eLinkTags, null, null);
 		boolean set = (null == ref) ? false : ref.contains(optResolve(tag));
