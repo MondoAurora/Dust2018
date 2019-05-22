@@ -20,7 +20,7 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 		ChangeCmd, ChangeEntity, ChangeKey, ChangeSource,
 		SchedulerTasks, TaskEntity, TaskMessage, TaskInitiator,
 		AccessControlAccess, AccessControlChange,
-		RelayTarget, IteratorLink,
+		RelayTarget, IteratorLinkLoop, IteratorPathMsgTarget, IteratorEvalFilter, IteratorMsgStart, IteratorMsgSep, IteratorMsgEnd,
 	}
 	
     enum DustProcSessionTypeValues implements DustEntityKey {

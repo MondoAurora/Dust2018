@@ -1,6 +1,8 @@
 package dust.mj02.dust.text;
 
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.DustComponents.ContextRef;
+import dust.mj02.dust.DustComponents.DustEntity;
 import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.tools.DustCollectionComponents;
@@ -86,7 +88,14 @@ public interface DustTextCoreServices
     public static class AttToText implements DustProcPocessor {
         @Override
         public void processorProcess() throws Exception {
-            Object val = new DustUtils.RefPathResolver().resolve(false);
+            DustUtils.RefPathResolver pr = new DustUtils.RefPathResolver();
+            Object val = pr.resolve(false);
+            
+            if ( null == val ) {
+                DustEntity root = DustUtils.getCtxVal(ContextRef.msg, DustGenericComponents.DustGenericLinks.ContextAwareEntity, true);
+
+                val = pr.resolve(root, false);
+            }
 
             if (null != val) {
                 String txt = DustUtilsJava.toString(val);

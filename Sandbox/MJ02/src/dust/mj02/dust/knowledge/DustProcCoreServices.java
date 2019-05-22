@@ -5,52 +5,75 @@ import dust.mj02.dust.DustUtils;
 public interface DustProcCoreServices extends DustKernelImplComponents {
 
     public static class DustIterator implements DustProcPocessor {
-        private final class IterProc implements RefProcessor {
+
+        private final class IterProc {
+            DustEntity msgRelay;
             DustEntity proc;
-            boolean init;
+            DustEntity backProc;
+            DustEntity filterProc;
+            DustEntity filterMsg;
 
-            DustEntity eMsg = null;
-
-            public IterProc(DustEntity proc) {
-                this.proc = proc;
-                this.init = null != DustUtils.getBinary(proc, DustProcServices.Active);
+            public IterProc() {
+                this.proc = DustUtils.getCtxVal(ContextRef.self, DustProcLinks.RelayTarget, true);
+                this.backProc = new DustUtils.RefPathResolver().resolve(ContextRef.msg, DustProcLinks.IteratorPathMsgTarget, true);
+                this.filterProc = DustUtils.getCtxVal(ContextRef.self, DustProcLinks.IteratorEvalFilter, true);
+                if ( null != filterProc ) {
+                    filterMsg = DustUtils.accessEntity(DataCommand.cloneEntity, ContextRef.msg);
+                    DustUtils.accessEntity(DataCommand.setRef, filterMsg, DustDataLinks.MessageCommand, DustProcMessages.EvaluatorEvaluate);
+                }
             }
 
-            @Override
-            public void processRef(DustRef ref) {
+            private void procRef(DustRef ref) {
                 DustEntity member = ref.get(RefKey.target);
-
-                if (null == eMsg) {
-                    eMsg = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
-
-                    if (init) {
-                        DustUtils.accessEntity(DataCommand.setRef, eMsg, DustDataLinks.MessageCommand, DustProcMessages.ActiveInit);
-                        DustUtils.accessEntity(DataCommand.tempSend, proc, eMsg);
+                
+                if ( null != filterProc ) {
+                    DustUtils.accessEntity(DataCommand.setRef, filterMsg, DustGenericLinks.ContextAwareEntity, member);
+                    DustUtils.accessEntity(DataCommand.tempSend, filterProc, filterMsg);
+                    if ( Boolean.FALSE.equals(DustUtils.accessEntity(DataCommand.getValue, filterMsg, DustDataAtts.MessageReturn))) {
+                        return;
                     }
-                    DustUtils.accessEntity(DataCommand.setRef, eMsg, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
                 }
-
-                DustUtils.accessEntity(DataCommand.setRef, eMsg, DustGenericLinks.ContextAwareEntity, member);
-                DustUtils.accessEntity(DataCommand.tempSend, proc, eMsg);
+                
+                if (null == msgRelay) {
+                    msgRelay = DustUtils.accessEntity(DataCommand.cloneEntity, ContextRef.msg);
+                    optSend(DustProcLinks.IteratorMsgStart);
+                } else {
+                    optSend(DustProcLinks.IteratorMsgSep);                    
+                }
+                DustUtils.accessEntity(DataCommand.setRef, msgRelay, DustGenericLinks.ContextAwareEntity, member);
+                DustUtils.accessEntity(DataCommand.tempSend, proc, msgRelay);
             }
 
-            void execute(DustEntity src, DustEntity key) {
-                DustUtils.accessEntity(DataCommand.processRef, src, key, this);
-
-                if (init && (null != eMsg)) {
-                    DustUtils.accessEntity(DataCommand.setRef, eMsg, DustDataLinks.MessageCommand, DustProcMessages.ActiveRelease);
-                    DustUtils.accessEntity(DataCommand.tempSend, proc, eMsg);
+            private void optSend(DustEntityKey key) {
+                if (null != backProc) {
+                    DustEntity backMsg = DustUtils.getCtxVal(ContextRef.self, key, true);
+                    if (null != backMsg) {
+                        DustUtils.accessEntity(DataCommand.tempSend, backProc, backMsg);
+                    }
                 }
             }
+            
+            public void execute() {
+                DustEntity loopEntity = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.ContextAwareEntity, true);
+                DustEntity loopKey = DustUtils.getCtxVal(ContextRef.self, DustProcLinks.IteratorLinkLoop, true);
+
+                DustUtils.accessEntity(DataCommand.processRef, loopEntity, loopKey, new RefProcessor() {
+                    @Override
+                    public void processRef(DustRef ref) {
+                        procRef(ref);
+                    }
+                });
+
+                if (null != msgRelay) {
+                    optSend(DustProcLinks.IteratorMsgEnd);
+                }
+            }
+
         }
 
         @Override
         public void processorProcess() throws Exception {
-            DustEntity src = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.ContextAwareEntity, true);
-            DustEntity key = DustUtils.getCtxVal(ContextRef.self, DustProcLinks.IteratorLink, true);
-            DustEntity proc = DustUtils.getCtxVal(ContextRef.self, DustProcLinks.RelayTarget, true);
-
-            new IterProc(proc).execute(src, key);
+           new IterProc().execute();
         }
     }
 }

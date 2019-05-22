@@ -190,9 +190,17 @@ public class DustUtils implements DustComponents {
         }
         
         public <RetType> RetType resolve(Object root, boolean resolveRef) {
+            return resolve(root, DustGenericComponents.DustGenericLinks.ReferencePath, resolveRef);
+        }
+        
+        public <RetType> RetType resolve(Object root, Object keyPath, boolean resolveRef) {
             this.item = toEntity(root);
             
-            accessEntity(DataCommand.processRef, ContextRef.self, DustGenericComponents.DustGenericLinks.ReferencePath, this);
+            accessEntity(DataCommand.processRef, ContextRef.self, keyPath, this);
+            
+            if ( resolveRef ) {
+                item = toEntity(item);
+            }
             
             return (RetType) item;
         }
