@@ -23,13 +23,13 @@ public class DustTextRendererPlain implements DustTextComponents, DustDataCompon
     public Object evaluatorEvaluate() throws Exception {
         sbContent = new StringBuilder();
 
+        DustEntity eSelf = DustUtils.getCtxVal(ContextRef.self, null, false);
+
         DustEntity eMsgCallback = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
         DustUtils.accessEntity(DataCommand.setRef, eMsgCallback, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
         
         DustEntity eMsgRelay = DustUtils.accessEntity(DataCommand.cloneEntity, ContextRef.msg);
         DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
-
-        DustEntity eSelf = DustUtils.getCtxVal(ContextRef.self, null, false);
         DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustTextLinks.TextRenderContextTarget, eSelf);
         DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustTextLinks.TextRenderContextMessage, eMsgCallback);
         

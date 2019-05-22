@@ -15,6 +15,7 @@ import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaTypes;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcAtts;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcLinks;
+import dust.mj02.dust.tools.DustGenericComponents;
 import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
 import dust.utils.DustUtilsFactory;
 
@@ -179,7 +180,35 @@ public class DustUtils implements DustComponents {
         return DustMetaLinkDefTypeValues.LinkDefSingle != factLinkTypes.get(eLinkType);
     }
     
-	public static class TagWatcher {
+    public static class RefPathResolver implements RefProcessor {
+        Object item;
+        
+        public <RetType> RetType resolve(boolean resolveRef) {
+            DustEntity root = getCtxVal(ContextRef.self, DustGenericComponents.DustGenericLinks.ContextAwareEntity, true);
+            
+            return resolve(root, resolveRef);
+        }
+        
+        public <RetType> RetType resolve(Object root, boolean resolveRef) {
+            this.item = toEntity(root);
+            
+            accessEntity(DataCommand.processRef, ContextRef.self, DustGenericComponents.DustGenericLinks.ReferencePath, this);
+            
+            return (RetType) item;
+        }
+
+        @Override
+        public void processRef(DustRef ref) {
+            if ( null != item ) {
+                DustEntity e = toEntity(item);
+                DustEntity key = ref.get(RefKey.target);
+                
+                item = accessEntity(DataCommand.getValue, e, key);
+            }
+        }
+    }
+    
+    public static class TagWatcher {
 	    private Object[] flags;
 	    
 	    private DustUtilsFactory<DustEntity, Set<Object>> factFlags = new DustUtilsFactory<DustEntity, Set<Object>>(false) {

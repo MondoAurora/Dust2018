@@ -6,7 +6,7 @@ public interface DustTextComponents extends DustComponents {
 	
 	enum DustTextTypes implements DustEntityKey {
 	    TextBase, TextLanguage, TextEncoding, 
-	    TextSpan, TextStatement, 
+	    TextSpan, TextStatement, TextAttToText, 
 		TextRenderer, TextRenderContext
 	};
 	
@@ -17,11 +17,11 @@ public interface DustTextComponents extends DustComponents {
 	enum DustTextLinks implements DustEntityKey {
 	    TextBaseLanguage, TextBaseEncoding,
 	    TextRendererRoot, 
-	    TextRenderContextSpanSource, TextRenderContextTarget, TextRenderContextMessage
+	    TextRenderContextSpanSource, TextRenderContextTarget, TextRenderContextMessage,
 	}
 	
 	enum DustTextServices implements DustEntityKey {
-	    TextRendererPlain, TextSource
+	    TextRendererPlain, TextSource, TextAttToText
 	};
 	
 //	enum DustProcMessages implements DustEntityKey {

@@ -71,12 +71,7 @@ public interface DustUtilsSwingComponents extends DustUtilsComponents {
         ActionListener alCmd = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    execute(Enum.valueOf(cmdClass, e.getActionCommand()));
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-                updateStates();
+                exec(Enum.valueOf(cmdClass, e.getActionCommand()));
             }
         };
 
@@ -145,6 +140,19 @@ public interface DustUtilsSwingComponents extends DustUtilsComponents {
             
         }
 
+        protected void processException(CmdType cmd, Exception ex) {
+            ex.printStackTrace();
+        }
+
         protected abstract void execute(CmdType cmd) throws Exception;
+
+        public void exec(CmdType cmd) {
+            try {
+                execute(cmd);
+            } catch (Exception e1) {
+                processException(cmd, e1);
+            }
+            updateStates();
+        }
     }
 }

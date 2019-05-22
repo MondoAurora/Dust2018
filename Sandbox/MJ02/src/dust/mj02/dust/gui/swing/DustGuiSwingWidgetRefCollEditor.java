@@ -2,6 +2,8 @@ package dust.mj02.dust.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -103,6 +105,13 @@ public class DustGuiSwingWidgetRefCollEditor extends JPanel implements DustGuiCo
             }
         });
 
+        lst.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                if (1 < evt.getClickCount() ) {
+                    cm.exec(Cmds.Show);
+                }
+            }
+        });
         DefaultListCellRenderer lcr = new DefaultListCellRenderer() {
             private static final long serialVersionUID = 1L;
 

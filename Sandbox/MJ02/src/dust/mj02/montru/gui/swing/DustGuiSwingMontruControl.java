@@ -61,6 +61,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 				}
 				DustPersistence.update(PERS_STORAGE_DEF_MULTI, name);
 				desktop.refreshData();
+				tfSearch.setText("test");
 				break;
 			case commit:
 				DustPersistence.commit(PERS_STORAGE_DEF_MULTI);
