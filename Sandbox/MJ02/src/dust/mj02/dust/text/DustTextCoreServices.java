@@ -1,8 +1,6 @@
 package dust.mj02.dust.text;
 
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.DustComponents.ContextRef;
-import dust.mj02.dust.DustComponents.DustEntity;
 import dust.mj02.dust.knowledge.DustDataComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.tools.DustCollectionComponents;
@@ -121,6 +119,7 @@ public interface DustTextCoreServices
             sbContent = new StringBuilder();
 
             DustEntity eSelf = DustUtils.getCtxVal(ContextRef.self, null, false);
+            DustEntity eCtx = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.ContextAwareEntity, true);
 
             DustEntity eMsgCallback = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
             DustUtils.accessEntity(DataCommand.setRef, eMsgCallback, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
@@ -129,6 +128,7 @@ public interface DustTextCoreServices
             DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
             DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustTextLinks.TextRenderContextTarget, eSelf);
             DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustTextLinks.TextRenderContextMessage, eMsgCallback);
+            DustUtils.accessEntity(DataCommand.setRef, eMsgRelay, DustGenericLinks.ContextAwareEntity, eCtx);
 
             DustEntity eRoot = DustUtils.getCtxVal(ContextRef.self, DustTextLinks.TextRendererRoot, true);
 

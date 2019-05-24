@@ -15,6 +15,13 @@ public class DustSandboxScheduler implements DustSandboxComponents, DustProcComp
         @Override
         public void run() {
             synchronized (this) {
+                
+                // ugly wait because this thread may be in conflict with the GUI refresh
+                try {
+                    wait(5000);
+                } catch (InterruptedException e1) {
+                }
+                
                 while (true) {
                     setNext();
                     try {

@@ -55,9 +55,14 @@ public interface DustProcCoreServices extends DustKernelImplComponents {
             
             public void execute() {
                 DustEntity loopEntity = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.ContextAwareEntity, true);
-                DustEntity loopKey = DustUtils.getCtxVal(ContextRef.self, DustProcLinks.IteratorLinkLoop, true);
+//                DustEntity loopKey = DustUtils.getCtxVal(ContextRef.self, DustProcLinks.IteratorLinkLoop, true);
+                
+                DustUtils.RefPathResolver pr = new DustUtils.RefPathResolver();
+                DustRef refIt = pr.resolve(loopEntity, DustProcLinks.IteratorLinkLoop, false);
 
-                DustUtils.accessEntity(DataCommand.processRef, loopEntity, loopKey, new RefProcessor() {
+                refIt.processAll(
+//                DustUtils.accessEntity(DataCommand.processRef, loopEntity, loopKey, 
+                        new RefProcessor() {
                     @Override
                     public void processRef(DustRef ref) {
                         procRef(ref);

@@ -62,6 +62,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 
             textArea = new JTextArea();
             textArea.setEditable(editable);
+            textArea.setTabSize(2);
 
             add(new JScrollPane(textArea), BorderLayout.CENTER);
         }

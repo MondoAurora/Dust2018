@@ -185,6 +185,10 @@ public class DustUtils implements DustComponents {
         
         public <RetType> RetType resolve(boolean resolveRef) {
             DustEntity root = getCtxVal(ContextRef.self, DustGenericComponents.DustGenericLinks.ContextAwareEntity, true);
+
+            if ( null == root ) {
+                root = getCtxVal(ContextRef.msg, DustGenericComponents.DustGenericLinks.ContextAwareEntity, true);
+            }
             
             return resolve(root, resolveRef);
         }

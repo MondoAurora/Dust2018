@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -423,21 +424,46 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		this.control = control;
 	}
 
-	public void deleteSelected() {
-		if ( eac.getAllSelected().isEmpty() ) {
-			return;
-		}
-		
-		for ( Object o : eac.getAllSelected().toArray() ) {
-			DustEntity ee = (DustEntity)o;
-			DustUtils.accessEntity(DataCommand.dropEntity, ee);
-			eac.select(CollectionAction.clear, null);
-			EntityDocWindow dw = factDocWindows.peek(ee);
-			dw.iFrame.dispose();
-			factDocWindows.drop(dw);
-		}
-		
-		refreshData();
-		links.refreshLines();
-	}
+    public void closeUnselected() {
+        Collection<DustEntity> sel = eac.getAllSelected();
+        Set<DustEntity> toClose = new HashSet<>();
+        
+        for ( DustEntity e : factDocWindows.keys() ) {
+            if ( !sel.contains(e) ) {
+                toClose.add(e);
+            }
+        }
+        
+        if ( toClose.isEmpty() ) {
+            return;
+        }
+        
+        for ( DustEntity ee : toClose ) {
+            EntityDocWindow dw = factDocWindows.peek(ee);
+            dw.iFrame.dispose();
+            factDocWindows.drop(dw);
+        }
+        
+        posOffset = 0;
+        refreshData();
+        links.refreshLines();
+    }
+
+    public void deleteSelected() {
+        if ( eac.getAllSelected().isEmpty() ) {
+            return;
+        }
+        
+        for ( Object o : eac.getAllSelected().toArray() ) {
+            DustEntity ee = (DustEntity)o;
+            DustUtils.accessEntity(DataCommand.dropEntity, ee);
+            eac.select(CollectionAction.clear, null);
+            EntityDocWindow dw = factDocWindows.peek(ee);
+            dw.iFrame.dispose();
+            factDocWindows.drop(dw);
+        }
+        
+        refreshData();
+        links.refreshLines();
+    }
 }
