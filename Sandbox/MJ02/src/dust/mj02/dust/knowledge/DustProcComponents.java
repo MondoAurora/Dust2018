@@ -6,7 +6,7 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	enum DustProcTypes implements DustEntityKey {
 		System, Session, Change, Binary, NativeBound, Scheduler, Task, AccessControl,
-		Relay, Iterator, 
+		Relay, Iterator, ValueUpdater
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
@@ -21,6 +21,7 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 		SchedulerTasks, TaskEntity, TaskMessage, TaskInitiator,
 		AccessControlAccess, AccessControlChange,
 		RelayTarget, IteratorLinkLoop, IteratorPathMsgTarget, IteratorEvalFilter, IteratorMsgStart, IteratorMsgSep, IteratorMsgEnd,
+		ValueUpdaterSource, ValueUpdaterTarget
 	}
 	
     enum DustProcSessionTypeValues implements DustEntityKey {
@@ -30,7 +31,7 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 
 	enum DustProcServices implements DustEntityKey {
 		Listener, Channel, Processor, Active, Scheduler, Evaluator, AccessControl, 
-		Iterator
+		Iterator, ValueUpdater
 	};
 	
 	enum DustProcMessages implements DustEntityKey {

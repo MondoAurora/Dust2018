@@ -4,6 +4,19 @@ import dust.mj02.dust.DustUtils;
 
 public interface DustProcCoreServices extends DustKernelImplComponents {
 
+    public static class DustValueUpdater implements DustProcPocessor {
+
+        @Override
+        public void processorProcess() throws Exception {
+            DustUtils.RefPathResolver pr = new DustUtils.RefPathResolver();
+            
+            DustEntity eVal = pr.resolve(ContextRef.msg, DustProcLinks.ValueUpdaterSource, true);
+            DustRef refTarget = pr.resolve(ContextRef.self, DustProcLinks.ValueUpdaterTarget, false);
+            
+            DustUtils.accessEntity(DataCommand.setRef, refTarget.get(RefKey.source), refTarget.get(RefKey.linkDef), eVal);
+        }
+    }
+        
     public static class DustIterator implements DustProcPocessor {
 
         private final class IterProc {

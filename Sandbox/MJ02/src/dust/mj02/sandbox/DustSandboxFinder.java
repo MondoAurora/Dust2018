@@ -10,6 +10,12 @@ public class DustSandboxFinder implements DustSandboxComponents, DustProcCompone
     @Override
     public Object evaluatorEvaluate() throws Exception {
         DustEntity eToFind = DustUtils.getCtxVal(ContextRef.self, DustSandboxLinks.SandboxFinderEntity, true);
+        
+        if ( null == eToFind ) {
+            DustUtils.RefPathResolver pr = new DustUtils.RefPathResolver();            
+            eToFind = pr.resolve(true);
+        }
+        
         DustRef rPath= DustUtils.getCtxVal(ContextRef.self, DustSandboxLinks.SandboxFinderPath, false);
         ee = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg);
 //        ee = rRoot.get(RefKey.source);
