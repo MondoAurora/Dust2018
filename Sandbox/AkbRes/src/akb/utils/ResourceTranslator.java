@@ -13,6 +13,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
     // }
 
     enum Commands {
-        LoadRef, LoadSrc, ShowValidated, Update, AcceptSrc, Invalidate, Save, Export
+        LoadRef, LoadSrc, ShowValidated, OnlySmallCaps, Update, AcceptSrc, Invalidate, Save, Export
     }
 
     enum Columns {
@@ -140,6 +141,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
         JLabel lbCounts;
         JTextField tfFilter;
         JToggleButton tbShowValid;
+        JToggleButton tbFilterSC;
 
         JTable tblData;
 
@@ -182,6 +184,18 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
                     }
                     break;
                 case ShowValidated:
+                    if ( tbShowValid.isSelected() ) {
+                        filterFlags.add(cmd);
+                    } else {
+                        filterFlags.remove(cmd);                        
+                    }
+                    break;
+                case OnlySmallCaps:
+                    if ( tbFilterSC.isSelected() ) {
+                        filterFlags.add(cmd);
+                    } else {
+                        filterFlags.remove(cmd);                        
+                    }
                     break;
                 default:
                     ResourceTranslator.this.execute(cmd);
@@ -264,10 +278,15 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             JPanel pnlLeft = new JPanel(new BorderLayout());
             JPanel pnlChild = new JPanel(new BorderLayout());
 
+            JPanel pnlFilterBtns = new JPanel(new FlowLayout());
             tbShowValid = new JToggleButton();
             cm.initButton(Commands.ShowValidated, tbShowValid);
+            pnlFilterBtns.add(tbShowValid);
+            tbFilterSC = new JToggleButton();
+            cm.initButton(Commands.OnlySmallCaps, tbFilterSC);
+            pnlFilterBtns.add(tbFilterSC);
 
-            pnlChild.add(tbShowValid, BorderLayout.WEST);
+            pnlChild.add(pnlFilterBtns, BorderLayout.WEST);
 
             tfFilter = new JTextField();
             tl.listen(tfFilter);
@@ -357,7 +376,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
         }
 
         private void updateDisplay() {
-            updateList(tbShowValid.isSelected(), tfFilter.getText());
+            updateList(tfFilter.getText());
 
             tmRes.updated();
 
@@ -399,6 +418,8 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
     final String workFileName;
     Map<String, String> validated;
 
+    EnumSet<Commands> filterFlags = EnumSet.noneOf(Commands.class);
+    
     String selKey;
     String text;
     ArrayList<String> alKeys = new ArrayList<>();
@@ -443,8 +464,11 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
         }
     }
 
-    private void updateList(boolean showValidated, String filter) {
+    private void updateList(String filter) {
         alKeys.clear();
+        
+        boolean showValidated = filterFlags.contains(Commands.ShowValidated);
+        boolean onlySC = filterFlags.contains(Commands.OnlySmallCaps);
 
         for (String line : src.lines) {
             String key = src.keyOfLine(line);
@@ -456,12 +480,18 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
             if (!showValidated && validated.containsKey(key)) {
                 continue;
             }
+            
+            String val = DustUtilsJava.toString(validated.get(key));
+
+            if (onlySC && !DustUtilsJava.isEmpty(val) && !Character.isLowerCase(val.charAt(0))) {
+                continue;
+            }
 
             String f = filter.trim().toLowerCase();
 
             if (0 != f.length()) {
                 if (!key.toLowerCase().contains(f) && !ref.valueOfKey(key).toLowerCase().contains(f)
-                        && !src.valueOfKey(key).toLowerCase().contains(f)) {
+                        && !src.valueOfKey(key).toLowerCase().contains(f) && !val.toLowerCase().contains(f)) {
                     continue;
                 }
             }
@@ -543,7 +573,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
         frame.pack();
         frame.setVisible(true);
 
-        updateList(false, "");
+        updateList("");
     }
 
     private static void diff(ResFile rf1, ResFile rf2, String diffMsg) {
