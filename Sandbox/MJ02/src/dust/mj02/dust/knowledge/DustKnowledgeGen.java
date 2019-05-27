@@ -89,7 +89,8 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.PersistentContainingUnit, DustMetaLinks.LinkDefReverse, DustCommLinks.UnitEntities);
 
 		DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Unit, DustGenericLinks.ConnectedRequires, DustCommTypes.Persistent);
-		DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Unit, DustGenericLinks.ConnectedRequires, DustGenericTypes.Identified);
+        DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Unit, DustGenericLinks.ConnectedRequires, DustGenericTypes.Identified);
+        DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Domain, DustGenericLinks.ConnectedRequires, DustGenericTypes.Identified);
 
 		
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.AttDefParent, DustMetaLinks.LinkDefParent, DustMetaTypes.AttDef);

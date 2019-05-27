@@ -60,7 +60,8 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
                         JOptionPane.QUESTION_MESSAGE);
                 if (DustUtilsJava.isEmpty(name)) {
                     // name = "TextTest";
-                    name = "SrcGen";
+//                    name = "SrcGen";
+                    name = "FleetManagement";
                 }
                 DustPersistence.update(PERS_STORAGE_DEF_MULTI, name);
                 desktop.refreshData();
