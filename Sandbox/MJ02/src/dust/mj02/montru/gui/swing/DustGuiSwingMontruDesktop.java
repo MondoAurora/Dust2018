@@ -60,7 +60,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 			pnl = DustUtils.getBinary(ePanel, DustGuiServices.PropertyPanel);
 			pnl.setEntityActionControl(eac);
 
-			iFrame = new JInternalFrame(DustUtilsJava.toString(eEntity), true, true, false, false);
+			iFrame = new JInternalFrame(DustUtilsJava.toString(eEntity), true, true, false, true);
 			iFrame.getContentPane().add(pnl, BorderLayout.CENTER);
 			iFrame.pack();
 			iFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

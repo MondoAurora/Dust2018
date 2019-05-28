@@ -208,8 +208,9 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 	public DustDataRef changeRef(boolean handleReverse, DataCommand cmd, DustDataEntity se, DustEntity key,
 			DustDataRef actRef, Object val, Object collId) {
 		DustDataRef sr = null;
+		 ArrayList<DustDataRef> al;
 
-		switch (cmd) {
+        switch (cmd) {
 		case removeRef:
 			if (null != actRef) {
 				Collection<DustDataEntity> mdls = null;
@@ -261,13 +262,26 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 		case setRef:
 			DustDataEntity eTarget = optResolveCtxEntity(val);
 
-			if ((null != actRef) && (DustMetaLinkDefTypeValues.LinkDefSet == actRef.lt)) {
-				for (DustDataRef er : ((Set<DustDataRef>) actRef.container)) {
-					if (er.target == eTarget) {
-						return er;
-					}
-				}
-			}
+            if (null != actRef) {
+                if (DustMetaLinkDefTypeValues.LinkDefSet == actRef.lt) {
+                    for (DustDataRef er : ((Set<DustDataRef>) actRef.container)) {
+                        if (er.target == eTarget) {
+                            return er;
+                        }
+                    }
+                }
+                if ((DustMetaLinkDefTypeValues.LinkDefArray == actRef.lt) && (collId instanceof Integer)) {
+                    al = (ArrayList<DustDataRef>) actRef.container;
+                    int idx = (int) collId;
+                    if (al.size() > idx) {
+                        DustDataRef er = al.get(idx);
+                        if (er.target == eTarget) {
+                            return er;
+                        }
+                    }
+                }
+            }
+            
 			sr = new DustDataRef(this, (DustDataEntity) key, se, (DustDataEntity) eTarget, collId, actRef);
 
 			if ((null != actRef) && (DustMetaLinkDefTypeValues.LinkDefSingle == sr.lt)) {

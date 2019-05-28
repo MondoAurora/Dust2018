@@ -13,6 +13,10 @@ public interface DustProcCoreServices extends DustKernelImplComponents {
             DustEntity eVal = pr.resolve(ContextRef.msg, DustProcLinks.ValueUpdaterSource, true);
             DustRef refTarget = pr.resolve(ContextRef.self, DustProcLinks.ValueUpdaterTarget, false);
             
+            if ( null == refTarget ) {
+                refTarget = pr.resolve(ContextRef.msg, DustProcLinks.ValueUpdaterTarget, false);
+            }
+            
             DustUtils.accessEntity(DataCommand.setRef, refTarget.get(RefKey.source), refTarget.get(RefKey.linkDef), eVal);
         }
     }
@@ -68,6 +72,9 @@ public interface DustProcCoreServices extends DustKernelImplComponents {
             
             public void execute() {
                 DustEntity loopEntity = DustUtils.getCtxVal(ContextRef.self, DustGenericLinks.ContextAwareEntity, true);
+                if ( null == loopEntity ) {
+                    loopEntity = DustUtils.getCtxVal(ContextRef.msg, null, true);
+                }
 //                DustEntity loopKey = DustUtils.getCtxVal(ContextRef.self, DustProcLinks.IteratorLinkLoop, true);
                 
                 DustUtils.RefPathResolver pr = new DustUtils.RefPathResolver();

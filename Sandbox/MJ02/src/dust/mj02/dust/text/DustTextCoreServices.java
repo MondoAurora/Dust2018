@@ -91,7 +91,11 @@ public interface DustTextCoreServices
             
             if ( null == val ) {
                 DustEntity root = DustUtils.getCtxVal(ContextRef.msg, DustGenericComponents.DustGenericLinks.ContextAwareEntity, true);
+                val = pr.resolve(root, false);
+            }
 
+            if ( null == val ) {
+                DustEntity root = DustUtils.getCtxVal(ContextRef.msg, null, true);
                 val = pr.resolve(root, false);
             }
 

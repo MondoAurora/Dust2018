@@ -14,9 +14,18 @@ public class DustSandboxFinder implements DustSandboxComponents, DustProcCompone
         if ( null == eToFind ) {
             DustUtils.RefPathResolver pr = new DustUtils.RefPathResolver();            
             eToFind = pr.resolve(true);
+            
+            if ( null == eToFind ) {
+                eToFind = pr.resolve(ContextRef.msg, true);
+            }
         }
         
         DustRef rPath= DustUtils.getCtxVal(ContextRef.self, DustSandboxLinks.SandboxFinderPath, false);
+        
+        if ( null == rPath ) {
+            return true;
+        }
+        
         ee = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg);
 //        ee = rRoot.get(RefKey.source);
         

@@ -460,9 +460,10 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                             Object val = de.getValue();
 
                             if (val instanceof Collection) {
+                                int idx = 0;
                                 for (Object o : (Collection) val) {
                                     DustEntity eTarget = factEntities.get(DustUtilsJava.toString(o));
-                                    DustUtils.accessEntity(DataCommand.setRef, item, eKey, eTarget);
+                                    DustUtils.accessEntity(DataCommand.setRef, item, eKey, eTarget, idx++);
                                 }
                             } else {
                                 DustMetaLinkDefTypeValues ldt = DustUtils.getLinkType(eKey);

@@ -7,6 +7,9 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,34 +93,36 @@ public class DustGuiSwingPanelEntity extends JPanel
     }
 
     enum RendererPanelCmds {
-        Refresh
+        Refresh, Export
     }
 
     static class TextRendererPanel extends TextPanelBase {
         private static final long serialVersionUID = 1L;
         
-        DustEntity eMgsEval;
+        DustEntity eMsgEval;
+        String fName;
 
         DustSwingCommandManager<RendererPanelCmds> cm = new DustSwingCommandManager<RendererPanelCmds>(RendererPanelCmds.class) {
             @Override
             protected void execute(RendererPanelCmds cmd) throws Exception {
                 switch (cmd) {
                 case Refresh:
-                    if (null == eMgsEval) {
-                        eMgsEval = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
-                        DustUtils.accessEntity(DataCommand.setRef, eMgsEval, DustDataLinks.MessageCommand, DustProcMessages.EvaluatorEvaluate);
-                    }
-
-                    DustUtils.accessEntity(DataCommand.tempSend, entity, eMgsEval);
-
-                    String txt = DustUtils.accessEntity(DataCommand.getValue, eMgsEval, DustDataAtts.MessageReturn);
-
-                    textArea.setText(txt);
-                    textArea.setCaretPosition(0);
-                    
+                    renderText();
                     break;
+                case Export:
+                    renderText();
+                    Writer fw;
+                    fw = new OutputStreamWriter(new FileOutputStream(fName), UTF8);
+                    fw.write(textArea.getText());
+                    fw.flush();
+                    fw.close();
                 }
             }
+            
+            public void updateStates() {
+                fName = DustUtils.accessEntity(DataCommand.getValue, entity, DustGenericAtts.StreamFileName);
+                setEnabled(!DustUtilsJava.isEmpty(fName) && !textArea.getText().isEmpty(), RendererPanelCmds.Export);
+            };
         };
 
         public TextRendererPanel(DustEntity entity) {
@@ -125,8 +130,23 @@ public class DustGuiSwingPanelEntity extends JPanel
 
             JPanel pnlBtns = new JPanel(new FlowLayout());
             cm.loadAll(pnlBtns);
+            cm.updateStates();
 
             add(pnlBtns, BorderLayout.SOUTH);
+        }
+
+        public void renderText() {
+            if (null == eMsgEval) {
+                eMsgEval = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
+                DustUtils.accessEntity(DataCommand.setRef, eMsgEval, DustDataLinks.MessageCommand, DustProcMessages.EvaluatorEvaluate);
+            }
+
+            DustUtils.accessEntity(DataCommand.tempSend, entity, eMsgEval);
+
+            String txt = DustUtils.accessEntity(DataCommand.getValue, eMsgEval, DustDataAtts.MessageReturn);
+
+            textArea.setText(txt);
+            textArea.setCaretPosition(0);
         }
     }
 
