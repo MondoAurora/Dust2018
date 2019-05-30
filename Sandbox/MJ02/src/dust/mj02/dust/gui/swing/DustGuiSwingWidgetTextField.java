@@ -1,15 +1,14 @@
 package dust.mj02.dust.gui.swing;
 
-import javax.swing.JTextField;
+import javax.swing.JFormattedTextField;
 import javax.swing.event.DocumentEvent;
+import javax.swing.text.DefaultFormatter;
 
-import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.utils.DustUtilsDev;
-import dust.utils.DustUtilsJava;
 
-public class DustGuiSwingWidgetTextField extends JTextField
+public class DustGuiSwingWidgetTextField extends JFormattedTextField
 		implements DustGuiSwingComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
 	private static final long serialVersionUID = 1L;
 
@@ -24,7 +23,8 @@ public class DustGuiSwingWidgetTextField extends JTextField
 						try {
 							changing = (DustGuiSwingWidgetTextField) source;
 //                            orig = Dust.accessEntity(DataCommand.getValue, changing.eEntity, changing.eData, null, null);
-                            Dust.accessEntity(DataCommand.setValue, changing.eEntity, changing.eData, text, null);
+							DustUtils.AttConverter.setAttFromString(changing.eEntity, changing.eData, text);
+//                            Dust.accessEntity(DataCommand.setValue, changing.eEntity, changing.eData, text, null);
 							changing.requestFocus();
 //                        } catch (Throwable t) {
 //                            changing.setTextDirect(orig);
@@ -56,8 +56,9 @@ public class DustGuiSwingWidgetTextField extends JTextField
 
 	@Override
 	public void dustProcListenerProcessChange() throws Exception {
-		Object val = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, false);
-		setText(DustUtilsJava.toString(val));
+	    setText(DustUtils.AttConverter.getAttAsString(eEntity, eData));
+//		Object val = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, false);
+//		setText(DustUtilsJava.toString(val));
 	}
 
 	@Override
@@ -67,10 +68,20 @@ public class DustGuiSwingWidgetTextField extends JTextField
 
 		eEntity = e.get(RefKey.target);
 		eData = a.get(RefKey.target);
-		String val = DustUtilsJava.toString(DustUtils.accessEntity(DataCommand.getValue, eEntity, eData));
-
-		setText(val);
 		
+		Class<?> valClass = DustUtils.AttConverter.getAttClass(eData);
+		
+        if (String.class != valClass) {
+            DefaultFormatter fmt = new DefaultFormatter();
+            fmt.setValueClass(valClass);
+            fmt.setAllowsInvalid(false);
+            setFormatter(fmt);
+        }
+		
+//		String val = DustUtilsJava.toString(DustUtils.accessEntity(DataCommand.getValue, eEntity, eData));
+//		setText(val);
+		setText(DustUtils.AttConverter.getAttAsString(eEntity, eData));
+
 		DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeListeners, ContextRef.self);
 	}
 

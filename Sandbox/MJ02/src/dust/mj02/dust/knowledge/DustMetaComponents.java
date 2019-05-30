@@ -42,7 +42,7 @@ public interface DustMetaComponents extends DustComponents {
 	};
 	
 	enum DustMetaAttDefTypeValues implements DustEntityKey {
-		AttDefBool, AttDefIdentifier, AttDefFloat, AttDefInteger
+		AttDefBool, AttDefIdentifier, AttDefFloat, AttDefInteger, AttDefRaw
 	};
 	
 	enum DustMetaLinkDefTypeValues implements DustEntityKey {
