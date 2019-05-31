@@ -104,6 +104,23 @@ public class DustUtils implements DustComponents, DustMetaComponents {
         return Boolean.TRUE.equals(accessEntity(DataCommand.getValue, entity, att));
     }
 
+    public static <RetType> RetType getSafe(Object entity, Object att, RetType defVal) {
+        RetType val = accessEntity(DataCommand.getValue, entity, att);
+        return ( null == val) ? defVal : val;
+    }
+
+    public static int getInt(Object entity, Object att, int defVal) {
+        Object val = accessEntity(DataCommand.getValue, entity, att);
+        
+        if ( val instanceof Number ) {
+            return ((Number) val).intValue();
+        } else if ( val instanceof String ) {
+            return DustUtilsJava.toIntSafe((String) val, defVal);
+        }
+        
+        return defVal;
+    }
+
     public static <RetVal> RetVal getBinary(Object entity, Object service) {
         Map bo = DustUtils.accessEntity(DataCommand.getValue, entity, DustDataAtts.EntityBinaries);
         if (null != bo) {
@@ -272,6 +289,9 @@ public class DustUtils implements DustComponents, DustMetaComponents {
         }
 
         String valToString(Object val) {
+//            if ( val instanceof String) {
+//                return (String) val;
+//            }
             switch (attType) {
             case AttDefBool:
                 return Boolean.toString((boolean) val);
@@ -280,7 +300,7 @@ public class DustUtils implements DustComponents, DustMetaComponents {
             case AttDefIdentifier:
                 return (String) val;
             case AttDefInteger:
-                return Integer.toString((int) val);
+                return Long.toString((long) val);
             case AttDefRaw:
                 return "{raw object " + val.getClass().getSimpleName() + val.hashCode() + "}";
             }
@@ -288,6 +308,10 @@ public class DustUtils implements DustComponents, DustMetaComponents {
         }
 
         private Object stringToOb(String str) {
+            if ( DustUtilsJava.isEmpty(str) ) {
+                return NOTSET;
+            }
+            
             switch (attType) {
             case AttDefBool:
                 return Boolean.parseBoolean(str);
@@ -296,10 +320,11 @@ public class DustUtils implements DustComponents, DustMetaComponents {
             case AttDefIdentifier:
                 return str;
             case AttDefInteger:
-                return Integer.parseInt(str);
+                return Long.parseLong(str);
             case AttDefRaw:
                 return NOTSET;
             }
+            
             return "";
         }
 
@@ -329,12 +354,12 @@ public class DustUtils implements DustComponents, DustMetaComponents {
 
         public static String getAttAsString(DustEntity e, DustEntity att) {
             Object val = accessEntity(DataCommand.getValue, e, att);
-            return (null == val) ? "" : attTypeInfo.get(att).valToString(val);
+            return ((null == val) || DustUtilsJava.isEmpty(DustUtilsJava.toString(val))) ? "" : attTypeInfo.get(att).valToString(val);
         }
 
         public static <RetType> RetType setAttFromString(DustEntity e, DustEntity att, String str) {
-            Object val = DustUtilsJava.isEmpty(str) ? null : attTypeInfo.get(att).stringToOb(str);
-            return (NOTSET == val) ? null : (RetType) accessEntity(DataCommand.setValue, e, att, val);
+            Object val = DustUtilsJava.isEmpty(str) ? NOTSET : attTypeInfo.get(att).stringToOb(str);
+            return (RetType) accessEntity(DataCommand.setValue, e, att, (NOTSET == val) ? null : val);
         }
 
     }

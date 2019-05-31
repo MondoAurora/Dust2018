@@ -3,12 +3,12 @@ package dust.mj02.dust;
 import java.util.HashMap;
 import java.util.Map;
 
+import dust.utils.DustUtilsComponents;
 import dust.utils.DustUtilsJava;
 
-public interface DustComponents {
-    String UTF8 = "UTF-8";
+public interface DustComponents extends DustUtilsComponents {
 
-	public class DustException extends RuntimeException {
+    public class DustException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
 
 		public DustException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

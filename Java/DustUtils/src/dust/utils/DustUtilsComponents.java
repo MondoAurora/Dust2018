@@ -7,7 +7,11 @@ public interface DustUtilsComponents {
 	String DEFAULT_SEPARATOR = ",";
 	String MULTI_FLAG = "*";
 	
-	String CHS_UTF8 = StandardCharsets.UTF_8.name();//"UTF-8";
+	String CHARSET_UTF8 = StandardCharsets.UTF_8.name();//"UTF-8";
+	
+    String CONTENT_JSON = "application/json";
+    int NO_PORT_SET = -1;
+
 
 	interface DumpFormatter {
 		

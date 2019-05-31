@@ -112,7 +112,7 @@ public class DustGuiSwingPanelEntity extends JPanel
                 case Export:
                     renderText();
                     Writer fw;
-                    fw = new OutputStreamWriter(new FileOutputStream(fName), UTF8);
+                    fw = new OutputStreamWriter(new FileOutputStream(fName), CHARSET_UTF8);
                     fw.write(textArea.getText());
                     fw.flush();
                     fw.close();

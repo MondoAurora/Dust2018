@@ -4,7 +4,8 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.sandbox.http.DustHttpClient;
 import dust.mj02.sandbox.http.DustHttpComponents;
-import dust.mj02.sandbox.http.DustHttpServer;
+import dust.mj02.sandbox.http.DustHttpServerJetty;
+import dust.mj02.sandbox.http.DustHttpServerCoreServices;
 
 public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
 
@@ -35,10 +36,16 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
         DustUtils.registerService(DustHttpClient.class, false, DustNetServices.NetClient, DustProcServices.Processor);
         DustUtils.accessEntity(DataCommand.setRef, DustNetTypes.NetClient, DustMetaLinks.TypeLinkedServices, DustNetServices.NetClient);
 
-        DustUtils.registerService(DustHttpServer.class, false, DustNetServices.NetServer, DustProcServices.Active);
+        DustUtils.registerService(DustHttpServerJetty.class, false, DustNetServices.NetServer, DustProcServices.Active);
         DustUtils.accessEntity(DataCommand.setRef, DustNetTypes.NetServer, DustMetaLinks.TypeLinkedServices, DustNetServices.NetServer);
         
+        DustUtils.registerService(DustHttpServerCoreServices.HttpServletGetRef.class, false, DustNetServices.NetGetRef, DustProcServices.Processor);
+        DustUtils.accessEntity(DataCommand.setRef, DustNetTypes.NetGetRef, DustMetaLinks.TypeLinkedServices, DustNetServices.NetGetRef);
+        
         DustUtils.accessEntity(DataCommand.setRef, DustNetLinks.NetClientProxyEntities, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
+        
+        DustUtils.accessEntity(DataCommand.setRef, DustNetAtts.NetProcessContextRequest, DustMetaLinks.AttDefType, DustMetaAttDefTypeValues.AttDefRaw);
+        DustUtils.accessEntity(DataCommand.setRef, DustNetAtts.NetProcessContextResponse, DustMetaLinks.AttDefType, DustMetaAttDefTypeValues.AttDefRaw);
     }
 
     public static void initDumpListener() {

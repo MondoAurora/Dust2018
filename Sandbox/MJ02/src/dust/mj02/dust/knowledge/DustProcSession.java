@@ -50,11 +50,13 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			return (DustDataEntity) e;
 		} else if (e instanceof DustEntityKey) {
 			return (DustDataEntity) EntityResolver.getEntity(e);
-		} else {
+		} else if (e instanceof ContextRef) {
 			ContextRef cr = (ContextRef) e;
 			DustDataEntity se = mapCtxEntities.get(cr);
 			return se;
 		}
+		
+		return null;
 	}
 
 	@Override
@@ -114,7 +116,8 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			}
 			break;
 		default:
-			retVal = changeRef(true, cmd, se, key, (DustDataRef) retVal, optResolveCtxEntity(val), hint);
+		    Object resolvedVal = optResolveCtxEntity(val);
+			retVal = changeRef(true, cmd, se, key, (DustDataRef) retVal, (null == resolvedVal) ? val : resolvedVal, hint);
 			break;
 		}
 		return (RetType) retVal;

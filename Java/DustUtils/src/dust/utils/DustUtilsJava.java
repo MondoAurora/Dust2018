@@ -16,6 +16,18 @@ public class DustUtilsJava implements DustUtilsComponents {
 	public static String toString(Object ob) {
 		return (null == ob) ? "" : ob.toString();
 	}
+	
+   public static int toIntSafe(String strVal, int defVal) {
+        if ( !isEmpty(strVal) ) {
+            try {
+                return Integer.parseInt(strVal);
+            } catch ( Throwable t ) {
+                // do nothing
+            }
+        }
+        
+        return defVal;
+    }
 
 	public static String toLocalId(Enum<?> e) {
 		return new StringBuilder(e.getClass().getSimpleName()).append(ID_SEP).append(e.name()).toString();

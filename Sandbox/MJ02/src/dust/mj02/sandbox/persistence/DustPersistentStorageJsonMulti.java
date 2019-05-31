@@ -61,7 +61,7 @@ public class DustPersistentStorageJsonMulti implements
             String key = r.getKey();
             File file = getFile(key, null);
 //            fw = new FileWriter(file);
-            fw = new OutputStreamWriter(new FileOutputStream(file), UTF8);
+            fw = new OutputStreamWriter(new FileOutputStream(file), CHARSET_UTF8);
 
             JSONObject.writeJSONString(r.getValue(), fw);
             fw.flush();
@@ -75,7 +75,7 @@ public class DustPersistentStorageJsonMulti implements
     public Map<String, Map> load(String unitId, String commitId)
             throws Exception {
         File uf = getFile(unitId, commitId);
-        Reader r = new InputStreamReader(new FileInputStream(uf), UTF8);
+        Reader r = new InputStreamReader(new FileInputStream(uf), CHARSET_UTF8);
 
         return (JSONObject) parser.parse(r);
     }

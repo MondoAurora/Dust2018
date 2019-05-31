@@ -56,7 +56,7 @@ public class DustPersistentStorageJsonSingle implements DustPersistenceComponent
 
         if (null == writer) {
             File file = getFile(commitId);
-            writer = new OutputStreamWriter(new FileOutputStream(file), UTF8);
+            writer = new OutputStreamWriter(new FileOutputStream(file), CHARSET_UTF8);
             close = true;
         }
         
@@ -75,9 +75,9 @@ public class DustPersistentStorageJsonSingle implements DustPersistenceComponent
             Reader r;
             if (null == is) {
                 File uf = getFile(commitId);
-                r = new InputStreamReader(new FileInputStream(uf), UTF8);
+                r = new InputStreamReader(new FileInputStream(uf), CHARSET_UTF8);
             } else {
-                r = new InputStreamReader(is, UTF8);
+                r = new InputStreamReader(is, CHARSET_UTF8);
             }
             map = (JSONObject) parser.parse(r);
 

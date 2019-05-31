@@ -286,7 +286,10 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                                         }
                                     });
                                 } else {
-                                    data.put(mapKey, (null == value) ? "" : value);
+//                                    data.put(mapKey, (null == value) ? "" : value);
+                                    if ( null != value ) {
+                                        data.put(mapKey, value);
+                                    }
                                 }
                             }
                         }, null);
@@ -534,6 +537,10 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
     }
 
     public static void commit(PersistentStorage storage) {
+        commit(storage, null);
+    }
+
+    public static void commit(PersistentStorage storage, Collection<DustEntity> entities) {
         TempUnit.optInit();
 
         SaveContext svctx = new SaveContext();
@@ -543,16 +550,23 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
 
         Map<String, Map> result;
 
-        DustEntity tu = EntityResolver.getEntity(DustCommTypes.Unit);
+        if ((null == entities) || entities.isEmpty()) {
+            DustEntity tu = EntityResolver.getEntity(DustCommTypes.Unit);
 
-        Dust.processEntities(new EntityProcessor() {
-            @Override
-            public void processEntity(DustEntity entity) {
-                if (tu == DustUtils.getByPath(entity, DustDataLinks.EntityPrimaryType)) {
-                    svctx.factUnitCtx.get(entity);
+            Dust.processEntities(new EntityProcessor() {
+                @Override
+                public void processEntity(DustEntity entity) {
+                    if (tu == DustUtils.getByPath(entity, DustDataLinks.EntityPrimaryType)) {
+                        svctx.factUnitCtx.get(entity);
+                    }
                 }
+            });
+        } else {
+            for (DustEntity eRoot : entities) {
+                DustEntity eu = DustUtils.getByPath(eRoot, DustCommLinks.PersistentContainingUnit);
+                svctx.factUnitCtx.get(eu).optSaveEntity(eRoot);
             }
-        });
+        }
 
         result = svctx.doSave();
         

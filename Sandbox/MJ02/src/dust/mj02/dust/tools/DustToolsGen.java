@@ -1,6 +1,7 @@
 package dust.mj02.dust.tools;
 
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaAttDefTypeValues;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
 
@@ -24,6 +25,7 @@ public class DustToolsGen implements DustGenericComponents, DustCollectionCompon
 
 		DustUtils.accessEntity(DataCommand.setRef, DustGenericAtts.StreamFileName, DustMetaLinks.AttDefParent, DustGenericTypes.Stream);
 		DustUtils.accessEntity(DataCommand.setRef, DustGenericAtts.StreamFileAccess, DustMetaLinks.AttDefParent, DustGenericTypes.Stream);
+        DustUtils.accessEntity(DataCommand.setRef, DustGenericAtts.StreamWriter, DustMetaLinks.AttDefType, DustMetaAttDefTypeValues.AttDefRaw);
 
 		DustUtils.accessEntity(DataCommand.setRef, DustCollectionLinks.SequenceMembers, DustMetaLinks.LinkDefParent, DustCollectionTypes.Sequence);
 		DustUtils.accessEntity(DataCommand.setRef, DustCollectionLinks.SequenceMembers, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefArray);
