@@ -21,7 +21,7 @@ public interface DustPersistenceComponents extends DustKernelComponents {
     
     enum ContextKeys {
         /* @formatter:off */
-        header(null), data(null), refUnits(null), unitCommitId(null), ThisUnit(null),
+        header(null), data(null), refUnits(null), keyTypes(null), unitCommitId(null), ThisUnit(null),
         
         CommitId(DustCommAtts.PersistentCommitId), 
         EntityUnit(DustCommLinks.PersistentContainingUnit), 

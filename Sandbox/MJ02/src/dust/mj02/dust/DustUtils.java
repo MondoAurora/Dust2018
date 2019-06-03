@@ -295,11 +295,11 @@ public class DustUtils implements DustComponents, DustMetaComponents {
             switch (attType) {
             case AttDefBool:
                 return Boolean.toString((boolean) val);
-            case AttDefFloat:
+            case AttDefDouble:
                 return Double.toString((double) val);
             case AttDefIdentifier:
                 return (String) val;
-            case AttDefInteger:
+            case AttDefLong:
                 return Long.toString((long) val);
             case AttDefRaw:
                 return "{raw object " + val.getClass().getSimpleName() + val.hashCode() + "}";
@@ -315,11 +315,11 @@ public class DustUtils implements DustComponents, DustMetaComponents {
             switch (attType) {
             case AttDefBool:
                 return Boolean.parseBoolean(str);
-            case AttDefFloat:
+            case AttDefDouble:
                 return Double.parseDouble(str);
             case AttDefIdentifier:
                 return str;
-            case AttDefInteger:
+            case AttDefLong:
                 return Long.parseLong(str);
             case AttDefRaw:
                 return NOTSET;
@@ -336,11 +336,11 @@ public class DustUtils implements DustComponents, DustMetaComponents {
             switch (attTypeInfo.get(att).attType) {
             case AttDefBool:
                 return Boolean.class;
-            case AttDefFloat:
+            case AttDefDouble:
                 return Double.class;
             case AttDefIdentifier:
                 return String.class;
-            case AttDefInteger:
+            case AttDefLong:
                 return Integer.class;
             case AttDefRaw:
                 return String.class;
