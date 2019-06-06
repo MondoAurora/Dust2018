@@ -5,21 +5,17 @@ import dust.mj02.dust.knowledge.DustKernelComponents;
 public interface DustSandboxComponents
 		extends DustKernelComponents {
 	
-	enum DustSandboxUnits implements DustEntityKey {
-		DustSandbox
-    };
-    
     enum DustSandboxTypes implements DustEntityKey {
-        SandboxFinder
+        SandboxFinder, SandboxSrcGen
     };
 
     enum DustSandboxLinks implements DustEntityKey {
-        SandboxFinderPath, SandboxFinderEntity
+        SandboxFinderPath, SandboxFinderEntity, SandboxSrcGenUnits, SandboxSrcGenRenderer
     };
 
 
 	enum DustSandboxServices implements DustEntityKey {
-		SandboxChangeDump, SandboxFinder
+		SandboxChangeDump, SandboxFinder, SandboxSrcGen
 	};
 
 }

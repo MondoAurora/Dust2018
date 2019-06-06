@@ -21,6 +21,8 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
             initScheduler();
             initFinderTest();
             
+            initSrcGen();
+            
             inited = true;
         }
     }
@@ -30,6 +32,13 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
         DustUtils.accessEntity(DataCommand.setRef, DustSandboxTypes.SandboxFinder, DustMetaLinks.TypeLinkedServices, DustSandboxServices.SandboxFinder);
 
         DustUtils.accessEntity(DataCommand.setRef, DustSandboxLinks.SandboxFinderPath, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefArray);
+    }
+
+    public static void initSrcGen() {
+        DustUtils.registerService(DustSandboxSrcGen.class, false, DustSandboxServices.SandboxSrcGen, DustProcServices.Processor);
+        DustUtils.accessEntity(DataCommand.setRef, DustSandboxTypes.SandboxSrcGen, DustMetaLinks.TypeLinkedServices, DustSandboxServices.SandboxSrcGen);
+
+        DustUtils.accessEntity(DataCommand.setRef, DustSandboxLinks.SandboxSrcGenUnits, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
     }
 
     public static void initHttpTest() {
@@ -62,31 +71,4 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
         DustUtils.accessEntity(DataCommand.setValue, sch, DustGenericAtts.IdentifiedIdLocal, "Default Scheduler");
    }
 
-    // public static void initJsonLoader() {
-    // DustEntity daGenId =
-    // EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal);
-    //
-    // DustEntity dlGenOwner =
-    // EntityResolver.getEntity(DustGenericLinks.ConnectedOwner);
-    // DustEntity dsCommStore = EntityResolver.getEntity(DustCommServices.Store);
-    // DustEntity dcStoreLoad =
-    // EntityResolver.getEntity(DustCommMessages.StoreLoad);
-    // DustEntity dcStoreSave =
-    // EntityResolver.getEntity(DustCommMessages.StoreSave);
-    //
-    // DustUtils.registerService(DustSandboxJsonLoader.class, false,
-    // DustCommServices.Store);
-    // DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Store,
-    // DustMetaLinks.TypeLinkedServices, DustCommServices.Store);
-    //
-    // Dust.accessEntity(DataCommand.setValue, dsCommStore, daGenId,
-    // "DustCommStore", null);
-    // Dust.accessEntity(DataCommand.setValue, dcStoreLoad, daGenId, "Load", null);
-    // Dust.accessEntity(DataCommand.setRef, dcStoreLoad, dlGenOwner, dsCommStore,
-    // null);
-    //
-    // Dust.accessEntity(DataCommand.setValue, dcStoreSave, daGenId, "Save", null);
-    // Dust.accessEntity(DataCommand.setRef, dcStoreSave, dlGenOwner, dsCommStore,
-    // null);
-    // }
 }

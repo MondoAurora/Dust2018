@@ -26,7 +26,8 @@ class DustDataRef implements DustRef {
 
     final DustDataEntity linkDef;
     final DustDataEntity source;
-    final DustDataEntity target;
+//    final DustDataEntity target;
+    DustDataEntity target;
     final Object key;
 
     DustDataRef reverse;
@@ -278,6 +279,13 @@ class DustDataRef implements DustRef {
             return ((null == lt) || (DustMetaLinkDefTypeValues.LinkDefSingle == lt)) ? 1 : 0;
         } else {
             return (DustMetaLinkDefTypeValues.LinkDefMap == lt) ? ((Map<?,?>)container).size() : ((Collection<?>)container).size();
+        }
+    }
+    
+    @Override
+    public void hackUpdate(DustEntity entity) {
+        if ( lt == DustMetaLinkDefTypeValues.LinkDefSingle ) {
+            target = (DustDataEntity) entity;
         }
     }
 

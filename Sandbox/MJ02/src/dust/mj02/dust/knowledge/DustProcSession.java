@@ -372,6 +372,10 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 				binConn.send(entity, init);
 			}
 		}
+		
+		if ( Boolean.TRUE.equals(ctxSelf.get(DustProcAtts.SessionChangeMute))) {
+		    return;
+		}
 
 		if (null != listeners) {
 			listeners.processAll(new RefProcessor() {

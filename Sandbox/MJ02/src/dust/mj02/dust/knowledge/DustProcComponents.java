@@ -11,7 +11,7 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	enum DustProcAtts implements DustEntityKey {
 		ChangeOldValue, ChangeNewValue, BinaryObjectName, BinaryAutoInit, NativeBoundId,
-		TaskRepeatSec, TaskNextRun
+		TaskRepeatSec, TaskNextRun, SessionChangeMute
 	}
 	
 	enum DustProcLinks implements DustEntityKey {
