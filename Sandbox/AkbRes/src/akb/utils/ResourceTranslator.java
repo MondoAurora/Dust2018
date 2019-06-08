@@ -320,13 +320,15 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
 
             pnlChild = new JPanel(new BorderLayout());
 
-            lbKey = new JLabel();
+            lbKey = new JLabel("", JLabel.CENTER);
             pnlChild.add(lbKey, BorderLayout.CENTER);
             pnlRight.add(pnlChild, BorderLayout.NORTH);
             
             fntTA = lbKey.getFont();
             
             fntTA = fntTA.deriveFont((float) 2*fntTA.getSize());
+            lbKey.setFont(fntTA);
+            
 
             taRef = createTA(false);
             taSrc = createTA(false);
@@ -425,10 +427,12 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
     ArrayList<String> alKeys = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
-        ResourceTranslator rt = new ResourceTranslator("Translation", Language.en, Language.hu);
+        ResourceTranslator rt = new ResourceTranslator("TranslationMacro", Language.en, Language.hu);
 
-        rt.ref = new ResFile(rt.langRef, "_ApplicationResources_en_final_1.2.properties");
-        rt.src = new ResFile(rt.langTranslate, "_ApplicationResources_hu_final_3.4.properties");
+//        rt.ref = new ResFile(rt.langRef, "_ApplicationResources_en_final_1.2.properties");
+//        rt.src = new ResFile(rt.langTranslate, "_ApplicationResources_hu_final_3.4.properties");
+        rt.ref = new ResFile(rt.langRef, "AKB_MacroDescriptors_en.properties");
+        rt.src = new ResFile(rt.langTranslate, "AKB_MacroDescriptors_hu.properties");
 
         rt.check();
 
@@ -550,7 +554,7 @@ public class ResourceTranslator implements DustUtilsSwingComponents {
         diff(ref, src, "Missing en line for hu key ");
         diff(src, ref, "Missing hu line for en key ");
         
-        ResFile t = new ResFile(src.lang, "Translation.properties");
+        ResFile t = new ResFile(src.lang, workFileName + ".properties");
         
         diff(t, ref, "Missing translated line for en key ");
         diff(t, src, "Missing translated line for hu key ");
