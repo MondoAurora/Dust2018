@@ -5,11 +5,11 @@ import dust.mj02.dust.DustComponents;
 public interface DustCollectionComponents extends DustComponents {
 	
 	enum DustCollectionTypes implements DustEntityKey {
-		Sequence
+		Sequence, MapEntry
 	};
 	
 	enum DustCollectionLinks implements DustEntityKey {
-		SequenceMembers
+		SequenceMembers, MapEntryKey
 	};
 	
 }

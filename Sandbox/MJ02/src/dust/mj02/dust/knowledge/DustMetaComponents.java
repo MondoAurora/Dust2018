@@ -35,7 +35,7 @@ public interface DustMetaComponents extends DustComponents {
 	
 	enum DustMetaLinks implements DustEntityKey {
 		AttDefType, AttDefParent, 
-		LinkDefType, LinkDefReverse, LinkDefParent,
+		LinkDefType, LinkDefReverse, LinkDefParent, LinkDefItemTypePrimary, LinkDefItemTypeAdditional, 
 		TypeAttDefs, TypeLinkDefs, TypeLinkedServices,
 		CommandRetValType,
 		MetaAccessControl

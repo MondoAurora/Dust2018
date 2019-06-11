@@ -27,6 +27,7 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustTempHacks;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.java.DustJavaGen;
+import dust.mj02.sandbox.DustSandboxJson;
 import dust.mj02.sandbox.persistence.DustPersistence;
 import dust.mj02.sandbox.persistence.DustPersistenceComponents;
 import dust.utils.DustUtilsJava;
@@ -59,12 +60,35 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
                 String name = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Unit names (comma separated list)?", "Select update",
                         JOptionPane.QUESTION_MESSAGE);
                 if (DustUtilsJava.isEmpty(name)) {
+                    name = DustSandboxJson.configGet(CFG_MONTRU, CFG_LASTUNIT);
                     // name = "TextTest";
-//                    name = "SrcGen";
-                    name = "FleetManagement";
+//                    name = "SrcGenCSharp";
+//                    name = "FleetManagement";
                 }
                 DustPersistence.update(PERS_STORAGE_DEF_MULTI, name);
                 desktop.refreshData();
+                
+                DustSandboxJson.configSet(name, CFG_MONTRU, CFG_LASTUNIT);
+                
+                final String n = name;
+                try {
+                    DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, true);
+
+                    Dust.processRefs(new RefProcessor() {
+                        @Override
+                        public void processRef(DustRef ref) {
+                            DustEntity s = ref.get(RefKey.source);
+                            String id = DustUtils.accessEntity(DataCommand.getValue, s, DustGenericAtts.IdentifiedIdLocal);
+                            if (n.equals(id)) {
+
+                                desktop.activateEditorPanel(ref.get(RefKey.target));
+                            }
+                        }
+                    }, null, EntityResolver.getEntity(DustCommLinks.UnitMainEntities), null);
+                } finally {
+                    DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);                                
+                }
+                
                 tfSearch.setText("test");
                 break;
             case commit:

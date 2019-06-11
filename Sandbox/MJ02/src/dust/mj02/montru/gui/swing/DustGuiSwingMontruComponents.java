@@ -12,4 +12,7 @@ public interface DustGuiSwingMontruComponents extends DustGuiSwingComponents, Mo
 	Color COL_DRAGLINE = Color.MAGENTA;
 	Color COL_REF_SEL = Color.RED;
 	Color COL_REF_NORMAL = Color.BLACK;
+	
+	String CFG_MONTRU = "Montru";
+	String CFG_LASTUNIT = "lastLoadedUnit";
 }

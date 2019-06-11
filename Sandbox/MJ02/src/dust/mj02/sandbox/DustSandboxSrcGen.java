@@ -37,6 +37,8 @@ public class DustSandboxSrcGen implements DustSandboxComponents, DustProcCompone
                 
                 String un = DustUtils.accessEntity(DataCommand.getValue, eT, DustGenericAtts.IdentifiedIdLocal);
                 String fName = targetDir + "\\" + un + ".cs";
+                
+                DustUtilsDev.dump("Generating source:", fName);
 
                 refSrcUnit.hackUpdate(eT);
                 DustUtils.accessEntity(DataCommand.tempSend, genRenderer, msg);

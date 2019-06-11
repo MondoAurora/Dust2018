@@ -74,6 +74,7 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustDataLinks.EntityPrimaryType, DustMetaTypes.LinkDef);
 		DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.TypeLinkDefs, DustMetaLinks.LinkDefParent, DustMetaTypes.Type);
 		
+        DustUtils.accessEntity(DataCommand.setRef, DustMetaLinks.LinkDefItemTypeAdditional, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
 		
 
 		
@@ -85,7 +86,8 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.PersistentContainingUnit, DustMetaLinks.LinkDefParent, DustCommTypes.Persistent);
 		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.PersistentStoreWith, DustMetaLinks.LinkDefParent, DustCommTypes.Persistent);
 		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.UnitEntities, DustMetaLinks.LinkDefParent, DustCommTypes.Unit);
-		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.UnitEntities, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
+        DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.UnitEntities, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
+        DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.UnitMainEntities, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSet);
 		DustUtils.accessEntity(DataCommand.setRef, DustCommLinks.PersistentContainingUnit, DustMetaLinks.LinkDefReverse, DustCommLinks.UnitEntities);
 
 		DustUtils.accessEntity(DataCommand.setRef, DustCommTypes.Unit, DustGenericLinks.ConnectedRequires, DustCommTypes.Persistent);
