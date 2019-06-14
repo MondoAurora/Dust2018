@@ -41,6 +41,7 @@ import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.text.DustTextComponents;
 import dust.mj02.montru.gui.MontruGuiComponents.MontruGuiServices;
 import dust.mj02.montru.gui.swing.DustGuiSwingMontruDesktop;
+import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
@@ -183,6 +184,8 @@ public class DustGuiSwingPanelEntity extends JPanel
 
             if (null != key) {
                 eac.setLabel(lbl);
+            } else {
+                DustUtilsDev.dump("is that here?", lbl.getText());
             }
 
             return lbl;

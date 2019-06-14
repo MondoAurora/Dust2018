@@ -57,10 +57,10 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
                 desktop.removeSelRefs();
                 break;
             case update:
-                String name = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Unit names (comma separated list)?", "Select update",
-                        JOptionPane.QUESTION_MESSAGE);
+                String name = DustSandboxJson.configGet(CFG_MONTRU, CFG_LASTUNIT);
+
+                name = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Unit names (comma separated list)?", name);
                 if (DustUtilsJava.isEmpty(name)) {
-                    name = DustSandboxJson.configGet(CFG_MONTRU, CFG_LASTUNIT);
                     // name = "TextTest";
 //                    name = "SrcGenCSharp";
 //                    name = "FleetManagement";
