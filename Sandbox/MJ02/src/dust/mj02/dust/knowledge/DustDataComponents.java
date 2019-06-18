@@ -4,11 +4,11 @@ import dust.mj02.dust.DustComponents;
 
 public interface DustDataComponents extends DustComponents {
 	enum DustDataTypes implements DustEntityKey {
-		Entity, Message
+		Entity, Message, Variant
 	};
 	
 	enum DustDataAtts implements DustEntityKey {
-		EntityBinaries, MessageReturn
+		EntityBinaries, MessageReturn, VariantValue
 	}
 	
 	enum DustDataTags implements DustEntityKey {
@@ -17,6 +17,6 @@ public interface DustDataComponents extends DustComponents {
 	
 	enum DustDataLinks implements DustEntityKey {
 		EntityPrimaryType, EntityModels, EntityServices, EntityTags, EntityAccessControl, 
-		MessageCommand, MessageSource, MessageTarget
+		MessageCommand, MessageSource, MessageTarget, VariantValueType
 	}
 }

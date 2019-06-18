@@ -6,7 +6,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -19,9 +21,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustTempHacks;
@@ -38,7 +44,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
     private static final long serialVersionUID = 1L;
 
     enum GuiCommands {
-        deleteEntity, deleteRef, update, commit, // setMaster, setSlave, // saveAll, //loadReflection, // createEntity, loadFile,
+        RESTORE, deleteEntity, deleteRef, update, commit, // setMaster, setSlave, // saveAll, //loadReflection, // createEntity, loadFile,
                                                  // test03
         clean,
     };
@@ -99,6 +105,12 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
                     JOptionPane.showMessageDialog(DustGuiSwingMontruControl.this, ex.getMessage(), "Commit exception", JOptionPane.ERROR_MESSAGE);
                 }
                 break;
+            case RESTORE:
+                String timestamp = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Restore timestamp?", "20190618_121717_717");
+                if (!DustUtilsJava.isEmpty(timestamp)) {
+                    DustPersistence.restoreFromHistory(PERS_STORAGE_DEF_MULTI, timestamp);
+                }
+                break;
             case clean:
                 desktop.closeUnselected();
                 break;
@@ -149,7 +161,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 
             switch (TypeTableCols.values()[columnIndex]) {
             case ei:
-                return type.toString();
+                return ( null == type ) ? "???" : type.toString();
             case sel:
                 return setFilterTypes.contains(type);
             }
@@ -232,6 +244,14 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
         JTable tblTypes = new JTable(tmTypes);
         pnlSearch.add(DustUtilsJavaSwing.setBorderScroll(tblTypes, "Type filter"), BorderLayout.CENTER);
 
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tmTypes);
+        tblTypes.setRowSorter(sorter);
+
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+        
         lstResults = new JList<DustEntity>(lmResults);
 
         lstResults.setCellRenderer(crTypes);
@@ -337,6 +357,15 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
                         arrSearchResults.add(ei);
                     }
                 }
+            }
+        });
+        
+        arrSearchResults.sort(new Comparator<DustEntity>() {
+            @Override
+            public int compare(DustEntity o1, DustEntity o2) {
+                String s1 = o1.toString();
+                String s2 = o2.toString();
+                return s1.compareTo(s2);
             }
         });
 

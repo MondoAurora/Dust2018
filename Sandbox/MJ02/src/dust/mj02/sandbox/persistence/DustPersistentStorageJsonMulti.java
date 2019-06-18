@@ -8,11 +8,17 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import dust.mj02.dust.Dust;
+import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -78,5 +84,37 @@ public class DustPersistentStorageJsonMulti implements
         Reader r = new InputStreamReader(new FileInputStream(uf), CHARSET_UTF8);
 
         return (JSONObject) parser.parse(r);
+    }
+    
+    public void restore(String timestamp) {
+        File dirPers = new File(pathPersistence);
+        File dirHistory = new File(dirPers, pathHistory);
+
+        String search = MessageFormat.format("_{0}.json", timestamp);
+        Map<String, File> toCopy = new HashMap<>();
+
+        for (File f : dirHistory.listFiles()) {
+            String fn = f.getName();
+            int idx = fn.indexOf(search);
+            if (-1 != idx) {
+                toCopy.put(fn.substring(0, idx) + ".json", f);
+            }
+        }
+
+        try {
+            DustUtilsDev.dump("Restoring timestamp", timestamp);
+
+            for (Map.Entry<String, File> tc : toCopy.entrySet()) {
+                File target = new File(dirPers, tc.getKey());
+                Path pT = target.toPath();
+                Path pS = tc.getValue().toPath();
+                Files.copy(pS, pT, StandardCopyOption.REPLACE_EXISTING);
+                DustUtilsDev.dump("Copied", pS, "to", pT);
+            }
+
+            DustUtilsDev.dump("Successfully restored", toCopy.size(), "files.");
+        } catch (Throwable e) {
+            Dust.wrapAndRethrowException("Restore failed", e);
+        }
     }
 }

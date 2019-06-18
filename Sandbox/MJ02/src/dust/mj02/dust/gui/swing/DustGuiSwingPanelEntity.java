@@ -3,10 +3,13 @@ package dust.mj02.dust.gui.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -37,32 +40,30 @@ import javax.swing.event.DocumentEvent;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.geometry.DustGeometryComponents;
+import dust.mj02.dust.gui.swing.geometry.DustGeoSwingView;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.text.DustTextComponents;
 import dust.mj02.montru.gui.MontruGuiComponents.MontruGuiServices;
 import dust.mj02.montru.gui.swing.DustGuiSwingMontruDesktop;
-import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 public class DustGuiSwingPanelEntity extends JPanel
-        implements DustGuiSwingComponents, DustTextComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
+        implements DustGuiSwingComponents, DustTextComponents, DustGeometryComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
     private static final long serialVersionUID = 1L;
 
     private static final Object RB_LINK_KEY = new Object();
 
     private static final DustEntity DATT_ID = EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal);
 
-    static abstract class TextPanelBase extends JPanel {
+    static abstract class TextPanelBase extends EntitySpecPanelBase {
         private static final long serialVersionUID = 1L;
 
-        DustEntity entity;
         JTextArea textArea;
 
         public TextPanelBase(DustEntity entity, boolean editable) {
-            super(new BorderLayout());
-
-            this.entity = entity;
+            super(entity);
 
             textArea = new JTextArea();
             textArea.setEditable(editable);
@@ -113,6 +114,13 @@ public class DustGuiSwingPanelEntity extends JPanel
                 case Export:
                     renderText();
                     Writer fw;
+                    File fTarget = new File(fName);
+                    File fParent = fTarget.getParentFile();
+                    
+                    if ( !fParent.exists() ) {
+                        fParent.mkdirs();
+                    }
+                    
                     fw = new OutputStreamWriter(new FileOutputStream(fName), CHARSET_UTF8);
                     fw.write(textArea.getText());
                     fw.flush();
@@ -129,12 +137,9 @@ public class DustGuiSwingPanelEntity extends JPanel
         public TextRendererPanel(DustEntity entity) {
             super(entity, false);
 
-            JPanel pnlBtns = new JPanel(new FlowLayout());
-            cm.loadAll(pnlBtns);
-            cm.updateStates();
-
-            add(pnlBtns, BorderLayout.SOUTH);
+            cm.createButtonPanelDefault(this);
         }
+
 
         public void renderText() {
             if (null == eMsgEval) {
@@ -151,11 +156,12 @@ public class DustGuiSwingPanelEntity extends JPanel
         }
     }
 
-    private static final Map<DustEntity, Class<? extends TextPanelBase>> SPEC_PANELS = new HashMap<>();
+    private static final Map<DustEntity, Class<? extends EntitySpecPanelBase>> SPEC_PANELS = new HashMap<>();
 
     static {
         SPEC_PANELS.put(EntityResolver.getEntity(DustTextTypes.TextSpan), TextSpanPanel.class);
         SPEC_PANELS.put(EntityResolver.getEntity(DustTextTypes.TextRenderer), TextRendererPanel.class);
+        SPEC_PANELS.put(EntityResolver.getEntity(DustGeometryTypes.RenderSource), DustGeoSwingView.class);
     }
 
     DustEntity eEntity;
@@ -166,6 +172,38 @@ public class DustGuiSwingPanelEntity extends JPanel
         @Override
         protected JCheckBox create(DustEntity key, Object... hints) {
             return new JCheckBox();
+        }
+    };
+
+    private final MouseListener mlRelationActivator = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (1 < e.getClickCount()) {
+                DustEntity ee = eac.resolveBaseComponent(e.getSource()).getEntity();
+
+                Set<DustEntity> s = new HashSet<>();
+                Dust.processRefs(new RefProcessor() {
+                    @Override
+                    public void processRef(DustRef ref) {
+                        DustEntity eSrc = ref.get(RefKey.source);
+                        
+                        DustEntity unit = DustUtils.getByPath(eSrc, DustDataLinks.EntityPrimaryType, DustCommLinks.PersistentContainingUnit);
+                        String uid = DustUtils.accessEntity(DataCommand.getValue, unit, DustGenericAtts.IdentifiedIdLocal);
+                        if ( "Gui".equals(uid)) {
+                            return;
+                        }
+                        
+                        s.add(eSrc);
+//                        if (ee == ref.get(RefKey.source)) {
+//                            s.add(ref.get(RefKey.target));
+//                        } else if (ee == ref.get(RefKey.target)) {
+//                            s.add(ref.get(RefKey.source));
+//                        }
+                    }
+                }, null, null, ee);
+
+                eac.activateEntities(s.toArray(new DustEntity[s.size()]));
+            }
         }
     };
 
@@ -185,7 +223,8 @@ public class DustGuiSwingPanelEntity extends JPanel
             if (null != key) {
                 eac.setLabel(lbl);
             } else {
-                DustUtilsDev.dump("is that here?", lbl.getText());
+                DustGuiSwingUtils.initJComponent(lbl);
+                lbl.addMouseListener(mlRelationActivator);
             }
 
             return lbl;
@@ -405,7 +444,7 @@ public class DustGuiSwingPanelEntity extends JPanel
                 pnl.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
                 pnlGeneric.add(pnl);
 
-                Class<? extends TextPanelBase> ct = SPEC_PANELS.get(mType);
+                Class<? extends EntitySpecPanelBase> ct = SPEC_PANELS.get(mType);
                 if (null != ct) {
                     String lbl = ct.getSimpleName();
                     for (int i = tpCenter.getTabCount(); i-- > 0;) {
@@ -417,7 +456,7 @@ public class DustGuiSwingPanelEntity extends JPanel
 
                     if (null != lbl) {
                         try {
-                            TextPanelBase tpb = ct.getConstructor(DustEntity.class).newInstance(eEntity);
+                            EntitySpecPanelBase tpb = ct.getConstructor(DustEntity.class).newInstance(eEntity);
                             tpCenter.addTab(lbl, tpb);
                         } catch (Exception e) {
                             Dust.wrapAndRethrowException("", e);

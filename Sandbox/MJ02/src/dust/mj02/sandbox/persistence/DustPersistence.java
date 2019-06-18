@@ -9,18 +9,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.geometry.DustGeometryComponents;
 import dust.mj02.dust.gui.DustGuiComponents;
 import dust.mj02.dust.knowledge.DustKernelComponents;
+import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaTypes;
 import dust.mj02.dust.text.DustTextComponents;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("rawtypes")
-public class DustPersistence implements DustKernelComponents, DustPersistenceComponents, DustTextComponents, DustGuiComponents {
+public class DustPersistence implements DustKernelComponents, DustPersistenceComponents, DustTextComponents, DustGeometryComponents, DustGuiComponents {
 
     private static final String SAVEFILTER_PERSCOMMIT = "SAVEFILTER_PERSCOMMIT";
 
@@ -34,13 +37,20 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
 		Collection(DustCollectionTypes.class),
         Text(DustTextTypes.class, DustTextServices.class), 
         Gui(DustGuiTypes.class, DustGuiServices.class, DustGuiTags.class), 
+        Geometry(true, DustGeometryTypes.class, DustGeometryServices.class, DustGeometryValues.class, DustGeometryAtts.class, DustGeometryLinks.class), 
 
 		;
 		/* @formatter:on */
         private static boolean inited = false;
+        private final boolean onHold;
         private final Class<?>[] keys;
 
         private TempUnit(Class<?>... keys) {
+            this(false, keys);
+        }
+
+        private TempUnit(boolean onHold, Class<?>... keys) {
+            this.onHold = onHold;
             this.keys = keys;
         }
 
@@ -49,6 +59,10 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                 StringBuilder sb = null;
                 for (TempUnit tu : values()) {
 
+                    if ( tu.onHold ) {
+                        continue;
+                    }
+                    
                     String un = tu.name();
                     DustEntity eu = getUnit(un);
                     sb = DustUtilsJava.sbAppend(sb, ",", false, un);
@@ -198,6 +212,41 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                 // myUnitId = factEntityLocalId.get(myUnit);
                 myUnitId = DustUtils.accessEntity(DataCommand.getValue, myUnit, DustGenericAtts.IdentifiedIdLocal);
                 ctxKeys.put(ContextKeys.ThisUnit, myUnitId);
+                
+                try {
+                    TempUnit tu = TempUnit.valueOf(myUnitId);
+                    if ((null != tu) && tu.onHold) {
+                        DustUtilsDev.dump("Now I would update unit native IDs", myUnitId);
+                        DustUtilsFactory<DustMetaTypes,  Map<String, String>> f = new DustUtilsFactory.Simple(false, HashMap.class);
+                        
+                        for (Class<?> c : tu.keys) {
+                            DustMetaTypes mt = DustMetaTypes.getMetaTypeHack(c.getName());
+                            Map<String, String> mapIDs = f.get(mt);
+                            
+                            for (Object e : c.getEnumConstants()) {
+                                DustEntity ee = EntityResolver.getEntity(e);
+                                String nativeId = DustUtils.accessEntity(DataCommand.getValue, ee, DustProcAtts.NativeBoundId);
+                                mapIDs.put(e.toString(), nativeId);
+                            }
+                        }
+
+                        DustUtils.accessEntity(DataCommand.processRef, myUnit, DustCommLinks.UnitEntities, new RefProcessor() {
+                            @Override
+                            public void processRef(DustRef ref) {
+                                DustEntity ee = ref.get(RefKey.target);
+                                String id = DustUtils.accessEntity(DataCommand.getValue, ee, DustGenericAtts.IdentifiedIdLocal);
+                                DustEntity pt = DustUtils.getByPath(ee, DustDataLinks.EntityPrimaryType);
+                                String natId = f.get(EntityResolver.getKey(pt)).get(id);
+                                if ( null != natId ) {
+                                    DustUtils.accessEntity(DataCommand.setValue, ee, DustProcAtts.NativeBoundId, natId);
+                                }
+                            }
+                        });
+                    }
+                }
+                catch (Throwable t) {
+                    // nevermind
+                }
 
                 String ni = DustUtils.accessEntity(DataCommand.getValue, myUnit, DustCommAtts.UnitNextEntityId);
                 nextId = DustUtilsJava.isEmpty(ni) ? 0 : Long.parseLong(ni);
@@ -574,6 +623,10 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
 
     public static void commit(PersistentStorage storage) {
         commit(storage, null);
+    }
+
+    public static void restoreFromHistory(PersistentStorage storage, String timestamp) {
+        ((DustPersistentStorageJsonMulti)storage).restore(timestamp);
     }
 
     public static void commit(PersistentStorage storage, Collection<DustEntity> entities) {

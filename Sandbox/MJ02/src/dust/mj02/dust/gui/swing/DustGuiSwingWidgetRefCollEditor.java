@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 
 import javax.swing.DefaultListCellRenderer;
@@ -154,12 +156,29 @@ public class DustGuiSwingWidgetRefCollEditor extends JPanel implements DustGuiCo
 
         lmLinks.clear();
         if (null != eLinkDef) {
+            ArrayList<DustRef> al = new ArrayList<>();
+            
             DustUtils.accessEntity(DataCommand.processRef, entity, eLinkDef, new RefProcessor() {
                 @Override
                 public void processRef(DustRef ref) {
-                    lmLinks.addElement(ref);
+                    al.add(ref);
                 }
             });
+            
+            if (DustMetaLinkDefTypeValues.LinkDefArray != lt) {
+                al.sort(new Comparator<DustRef>() {
+                    @Override
+                    public int compare(DustRef o1, DustRef o2) {
+                        String s1 = o1.get(RefKey.target).toString();
+                        String s2 = o2.get(RefKey.target).toString();
+                        return s1.compareTo(s2);
+                    }
+                });
+            }
+
+            for (DustRef r : al) {
+                lmLinks.addElement(r);
+            }
 
             for (DustRef r : refs) {
                 lst.setSelectedValue(r, false);

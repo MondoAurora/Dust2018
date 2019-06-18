@@ -2,12 +2,14 @@ package dust.mj02.sandbox;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.geometry.DustGeometryCoreServices;
+import dust.mj02.dust.geometry.DustGeometryComponents;
 import dust.mj02.sandbox.http.DustHttpClient;
 import dust.mj02.sandbox.http.DustHttpComponents;
 import dust.mj02.sandbox.http.DustHttpServerJetty;
 import dust.mj02.sandbox.http.DustHttpServerCoreServices;
 
-public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
+public class DustSandbox implements DustSandboxComponents, DustHttpComponents, DustGeometryComponents {
 
     private static boolean inited = false;
 
@@ -23,8 +25,18 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents {
             
             initSrcGen();
             
+            initDraw();
+            
             inited = true;
         }
+    }
+
+    public static void initDraw() {
+        DustUtils.registerService(DustGeometryCoreServices.DustRenderSource.class, false, DustGeometryServices.RenderSource, DustProcServices.Processor);
+        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.RenderSource, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderSource);
+
+        DustUtils.registerService(DustGeometryCoreServices.DustRenderTarget.class, false, DustGeometryServices.RenderTarget, DustProcServices.Processor, DustProcServices.Evaluator, DustProcServices.Active);
+        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.RenderTarget, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderTarget);
     }
 
     public static void initFinderTest() {

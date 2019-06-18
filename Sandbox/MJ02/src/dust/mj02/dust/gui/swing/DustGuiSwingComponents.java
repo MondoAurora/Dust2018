@@ -11,6 +11,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.table.AbstractTableModel;
 
 import dust.mj02.dust.gui.DustGuiComponents;
@@ -113,5 +114,16 @@ public interface DustGuiSwingComponents extends DustGuiComponents, DustUtilsSwin
 			return data.size();
 		}
 	}
+
+    abstract class EntitySpecPanelBase extends JPanel {
+        private static final long serialVersionUID = 1L;
+
+        protected final DustEntity entity;
+
+        public EntitySpecPanelBase(DustEntity entity) {
+            super(new BorderLayout());
+            this.entity = entity;
+        }
+    }
 
 }

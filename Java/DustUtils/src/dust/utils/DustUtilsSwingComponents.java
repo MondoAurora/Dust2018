@@ -1,6 +1,8 @@
 package dust.utils;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EnumSet;
@@ -9,6 +11,7 @@ import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
@@ -154,5 +157,18 @@ public interface DustUtilsSwingComponents extends DustUtilsComponents {
             }
             updateStates();
         }
+
+        public void createButtonPanelDefault(Container target) {
+            createButtonPanelDefault(target, BorderLayout.SOUTH);
+        }
+        
+        public void createButtonPanelDefault(Container target, Object location) {
+            JPanel pnlBtns = new JPanel(new FlowLayout());
+            loadAll(pnlBtns);
+            updateStates();
+
+            target.add(pnlBtns, location);
+        }
+
     }
 }

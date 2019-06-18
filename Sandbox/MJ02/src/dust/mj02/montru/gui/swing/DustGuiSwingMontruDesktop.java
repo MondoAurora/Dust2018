@@ -132,10 +132,16 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		
 		@Override
         public void activateEntities(DustEntity... entities) {
-			for (DustEntity de : entities) {
-				activateEditorPanel(de);
-			}
-		}
+            try {
+                DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, true);
+
+                for (DustEntity de : entities) {
+                    activateEditorPanel(de);
+                }
+            } finally {
+                DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);
+            }
+        }
 
 		@Override
 		protected void dragItemChanged(DragItem item, GuiDataWrapper<JComponent> gdwOld,
