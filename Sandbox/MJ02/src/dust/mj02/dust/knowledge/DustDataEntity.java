@@ -8,15 +8,15 @@ import dust.mj02.dust.DustComponents.DataCommand;
 import dust.mj02.dust.DustComponents.DustEntity;
 import dust.mj02.dust.DustComponents.DustEntityKey;
 import dust.mj02.dust.DustComponents.EntityResolver;
+import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustDataComponents.DustDataLinks;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
-import dust.mj02.dust.tools.DustGenericComponents.DustGenericAtts;
 import dust.utils.DustUtilsFactory;
 
 @SuppressWarnings("unchecked")
 class DustDataEntity implements DustEntity {
     private final DustProcSession session;
-
+    
     Map<DustEntity, Object> content = new HashMap<>();
     DustEntity ePT;
     DustUtilsFactory<DustDataEntity, Method> factMethods;
@@ -96,11 +96,13 @@ class DustDataEntity implements DustEntity {
 
     @Override
     public String toString() {
-        String id = get(EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal));
-
-        String type = (null == ePT) ? "?"
-                : (ePT == this) ? id : ((DustDataEntity) ePT).get(EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal));
-        return type + ": " + id;
+        return DustUtils.formatEntity(this);
+        
+//        String id = get(EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal));
+//
+//        String type = (null == ePT) ? "?"
+//                : (ePT == this) ? id : ((DustDataEntity) ePT).get(EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal));
+//        return type + ": " + id;
     }
 
     public void putLocalRef(DustEntityKey link, DustEntityKey target) {

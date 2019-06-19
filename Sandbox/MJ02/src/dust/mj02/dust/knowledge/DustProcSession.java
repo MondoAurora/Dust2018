@@ -266,22 +266,36 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			DustDataEntity eTarget = optResolveCtxEntity(val);
 
             if (null != actRef) {
-                if (DustMetaLinkDefTypeValues.LinkDefSet == actRef.lt) {
+                switch (actRef.lt) {
+                case LinkDefArray:
+                    if (collId instanceof Integer) {
+                        al = (ArrayList<DustDataRef>) actRef.container;
+                        int idx = (int) collId;
+                        if (al.size() > idx) {
+                            DustDataRef er = al.get(idx);
+                            if (er.target == eTarget) {
+                                return er;
+                            }
+                        }
+                    }
+                    break;
+                case LinkDefMap:
+                    DustDataRef mr = ((Map<Object, DustDataRef>) actRef.container).get(eTarget);
+                    if ( null != mr ) {
+                        return mr;
+                    }
+                    break;
+                case LinkDefSet:
                     for (DustDataRef er : ((Set<DustDataRef>) actRef.container)) {
                         if (er.target == eTarget) {
                             return er;
                         }
                     }
-                }
-                if ((DustMetaLinkDefTypeValues.LinkDefArray == actRef.lt) && (collId instanceof Integer)) {
-                    al = (ArrayList<DustDataRef>) actRef.container;
-                    int idx = (int) collId;
-                    if (al.size() > idx) {
-                        DustDataRef er = al.get(idx);
-                        if (er.target == eTarget) {
-                            return er;
-                        }
-                    }
+                    break;
+                case LinkDefSingle:
+                    break;
+                default:
+                    break;
                 }
             }
             

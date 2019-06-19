@@ -9,14 +9,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.geometry.DustGeometryComponents;
 import dust.mj02.dust.gui.DustGuiComponents;
 import dust.mj02.dust.knowledge.DustKernelComponents;
-import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaTypes;
 import dust.mj02.dust.text.DustTextComponents;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
@@ -217,6 +215,7 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                     TempUnit tu = TempUnit.valueOf(myUnitId);
                     if ((null != tu) && tu.onHold) {
                         DustUtilsDev.dump("Now I would update unit native IDs", myUnitId);
+                        @SuppressWarnings("unchecked")
                         DustUtilsFactory<DustMetaTypes,  Map<String, String>> f = new DustUtilsFactory.Simple(false, HashMap.class);
                         
                         for (Class<?> c : tu.keys) {
@@ -553,7 +552,13 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                                     DustEntity eTarget = factEntities.get(DustUtilsJava.toString(o));
                                     DustUtils.accessEntity(DataCommand.setRef, item, eKey, eTarget, idx++);
                                 }
-                            } else {
+                            } else if (val instanceof Map) {
+                                for (Map.Entry e : (Iterable<Map.Entry>) ((Map) val).entrySet() ) {
+                                    DustEntity eK = factEntities.get(DustUtilsJava.toString(e.getKey()));
+                                    DustEntity eT = factEntities.get(DustUtilsJava.toString(e.getValue()));
+                                    DustUtils.accessEntity(DataCommand.setRef, item, eKey, eT, eK);
+                                }
+                            } else{
                                 DustMetaLinkDefTypeValues ldt = DustUtils.getLinkType(eKey);
 
                                 if (null == ldt) {
@@ -674,6 +679,8 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
 
     public static void update(PersistentStorage storage, String unitName) {
         try {
+            DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, true);
+
             TempUnit.optInit();
             storage.activeInit();
             LoadContext lctx = new LoadContext(storage);
@@ -686,7 +693,10 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
             storage.activeRelease();
         } catch (Throwable e) {
             Dust.wrapAndRethrowException("update", e);
+        } finally {
+            DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);                                
         }
+
     }
 
 }

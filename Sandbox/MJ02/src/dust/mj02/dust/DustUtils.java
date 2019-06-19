@@ -8,18 +8,15 @@ import java.util.Map;
 import java.util.Set;
 
 import dust.mj02.dust.knowledge.DustDataComponents;
-import dust.mj02.dust.knowledge.DustDataComponents.DustDataAtts;
-import dust.mj02.dust.knowledge.DustDataComponents.DustDataLinks;
-import dust.mj02.dust.knowledge.DustMetaComponents;
-import dust.mj02.dust.knowledge.DustProcComponents.DustProcAtts;
-import dust.mj02.dust.knowledge.DustProcComponents.DustProcLinks;
+import dust.mj02.dust.knowledge.DustKernelComponents;
+import dust.mj02.dust.text.DustTextComponents;
 import dust.mj02.dust.tools.DustGenericComponents;
-import dust.mj02.dust.tools.DustGenericComponents.DustGenericLinks;
+import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class DustUtils implements DustComponents, DustMetaComponents {
+public class DustUtils implements DustComponents, DustKernelComponents {
 
     public static <RetVal> RetVal getMsgVal(DustEntityKey key, boolean resolveRef) {
         return getCtxVal(ContextRef.msg, key, resolveRef);
@@ -49,12 +46,19 @@ public class DustUtils implements DustComponents, DustMetaComponents {
 
     public static <RetVal> RetVal getByPath(Object ob, Object... path) {
         for (Object key : path) {
-            DustEntity ee = toEntity(ob);
-            ob = DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, ee, key));
-
+            if (ob instanceof DustRef) {
+                ob = ((DustRef) ob).getByKey(key);
+            } else {
+                DustEntity ee = toEntity(ob);
+                ob = DustUtils.accessEntity(DataCommand.getValue, ee, key);
+            }
             if (null == ob) {
                 return null;
             }
+        }
+        
+        if (ob instanceof DustRef) {
+            ob = toEntity(ob);
         }
 
         return (RetVal) ob;
@@ -227,10 +231,13 @@ public class DustUtils implements DustComponents, DustMetaComponents {
         @Override
         public void processRef(DustRef ref) {
             if (null != item) {
-                DustEntity e = toEntity(item);
                 DustEntity key = ref.get(RefKey.target);
-
-                item = accessEntity(DataCommand.getValue, e, key);
+                if ( item instanceof DustRef ) {
+                    item = ((DustRef)item).getByKey(key);
+                } else {
+                    DustEntity e = toEntity(item);
+                    item = accessEntity(DataCommand.getValue, e, key);
+                }
             }
         }
     }
@@ -361,6 +368,43 @@ public class DustUtils implements DustComponents, DustMetaComponents {
             Object val = DustUtilsJava.isEmpty(str) ? NOTSET : attTypeInfo.get(att).stringToOb(str);
             return (RetType) accessEntity(DataCommand.setValue, e, att, (NOTSET == val) ? null : val);
         }
+    }
+    
+    private static final DustUtilsFactory<DustEntity, DustEntity> FMT_PRIM_TYPE = new DustUtilsFactory<DustEntity, DustEntity>(false) {
+        @Override
+        protected DustEntity create(DustEntity key, Object... hints) {
+            DustEntity fmtRoot =  getByPath(key, DustTextComponents.DustTextLinks.TextRendererRoot);
+            
+            return fmtRoot;
+        }
+    };
 
+    public static String formatEntity(DustEntity e) {
+        DustEntity ePT = getByPath(e, DustDataComponents.DustDataLinks.EntityPrimaryType);
+        
+        String id = accessEntity(DataCommand.getValue, e, DustGenericAtts.IdentifiedIdLocal);
+        String type = (null == ePT) ? "?" : (ePT == e) ? id : accessEntity(DataCommand.getValue, ePT, DustGenericAtts.IdentifiedIdLocal);
+        String txt = type + ": " + id;
+
+        DustEntity fmtRoot = FMT_PRIM_TYPE.get(ePT);
+
+        if (null != fmtRoot) {
+            try {
+                DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, true);
+                DustEntity eFmtMsg = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
+                DustUtils.accessEntity(DataCommand.setRef, eFmtMsg, DustDataLinks.MessageCommand, DustProcMessages.EvaluatorEvaluate);
+                accessEntity(DataCommand.setRef, fmtRoot, DustGenericComponents.DustGenericLinks.ContextAwareEntity, e);
+                
+                accessEntity(DataCommand.tempSend, ePT, eFmtMsg);
+    
+                txt = DustUtils.accessEntity(DataCommand.getValue, eFmtMsg, DustDataAtts.MessageReturn);
+            } catch (Throwable t) {
+                DustUtilsDev.dump("temp swallow exception in formatting");
+            } finally {
+                DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);                                
+            }
+        }
+        
+        return txt;
     }
 }

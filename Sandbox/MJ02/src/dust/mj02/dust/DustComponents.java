@@ -72,6 +72,7 @@ public interface DustComponents extends DustUtilsComponents {
 		<InfoType> InfoType get(RefKey ref);
         void processAll(RefProcessor proc);
         boolean contains(DustEntity entity);
+        DustEntity getByKey(Object key);
         int count();
         void hackUpdate(DustEntity entity);
 	}

@@ -119,7 +119,21 @@ public class DustGuiSwingWidgetRefCollEditor extends JPanel implements DustGuiCo
 
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                return super.getListCellRendererComponent(list, ((DustRef) value).get(RefKey.target), index, isSelected, cellHasFocus);
+                DustRef ref = (DustRef) value;
+
+                Object ob;
+                
+                switch (lt) {
+                case LinkDefMap:
+                    DustEntity key = ref.get(RefKey.key);
+                    String id = DustUtils.accessEntity(DataCommand.getValue, key, DustGenericAtts.IdentifiedIdLocal);
+                    ob = id + " = " + ref.get(RefKey.target);
+                    break;
+                default:
+                    ob = ref.get(RefKey.target);
+                    break;
+                }
+                return super.getListCellRendererComponent(list, ob, index, isSelected, cellHasFocus);
             }
         };
 

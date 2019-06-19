@@ -31,9 +31,13 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
                 pt = DustUtils.getByPath(eSrc, DustDataLinks.EntityPrimaryType);
                 dgt = EntityResolver.getKey(pt);
             }
+            
+            DustEntity eTarget = DustUtils.getCtxVal(ContextRef.msg, DustGenericLinks.ContextAwareEntity, true);
+
 
             switch (dgt) {
             case ShapePath:
+                DustUtils.accessEntity(DataCommand.setRef, eTarget, DustGeometryLinks.RenderTargetAllShapes, eSrc);
                 break;
             case ShapeArc:
                 break;

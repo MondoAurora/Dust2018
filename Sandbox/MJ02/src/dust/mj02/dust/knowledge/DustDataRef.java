@@ -16,6 +16,8 @@ import dust.mj02.dust.DustComponents.DustRef;
 import dust.mj02.dust.DustComponents.EntityResolver;
 import dust.mj02.dust.DustComponents.RefKey;
 import dust.mj02.dust.DustComponents.RefProcessor;
+import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.knowledge.DustCommComponents.DustCommLinks;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
 import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
 import dust.utils.DustUtilsJava;
@@ -28,20 +30,21 @@ class DustDataRef implements DustRef {
     final DustDataEntity source;
 //    final DustDataEntity target;
     DustDataEntity target;
-    final Object key;
+//    final Object key;
+    Object key;
 
     DustDataRef reverse;
 
     DustMetaLinkDefTypeValues lt;
     Object container;
 
-    public DustDataRef(DustProcSession session, DustDataEntity linkDef, DustDataEntity source, DustDataEntity target, Object key, DustDataRef orig) {
+    public DustDataRef(DustProcSession session, DustDataEntity linkDef_, DustDataEntity source_, DustDataEntity target_, Object key_, DustDataRef orig) {
         this.session = session;
 
-        this.linkDef = linkDef;
-        this.source = source;
-        this.target = target;
-        this.key = key;
+        this.linkDef = linkDef_;
+        this.source = source_;
+        this.target = target_;
+        this.key = key_;
 
         initContainer(orig);
 
@@ -58,6 +61,17 @@ class DustDataRef implements DustRef {
             ((Set<DustDataRef>) container).add(this);
             break;
         case LinkDefMap:
+            if ( null == key ) {
+                key = target;
+                DustEntity valPT = DustUtils.getByPath(linkDef, DustMetaLinks.LinkDefItemTypePrimary);
+                if ( null != valPT ) {
+                    target = DustUtils.accessEntity(DataCommand.getEntity, valPT);
+                    DustEntity unit = DustUtils.getByPath(source, DustCommLinks.PersistentContainingUnit);
+                    DustUtils.accessEntity(DataCommand.setRef, target, DustCommLinks.PersistentContainingUnit, unit);
+                } else {
+                    target = null;
+                }
+            }
             DustDataRef old = ((Map<Object, DustDataRef>) container).put(key, this);
             if (null != old) {
                 session.refs.remove(old);
@@ -237,7 +251,7 @@ class DustDataRef implements DustRef {
                 map.remove(key);
                 clear = map.isEmpty();
                 if (!map.isEmpty() && (this == source.get(linkDef))) {
-                    source.put(linkDef, map.entrySet().iterator().next());
+                    source.put(linkDef, map.values().iterator().next());
                 }
             }
             break;
@@ -257,6 +271,36 @@ class DustDataRef implements DustRef {
             reverse.remove(false, false);
         }
     }
+    
+    @Override
+    public DustEntity getByKey(Object key) {
+        DustEntity eKey = DustUtils.toEntity(key);
+        if ( null == container ) {
+            return (this.key == eKey) ? target : null;
+        }
+        
+        switch (lt) {
+        case LinkDefMap:
+            DustDataRef r = ((Map<Object, DustDataRef>) container).get(eKey);
+            return (null == r) ? null : r.target;
+
+        case LinkDefArray:
+            if ( key instanceof Integer ) {
+                int idx = (int) key;
+                ArrayList<DustDataRef> al = (ArrayList<DustDataRef>) container;
+                if ( (0 <= idx) && (idx < al.size())) {
+                    return al.get(idx).target;
+                }
+            }
+            break;
+
+        default:
+            break;
+        }
+        
+        return null;
+    }
+    
 
     @Override
     public <InfoType> InfoType get(RefKey ref) {

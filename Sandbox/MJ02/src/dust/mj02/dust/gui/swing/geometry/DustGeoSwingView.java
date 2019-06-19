@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.GeneralPath;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,7 +81,30 @@ public class DustGeoSwingView extends EntitySpecPanelBase implements DustGeometr
         shapeLoader = new RefProcessor() {
             @Override
             public void processRef(DustRef ref) {
-                
+                DustEntity eShape = ref.get(RefKey.target);
+                GeneralPath path = new GeneralPath();
+
+                DustUtils.accessEntity(DataCommand.processRef, eShape, DustCollectionLinks.SequenceMembers, new RefProcessor() {
+                    
+                    @Override
+                    public void processRef(DustRef ref) {
+                        Object x = DustUtils.getByPath(ref.get(RefKey.target), DustGeometryLinks.GeometricDataMeasurements, DustGeometryValues.GeometricDimensionCartesianX, DustDataAtts.VariantValue);
+                        Object y = DustUtils.getByPath(ref.get(RefKey.target), DustGeometryLinks.GeometricDataMeasurements, DustGeometryValues.GeometricDimensionCartesianY, DustDataAtts.VariantValue);
+
+                        if ( null == path.getCurrentPoint() ) {
+                            path.moveTo(Double.parseDouble((String)x), Double.parseDouble((String)y));
+                        } else {
+                            path.lineTo(Double.parseDouble((String)x), Double.parseDouble((String)y));                            
+                        }
+                    }
+                });
+
+                if ( null != path.getCurrentPoint() ) {
+                    if ( DustUtils.isTrue(eShape, DustGeometryAtts.ShapePathClosed) ) {
+                        path.closePath();
+                    }
+                    mapShapes.put(eShape, path);
+                }
             }
         };
         

@@ -1,5 +1,20 @@
 ** TASKS **
 
+ + Map/Factory - the drop is a key, value is created
+ + right list to display map key = value
+ + del should work, 
+ + check doubleclick
+
+ + toString to mix with TextFormatted - render content for Variants to show the value in right list
+getByPath to look into maps
+
+GeoView
+ + Basic path draw works
+ - initial size for empty paths
+ - make path, box, composite work
+ - mapped coords configurable
+ - scale, rotate, move
+
 * IMMEDIATE
 check "Net" unit creation
 "Raw" att should not persist
