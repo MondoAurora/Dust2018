@@ -3,6 +3,7 @@ package dust.mj02.dust.geometry;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,7 +18,7 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
     DustGeometryValues EXEC_ORDER[] = { DustGeometryValues.GeometricDataRoleScale, DustGeometryValues.GeometricDataRoleRotate,
             DustGeometryValues.GeometricDataRoleLocate, };
 
-    DustGeometryValues ACCESS[] = { DustGeometryValues.GeometricDimensionCartesianX, DustGeometryValues.GeometricDimensionCartesianY,
+    DustGeometryValues DIMS[] = { DustGeometryValues.GeometricDimensionCartesianX, DustGeometryValues.GeometricDimensionCartesianY,
             DustGeometryValues.GeometricDimensionCartesianZ, };
 
     public class DustRenderSourceSimple implements DustProcComponents.DustProcPocessor {
@@ -33,12 +34,85 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
         }
     }
 
+    public class DustSimplePoint3D {
+        
+        EnumMap<DustGeometryValues, Double> vals = new EnumMap<>(DustGeometryValues.class);
+
+        DustSimplePoint3D(DustEntity node) {
+            for ( DustGeometryValues v : DIMS ) {
+                vals.put(v, DustGeometryUtils.getMeasurement(node, EntityResolver.getEntity(v)));
+            }
+        }
+        
+        Double get(DustGeometryValues dim) {
+            return vals.get(dim);
+        }
+        
+        boolean isSet(DustGeometryValues... dims) {
+            for ( DustGeometryValues d : dims ) {
+                if ( !vals.containsKey(d)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        void apply(DustGeometryValues action, DustSimplePoint3D param) {
+            switch (action) {
+            case GeometricDataRoleLocate:
+                for ( DustGeometryValues v : DIMS ) {
+                    Double orig = vals.get(v);
+                    Double diff = param.vals.get(v);
+                    if ( null != diff ) {
+                        vals.put(v, (null == orig) ? diff : orig + diff);
+                    }
+                }
+
+                break;
+            case GeometricDataRoleScale:
+                for ( DustGeometryValues v : DIMS ) {
+                    Double orig = vals.get(v);
+                    Double diff = param.vals.get(v);
+                    if ( (null != diff) && (null != orig) ) {
+                        vals.put(v, orig * diff);
+                    }
+                }
+                break;
+            case GeometricDataRoleRotate:
+                Double simpleRot = param.vals.get(DustGeometryValues.GeometricDimensionCartesianZ);
+                if ( null != simpleRot ) {
+                    simpleRot = simpleRot / 180 * Math.PI;
+                    Double sX = vals.get(DustGeometryValues.GeometricDimensionCartesianX);
+                    Double sY = vals.get(DustGeometryValues.GeometricDimensionCartesianY);
+                    
+                    Double rSin = Math.sin(simpleRot);
+                    Double rCos = Math.cos(simpleRot);
+
+                    Double nX = sX * rCos - sY * rSin;
+                    Double nY = sX * rSin + sY * rCos;
+                    
+                    vals.put(DustGeometryValues.GeometricDimensionCartesianX, nX);
+                    vals.put(DustGeometryValues.GeometricDimensionCartesianY, nY);
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+        
+        @Override
+        public String toString() {
+            return vals.toString();
+        }
+    }
+
     public class DustRenderSourceComposite implements DustProcComponents.DustProcPocessor {
 
         @Override
         public void processorProcess() throws Exception {
             DustEntity eTarget = DustUtils.getCtxVal(ContextRef.msg, DustGenericLinks.ContextAwareEntity, true);
-            
+
             DustUtils.LazyMsgContainer lmc = new DustUtils.LazyMsgContainer() {
                 @Override
                 protected DustEntity createMsg() {
@@ -46,23 +120,23 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
                     return eMsg;
                 }
             };
-            
+
             DustEntity eSrc = DustUtils.getCtxVal(ContextRef.self, null, true);
             DustUtils.accessEntity(DataCommand.processRef, eSrc, DustCollectionLinks.SequenceMembers, new RefProcessor() {
                 @Override
                 public void processRef(DustRef ref) {
                     DustEntity incl = ref.get(RefKey.target);
-                    
+
                     DustEntity msgAct = lmc.getMsg();
                     DustUtils.accessEntity(DataCommand.setRef, msgAct, DustGenericLinks.ContextAwareEntity, incl);
-                    
+
                     DustUtils.accessEntity(DataCommand.setRef, msgAct, DustDataLinks.MessageCommand, DustProcMessages.ActiveInit);
                     DustUtils.accessEntity(DataCommand.tempSend, eTarget, msgAct);
 
                     DustEntity shape = DustUtils.getByPath(incl, DustGeometryLinks.GeometricInclusionTarget);
                     DustEntity eMsg = DustUtils.getCtxVal(ContextRef.msg, null, true);
                     DustUtils.accessEntity(DataCommand.tempSend, shape, eMsg);
-                    
+
                     DustUtils.accessEntity(DataCommand.setRef, msgAct, DustDataLinks.MessageCommand, DustProcMessages.ActiveRelease);
                     DustUtils.accessEntity(DataCommand.tempSend, eTarget, msgAct);
                 }
@@ -80,16 +154,21 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
                 this.incl = incl;
             }
         }
-        
+
         class Transformation {
             DustGeometryValues action;
-            DustEntity node;
-
-            Map<DustGeometryValues, Double> values = new HashMap<>();
+            DustEntity node;    
+            DustSimplePoint3D pt;
 
             public Transformation(DustGeometryValues action, DustEntity node) {
                 this.action = action;
                 this.node = node;
+
+                pt = new DustSimplePoint3D(node);
+            }
+
+            public void apply(DustSimplePoint3D ptTarget) {
+                ptTarget.apply(action, pt);
             }
         }
 
@@ -112,18 +191,24 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
                     }
                 }
             }
+
+            public void apply(DustSimplePoint3D node) {
+                for (Transformation t : transformations) {
+                    t.apply(node);
+                }
+            }
         }
 
         Map<DustEntity, Shape> mapShapes;
-        DustUtilsFactory<DustEntity, GraphNode> factNodes = new DustUtilsFactory<DustEntity, GraphNode> ( false ) {
+        DustUtilsFactory<DustEntity, GraphNode> factNodes = new DustUtilsFactory<DustEntity, GraphNode>(false) {
             @Override
             protected GraphNode create(DustEntity key, Object... hints) {
                 return new GraphNode(key);
             }
         };
-        
-        DustEntity axisX = EntityResolver.getEntity(DustGeometryValues.GeometricDimensionCartesianX);
-        DustEntity axisY = EntityResolver.getEntity(DustGeometryValues.GeometricDimensionCartesianY);
+
+//        DustEntity axisX = EntityResolver.getEntity(DustGeometryValues.GeometricDimensionCartesianX);
+//        DustEntity axisY = EntityResolver.getEntity(DustGeometryValues.GeometricDimensionCartesianY);
 
         CollectedTransformations ct = new CollectedTransformations();
 
@@ -133,7 +218,7 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
 
             DustEntity pt = DustUtils.getByPath(eShape, DustDataLinks.EntityPrimaryType);
             DustGeometryTypes dgt = EntityResolver.getKey(pt);
-            
+
             switch (dgt) {
             case ShapePath:
                 GeneralPath path = new GeneralPath();
@@ -142,10 +227,13 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
                     @Override
                     public void processRef(DustRef ref) {
                         DustEntity point = ref.get(RefKey.target);
-                        Double x = DustGeometryUtils.getMeasurement(point, axisX);
-                        Double y = DustGeometryUtils.getMeasurement(point, axisY);
+                        DustSimplePoint3D pt = new DustSimplePoint3D(point);
 
-                        if ((null != x) && (null != y)) {
+                        if (pt.isSet(DustGeometryValues.GeometricDimensionCartesianX, DustGeometryValues.GeometricDimensionCartesianY)) {
+                            ct.apply(pt);
+
+                            Double x = pt.get(DustGeometryValues.GeometricDimensionCartesianX);
+                            Double y = pt.get(DustGeometryValues.GeometricDimensionCartesianY);
                             if (null == path.getCurrentPoint()) {
                                 path.moveTo(x, y);
                             } else {
@@ -189,8 +277,9 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
 
         @Override
         public Object evaluatorEvaluate() throws Exception {
+            ct = new CollectedTransformations();
             mapShapes = new HashMap<>();
-            
+
             DustEntity self = DustUtils.getCtxVal(ContextRef.self, null, true);
 
             DustEntity msgProc = DustUtils.accessEntity(DataCommand.cloneEntity, ContextRef.msg);
@@ -202,7 +291,7 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
             DustUtils.accessEntity(DataCommand.setRef, msgProc, DustGenericLinks.CallbackMessage, msgCB);
 
             DustEntity eTarget = DustUtils.getCtxVal(ContextRef.msg, DustGenericLinks.ContextAwareEntity, true);
-            
+
             DustUtils.accessEntity(DataCommand.tempSend, eTarget, msgProc);
 
             return mapShapes;

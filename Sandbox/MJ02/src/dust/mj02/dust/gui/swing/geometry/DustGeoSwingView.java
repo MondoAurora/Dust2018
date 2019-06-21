@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.util.Map;
 
 import javax.swing.JComponent;
@@ -29,6 +30,7 @@ public class DustGeoSwingView extends EntitySpecPanelBase implements DustGeometr
 
             if (null != mapShapes) {
                 Graphics2D g2d = (Graphics2D) g;
+                g2d.transform(translate);
 
                 for (Shape s : mapShapes.values()) {
                     g2d.draw(s);
@@ -53,6 +55,7 @@ public class DustGeoSwingView extends EntitySpecPanelBase implements DustGeometr
     DustEntity eRenderTarget;
     Dimension drawSize;
     int margin;
+    AffineTransform translate;
 
     Map<DustEntity, Shape> mapShapes;
 
@@ -106,6 +109,7 @@ public class DustGeoSwingView extends EntitySpecPanelBase implements DustGeometr
         int m2 = 2 * margin;
 
         drawSize.setSize(bb.width + m2, bb.height + m2);
+        translate = AffineTransform.getTranslateInstance(margin - bb.getMinX(), margin - bb.getMinY());
 
         drawPanel.invalidate();
         repaint();
