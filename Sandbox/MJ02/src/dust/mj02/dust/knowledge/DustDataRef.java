@@ -9,21 +9,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import dust.mj02.dust.DustComponents.DataCommand;
-import dust.mj02.dust.DustComponents.DustEntity;
-import dust.mj02.dust.DustComponents.DustEntityKey;
 import dust.mj02.dust.DustComponents.DustRef;
-import dust.mj02.dust.DustComponents.EntityResolver;
-import dust.mj02.dust.DustComponents.RefKey;
-import dust.mj02.dust.DustComponents.RefProcessor;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.knowledge.DustCommComponents.DustCommLinks;
-import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinkDefTypeValues;
-import dust.mj02.dust.knowledge.DustMetaComponents.DustMetaLinks;
+import dust.mj02.dust.tools.DustToolsComponents;
 import dust.utils.DustUtilsJava;
 
 @SuppressWarnings("unchecked")
-class DustDataRef implements DustRef {
+class DustDataRef implements DustRef, DustKernelImplComponents, DustToolsComponents {
     private final DustProcSession session;
 
     final DustDataEntity linkDef;
@@ -68,6 +60,7 @@ class DustDataRef implements DustRef {
                     target = DustUtils.accessEntity(DataCommand.getEntity, valPT);
                     DustEntity unit = DustUtils.getByPath(source, DustCommLinks.PersistentContainingUnit);
                     DustUtils.accessEntity(DataCommand.setRef, target, DustCommLinks.PersistentContainingUnit, unit);
+                    DustUtils.accessEntity(DataCommand.setRef, target, DustGenericLinks.ConnectedOwner, source);
                 } else {
                     target = null;
                 }

@@ -9,19 +9,19 @@ import dust.mj02.dust.DustComponents;
 
 public interface DustGeometryComponents extends DustComponents {
 	enum DustGeometryTypes implements DustEntityKey { 
-		RenderNode, GeometricDimension, ShapePath, ShapeArc, RenderSource, GeometricDataRole, GeometricData, RenderTarget, ShapeComposite, GeometricInclusion, ShapeBox, ShapeRef
+		GeometricDimension, ShapePath, ShapeArc, RenderSource, GeometricDataRole, GeometricData, RenderTarget, ShapeComposite, GeometricInclusion, ShapeBox, ShapeRef
 	};
 
 	enum DustGeometryAtts implements DustEntityKey { 
-		ShapePathClosed, RenderTargetTransformColl
+		ShapePathClosed
 	};
 
 	enum DustGeometryLinks implements DustEntityKey { 
-		ShapeArcBegin, ShapeBoxSize, GeometricInclusionTarget, RenderTargetNodeStack, RenderTargetAllShapes, GeometricDataType, GeometricInclusionParameters, ShapeArcEnd, GeometricDataMeasurements, RenderNodeCumulativeRotation
+		ShapeArcBegin, ShapeBoxSize, GeometricInclusionTarget, GeometricDataType, GeometricInclusionParameters, ShapeArcEnd, GeometricDataMeasurements
 	};
 
 	enum DustGeometryServices implements DustEntityKey { 
-		RenderTarget, RenderSource
+		RenderTarget, RenderSourceSimple, RenderSourceComposite
 	};
 
 	enum DustGeometryMessages implements DustEntityKey { 

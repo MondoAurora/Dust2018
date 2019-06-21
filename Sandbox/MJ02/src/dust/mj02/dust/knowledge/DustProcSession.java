@@ -80,7 +80,7 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			retVal = invokeEntity(se, sKey, val, (EntityProcessor) hint);
 			break;
 		case cloneEntity:
-			retVal = cloneEntity(se);
+			retVal = cloneEntity(se, new HashMap<>());
 			break;
 		case dropEntity:
 			if ( val instanceof Collection<?> ) {
@@ -92,13 +92,13 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			}
 			break;
 		case tempSend:
-			binConn.send(se, (DustDataEntity) key);
+			retVal = binConn.send(se, (DustDataEntity) key);
 			break;
 		case getValue:
 			// nothing, retVal already set
 			break;
 		case setValue:
-			retVal = se.put(key, val);
+			retVal = se.put((DustDataEntity) key, val);
 
 			if (!DustUtilsJava.isEqual(retVal, val)) {
 				notifyListeners(cmd, se, key, val, retVal);
@@ -106,7 +106,7 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			break;
 		case processContent:
 			ContentProcessor cp = (ContentProcessor) val;
-			for ( Map.Entry<DustEntity, Object> ee : se.content.entrySet() ) {
+			for ( Map.Entry<DustDataEntity, Object> ee : se.content.entrySet() ) {
 				cp.processContent(se, ee.getKey(), ee.getValue());
 			}
 			break;
@@ -117,7 +117,7 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			break;
 		default:
 		    Object resolvedVal = optResolveCtxEntity(val);
-			retVal = changeRef(true, cmd, se, key, (DustDataRef) retVal, (null == resolvedVal) ? val : resolvedVal, hint);
+			retVal = changeRef(true, cmd, se, (DustDataEntity) key, (DustDataRef) retVal, (null == resolvedVal) ? val : resolvedVal, hint);
 			break;
 		}
 		return (RetType) retVal;
@@ -125,7 +125,8 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 
 	private DustDataEntity invokeEntity(DustDataEntity type, DustDataEntity owner, Object id, EntityProcessor initializer) {
 		String gid = (String) id;
-		DustDataEntity ce = ctxGetEntity(gid);
+		DustDataEntity ce = (EntityResolver.getEntity(DustDataTypes.Message) == type) 
+		        ? new DustDataEntity(this, true) : ctxGetEntity(gid);
 
 		if (ce.justCreated) {
 //			if ( null != gid ) {
@@ -154,14 +155,16 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 			notifyListeners(DataCommand.getEntity, ce, null, id, null);
 		}
 		return ce;
-	}
+    }
 
-	private DustDataEntity cloneEntity(DustDataEntity source) {
-		DustDataRef refPt = source.get(DustDataLinks.EntityPrimaryType);
-		DustDataEntity ret = invokeEntity((null == refPt) ? null : refPt.get(RefKey.target), null, null, null);
+    private DustDataEntity cloneEntity(DustDataEntity source, Map<DustDataEntity, DustDataEntity> clones) {
+        DustDataEntity pt = source.getSingleRef(DustDataLinks.EntityPrimaryType);
+		DustDataEntity ret = ( EntityResolver.getEntity(DustDataTypes.Message) == pt) 
+		        ? new DustDataEntity(this, true) : invokeEntity(pt, null, null, null);
+		clones.put(source, ret);
 		
-		for ( Map.Entry<DustEntity, Object> se : source.content.entrySet() ) {
-			DustEntity key = se.getKey();
+		for ( Map.Entry<DustDataEntity, Object> se : source.content.entrySet() ) {
+		    DustDataEntity key = se.getKey();
 			if ( DustUtils.tag(key, TagCommand.test, DustMetaTags.NotCloned)) {
 				continue;
 			}
@@ -179,7 +182,14 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 					
 					@Override
 					public void processRef(DustRef ref) {
-						lastRef = changeRef(true, DataCommand.setRef, ret, key, lastRef, rr.target, rr.key);
+					    DustDataRef actRef = (DustDataRef) ref;
+					    DustDataEntity dt = clones.get(actRef.target);
+					    
+					    if ( null == dt ) {
+					        dt = ( source == actRef.target.getSingleRef(DustGenericLinks.ConnectedOwner)) 
+					           ? cloneEntity(actRef.target, clones) : actRef.target;
+					    }
+						lastRef = changeRef(true, DataCommand.setRef, ret, key, lastRef, dt, actRef.key);
 					}
 				});
 			} else {
@@ -208,7 +218,7 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 		}
 	}
 
-	public DustDataRef changeRef(boolean handleReverse, DataCommand cmd, DustDataEntity se, DustEntity key,
+	public DustDataRef changeRef(boolean handleReverse, DataCommand cmd, DustDataEntity se, DustDataEntity key,
 			DustDataRef actRef, Object val, Object collId) {
 		DustDataRef sr = null;
 		 ArrayList<DustDataRef> al;
@@ -235,7 +245,7 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
 					
 					Map<DustDataEntity, Object> toDel = new HashMap<>();
 					
-					for (Map.Entry<DustEntity, Object> ee : se.content.entrySet()) {
+					for (Map.Entry<DustDataEntity, Object> ee : se.content.entrySet()) {
 						DustDataEntity eKey = (DustDataEntity) ee.getKey();
 						Object eval = ee.getValue();
 

@@ -144,9 +144,10 @@ public class DustProcBinaryConnector
 		this.ctx = ctx;
 	}
 
-	public void send(DustDataEntity target, DustDataEntity msg) {
+	public Object send(DustDataEntity target, DustDataEntity msg) {
 		EnumMap<ContextRef, DustDataEntity> store = new EnumMap<>(ctx.mapCtxEntities);
 		Throwable t = null;
+		Object ret = null;
 
 		try {
 			DustDataEntity cmd = ((DustDataRef) msg.get(KEYS.get(DustDataLinks.MessageCommand))).target;
@@ -167,8 +168,8 @@ public class DustProcBinaryConnector
 			ctx.mapCtxEntities.put(ContextRef.self, target);
 			ctx.mapCtxEntities.put(ContextRef.msg, msg);
 			
-			Object ret = m.invoke(o);
-			msg.put(KEYS.get(DustDataAtts.MessageReturn), ret);
+			ret = m.invoke(o);
+			msg.put((DustDataEntity)KEYS.get(DustDataAtts.MessageReturn), ret);
 		} catch (Throwable e) {
 			t = e;
 		} finally {
@@ -178,6 +179,8 @@ public class DustProcBinaryConnector
 		if (null != t) {
 			Dust.wrapAndRethrowException("Command execution", t);
 		}
+		
+		return ret;
 	}
 
 	public void instSvc(DustDataEntity target, DustDataEntity svc) {

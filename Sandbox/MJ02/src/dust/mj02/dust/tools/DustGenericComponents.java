@@ -6,7 +6,7 @@ public interface DustGenericComponents extends DustComponents {
 	
 	enum DustGenericTypes implements DustEntityKey {
 		Identified, Connected, Tag, Stream, 
-		ContextAware, Reference
+		ContextAware, Reference, Callback
 	};
 	
 	enum DustGenericAtts implements DustEntityKey {
@@ -16,7 +16,7 @@ public interface DustGenericComponents extends DustComponents {
 	
 	enum DustGenericLinks implements DustEntityKey {
 		ConnectedOwner, ConnectedRequires, ConnectedExtends, 
-		ContextAwareEntity, ReferencePath
+		ContextAwareEntity, ReferencePath, CallbackMessage
 	};
 	
 }

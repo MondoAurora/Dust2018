@@ -17,7 +17,7 @@ import dust.utils.DustUtilsFactory;
 class DustDataEntity implements DustEntity {
     private final DustProcSession session;
     
-    Map<DustEntity, Object> content = new HashMap<>();
+    Map<DustDataEntity, Object> content = new HashMap<>();
     DustEntity ePT;
     DustUtilsFactory<DustDataEntity, Method> factMethods;
     boolean justCreated = true;
@@ -32,7 +32,7 @@ class DustDataEntity implements DustEntity {
         }
     }
 
-    public <RetType> RetType put(DustEntity key, Object value) {
+    public <RetType> RetType put(DustDataEntity key, Object value) {
         RetType orig = (RetType) content.put(key, value);
 
         if (!internal) {
@@ -91,7 +91,7 @@ class DustDataEntity implements DustEntity {
     }
 
     public <RetType> RetType put(DustEntityKey key, Object value) {
-        return (RetType) put(EntityResolver.getEntity(key), value);
+        return (RetType) put((DustDataEntity)EntityResolver.getEntity(key), value);
     }
 
     @Override

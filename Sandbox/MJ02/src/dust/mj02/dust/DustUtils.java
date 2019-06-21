@@ -407,4 +407,18 @@ public class DustUtils implements DustComponents, DustKernelComponents {
         
         return txt;
     }
+    
+    public static abstract class LazyMsgContainer {
+        private DustEntity msg = null;
+
+        public DustEntity getMsg() {
+            if (null == msg) {
+                msg = createMsg();
+            }
+            return msg;
+        }
+
+        protected abstract DustEntity createMsg();
+    }
+
 }

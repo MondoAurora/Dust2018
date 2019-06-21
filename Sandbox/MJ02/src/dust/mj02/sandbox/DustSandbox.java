@@ -32,10 +32,20 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents, D
     }
 
     public static void initDraw() {
-        DustUtils.registerService(DustGeometryCoreServices.DustRenderSource.class, false, DustGeometryServices.RenderSource, DustProcServices.Processor);
-        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.RenderSource, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderSource);
+//        DustUtils.registerService(DustGeometryCoreServices.DustRenderSourceSimple.class, false, DustGeometryServices.RenderSource, DustProcServices.Processor);
+//        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.RenderSource, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderSource);
 
-        DustUtils.registerService(DustGeometryCoreServices.DustRenderTarget.class, false, DustGeometryServices.RenderTarget, DustProcServices.Processor, DustProcServices.Evaluator, DustProcServices.Active);
+        DustUtils.registerService(DustGeometryCoreServices.DustRenderSourceSimple.class, false, DustGeometryServices.RenderSourceSimple, DustProcServices.Processor);
+        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.RenderSource, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderSourceSimple);
+        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.ShapePath, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderSourceSimple);
+        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.ShapeArc, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderSourceSimple);
+        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.ShapeBox, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderSourceSimple);
+
+        DustUtils.registerService(DustGeometryCoreServices.DustRenderSourceComposite.class, false, DustGeometryServices.RenderSourceComposite, DustProcServices.Processor);
+        DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.ShapeComposite, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderSourceComposite);
+
+        
+        DustUtils.registerService(DustGeometryCoreServices.DustRenderTargetAwtGeom.class, false, DustGeometryServices.RenderTarget, DustProcServices.Processor, DustProcServices.Evaluator, DustProcServices.Active);
         DustUtils.accessEntity(DataCommand.setRef, DustGeometryTypes.RenderTarget, DustMetaLinks.TypeLinkedServices, DustGeometryServices.RenderTarget);
     }
 

@@ -35,7 +35,8 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
 		Collection(DustCollectionTypes.class),
         Text(DustTextTypes.class, DustTextServices.class), 
         Gui(DustGuiTypes.class, DustGuiServices.class, DustGuiTags.class), 
-        Geometry(true, DustGeometryTypes.class, DustGeometryServices.class, DustGeometryValues.class, DustGeometryAtts.class, DustGeometryLinks.class), 
+//        Geometry(true, DustGeometryTypes.class, DustGeometryServices.class, DustGeometryValues.class, DustGeometryAtts.class, DustGeometryLinks.class), 
+        Geometry(DustGeometryTypes.class, DustGeometryServices.class, DustGeometryValues.class, DustGeometryAtts.class, DustGeometryLinks.class), 
 
 		;
 		/* @formatter:on */

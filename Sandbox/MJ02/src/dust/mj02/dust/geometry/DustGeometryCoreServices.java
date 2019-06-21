@@ -1,5 +1,7 @@
 package dust.mj02.dust.geometry;
 
+import java.awt.Shape;
+import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +11,7 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustKernelComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
+import dust.utils.DustUtilsFactory;
 
 public interface DustGeometryCoreServices extends DustGeometryComponents, DustKernelComponents {
     DustGeometryValues EXEC_ORDER[] = { DustGeometryValues.GeometricDataRoleScale, DustGeometryValues.GeometricDataRoleRotate,
@@ -17,45 +20,67 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
     DustGeometryValues ACCESS[] = { DustGeometryValues.GeometricDimensionCartesianX, DustGeometryValues.GeometricDimensionCartesianY,
             DustGeometryValues.GeometricDimensionCartesianZ, };
 
-    public class DustRenderSource implements DustProcComponents.DustProcPocessor {
-
+    public class DustRenderSourceSimple implements DustProcComponents.DustProcPocessor {
         @Override
         public void processorProcess() throws Exception {
-            DustEntity eSrc = DustUtils.getCtxVal(ContextRef.self, null, true);
-            DustEntity pt = DustUtils.getCtxVal(ContextRef.self, DustDataLinks.EntityPrimaryType, true);
-            DustGeometryTypes dgt = EntityResolver.getKey(pt);
-            
-            if ( DustGeometryTypes.ShapeRef == dgt ) {
-                DustUtils.RefPathResolver rp = new DustUtils.RefPathResolver();
-                eSrc = rp.resolve(true);
-                pt = DustUtils.getByPath(eSrc, DustDataLinks.EntityPrimaryType);
-                dgt = EntityResolver.getKey(pt);
-            }
-            
             DustEntity eTarget = DustUtils.getCtxVal(ContextRef.msg, DustGenericLinks.ContextAwareEntity, true);
+            DustEntity msg = DustUtils.getCtxVal(ContextRef.msg, DustGenericLinks.CallbackMessage, true);
 
+            DustEntity self = DustUtils.getCtxVal(ContextRef.self, null, true);
+            DustUtils.accessEntity(DataCommand.setRef, msg, DustGenericLinks.ContextAwareEntity, self);
 
-            switch (dgt) {
-            case ShapePath:
-                DustUtils.accessEntity(DataCommand.setRef, eTarget, DustGeometryLinks.RenderTargetAllShapes, eSrc);
-                break;
-            case ShapeArc:
-                break;
-            case ShapeBox:
-                break;
-            case ShapeComposite:
-                break;
-            default:
-                Dust.wrapAndRethrowException("Invalid item type " + dgt, null);
-                break;
-            }
-
+            DustUtils.accessEntity(DataCommand.tempSend, eTarget, msg);
         }
     }
 
-    public class DustRenderTarget
+    public class DustRenderSourceComposite implements DustProcComponents.DustProcPocessor {
+
+        @Override
+        public void processorProcess() throws Exception {
+            DustEntity eTarget = DustUtils.getCtxVal(ContextRef.msg, DustGenericLinks.ContextAwareEntity, true);
+            
+            DustUtils.LazyMsgContainer lmc = new DustUtils.LazyMsgContainer() {
+                @Override
+                protected DustEntity createMsg() {
+                    DustEntity eMsg = DustUtils.accessEntity(DataCommand.getEntity, DustDataTypes.Message);
+                    return eMsg;
+                }
+            };
+            
+            DustEntity eSrc = DustUtils.getCtxVal(ContextRef.self, null, true);
+            DustUtils.accessEntity(DataCommand.processRef, eSrc, DustCollectionLinks.SequenceMembers, new RefProcessor() {
+                @Override
+                public void processRef(DustRef ref) {
+                    DustEntity incl = ref.get(RefKey.target);
+                    
+                    DustEntity msgAct = lmc.getMsg();
+                    DustUtils.accessEntity(DataCommand.setRef, msgAct, DustGenericLinks.ContextAwareEntity, incl);
+                    
+                    DustUtils.accessEntity(DataCommand.setRef, msgAct, DustDataLinks.MessageCommand, DustProcMessages.ActiveInit);
+                    DustUtils.accessEntity(DataCommand.tempSend, eTarget, msgAct);
+
+                    DustEntity shape = DustUtils.getByPath(incl, DustGeometryLinks.GeometricInclusionTarget);
+                    DustEntity eMsg = DustUtils.getCtxVal(ContextRef.msg, null, true);
+                    DustUtils.accessEntity(DataCommand.tempSend, shape, eMsg);
+                    
+                    DustUtils.accessEntity(DataCommand.setRef, msgAct, DustDataLinks.MessageCommand, DustProcMessages.ActiveRelease);
+                    DustUtils.accessEntity(DataCommand.tempSend, eTarget, msgAct);
+                }
+            });
+        }
+    }
+
+    public class DustRenderTargetAwtGeom
             implements DustProcComponents.DustProcEvaluator, DustProcComponents.DustProcActive, DustProcComponents.DustProcPocessor {
 
+        class GraphNode {
+            DustEntity incl;
+
+            public GraphNode(DustEntity incl) {
+                this.incl = incl;
+            }
+        }
+        
         class Transformation {
             DustGeometryValues action;
             DustEntity node;
@@ -65,24 +90,15 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
             public Transformation(DustGeometryValues action, DustEntity node) {
                 this.action = action;
                 this.node = node;
-                //
-                // DustRef ref = DustUtils.accessEntity(DataCommand.getValue, node, )
-                //
-                // for ( DustGeometryValues gv : ACCESS ) {
-                //
-                // values.put(gv, )
-                // }
             }
-
         }
 
-        class CollectedTransformations {
+        public class CollectedTransformations {
             ArrayList<Transformation> transformations = new ArrayList<>();
 
             public void add(DustEntity node) {
                 for (DustGeometryValues action : EXEC_ORDER) {
-                    DustEntity ea = DustUtils.getByPath(node, DustGenericLinks.ContextAwareEntity, DustGeometryLinks.GeometricInclusionParameters,
-                            action);
+                    DustEntity ea = DustUtils.getByPath(node, DustGeometryLinks.GeometricInclusionParameters, action);
                     if (null != ea) {
                         transformations.add(new Transformation(action, ea));
                     }
@@ -98,50 +114,98 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
             }
         }
 
+        Map<DustEntity, Shape> mapShapes;
+        DustUtilsFactory<DustEntity, GraphNode> factNodes = new DustUtilsFactory<DustEntity, GraphNode> ( false ) {
+            @Override
+            protected GraphNode create(DustEntity key, Object... hints) {
+                return new GraphNode(key);
+            }
+        };
+        
+        DustEntity axisX = EntityResolver.getEntity(DustGeometryValues.GeometricDimensionCartesianX);
+        DustEntity axisY = EntityResolver.getEntity(DustGeometryValues.GeometricDimensionCartesianY);
+
+        CollectedTransformations ct = new CollectedTransformations();
+
         @Override
         public void processorProcess() throws Exception {
-            // TODO Auto-generated method stub
+            DustEntity eShape = DustUtils.getCtxVal(ContextRef.msg, DustGenericLinks.ContextAwareEntity, true);
 
+            DustEntity pt = DustUtils.getByPath(eShape, DustDataLinks.EntityPrimaryType);
+            DustGeometryTypes dgt = EntityResolver.getKey(pt);
+            
+            switch (dgt) {
+            case ShapePath:
+                GeneralPath path = new GeneralPath();
+
+                DustUtils.accessEntity(DataCommand.processRef, eShape, DustCollectionLinks.SequenceMembers, new RefProcessor() {
+                    @Override
+                    public void processRef(DustRef ref) {
+                        DustEntity point = ref.get(RefKey.target);
+                        Double x = DustGeometryUtils.getMeasurement(point, axisX);
+                        Double y = DustGeometryUtils.getMeasurement(point, axisY);
+
+                        if ((null != x) && (null != y)) {
+                            if (null == path.getCurrentPoint()) {
+                                path.moveTo(x, y);
+                            } else {
+                                path.lineTo(x, y);
+                            }
+                        }
+                    }
+                });
+
+                if (null != path.getCurrentPoint()) {
+                    if (DustUtils.isTrue(eShape, DustGeometryAtts.ShapePathClosed)) {
+                        path.closePath();
+                    }
+                    mapShapes.put(eShape, path);
+                }
+                break;
+            case ShapeArc:
+                break;
+            case ShapeBox:
+                break;
+            case ShapeComposite:
+                break;
+            default:
+                Dust.wrapAndRethrowException("Invalid item type " + dgt, null);
+                break;
+            }
         }
 
         @Override
         public void activeInit() throws Exception {
             DustEntity eIncl = DustUtils.getMsgVal(DustGenericLinks.ContextAwareEntity, true);
-
-            DustEntity eNode = DustUtils.accessEntity(DataCommand.getEntity, DustGeometryTypes.RenderNode);
-            DustUtils.accessEntity(DataCommand.setRef, eNode, DustGenericLinks.ContextAwareEntity, eIncl);
-
-            DustEntity eParentNode = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustGeometryLinks.RenderTargetNodeStack, 0);
-            if (null != eParentNode) {
-                DustUtils.accessEntity(DataCommand.setRef, eNode, DustGenericLinks.ConnectedOwner, eParentNode);
-            }
-
-            CollectedTransformations ct = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg,
-                    DustGeometryAtts.RenderTargetTransformColl);
-            if (null == ct) {
-                ct = new CollectedTransformations();
-                DustUtils.accessEntity(DataCommand.setValue, ContextRef.msg, DustGeometryAtts.RenderTargetTransformColl, ct);
-            }
-
-            ct.add(eNode);
-
-            DustUtils.accessEntity(DataCommand.setValue, ContextRef.msg, DustGeometryLinks.RenderTargetNodeStack, eNode, 0);
+            factNodes.get(eIncl);
+            ct.add(eIncl);
         }
 
         @Override
         public void activeRelease() throws Exception {
-            DustEntity eNode = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustGeometryLinks.RenderTargetNodeStack, 0);
-            CollectedTransformations ct = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg,
-                    DustGeometryAtts.RenderTargetTransformColl);
-            ct.remove(eNode);
-
-            DustUtils.accessEntity(DataCommand.removeRef, ContextRef.msg, DustGeometryLinks.RenderTargetNodeStack, eNode);
+            DustEntity eIncl = DustUtils.getMsgVal(DustGenericLinks.ContextAwareEntity, true);
+            ct.remove(eIncl);
         }
 
         @Override
         public Object evaluatorEvaluate() throws Exception {
-            // TODO Auto-generated method stub
-            return null;
+            mapShapes = new HashMap<>();
+            
+            DustEntity self = DustUtils.getCtxVal(ContextRef.self, null, true);
+
+            DustEntity msgProc = DustUtils.accessEntity(DataCommand.cloneEntity, ContextRef.msg);
+            DustUtils.accessEntity(DataCommand.setRef, msgProc, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
+            DustUtils.accessEntity(DataCommand.setRef, msgProc, DustGenericLinks.ContextAwareEntity, self);
+
+            DustEntity msgCB = DustUtils.accessEntity(DataCommand.cloneEntity, ContextRef.msg);
+            DustUtils.accessEntity(DataCommand.setRef, msgCB, DustDataLinks.MessageCommand, DustProcMessages.ProcessorProcess);
+            DustUtils.accessEntity(DataCommand.setRef, msgProc, DustGenericLinks.CallbackMessage, msgCB);
+
+            DustEntity eTarget = DustUtils.getCtxVal(ContextRef.msg, DustGenericLinks.ContextAwareEntity, true);
+            
+            DustUtils.accessEntity(DataCommand.tempSend, eTarget, msgProc);
+
+            return mapShapes;
         }
     }
 
