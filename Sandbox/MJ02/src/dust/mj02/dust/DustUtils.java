@@ -233,11 +233,16 @@ public class DustUtils implements DustComponents, DustKernelComponents {
             if (null != item) {
                 DustEntity key = ref.get(RefKey.target);
                 if ( item instanceof DustRef ) {
-                    item = ((DustRef)item).getByKey(key);
-                } else {
+                    DustEntity eInMap = ((DustRef)item).getByKey(key);
+                    if ( null != eInMap ) {
+                        item = eInMap;
+                        return;
+                    }
+                } 
+//                else {
                     DustEntity e = toEntity(item);
                     item = accessEntity(DataCommand.getValue, e, key);
-                }
+//                }
             }
         }
     }
@@ -280,6 +285,9 @@ public class DustUtils implements DustComponents, DustKernelComponents {
 
     public static class AttConverter {
         private static final Object NOTSET = new Object();
+        private static final DustEntity E_VAR_VALUE = EntityResolver.getEntity(DustDataAtts.VariantValue);
+        private static final DustEntity E_VAR_TYPE = EntityResolver.getEntity(DustDataLinks.VariantValueType);
+        
         private final DustMetaAttDefTypeValues attType;
 
         private static DustUtilsFactory<DustEntity, AttConverter> attTypeInfo = new DustUtilsFactory<DustEntity, AttConverter>(false) {
@@ -295,10 +303,14 @@ public class DustUtils implements DustComponents, DustKernelComponents {
             attType = (null == at) ? DustMetaAttDefTypeValues.AttDefIdentifier : EntityResolver.getKey(at);
         }
 
-        String valToString(Object val) {
-//            if ( val instanceof String) {
-//                return (String) val;
-//            }
+//        private String valToString(Object val) {
+//            return valToString(attType, val);
+//        }
+
+        public static String valToString(DustMetaAttDefTypeValues attType, Object val) {
+            if ( val instanceof String ) {
+                return (String) val;
+            }
             switch (attType) {
             case AttDefBool:
                 return Boolean.toString((boolean) val);
@@ -314,7 +326,11 @@ public class DustUtils implements DustComponents, DustKernelComponents {
             return "";
         }
 
-        private Object stringToOb(String str) {
+//        private Object stringToOb(String str) {
+//            return stringToOb(attType, str);
+//        }
+
+        public static Object stringToOb(DustMetaAttDefTypeValues attType, String str) {
             if ( DustUtilsJava.isEmpty(str) ) {
                 return NOTSET;
             }
@@ -361,11 +377,37 @@ public class DustUtils implements DustComponents, DustKernelComponents {
 
         public static String getAttAsString(DustEntity e, DustEntity att) {
             Object val = accessEntity(DataCommand.getValue, e, att);
-            return ((null == val) || DustUtilsJava.isEmpty(DustUtilsJava.toString(val))) ? "" : attTypeInfo.get(att).valToString(val);
+            
+            DustMetaAttDefTypeValues attType = getAttTypeVal(e, att);
+            
+            return ((null == val) || DustUtilsJava.isEmpty(DustUtilsJava.toString(val))) ? "" : AttConverter.valToString(attType, val);
+        }
+
+        public static DustMetaAttDefTypeValues getAttTypeVal(DustEntity e, DustEntity att) {
+            DustMetaAttDefTypeValues attType;
+            
+            if ( E_VAR_VALUE == att ) {
+                DustRef rAT = accessEntity(DataCommand.getValue, e, E_VAR_TYPE);
+                attType = (null == rAT) ? DustMetaAttDefTypeValues.AttDefIdentifier : EntityResolver.getKey(rAT.get(RefKey.target));
+            } else {
+                attType = attTypeInfo.get(att).attType;
+            }
+            
+            return attType;
         }
 
         public static <RetType> RetType setAttFromString(DustEntity e, DustEntity att, String str) {
-            Object val = DustUtilsJava.isEmpty(str) ? NOTSET : attTypeInfo.get(att).stringToOb(str);
+            DustMetaAttDefTypeValues attType = getAttTypeVal(e, att);
+
+//            if ( E_VAR_VALUE == att ) {
+//                DustEntity eAT = accessEntity(DataCommand.getValue, e, E_VAR_TYPE);
+//                attType = (null == eAT) ? DustMetaAttDefTypeValues.AttDefIdentifier : EntityResolver.getKey(eAT);
+//            } else {
+//                attType = attTypeInfo.get(att).attType;
+//            }
+
+            Object val = DustUtilsJava.isEmpty(str) ? NOTSET : AttConverter.stringToOb(attType, str);
+//            Object val = DustUtilsJava.isEmpty(str) ? NOTSET : attTypeInfo.get(att).stringToOb(str);
             return (RetType) accessEntity(DataCommand.setValue, e, att, (NOTSET == val) ? null : val);
         }
     }

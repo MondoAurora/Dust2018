@@ -28,7 +28,9 @@ public interface DustPersistenceComponents extends DustKernelComponents {
         EntityId(DustCommAtts.PersistentEntityId), 
         LocalId(DustGenericAtts.IdentifiedIdLocal), 
         PrimaryType(DustDataLinks.EntityPrimaryType), 
-        NativeId(DustProcAtts.NativeBoundId)
+        NativeId(DustProcAtts.NativeBoundId), 
+        VariantType(DustDataLinks.VariantValueType), 
+        VariantVal(DustDataAtts.VariantValue)
         
         ;
         /* @formatter:on */
