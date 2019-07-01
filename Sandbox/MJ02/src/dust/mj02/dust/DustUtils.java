@@ -398,6 +398,7 @@ public class DustUtils implements DustComponents, DustKernelComponents {
                 accessEntity(DataCommand.tempSend, ePT, eFmtMsg);
     
                 txt = DustUtils.accessEntity(DataCommand.getValue, eFmtMsg, DustDataAtts.MessageReturn);
+                accessEntity(DataCommand.removeRef, fmtRoot, DustGenericComponents.DustGenericLinks.ContextAwareEntity);
             } catch (Throwable t) {
                 DustUtilsDev.dump("temp swallow exception in formatting");
             } finally {

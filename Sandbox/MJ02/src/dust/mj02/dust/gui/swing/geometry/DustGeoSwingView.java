@@ -57,7 +57,7 @@ public class DustGeoSwingView extends EntitySpecPanelBase implements DustGeometr
     int margin;
     AffineTransform translate;
 
-    Map<DustEntity, Shape> mapShapes;
+    Map<Object, Shape> mapShapes;
 
     DustSwingCommandManager<RendererPanelCmds> cm = new DustSwingCommandManager<RendererPanelCmds>(RendererPanelCmds.class) {
         @Override

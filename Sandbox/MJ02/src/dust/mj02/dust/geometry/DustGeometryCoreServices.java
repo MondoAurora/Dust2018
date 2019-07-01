@@ -12,6 +12,7 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustKernelComponents;
 import dust.mj02.dust.knowledge.DustProcComponents;
+import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 
 public interface DustGeometryCoreServices extends DustGeometryComponents, DustKernelComponents {
@@ -58,6 +59,8 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
         }
         
         void apply(DustGeometryValues action, DustSimplePoint3D param) {
+            DustUtilsDev.dump(action, this, param);
+            
             switch (action) {
             case GeometricDataRoleLocate:
                 for ( DustGeometryValues v : DIMS ) {
@@ -160,11 +163,11 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
             DustEntity node;    
             DustSimplePoint3D pt;
 
-            public Transformation(DustGeometryValues action, DustEntity node) {
+            public Transformation(DustGeometryValues action, DustEntity node, DustEntity param) {
                 this.action = action;
                 this.node = node;
 
-                pt = new DustSimplePoint3D(node);
+                pt = new DustSimplePoint3D(param);
             }
 
             public void apply(DustSimplePoint3D ptTarget) {
@@ -176,10 +179,12 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
             ArrayList<Transformation> transformations = new ArrayList<>();
 
             public void add(DustEntity node) {
-                for (DustGeometryValues action : EXEC_ORDER) {
+                DustGeometryValues EXEC_ORDER_REV[] = { DustGeometryValues.GeometricDataRoleLocate, DustGeometryValues.GeometricDataRoleRotate, DustGeometryValues.GeometricDataRoleScale,
+                        };
+                for (DustGeometryValues action : EXEC_ORDER_REV) {
                     DustEntity ea = DustUtils.getByPath(node, DustGeometryLinks.GeometricInclusionParameters, action);
                     if (null != ea) {
-                        transformations.add(new Transformation(action, ea));
+                        transformations.add(0, new Transformation(action, node, ea));
                     }
                 }
             }
@@ -199,7 +204,7 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
             }
         }
 
-        Map<DustEntity, Shape> mapShapes;
+        Map<Object, Shape> mapShapes;
         DustUtilsFactory<DustEntity, GraphNode> factNodes = new DustUtilsFactory<DustEntity, GraphNode>(false) {
             @Override
             protected GraphNode create(DustEntity key, Object... hints) {
@@ -247,7 +252,7 @@ public interface DustGeometryCoreServices extends DustGeometryComponents, DustKe
                     if (DustUtils.isTrue(eShape, DustGeometryAtts.ShapePathClosed)) {
                         path.closePath();
                     }
-                    mapShapes.put(eShape, path);
+                    mapShapes.put(new Object(), path);
                 }
                 break;
             case ShapeArc:
