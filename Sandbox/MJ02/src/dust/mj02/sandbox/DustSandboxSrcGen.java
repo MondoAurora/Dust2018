@@ -3,6 +3,7 @@ package dust.mj02.sandbox;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.text.MessageFormat;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
@@ -15,6 +16,7 @@ public class DustSandboxSrcGen implements DustSandboxComponents, DustProcCompone
     public void processorProcess() throws Exception {
         String targetDir = DustUtils.getCtxVal(ContextRef.self, DustGenericAtts.StreamFileName, false);
         DustRef refUnits = DustUtils.getCtxVal(ContextRef.self, DustSandboxLinks.SandboxSrcGenUnits, false);
+        String fmt = DustUtils.getCtxVal(ContextRef.self, DustSandboxAtts.SandboxSrcGenFileNameTemplate, false);
         
         DustEntity genRenderer = DustUtils.getByPath(ContextRef.self, DustSandboxLinks.SandboxSrcGenRenderer);
         
@@ -36,7 +38,7 @@ public class DustSandboxSrcGen implements DustSandboxComponents, DustProcCompone
                 DustEntity eT = ref.get(RefKey.target);
                 
                 String un = DustUtils.accessEntity(DataCommand.getValue, eT, DustGenericAtts.IdentifiedIdLocal);
-                String fName = targetDir + "\\" + un + ".cs";
+                String fName = targetDir + "\\" + MessageFormat.format(fmt, un);
                 
                 DustUtilsDev.dump("Generating source:", fName);
 

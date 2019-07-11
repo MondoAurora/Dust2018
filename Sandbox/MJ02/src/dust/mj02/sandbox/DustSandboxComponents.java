@@ -9,6 +9,10 @@ public interface DustSandboxComponents
         SandboxFinder, SandboxSrcGen
     };
 
+    enum DustSandboxAtts implements DustEntityKey {
+        SandboxSrcGenFileNameTemplate
+    };
+
     enum DustSandboxLinks implements DustEntityKey {
         SandboxFinderPath, SandboxFinderEntity, SandboxSrcGenUnits, SandboxSrcGenRenderer
     };
