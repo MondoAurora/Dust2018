@@ -80,14 +80,16 @@ public interface DustProcCoreServices extends DustKernelImplComponents {
                 DustUtils.RefPathResolver pr = new DustUtils.RefPathResolver();
                 DustRef refIt = pr.resolve(loopEntity, DustProcLinks.IteratorLinkLoop, false);
 
-                refIt.processAll(
-//                DustUtils.accessEntity(DataCommand.processRef, loopEntity, loopKey, 
-                        new RefProcessor() {
-                    @Override
-                    public void processRef(DustRef ref) {
-                        procRef(ref);
-                    }
-                });
+                if (null != refIt) {
+                    refIt.processAll(
+                            // DustUtils.accessEntity(DataCommand.processRef, loopEntity, loopKey,
+                            new RefProcessor() {
+                                @Override
+                                public void processRef(DustRef ref) {
+                                    procRef(ref);
+                                }
+                            });
+                }
 
                 if (null != msgRelay) {
                     optSend(DustProcLinks.IteratorMsgEnd);

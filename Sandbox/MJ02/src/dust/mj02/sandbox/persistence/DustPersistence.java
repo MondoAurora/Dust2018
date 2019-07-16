@@ -98,6 +98,29 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
 
         return eu;
     }
+    
+    public static Set<DustEntity> getEntityFromUnit(String modName, String itemID) {
+        Set<DustEntity> refs = new HashSet<>();
+        
+        if ( !DustUtilsJava.isEmpty(modName) && !DustUtilsJava.isEmpty(itemID) ) {
+            DustEntity eu = getUnit(modName);
+            
+            Dust.processRefs(new RefProcessor() {
+                
+                @Override
+                public void processRef(DustRef ref) {
+                    DustEntity t = ref.get(RefKey.target);
+                    Object ui = DustUtils.accessEntity(DataCommand.getValue, t, DustCommAtts.PersistentEntityId);
+                    if ( itemID.equals(ui)) {
+                        refs.add(t);
+                    }
+                }
+            }, eu, EntityResolver.getEntity(DustCommLinks.UnitEntities), null);
+        }
+        
+        return refs;
+    }
+
 
     static DustUtils.TagWatcher metaFlags = new DustUtils.TagWatcher(DustCommTags.PersistentNotStored, DustMetaTags.AttRaw);
 //    static DustUtilsFactory<DustEntity, Set<Object>> factNotStoredFlag = new DustUtilsFactory<DustEntity, Boolean>(false) {

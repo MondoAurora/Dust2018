@@ -17,7 +17,7 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents, D
         if (!inited) {
 
             initHttpTest();
-            initDumpListener();
+//            initDumpListener();
             // initJsonLoader();
 
             initScheduler();

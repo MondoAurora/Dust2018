@@ -14,7 +14,7 @@ public interface DustSandboxComponents
     };
 
     enum DustSandboxLinks implements DustEntityKey {
-        SandboxFinderPath, SandboxFinderEntity, SandboxSrcGenUnits, SandboxSrcGenRenderer
+        SandboxFinderPath, SandboxFinderEntity, SandboxSrcGenUnits, SandboxSrcGenModules, SandboxSrcGenRenderer
     };
 
 
