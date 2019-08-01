@@ -3,6 +3,7 @@ package dust.mj02.dust.knowledge;
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustComponents;
 import dust.mj02.dust.DustUtils;
+import dust.mj02.dust.knowledge.DustCommComponents.DustCommTags;
 import dust.mj02.dust.knowledge.DustProcComponents.DustProcTypes;
 import dust.mj02.dust.text.DustTextGen;
 import dust.mj02.dust.tools.DustGenericComponents;
@@ -35,6 +36,7 @@ public class DustProcRuntime extends Dust implements DustComponents, DustDataCom
         DustUtils.accessEntity(DataCommand.setRef, rootSession.ctxSelf, DustDataLinks.EntityPrimaryType, DustProcTypes.Session);
         DustUtils.accessEntity(DataCommand.setRef, rootSession.ctxSelf, DustDataLinks.EntityModels, DustProcTypes.Session);
         DustUtils.accessEntity(DataCommand.setRef, rootSession.ctxSelf, DustDataLinks.EntityModels, DustGenericTypes.Identified);
+        DustUtils.accessEntity(DataCommand.setRef, rootSession.ctxSelf, DustDataLinks.EntityTags, DustCommTags.PersistentNotStored);
         DustUtils.accessEntity(DataCommand.setValue, rootSession.ctxSelf, DustGenericAtts.IdentifiedIdLocal, "RootSession");
 		
 		new DustGuiSwingMontruMain().activeInit();

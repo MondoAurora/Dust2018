@@ -5,12 +5,14 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
+import java.io.File;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -24,6 +26,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
@@ -275,6 +278,43 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		});
 		dragLayer.setSize(getSize());
 
+		setTransferHandler(new TransferHandler() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+    		public boolean canImport(TransferSupport support) {
+                DataFlavor[] dataFlavors = support.getDataFlavors();
+                boolean ok = -1 != DustUtilsJava.indexInArr(DataFlavor.javaFileListFlavor, dataFlavors);
+                
+                return ok;
+    		}
+            
+            @Override
+            public boolean importData(TransferSupport support) {
+                try {
+                    Object o = support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                    
+                    for ( Object of : (Collection<?>)o ) {
+                        File f = (File) of;
+                        String id = f.toURI().toURL().toString();
+                        
+                        DustEntity e = DustUtils.accessEntity(DataCommand.getEntity, DustGenericTypes.Stream, null, id, new EntityProcessor() {
+                            @Override
+                            public void processEntity(DustEntity entity) {
+                                DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.IdentifiedIdLocal, id);
+                                DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.StreamFileName, f.getAbsolutePath());
+                            }
+                        });
+                        
+                        activateEditorPanel(e);                        
+                    }
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+		}); 
 
 		addMouseListener(ml);
 	}
@@ -282,48 +322,6 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 	public void removeSelRefs() {
 		links.removeSelRefs();
 	}
-
-//	public void saveAll() {
-//		Set<DustEntity> stores = new HashSet<>();
-//		DustEntity msg = Dust.getEntity(null);
-//		DustUtils.accessEntity(DataCommand.setRef, msg, DustDataLinks.MessageCommand, DustCommMessages.StoreSave);
-//
-//		for (EntityDocWindow edw : factDocWindows.values()) {
-//			DustRef ref = DustUtils.accessEntity(DataCommand.getValue, edw.eEntity, DustCommLinks.PersistentContainingUnit);
-//			if (null != ref) {
-//				DustEntity store = ref.get(RefKey.target);
-//
-//				if (stores.add(store)) {
-//					Dust.accessEntity(DataCommand.tempSend, store, msg, null, null);
-//				}
-//			}
-//		}
-//	}
-
-//	public void loadFiles(Object... cont) {
-//		DustEntity msg = Dust.getEntity(null);
-//		DustUtils.accessEntity(DataCommand.setRef, msg, DustDataLinks.MessageCommand, DustCommMessages.StoreLoad);
-//
-//		for (Object of : cont) {
-//			File f = (File) of;
-//			String fp = f.getAbsolutePath();
-//
-//			DustEntity store = DustUtils.accessEntity(DataCommand.getEntity, DustCommTypes.Store, null, "Store: " + fp,
-//					new EntityProcessor() {
-//						@Override
-//						public void processEntity(DustEntity entity) {
-//							DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.StreamFileName, fp);
-//							DustUtils.accessEntity(DataCommand.setValue, entity, DustGenericAtts.IdentifiedIdLocal, f.getName());
-////							DustUtils.accessEntity(DataCommand.setRef, entity, DustDataLinks.EntityServices,
-////									DustCommServices.Store);
-//						}
-//					});
-//
-//			DustUtils.accessEntity(DataCommand.tempSend, store, msg, null, null);
-//		}
-//		
-//		refreshData();
-//	}
 
 	public void refreshData() {
        DustSandbox.init();

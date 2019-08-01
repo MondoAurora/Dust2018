@@ -164,7 +164,13 @@ public class DustUtils implements DustComponents, DustKernelComponents {
 
     public static void registerService(Class<?> implClass, boolean autoInit, DustEntityKey svc, DustEntityKey... implServices) {
         String cName = implClass.getName();
-        DustEntity ba = Dust.getEntity("BinaryAssignment: " + cName);
+        String id = " -> " + cName;
+        DustEntity ba = Dust.getEntity(id);
+
+        DustEntity bt = EntityResolver.getEntity(DustProcTypes.Binary);
+        DustUtils.accessEntity(DataCommand.setRef, ba, DustDataLinks.EntityPrimaryType, bt, null);
+        DustUtils.accessEntity(DataCommand.setRef, ba, DustDataLinks.EntityModels, bt, null);
+        DustUtils.accessEntity(DataCommand.setValue, ba, DustGenericAtts.IdentifiedIdLocal, id, null);
 
         DustUtils.accessEntity(DataCommand.setValue, ba, DustProcAtts.BinaryObjectName, cName, null);
         DustUtils.accessEntity(DataCommand.setRef, ba, DustProcLinks.BinaryImplementedServices, svc, null);
@@ -322,7 +328,8 @@ public class DustUtils implements DustComponents, DustKernelComponents {
             case AttDefDouble:
                 return Double.toString((double) val);
             case AttDefIdentifier:
-                return (String) val;
+                return DustUtilsJava.toString(val);
+//                return (String) val;
             case AttDefLong:
                 return Long.toString((long) val);
             case AttDefRaw:

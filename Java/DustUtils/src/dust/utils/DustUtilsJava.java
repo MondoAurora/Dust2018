@@ -157,20 +157,35 @@ public class DustUtilsJava implements DustUtilsComponents {
 		target.put(o2, o1);
 	}
 
-	public static int indexOf(Object val, Object... items) {
-		if ( null != items ) {
-			int idx = 0;
-			for ( Object it : items ) {
-				if ( val == it ) {
-					return idx;
-				} else {
-					++idx;
-				}
-			}
-		}
-		
-		return -1;
-	}
+    public static int indexOf(Object val, Object... items) {
+        if ( null != items ) {
+            int idx = 0;
+            for ( Object it : items ) {
+                if ( val == it ) {
+                    return idx;
+                } else {
+                    ++idx;
+                }
+            }
+        }
+        
+        return -1;
+    }
+
+    public static <RetType> int indexInArr(RetType val, RetType[] items) {
+        if ( null != items ) {
+            int idx = 0;
+            for ( RetType it : items ) {
+                if ( isEqual(val, it) ) {
+                    return idx;
+                } else {
+                    ++idx;
+                }
+            }
+        }
+        
+        return -1;
+    }
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static boolean manageCollection(CollectionAction action, Collection coll, Object obj) {
