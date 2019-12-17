@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project MJ02 with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR file Export Wizard-->
+    <!--ANT 1.7 is required-->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="C:/Users/loran/work/eclipseWS"/>
+    <property name="dir.jarfile" value="${dir.buildfile}"/>
+    <target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/mj02.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="dust.mj02.dust.knowledge.DustProcRuntime"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ json-simple-1.1.1.jar jetty-http-9.3.7.v20160115.jar jetty-io-9.3.7.v20160115.jar jetty-security-9.3.7.v20160115.jar jetty-server-9.3.7.v20160115.jar jetty-servlet-9.3.7.v20160115.jar jetty-util-9.3.7.v20160115.jar jetty-webapp-9.3.7.v20160115.jar servlet-api-3.1.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/MJ02/bin"/>
+            <fileset dir="C:/Users/loran/work/git/Dust2018/Java/DustUtils/bin"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/json" includes="json-simple-1.1.1.jar"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/jetty" includes="jetty-http-9.3.7.v20160115.jar"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/jetty" includes="jetty-io-9.3.7.v20160115.jar"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/jetty" includes="jetty-security-9.3.7.v20160115.jar"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/jetty" includes="jetty-server-9.3.7.v20160115.jar"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/jetty" includes="jetty-servlet-9.3.7.v20160115.jar"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/jetty" includes="jetty-util-9.3.7.v20160115.jar"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/jetty" includes="jetty-webapp-9.3.7.v20160115.jar"/>
+            <zipfileset dir="C:/Users/loran/work/git/Dust2018/Sandbox/ExtLib/lib/jetty" includes="servlet-api-3.1.jar"/>
+        </jar>
+    </target>
+</project>
