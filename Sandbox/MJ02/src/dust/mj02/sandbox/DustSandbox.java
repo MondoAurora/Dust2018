@@ -2,14 +2,16 @@ package dust.mj02.sandbox;
 
 import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
-import dust.mj02.dust.geometry.DustGeometryCoreServices;
 import dust.mj02.dust.geometry.DustGeometryComponents;
+import dust.mj02.dust.geometry.DustGeometryCoreServices;
 import dust.mj02.sandbox.http.DustHttpClient;
 import dust.mj02.sandbox.http.DustHttpComponents;
-import dust.mj02.sandbox.http.DustHttpServerJetty;
 import dust.mj02.sandbox.http.DustHttpServerCoreServices;
+import dust.mj02.sandbox.http.DustHttpServerJetty;
+import dust.mj02.sandbox.jdbc.DustJdbcComponents;
+import dust.mj02.sandbox.jdbc.DustJdbcConnector;
 
-public class DustSandbox implements DustSandboxComponents, DustHttpComponents, DustGeometryComponents {
+public class DustSandbox implements DustSandboxComponents, DustHttpComponents, DustGeometryComponents, DustJdbcComponents {
 
     private static boolean inited = false;
 
@@ -19,7 +21,9 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents, D
             initHttpTest();
 //            initDumpListener();
             // initJsonLoader();
-
+            
+            initJdbc();
+            
             initScheduler();
             initFinderTest();
             
@@ -54,6 +58,11 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents, D
         DustUtils.accessEntity(DataCommand.setRef, DustSandboxTypes.SandboxFinder, DustMetaLinks.TypeLinkedServices, DustSandboxServices.SandboxFinder);
 
         DustUtils.accessEntity(DataCommand.setRef, DustSandboxLinks.SandboxFinderPath, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefArray);
+    }
+
+    public static void initJdbc() {
+        DustUtils.registerService(DustJdbcConnector.class, false, DustJdbcServices.JdbcConnector, DustProcServices.Processor, DustProcServices.Evaluator, DustProcServices.Active, DustProcServices.Listener);
+        DustUtils.accessEntity(DataCommand.setRef, DustJdbcTypes.JdbcConnector, DustMetaLinks.TypeLinkedServices, DustJdbcServices.JdbcConnector);
     }
 
     public static void initSrcGen() {
