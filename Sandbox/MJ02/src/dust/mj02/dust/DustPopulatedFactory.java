@@ -31,6 +31,11 @@ public abstract class DustPopulatedFactory<ValType> extends DustUtilsFactory<Str
             }
         }, eSrc, linkType, eTrg);
     }
+    
+    public DustPopulatedFactory(DustEntity center, Object linkType, boolean leftCenter) {
+        this(center, DustUtils.optResolve(linkType), leftCenter);
+    }
+
 
     protected abstract ValType createForRef(String id, DustEntity other);
 
@@ -44,8 +49,8 @@ public abstract class DustPopulatedFactory<ValType> extends DustUtilsFactory<Str
 
             this.itemType = itemType;
         }
-        public Entity(DustEntity center, Object linkType, boolean leftCenter, DustEntity itemType) {
-            this(center, DustUtils.optResolve(linkType), leftCenter, itemType);
+        public Entity(DustEntity center, Object linkType, boolean leftCenter, Object itemType) {
+            this(center, DustUtils.optResolve(linkType), leftCenter, DustUtils.optResolve(itemType));
         }
 
         public void setUnit(DustEntity unit) {

@@ -314,10 +314,6 @@ public class DustUtils implements DustComponents, DustKernelComponents {
             attType = (null == at) ? DustMetaAttDefTypeValues.AttDefIdentifier : EntityResolver.getKey(at);
         }
 
-        // private String valToString(Object val) {
-        // return valToString(attType, val);
-        // }
-
         public static String valToString(DustMetaAttDefTypeValues attType, Object val) {
             if (val instanceof String) {
                 return (String) val;
@@ -338,9 +334,27 @@ public class DustUtils implements DustComponents, DustKernelComponents {
             return "";
         }
 
-        // private Object stringToOb(String str) {
-        // return stringToOb(attType, str);
-        // }
+        public static Object fixValueType(DustMetaAttDefTypeValues valType, Object value) {
+            if (null != value) {
+                switch (valType) {
+                case AttDefBool:
+                    break;
+                case AttDefDouble:
+                    value = ((Number) value).doubleValue();
+                    break;
+                case AttDefIdentifier:
+                    break;
+                case AttDefLong:
+                    value = ((Number) value).longValue();
+                    break;
+                case AttDefRaw:
+                    value = value.toString();
+                    break;
+                }
+            }
+            
+            return value;
+        }
 
         public static Object stringToOb(DustMetaAttDefTypeValues attType, String str) {
             if (DustUtilsJava.isEmpty(str)) {
