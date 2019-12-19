@@ -1,8 +1,12 @@
 package dust.mj02.sandbox.jdbc;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import dust.mj02.dust.Dust;
@@ -62,5 +66,28 @@ public class DustJdbcUtils implements DustJdbcComponents {
         }
         
         return ret;
+    }
+    
+    private static Set<WeakReference<Connection>> CONNECTIONS = new HashSet<>();
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                for (WeakReference<Connection> wrc : CONNECTIONS) {
+                    Connection c = wrc.get();
+                    if (null != c) {
+                        try {
+                            DustJdbcConnector.releaseConn(c, null);
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    public static void addConn(Connection conn) {
+        CONNECTIONS.add(new WeakReference<Connection>(conn));
     }
 }

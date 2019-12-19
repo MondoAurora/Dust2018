@@ -1,6 +1,5 @@
 package dust.mj02.sandbox.jdbc;
 
-import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -8,20 +7,20 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
 
 import dust.mj02.dust.Dust;
+import dust.mj02.dust.DustPopulatedFactory;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.text.DustTextComponents;
 import dust.utils.DustUtilsFactory;
+import dust.utils.DustUtilsJava;
+import dust.utils.DustUtilsMuteManager;
 
 public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents.DustProcActive, DustProcComponents.DustProcPocessor,
         DustProcComponents.DustProcEvaluator, DustProcComponents.DustProcListener {
-
-    public static String[] COL_DEF_COLS;
 
     class ColumnInfo {
         final String colName;
@@ -30,22 +29,77 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
         Map<String, Object> colData;
 
         boolean primaryKey;
-        Map<String, Object> fKeyInfo;
+        Map<String, Object> keyData;
+        TableInfo foreignTableInfo;
+
+        DustMetaAttDefTypeValues valType;
 
         public ColumnInfo(String colName, DustEntity eColumn) {
             this.colName = colName;
             this.eColumn = eColumn;
         };
 
-        public ColumnInfo(String colName, ResultSet rsFrom, DustEntity eTable) {
-            colData = DustJdbcUtils.mapFromRS(rsFrom, COL_DEF_COLS);
+        public ColumnInfo(String colName, ResultSet rsFrom, TableInfo ti) {
+            colData = DustJdbcUtils.mapFromRS(rsFrom);
             this.colName = colName;
 
-            eColumn = DustUtils.accessEntity(DataCommand.getEntity, DustMetaTypes.AttDef);
+            boolean isRef = initKeyData(ti);
+
+            eColumn = DustUtils.accessEntity(DataCommand.getEntity, isRef ? DustMetaTypes.LinkDef : DustMetaTypes.AttDef);
 
             DustUtils.accessEntity(DataCommand.setValue, eColumn, DustGenericAtts.IdentifiedIdLocal, colName);
-            DustUtils.accessEntity(DataCommand.setRef, eColumn, DustMetaLinks.AttDefParent, eTable);
-            DustUtils.accessEntity(DataCommand.setRef, eColumn, DustMetaLinks.AttDefType, DustMetaAttDefTypeValues.AttDefIdentifier);
+            String typeName = (String) colData.get(JDBC_TYPE_NAME);
+            DustEntity eDbType = factTypeInfos.get(typeName);
+            DustUtils.accessEntity(DataCommand.setRef, eColumn, DustJdbcLinks.ColumnType, eDbType);
+
+            if (isRef) {
+                DustUtils.accessEntity(DataCommand.setRef, eColumn, DustMetaLinks.LinkDefParent, ti.eTable);
+
+                DustUtils.accessEntity(DataCommand.setRef, eColumn, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSingle);
+                DustUtils.accessEntity(DataCommand.setRef, eColumn, DustMetaLinks.LinkDefItemTypePrimary, foreignTableInfo.eTable);
+            } else {
+                DustUtils.accessEntity(DataCommand.setRef, eColumn, DustMetaLinks.AttDefParent, ti.eTable);
+
+                optSetAttType(eDbType);
+            }
+        }
+
+        public boolean initKeyData(TableInfo ti) {
+            boolean isRef = false;
+
+            keyData = ti.pKeyInfo.get(colName);
+            primaryKey = null != keyData;
+
+            if (!primaryKey) {
+                keyData = ti.fKeyInfo.get(colName);
+                if (null != keyData) {
+                    isRef = true;
+                    String pkTbl = (String) keyData.get(JDBC_PKTABLE_NAME);
+                    foreignTableInfo = factTableInfos.get(pkTbl);
+                }
+            }
+
+            return isRef;
+        }
+
+        public void optSetAttType(DustEntity eDbType) {
+            if (null == valType) {
+                DustEntity eAttType = null;
+                DustRef refAttType = DustUtils.accessEntity(DataCommand.getValue, eColumn, DustMetaLinks.AttDefType);
+                if (null == refAttType) {
+                    if (null == eDbType) {
+                        eDbType = ((DustRef) DustUtils.accessEntity(DataCommand.getValue, eColumn, DustJdbcLinks.ColumnType)).get(RefKey.target);
+                    }
+                    DustRef refDustType = (DustRef) DustUtils.accessEntity(DataCommand.getValue, eDbType, DustJdbcLinks.DataTypeToDustType);
+                    if (null != refDustType) {
+                        eAttType = refDustType.get(RefKey.target);
+                        DustUtils.accessEntity(DataCommand.setRef, eColumn, DustMetaLinks.AttDefType, eAttType);
+                    }
+                } else {
+                    eAttType = refAttType.get(RefKey.target);
+                }
+                valType = EntityResolver.getKey(eAttType);
+            }
         }
     }
 
@@ -53,27 +107,36 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
         final String tblName;
         final DustEntity eTable;
 
-        boolean dbVerified;
+        private boolean dbVerified;
+
+        Map<String, Map<String, Object>> pKeyInfo = new TreeMap<>();
+        Map<String, Map<String, Object>> fKeyInfo = new TreeMap<>();
 
         DustUtilsFactory<String, ColumnInfo> columns = new DustUtilsFactory<String, ColumnInfo>(true) {
             @Override
             protected ColumnInfo create(String key, Object... hints) {
-                return new ColumnInfo(key, (ResultSet) hints[0], eTable);
+                return new ColumnInfo(key, (ResultSet) hints[0], TableInfo.this);
             }
         };
 
-        DustUtilsFactory<String, DustEntity> factData = new DustUtilsFactory<String, DustEntity>(true) {
-            @Override
-            protected DustEntity create(String key, Object... hints) {
-                DustEntity e = DustUtils.accessEntity(DataCommand.getEntity, eTable);
+        DustPopulatedFactory.Entity pfData;
 
-                DustUtils.accessEntity(DataCommand.setValue, e, DustGenericAtts.IdentifiedIdLocal, key);
-                DustUtils.accessEntity(DataCommand.setRef, e, DustGenericLinks.ConnectedOwner, eTable);
-                DustUtils.accessEntity(DataCommand.setRef, e, DustCommLinks.PersistentContainingUnit, eMyUnit);
-
-                return e;
-            }
-        };
+        // DustUtilsFactory<String, DustEntity> factData = new DustUtilsFactory<String,
+        // DustEntity>(true) {
+        // @Override
+        // protected DustEntity create(String key, Object... hints) {
+        // DustEntity e = DustUtils.accessEntity(DataCommand.getEntity, eTable);
+        //
+        // DustUtils.accessEntity(DataCommand.setValue, e,
+        // DustGenericAtts.IdentifiedIdLocal, key);
+        // DustUtils.accessEntity(DataCommand.setRef, e,
+        // DustGenericLinks.ConnectedOwner, eTable);
+        // DustUtils.accessEntity(DataCommand.setRef, e,
+        // DustCommLinks.PersistentContainingUnit, eMyUnit);
+        //
+        // return e;
+        // }
+        // };
 
         public TableInfo(String tblName, DustEntity eTblType) {
             this.tblName = tblName;
@@ -97,15 +160,17 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
                 }
             }, null, DustUtils.optResolve(DustMetaLinks.LinkDefParent), eTable);
 
-            Dust.processRefs(new RefProcessor() {
-                @Override
-                public void processRef(DustRef ref) {
-                    DustEntity eRecord = ref.get(RefKey.source);
-                    String recId = DustUtils.accessEntity(DataCommand.getValue, eRecord, DustGenericAtts.IdentifiedIdLocal);
-                    factData.put(recId, eRecord);
-                }
-            }, null, DustUtils.optResolve(DustGenericLinks.ConnectedOwner), eTable);
+            // Dust.processRefs(new RefProcessor() {
+            // @Override
+            // public void processRef(DustRef ref) {
+            // DustEntity eRecord = ref.get(RefKey.source);
+            // String recId = DustUtils.accessEntity(DataCommand.getValue, eRecord,
+            // DustGenericAtts.IdentifiedIdLocal);
+            // factData.put(recId, eRecord);
+            // }
+            // }, null, DustUtils.optResolve(DustGenericLinks.ConnectedOwner), eTable);
 
+            initData();
         };
 
         public TableInfo(String tblName) {
@@ -115,39 +180,45 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
 
             DustUtils.accessEntity(DataCommand.setValue, eTable, DustGenericAtts.IdentifiedIdLocal, tblName);
             DustUtils.accessEntity(DataCommand.setRef, eTable, DustCommLinks.PersistentContainingUnit, eMyUnit);
+
+            initData();
         };
 
-        private void loadDbMeta() throws Exception {
-            ResultSet rs = dbMetaData.getPrimaryKeys(dbName, null, tblName);
-            String colName;
-            for (boolean ok = rs.first(); ok; ok = rs.next()) {
-                colName = rs.getString("COLUMN_NAME");
-                columns.get(colName).primaryKey = true;
-            }
+        private void initData() {
+            pfData = new DustPopulatedFactory.Entity(eTable, DustGenericLinks.ConnectedOwner, false, eTable);
+            pfData.setUnit(eMyUnit);
+        }
 
-            rs = dbMetaData.getImportedKeys(dbName, null, tblName);
-            DustJdbcUtils.dumpResultSet(rs);
-            for (boolean ok = rs.first(); ok; ok = rs.next()) {
-                colName = rs.getString("FKCOLUMN_NAME");
-                ColumnInfo columnInfo = columns.get(colName);
-                columnInfo.fKeyInfo = DustJdbcUtils.mapFromRS(rs);
-                DustEntity eCol = columnInfo.eColumn;
+        public void setDbVerified(boolean verified) throws Exception {
+            this.dbVerified = verified;
 
-                if (null == DustUtils.accessEntity(DataCommand.getValue, eCol, DustMetaLinks.LinkDefParent)) {
-                    DustUtils.accessEntity(DataCommand.dropEntity, eCol);
+            if (dbVerified) {
+                String colName;
 
-                    eCol = DustUtils.accessEntity(DataCommand.getEntity, DustMetaTypes.LinkDef);
+                ResultSet rs = dbMetaData.getPrimaryKeys(dbName, null, tblName);
+                for (boolean ok = rs.first(); ok; ok = rs.next()) {
+                    colName = rs.getString(JDBC_COLUMN_NAME);
+                    pKeyInfo.put(colName, DustJdbcUtils.mapFromRS(rs));
+                }
 
-                    DustUtils.accessEntity(DataCommand.setValue, eCol, DustGenericAtts.IdentifiedIdLocal, colName);
-                    DustUtils.accessEntity(DataCommand.setRef, eCol, DustMetaLinks.LinkDefParent, eTable);
-                    DustUtils.accessEntity(DataCommand.setRef, eCol, DustMetaLinks.LinkDefType, DustMetaLinkDefTypeValues.LinkDefSingle);
+                rs = dbMetaData.getImportedKeys(dbName, null, tblName);
+                for (boolean ok = rs.first(); ok; ok = rs.next()) {
+                    colName = rs.getString(JDBC_FKCOLUMN_NAME);
+                    fKeyInfo.put(colName, DustJdbcUtils.mapFromRS(rs));
                 }
             }
         }
 
         public void registerColumn(ResultSet rs) throws Exception {
-            String colName = rs.getString("COLUMN_NAME");
-            columns.get(colName, rs);
+            String colName = rs.getString(JDBC_COLUMN_NAME);
+            ColumnInfo colInfo = columns.get(colName, rs);
+            colInfo.initKeyData(this);
+        }
+
+        public void clean() {
+            for (DustEntity e : pfData.values()) {
+                DustUtils.accessEntity(DataCommand.dropEntity, e);
+            }
         }
     }
 
@@ -163,27 +234,21 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
         }
     };
 
+    DustUtilsFactory<String, DustEntity> factTypeInfos = new DustUtilsFactory<String, DustEntity>(true) {
+        @Override
+        protected DustEntity create(String key, Object... hints) {
+            DustEntity e = DustUtils.accessEntity(DataCommand.getEntity, DustJdbcTypes.JdbcDataType);
+
+            DustUtils.accessEntity(DataCommand.setValue, e, DustGenericAtts.IdentifiedIdLocal, key);
+            DustUtils.accessEntity(DataCommand.setRef, ContextRef.self, DustJdbcLinks.ConnectorDataTypes, e);
+            DustUtils.accessEntity(DataCommand.setRef, e, DustCommLinks.PersistentContainingUnit, eMyUnit);
+
+            return e;
+        }
+    };
+
     Connection conn = null;
     DatabaseMetaData dbMetaData;
-
-    private static Set<WeakReference<Connection>> CONNECTIONS = new HashSet<>();
-
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                for (WeakReference<Connection> wrc : CONNECTIONS) {
-                    Connection c = wrc.get();
-                    if (null != c) {
-                        try {
-                            releaseConn(c, null);
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
-    }
 
     private void updateParams() throws Exception {
         eMyUnit = ((DustRef) DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustCommLinks.PersistentContainingUnit))
@@ -216,21 +281,11 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
                 String dbUrl = (String) mapAtts.get("dbUrl") + "/" + dbName;
                 conn = DriverManager.getConnection(dbUrl, (String) mapAtts.get("userId"), (String) mapAtts.get("password"));
 
-                CONNECTIONS.add(new WeakReference<Connection>(conn));
+                DustJdbcUtils.addConn(conn);
 
                 dbMetaData = conn.getMetaData();
 
                 System.out.println("Connection successful.");
-
-                ResultSet rs;
-
-                rs = dbMetaData.getCatalogs();
-                System.out.println("CATALOGS");
-                DustJdbcUtils.dumpResultSet(rs);
-
-                rs = dbMetaData.getSchemas();
-                System.out.println("SCHEMAS");
-                DustJdbcUtils.dumpResultSet(rs);
 
                 Dust.processRefs(new RefProcessor() {
                     @Override
@@ -242,6 +297,15 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
                     }
                 }, null, DustUtils.optResolve(DustGenericLinks.ConnectedOwner), ContextRef.self);
 
+                Dust.processRefs(new RefProcessor() {
+                    @Override
+                    public void processRef(DustRef ref) {
+                        DustEntity e = ref.get(RefKey.target);
+                        String id = DustUtils.accessEntity(DataCommand.getValue, e, DustUtils.optResolve(DustGenericAtts.IdentifiedIdLocal));
+                        factTypeInfos.put(id, e);
+                    }
+                }, ContextRef.self, DustUtils.optResolve(DustJdbcLinks.ConnectorDataTypes), null);
+
             } catch (Throwable e) {
                 releaseConn(conn, e);
                 conn = null;
@@ -250,7 +314,7 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
         }
     }
 
-    private static void releaseConn(Connection conn, Throwable cause) throws Exception {
+    public static void releaseConn(Connection conn, Throwable cause) throws Exception {
         if (null != conn) {
             if (!conn.isClosed()) {
                 if (!conn.getAutoCommit()) {
@@ -278,37 +342,26 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
 
             System.out.println("Getting tables...");
 
-            rs = dbMetaData.getTables(dbName, null, null, new String[] { "TABLE" });
+            rs = dbMetaData.getTables(dbName, null, null, new String[] { JDBC_TABLE });
 
             DustJdbcUtils.dumpResultSet(rs);
 
             for (TableInfo ti : factTableInfos.values()) {
-                ti.dbVerified = false;
+                ti.setDbVerified(false);
             }
 
             for (boolean ok = rs.first(); ok; ok = rs.next()) {
-                String tblName = rs.getString("TABLE_NAME");
-                factTableInfos.get(tblName).dbVerified = true;
+                String tblName = rs.getString(JDBC_TABLE_NAME);
+                factTableInfos.get(tblName).setDbVerified(true);
             }
 
             rs = dbMetaData.getColumns(dbName, null, null, null);
 
-            if (null == COL_DEF_COLS) {
-                COL_DEF_COLS = DustJdbcUtils.getAllColumnNames(rs);
-            }
-
-            System.out.println("COLUMNS");
             for (boolean ok = rs.first(); ok; ok = rs.next()) {
-                String tblName = rs.getString("TABLE_NAME");
+                String tblName = rs.getString(JDBC_TABLE_NAME);
                 TableInfo ti = factTableInfos.peek(tblName);
                 if (null != ti) {
                     ti.registerColumn(rs);
-                }
-            }
-
-            for (TableInfo ti : factTableInfos.values()) {
-                if (ti.dbVerified) {
-                    ti.loadDbMeta();
                 }
             }
 
@@ -338,101 +391,94 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
 
     @Override
     public void processorProcess() throws Exception {
-        String query = DustUtils.getMsgVal(DustTextComponents.DustTextAtts.TextSpanString, false);
+        try {
+            DustUtilsMuteManager.mute(DustUtilsMuteManager.MutableModule.GUI, true);
+            String query = DustUtils.getMsgVal(DustTextComponents.DustTextAtts.TextSpanString, false);
 
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
+            DustUtils.accessEntity(DataCommand.clearRefs, ContextRef.msg, DustGenericLinks.ConnectedExtends);
+            DustUtils.accessEntity(DataCommand.clearRefs, ContextRef.msg, DustGenericLinks.ConnectedRequires);
 
-        DustJdbcUtils.dumpResultSet(rs);
-
-        ResultSetMetaData rsmd = rs.getMetaData();
-        String tblName = rsmd.getTableName(1);
-
-        TableInfo ti = factTableInfos.peek(tblName);
-        int cc = rsmd.getColumnCount();
-
-        DustUtilsFactory<DustEntity, DustMetaAttDefTypeValues> attTypes = new DustUtilsFactory<DustEntity, DustMetaAttDefTypeValues>(false) {
-            @Override
-            protected DustMetaAttDefTypeValues create(DustEntity key, Object... hints) {
-                Object value = hints[0];
-
-                DustMetaAttDefTypeValues valType = DustMetaAttDefTypeValues.AttDefRaw;
-
-                if (String.class.isInstance(value)) {
-                    valType = DustMetaAttDefTypeValues.AttDefIdentifier;
-                } else if (Number.class.isInstance(value)) {
-                    if (Double.class.isInstance(value) || Float.class.isInstance(value)) {
-                        valType = DustMetaAttDefTypeValues.AttDefDouble;
-                    } else {
-                        valType = DustMetaAttDefTypeValues.AttDefLong;
-                    }
-                } else if (Boolean.class.isInstance(value)) {
-                    valType = DustMetaAttDefTypeValues.AttDefBool;
+            if (DustUtilsJava.isEmpty(query)) {
+                for (TableInfo ti : factTableInfos.values()) {
+                    ti.clean();
                 }
-
-                DustUtils.accessEntity(DataCommand.setRef, key, DustMetaLinks.AttDefType, valType);
-
-                return valType;
-            }
-        };
-
-        DustEntity[] cols = new DustEntity[cc];
-        int pKeyIdx = 0;
-        Map<DustEntity, TableInfo> mapLinks = new HashMap<>();
-
-        for (int i = 0; i < cc; ++i) {
-            int colIdx = i + 1;
-            String colName = rsmd.getColumnName(colIdx);
-            ColumnInfo colInfo = ti.columns.peek(colName);
-            DustEntity eColDef = colInfo.eColumn;
-            cols[i] = eColDef;
-
-            if (colInfo.primaryKey) {
-                pKeyIdx = colIdx;
+                return;
             }
 
-            if (null == colInfo.fKeyInfo) {
-                DustUtils.accessEntity(DataCommand.setRef, eColDef, DustMetaLinks.AttDefType, null);
-            } else {
-                mapLinks.put(eColDef, factTableInfos.peek((String) colInfo.fKeyInfo.get("PKTABLE_NAME")));
-            }
-        }
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
 
-        for (boolean ok = rs.first(); ok; ok = rs.next()) {
-            String id = rs.getObject(pKeyIdx).toString();
+            DustJdbcUtils.dumpResultSet(rs);
 
-            DustEntity e = ti.factData.get(id);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            String tblName = rsmd.getTableName(1);
+
+            TableInfo ti = factTableInfos.peek(tblName);
+            int cc = rsmd.getColumnCount();
+
+            ColumnInfo[] cols = new ColumnInfo[cc];
+            int pKeyIdx = 0;
+            Map<DustEntity, TableInfo> mapLinks = new HashMap<>();
 
             for (int i = 0; i < cc; ++i) {
-                DustEntity eColDef = cols[i];
-                Object value = rs.getObject(i + 1);
-                TableInfo tblRef = mapLinks.get(eColDef);
+                int colIdx = i + 1;
+                String colName = rsmd.getColumnName(colIdx);
+                ColumnInfo colInfo = ti.columns.peek(colName);
+                DustEntity eColDef = colInfo.eColumn;
+                cols[i] = colInfo;
 
-                if (null == tblRef) {
-                    if (null != value) {
-                        DustMetaAttDefTypeValues valType = attTypes.get(eColDef, value);
-                        switch (valType) {
-                        case AttDefBool:
-                            break;
-                        case AttDefDouble:
-                            value = ((Number) value).doubleValue();
-                            break;
-                        case AttDefIdentifier:
-                            break;
-                        case AttDefLong:
-                            value = ((Number) value).longValue();
-                            break;
-                        case AttDefRaw:
-                            value = value.toString();
-                            break;
-                        }
-                    }
-                    DustUtils.accessEntity(DataCommand.setValue, e, eColDef, value);
+                if (colInfo.primaryKey) {
+                    pKeyIdx = colIdx;
+                    colInfo.optSetAttType(null);
                 } else {
-                    DustEntity eRef = tblRef.factData.get(value.toString());
-                    DustUtils.accessEntity(DataCommand.setRef, e, eColDef, eRef);                    
+                    if (null != colInfo.foreignTableInfo) {
+                        mapLinks.put(eColDef, colInfo.foreignTableInfo);
+                    } else {
+                        colInfo.optSetAttType(null);
+                    }
                 }
             }
+
+            for (boolean ok = rs.first(); ok; ok = rs.next()) {
+                String id = rs.getObject(pKeyIdx).toString();
+
+                DustEntity e = ti.pfData.get(id);
+
+                for (int i = 0; i < cc; ++i) {
+                    ColumnInfo colInfo = cols[i];
+                    Object value = rs.getObject(i + 1);
+
+                    if (null == colInfo.foreignTableInfo) {
+                        if (null != value) {
+                            DustMetaAttDefTypeValues valType = colInfo.valType;
+                            switch (valType) {
+                            case AttDefBool:
+                                break;
+                            case AttDefDouble:
+                                value = ((Number) value).doubleValue();
+                                break;
+                            case AttDefIdentifier:
+                                break;
+                            case AttDefLong:
+                                value = ((Number) value).longValue();
+                                break;
+                            case AttDefRaw:
+                                value = value.toString();
+                                break;
+                            }
+                        }
+                        DustUtils.accessEntity(DataCommand.setValue, e, colInfo.eColumn, value);
+                    } else {
+                        DustEntity eRef = colInfo.foreignTableInfo.pfData.get(value.toString());
+                        DustUtils.accessEntity(DataCommand.setRef, e, colInfo.eColumn, eRef);
+                        DustUtils.accessEntity(DataCommand.setRef, ContextRef.msg, DustGenericLinks.ConnectedRequires, eRef);
+                    }
+                }
+
+                DustUtils.accessEntity(DataCommand.setRef, ContextRef.msg, DustGenericLinks.ConnectedExtends, e);
+            }
+        } finally {
+            DustUtilsMuteManager.mute(DustUtilsMuteManager.MutableModule.GUI, false);
         }
     }
 
