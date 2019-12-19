@@ -38,14 +38,15 @@ import dust.mj02.sandbox.persistence.DustPersistence;
 import dust.mj02.sandbox.persistence.DustPersistenceComponents;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsJavaSwing;
+import dust.utils.DustUtilsMuteManager;
 
 @SuppressWarnings("serial")
 class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComponents, DustPersistenceComponents {
     private static final long serialVersionUID = 1L;
 
     enum GuiCommands {
-        RESTORE, deleteEntity, deleteRef, update, commit, // setMaster, setSlave, // saveAll, //loadReflection, // createEntity, loadFile,
-                                                 // test03
+        RESTORE, deleteEntity, deleteRef, load, commit, // setMaster, setSlave, // saveAll, //loadReflection, // createEntity, loadFile,
+        // test03
         clean,
     };
 
@@ -53,91 +54,73 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            switch (GuiCommands.valueOf(e.getActionCommand())) {
-            // case createEntity:
-            // break;
-            case deleteEntity:
-                desktop.deleteSelected();
-                break;
-            case deleteRef:
-                desktop.removeSelRefs();
-                break;
-            case update:
-                String name = DustSandboxJson.configGet(CFG_MONTRU, CFG_LASTUNIT);
+            try {
+                DustUtilsMuteManager.mute(DustUtilsMuteManager.MutableModule.GUI, true);
+                switch (GuiCommands.valueOf(e.getActionCommand())) {
+                // case createEntity:
+                // break;
+                case deleteEntity:
+                    desktop.deleteSelected();
+                    break;
+                case deleteRef:
+                    desktop.removeSelRefs();
+                    break;
+                case load:
+                    String name = DustSandboxJson.configGet(CFG_MONTRU, CFG_LASTUNIT);
 
-                name = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Unit names (comma separated list)?", name);
-                if (DustUtilsJava.isEmpty(name)) {
-                    // name = "TextTest";
-//                    name = "SrcGenCSharp";
-//                    name = "FleetManagement";
-                    return;
-                }
-                DustPersistence.update(PERS_STORAGE_DEF_MULTI, name);
-                desktop.refreshData();
-                
-                DustSandboxJson.configSet(name, CFG_MONTRU, CFG_LASTUNIT);
-                
-                final String n = name;
-                try {
-                    DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, true);
+                    name = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Unit names (comma separated list)?", name);
+                    if (DustUtilsJava.isEmpty(name)) {
+                        // name = "TextTest";
+                        // name = "SrcGenCSharp";
+                        // name = "FleetManagement";
+                        return;
+                    }
+                    DustPersistence.update(PERS_STORAGE_DEF_MULTI, name);
+                    desktop.refreshData();
 
-                    Dust.processRefs(new RefProcessor() {
-                        @Override
-                        public void processRef(DustRef ref) {
-                            DustEntity s = ref.get(RefKey.source);
-                            String id = DustUtils.accessEntity(DataCommand.getValue, s, DustGenericAtts.IdentifiedIdLocal);
-                            if (n.equals(id)) {
+                    DustSandboxJson.configSet(name, CFG_MONTRU, CFG_LASTUNIT);
 
-                                desktop.activateEditorPanel(ref.get(RefKey.target));
+                    final String n = name;
+                    try {
+                        DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, true);
+
+                        Dust.processRefs(new RefProcessor() {
+                            @Override
+                            public void processRef(DustRef ref) {
+                                DustEntity s = ref.get(RefKey.source);
+                                String id = DustUtils.accessEntity(DataCommand.getValue, s, DustGenericAtts.IdentifiedIdLocal);
+                                if (n.equals(id)) {
+
+                                    desktop.activateEditorPanel(ref.get(RefKey.target));
+                                }
                             }
-                        }
-                    }, null, EntityResolver.getEntity(DustCommLinks.UnitMainEntities), null);
-                } finally {
-                    DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);                                
+                        }, null, EntityResolver.getEntity(DustCommLinks.UnitMainEntities), null);
+                    } finally {
+                        DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);
+                    }
+
+                    tfSearch.setText("test");
+                    break;
+                case commit:
+                    try {
+                        DustPersistence.commit(PERS_STORAGE_DEF_MULTI);
+                    } catch (Throwable ex) {
+                        Dust.wrapAndRethrowException("Commit exception", ex);
+                        JOptionPane.showMessageDialog(DustGuiSwingMontruControl.this, ex.getMessage(), "Commit exception", JOptionPane.ERROR_MESSAGE);
+                    }
+                    break;
+                case RESTORE:
+                    String timestamp = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Restore timestamp?", "20190618_121717_717");
+                    if (!DustUtilsJava.isEmpty(timestamp)) {
+                        DustPersistence.restoreFromHistory(PERS_STORAGE_DEF_MULTI, timestamp);
+                    }
+                    break;
+                case clean:
+                    desktop.closeUnselected();
+                    break;
                 }
-                
-                tfSearch.setText("test");
-                break;
-            case commit:
-                try {
-                    DustPersistence.commit(PERS_STORAGE_DEF_MULTI);
-                } catch (Throwable ex) {
-                    Dust.wrapAndRethrowException("Commit exception", ex);
-                    JOptionPane.showMessageDialog(DustGuiSwingMontruControl.this, ex.getMessage(), "Commit exception", JOptionPane.ERROR_MESSAGE);
-                }
-                break;
-            case RESTORE:
-                String timestamp = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Restore timestamp?", "20190618_121717_717");
-                if (!DustUtilsJava.isEmpty(timestamp)) {
-                    DustPersistence.restoreFromHistory(PERS_STORAGE_DEF_MULTI, timestamp);
-                }
-                break;
-            case clean:
-                desktop.closeUnselected();
-                break;
-            // case setMaster:
-            // DustPersistence.commit(PERS_STORAGE_DEF_SINGLE);
-            // break;
-            // case setSlave:
-            // DustPersistence.update(PERS_STORAGE_DEF_SINGLE, "Text");
-            // desktop.refreshData();
-            // break;
-            // case saveAll:
-            // desktop.saveAll();
-            // break;
-            // case loadFile:
-            // desktop.loadFiles(new File("MJ02Boot02.json"));
-            //
-            // break;
-            // case test03:
-            // if ( null != eiSelected ) {
-            // DustUtils.accessEntity(DataCommand.setRef, desktop,
-            // MontruGuiLinks.MontruDesktopActivePanel, eiSelected);
-            // }
-            // break;
-            // case loadReflection:
-            // loadReflection();
-            // break;
+            } finally {
+                DustUtilsMuteManager.mute(DustUtilsMuteManager.MutableModule.GUI, false);
             }
         }
     };
