@@ -212,4 +212,8 @@ public class DustUtilsJava implements DustUtilsComponents {
 		throw new RuntimeException("Should not get here");
 	}
 
+    public static boolean isEmpty(Object[] array) {
+        return (null == array) || (0 == array.length);
+    }
+
 }

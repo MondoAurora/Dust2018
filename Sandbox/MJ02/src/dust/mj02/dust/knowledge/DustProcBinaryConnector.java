@@ -205,6 +205,9 @@ public class DustProcBinaryConnector
 
 				o = si.implClass.newInstance();
 			} catch (Throwable e) {
+			    if ( null != si ) {
+			        factServices.drop(si);
+			    }
 				Dust.wrapAndRethrowException("Initializing service", e);
 			} finally {
 				ctx.mapCtxEntities.putAll(store);

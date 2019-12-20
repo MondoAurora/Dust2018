@@ -1,117 +1,147 @@
 package dust.mj02.dust;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import dust.mj02.dust.java.DustJavaComponents;
 import dust.mj02.dust.knowledge.DustKernelComponents;
 import dust.utils.DustUtilsDev;
+import dust.utils.DustUtilsJava;
 
 public class DustTempHacks extends DustUtils implements DustKernelComponents {
-	public static DustEntity loadFromEnum(Object key) {
-		DustEntity e = null;
 
-		if (key instanceof DustEntityKey) {
-			// so that all enums will have their entity without problem
-			String cn = key.getClass().getName();
-			String en = ((Enum<?>) key).name();
-			String kk = cn + ":" + en;
+    public static Map<String, Object> loadAtts(Map<String, Object> mapAtts, DustEntity from, Object... types) {
+        if (null == mapAtts) {
+            mapAtts = new HashMap<>();
+        } else {
+            mapAtts.clear();
+        }
 
-			e = EntityResolver.register(kk, key);
+        if (DustUtilsJava.isEmpty(types)) {
+            types = new Object[] {
+                    ((DustRef) DustUtils.accessEntity(DataCommand.getValue, from, DustDataLinks.EntityPrimaryType)).get(RefKey.target) };
+        }
 
-			DustUtils.accessEntity(DataCommand.setValue, e, DustGenericAtts.IdentifiedIdLocal, en);
-			DustUtils.accessEntity(DataCommand.setValue, e, DustProcAtts.NativeBoundId, kk);
+        Map<String, Object> mt = mapAtts;
 
-			DustMetaTypes mt = DustMetaTypes.getMetaTypeHack(cn);
+        for (int i = 0; i < types.length; ++i) {
+            Dust.processRefs(new RefProcessor() {
+                @Override
+                public void processRef(DustRef ref) {
+                    DustEntity eAttDef = ref.get(RefKey.target);
+                    mt.put(DustUtils.accessEntity(DataCommand.getValue, eAttDef, DustUtils.optResolve(DustGenericAtts.IdentifiedIdLocal)),
+                            DustUtils.accessEntity(DataCommand.getValue, from, eAttDef));
+                }
+            }, optResolve(types[i]), DustUtils.optResolve(DustMetaLinks.TypeAttDefs), null);
+        }
 
-			if (null != mt) {
-				DustUtils.accessEntity(DataCommand.setRef, e, DustDataLinks.EntityPrimaryType, mt);
-			}
-		}
+        return mapAtts;
+    }
 
-		return e;
-	}
+    public static DustEntity loadFromEnum(Object key) {
+        DustEntity e = null;
 
-	public static void detectMetaConnections() {
-		DustEntity eJava = EntityResolver.getEntity(DustJavaComponents.DustJavaTypes.JavaItem);
+        if (key instanceof DustEntityKey) {
+            // so that all enums will have their entity without problem
+            String cn = key.getClass().getName();
+            String en = ((Enum<?>) key).name();
+            String kk = cn + ":" + en;
 
-		Dust.processEntities(new EntityProcessor() {
-			boolean parentSet;
-			
-			@Override
-			public void processEntity(DustEntity entity) {
-				if (eJava == DustUtils.toEntity(
-						DustUtils.accessEntity(DataCommand.getValue, entity, DustDataLinks.EntityPrimaryType))) {
-					Class<?> cc = DustUtils.accessEntity(DataCommand.getValue, entity,
-							DustJavaComponents.DustJavaAtts.JavaItemObj);
+            e = EntityResolver.register(kk, key);
 
-					if (DustEntityKey.class.isAssignableFrom(cc)) {
-						DustUtilsDev.dump(cc.getCanonicalName());
+            DustUtils.accessEntity(DataCommand.setValue, e, DustGenericAtts.IdentifiedIdLocal, en);
+            DustUtils.accessEntity(DataCommand.setValue, e, DustProcAtts.NativeBoundId, kk);
 
-						DustMetaTypes mt = DustMetaTypes.getMetaTypeHack(cc.getName());
+            DustMetaTypes mt = DustMetaTypes.getMetaTypeHack(cn);
 
-						if (null != mt) {
-							String parentKeyName = null;
-							Object parentLink = null;
+            if (null != mt) {
+                DustUtils.accessEntity(DataCommand.setRef, e, DustDataLinks.EntityPrimaryType, mt);
+            }
+        }
 
-							switch (mt) {
-							case AttDef:
-								parentKeyName = mt.replacePostfix(cc.getName(), DustMetaTypes.Type);
-								parentLink = DustMetaLinks.AttDefParent;
-								break;
-							case LinkDef:
-								parentKeyName = mt.replacePostfix(cc.getName(), DustMetaTypes.Type);
-								parentLink = DustMetaLinks.LinkDefParent;
-								break;
-							case Command:
-								parentKeyName = mt.replacePostfix(cc.getName(), DustMetaTypes.Service);
-								parentLink = DustGenericLinks.ConnectedOwner;
-								break;
-							case Constant:
-								break;
-							case Service:
-								break;
-							case Type:
-								// parentKeyName = mt.replacePostfix(cc.getCanonicalName(), DustMetaTypes.Unit);
-								break;
-							default:
-								break;
-							}
+        return e;
+    }
 
-							Class<?> parentKey;
-							try {
-								parentKey = (null != parentKeyName) ? Class.forName(parentKeyName) : null;
-							} catch (ClassNotFoundException e1) {
-								Dust.wrapAndRethrowException("parent key not found", e1);
-								parentKey = null;
-							}
+    public static void detectMetaConnections() {
+        DustEntity eJava = EntityResolver.getEntity(DustJavaComponents.DustJavaTypes.JavaItem);
 
-							for (Object e : cc.getEnumConstants()) {
-								DustEntity de = EntityResolver.getEntity(e);
-								DustUtils.accessEntity(DataCommand.setRef, de, DustDataLinks.EntityPrimaryType, mt);
-								DustUtils.accessEntity(DataCommand.setRef, de, DustDataLinks.EntityModels, DustGenericTypes.Identified);
-								DustUtils.accessEntity(DataCommand.setRef, de, DustDataLinks.EntityModels, DustDataTypes.Entity);
+        Dust.processEntities(new EntityProcessor() {
+            boolean parentSet;
 
-								String itemName = e.toString();
-								DustUtils.accessEntity(DataCommand.setValue, de, DustGenericAtts.IdentifiedIdLocal,
-										itemName);
+            @Override
+            public void processEntity(DustEntity entity) {
+                if (eJava == DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, entity, DustDataLinks.EntityPrimaryType))) {
+                    Class<?> cc = DustUtils.accessEntity(DataCommand.getValue, entity, DustJavaComponents.DustJavaAtts.JavaItemObj);
 
-								if (null != parentKey) {
-									parentSet = false;
-									for (Object ep : parentKey.getEnumConstants()) {
-										if ( itemName.startsWith(ep.toString())) {
-											DustUtils.accessEntity(DataCommand.setRef, de, parentLink, ep);
-											parentSet = true;
-											break;
-										}
-									}
-									
-									if (!parentSet) {
-										DustUtilsDev.dump("missing parent for", e);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		});
-	}
+                    if (DustEntityKey.class.isAssignableFrom(cc)) {
+                        DustUtilsDev.dump(cc.getCanonicalName());
+
+                        DustMetaTypes mt = DustMetaTypes.getMetaTypeHack(cc.getName());
+
+                        if (null != mt) {
+                            String parentKeyName = null;
+                            Object parentLink = null;
+
+                            switch (mt) {
+                            case AttDef:
+                                parentKeyName = mt.replacePostfix(cc.getName(), DustMetaTypes.Type);
+                                parentLink = DustMetaLinks.AttDefParent;
+                                break;
+                            case LinkDef:
+                                parentKeyName = mt.replacePostfix(cc.getName(), DustMetaTypes.Type);
+                                parentLink = DustMetaLinks.LinkDefParent;
+                                break;
+                            case Command:
+                                parentKeyName = mt.replacePostfix(cc.getName(), DustMetaTypes.Service);
+                                parentLink = DustGenericLinks.ConnectedOwner;
+                                break;
+                            case Constant:
+                                break;
+                            case Service:
+                                break;
+                            case Type:
+                                // parentKeyName = mt.replacePostfix(cc.getCanonicalName(), DustMetaTypes.Unit);
+                                break;
+                            default:
+                                break;
+                            }
+
+                            Class<?> parentKey;
+                            try {
+                                parentKey = (null != parentKeyName) ? Class.forName(parentKeyName) : null;
+                            } catch (ClassNotFoundException e1) {
+                                Dust.wrapAndRethrowException("parent key not found", e1);
+                                parentKey = null;
+                            }
+
+                            for (Object e : cc.getEnumConstants()) {
+                                DustEntity de = EntityResolver.getEntity(e);
+                                DustUtils.accessEntity(DataCommand.setRef, de, DustDataLinks.EntityPrimaryType, mt);
+                                DustUtils.accessEntity(DataCommand.setRef, de, DustDataLinks.EntityModels, DustGenericTypes.Identified);
+                                DustUtils.accessEntity(DataCommand.setRef, de, DustDataLinks.EntityModels, DustDataTypes.Entity);
+
+                                String itemName = e.toString();
+                                DustUtils.accessEntity(DataCommand.setValue, de, DustGenericAtts.IdentifiedIdLocal, itemName);
+
+                                if (null != parentKey) {
+                                    parentSet = false;
+                                    for (Object ep : parentKey.getEnumConstants()) {
+                                        if (itemName.startsWith(ep.toString())) {
+                                            DustUtils.accessEntity(DataCommand.setRef, de, parentLink, ep);
+                                            parentSet = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!parentSet) {
+                                        DustUtilsDev.dump("missing parent for", e);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
