@@ -16,6 +16,7 @@ import dust.mj02.dust.DustTempHacks;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.dust.text.DustTextComponents;
+import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 import dust.utils.DustUtilsMuteManager;
@@ -213,13 +214,13 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
                 String colName;
 
                 ResultSet rs = dbMetaData.getPrimaryKeys(dbName, null, tblName);
-                for (boolean ok = rs.first(); ok; ok = rs.next()) {
+                for (boolean ok = DustJdbcUtils.optFirst(rs); ok; ok = rs.next()) {
                     colName = rs.getString(JDBC_COLUMN_NAME);
                     pKeyInfo.put(colName, DustJdbcUtils.mapFromRS(rs));
                 }
 
                 rs = dbMetaData.getImportedKeys(dbName, null, tblName);
-                for (boolean ok = rs.first(); ok; ok = rs.next()) {
+                for (boolean ok = DustJdbcUtils.optFirst(rs); ok; ok = rs.next()) {
                     colName = rs.getString(JDBC_FKCOLUMN_NAME);
                     fKeyInfo.put(colName, DustJdbcUtils.mapFromRS(rs));
                 }
@@ -276,7 +277,10 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
                 Class.forName((String) mapAtts.get("driverClass"));
 
                 dbName = (String) mapAtts.get("dbName");
-                String dbUrl = (String) mapAtts.get("dbUrl") + "/" + dbName;
+                String dbUrl = (String) mapAtts.get("dbUrl");
+                if ( !dbUrl.endsWith(dbName)) {
+                    dbUrl += "/" + dbName;
+                }
                 conn = DriverManager.getConnection(dbUrl, (String) mapAtts.get("userId"), (String) mapAtts.get("password"));
 
                 DustJdbcUtils.addConn(conn);
@@ -342,14 +346,14 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
                 ti.setDbVerified(false);
             }
 
-            for (boolean ok = rs.first(); ok; ok = rs.next()) {
+            for (boolean ok = DustJdbcUtils.optFirst(rs); ok; ok = rs.next()) {
                 String tblName = rs.getString(JDBC_TABLE_NAME);
                 factTableInfos.get(tblName).setDbVerified(true);
             }
 
             rs = dbMetaData.getColumns(dbName, null, null, null);
 
-            for (boolean ok = rs.first(); ok; ok = rs.next()) {
+            for (boolean ok = DustJdbcUtils.optFirst(rs); ok; ok = rs.next()) {
                 String tblName = rs.getString(JDBC_TABLE_NAME);
                 TableInfo ti = factTableInfos.peek(tblName);
                 if (null != ti) {
@@ -404,10 +408,21 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
             DustJdbcUtils.dumpResultSet(rs);
 
             ResultSetMetaData rsmd = rs.getMetaData();
+            int cc = rsmd.getColumnCount();
+            
             String tblName = rsmd.getTableName(1);
+            for ( int i = 1; i <= cc; ++i ) {
+                String tbl = rsmd.getTableName(i);
+                DustUtilsDev.dump(rsmd.getColumnName(i), tbl);
+                if ( DustUtilsJava.isEmpty(tblName) ) {
+                    tblName = tbl;
+                }
+            }
+            if ( DustUtilsJava.isEmpty(tblName) ) {
+                tblName = query.substring(query.lastIndexOf(" ")).trim();
+            }
 
             TableInfo ti = factTableInfos.peek(tblName);
-            int cc = rsmd.getColumnCount();
 
             ColumnInfo[] cols = new ColumnInfo[cc];
             int pKeyIdx = 0;
@@ -427,7 +442,7 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
                 }
             }
 
-            for (boolean ok = rs.first(); ok; ok = rs.next()) {
+            for (boolean ok = DustJdbcUtils.optFirst(rs); ok; ok = rs.next()) {
                 String id = rs.getObject(pKeyIdx).toString();
 
                 DustEntity e = ti.pfData.get(id);

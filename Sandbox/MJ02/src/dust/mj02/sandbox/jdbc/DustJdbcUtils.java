@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import dust.mj02.dust.Dust;
+import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsJava;
 
 public class DustJdbcUtils implements DustJdbcComponents {
@@ -25,13 +26,30 @@ public class DustJdbcUtils implements DustJdbcComponents {
         }
         System.out.println(sb);
         
-        for ( boolean ok = rs.first(); ok; ok = rs.next() ) {
+        if ( ResultSet.TYPE_FORWARD_ONLY == rs.getType() ) {
+            DustUtilsDev.dump("Skip dumping forward only resultset");
+            return;
+        }
+        
+        for ( boolean ok = optFirst(rs); ok; ok = rs.next() ) {
             sb = null;
             
             for ( String col : colNames ) {
                 sb = DustUtilsJava.sbAppend(sb, "\t", true, rs.getObject(col));
             }
             System.out.println(sb);
+        }
+    }
+
+    public static boolean optFirst(ResultSet rs) throws Exception {
+        if ( ResultSet.TYPE_FORWARD_ONLY != rs.getType() ) {
+            return rs.first();
+        } else { 
+            if ( rs.isBeforeFirst() ) {
+                return rs.next();
+            } else {
+                throw new IllegalStateException("Already called optFirst on a ForwardOnly ResultSet!");
+            }
         }
     }
 
