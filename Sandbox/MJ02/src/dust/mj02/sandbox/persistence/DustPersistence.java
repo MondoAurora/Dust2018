@@ -272,7 +272,13 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
                 }
 
                 String ni = DustUtils.accessEntity(DataCommand.getValue, myUnit, DustCommAtts.UnitNextEntityId);
-                nextId = DustUtilsJava.isEmpty(ni) ? 0 : Long.parseLong(ni);
+                if ( DustUtilsJava.isEmpty(ni) ) {
+                    nextId = 0;
+                    DustUtils.accessEntity(DataCommand.setValue, myUnit, DustCommAtts.UnitNextEntityId, nextId);
+                } else {
+                    nextId = Long.parseLong(ni);
+                }
+                
                 nextRefId = -1;
 
                 actualCommitId = DustUtils.accessEntity(DataCommand.getValue, myUnit, DustCommAtts.PersistentCommitId);
