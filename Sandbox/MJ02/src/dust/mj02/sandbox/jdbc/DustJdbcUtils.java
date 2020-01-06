@@ -45,10 +45,10 @@ public class DustJdbcUtils implements DustJdbcComponents {
         if ( ResultSet.TYPE_FORWARD_ONLY != rs.getType() ) {
             return rs.first();
         } else { 
-            if ( rs.isBeforeFirst() ) {
-                return rs.next();
-            } else {
+            if ( rs.isAfterLast() ) {
                 throw new IllegalStateException("Already called optFirst on a ForwardOnly ResultSet!");
+            } else {
+                return rs.next();
             }
         }
     }

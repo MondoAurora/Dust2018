@@ -306,6 +306,7 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
                 releaseConn(conn, e);
                 conn = null;
                 dbMetaData = null;
+                Dust.wrapAndRethrowException("Connection exception", e);
             }
         }
     }
@@ -390,6 +391,8 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
     public void processorProcess() throws Exception {
         try {
             DustUtilsMuteManager.mute(DustUtilsMuteManager.MutableModule.GUI, true);
+//            DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, true);
+
             String query = DustUtils.getMsgVal(DustTextComponents.DustTextAtts.TextSpanString, false);
 
             DustUtils.accessEntity(DataCommand.clearRefs, ContextRef.msg, DustGenericLinks.ConnectedExtends);
@@ -455,6 +458,7 @@ public class DustJdbcConnector implements DustJdbcComponents, DustProcComponents
             }
         } finally {
             DustUtilsMuteManager.mute(DustUtilsMuteManager.MutableModule.GUI, false);
+//            DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);
         }
     }
 }

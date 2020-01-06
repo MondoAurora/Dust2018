@@ -46,8 +46,7 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
 
     enum GuiCommands {
         RESTORE, deleteEntity, deleteRef, load, commit, // setMaster, setSlave, // saveAll, //loadReflection, // createEntity, loadFile,
-        // test03
-        clean,
+        test01, clean,
     };
 
     ActionListener cmdListener = new ActionListener() {
@@ -117,6 +116,9 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
                     break;
                 case clean:
                     desktop.closeUnselected();
+                    break;
+                case test01:
+                    DustGuiSwingMontruMain.makeChild();
                     break;
                 }
             } finally {
