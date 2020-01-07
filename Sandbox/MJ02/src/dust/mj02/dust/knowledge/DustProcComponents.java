@@ -6,16 +6,17 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	enum DustProcTypes implements DustEntityKey {
 		System, Session, Change, Binary, NativeBound, Scheduler, Task, AccessControl,
-		Relay, Iterator, ValueUpdater, Dispatcher
+		Relay, Iterator, ValueUpdater, Dispatcher, UndoStack
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
 		ChangeOldValue, ChangeNewValue, BinaryObjectName, BinaryAutoInit, NativeBoundId,
-		TaskRepeatSec, TaskNextRun, SessionChangeMute
+		TaskRepeatSec, TaskNextRun, SessionChangeMute, SessionCallDepth,
 	}
 	
 	enum DustProcLinks implements DustEntityKey {
 		SessionRootEntity, SessionType, SessionChangeListeners, SessionBinaryAssignments, 
+		SessionCurrentStatement, SessionUndoStack, 
 		BinaryImplementedServices,
 		ChangeCmd, ChangeEntity, ChangeKey, ChangeSource,
 		SchedulerTasks, TaskEntity, TaskMessage, TaskInitiator,

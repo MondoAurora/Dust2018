@@ -258,7 +258,7 @@ class DustDataRef implements DustRef, DustKernelImplComponents, DustToolsCompone
         }
 
         session.refs.remove(this);
-        session.notifyListeners(DataCommand.removeRef, source, linkDef, null, this);
+        session.collectChange(DataCommand.removeRef, source, linkDef, null, this);
 
         if (handleReverse && (null != reverse)) {
             reverse.remove(false, false);
@@ -351,6 +351,11 @@ class DustDataRef implements DustRef, DustKernelImplComponents, DustToolsCompone
             break;
         }
 
-        return sb.insert(0, lt.sepStart).append(lt.sepEnd).toString();
+        sb.insert(0, lt.sepStart).append(lt.sepEnd);
+        if ( DustMetaLinkDefTypeValues.LinkDefSingle != lt ) {
+            sb.insert(0, ":").insert(0, count());
+        }
+        
+        return sb.toString();
     }
 }

@@ -66,8 +66,6 @@ public class DustTempHacks extends DustUtils implements DustKernelComponents {
         DustEntity eJava = EntityResolver.getEntity(DustJavaComponents.DustJavaTypes.JavaItem);
 
         Dust.processEntities(new EntityProcessor() {
-            boolean parentSet;
-
             @Override
             public void processEntity(DustEntity entity) {
                 if (eJava == DustUtils.toEntity(DustUtils.accessEntity(DataCommand.getValue, entity, DustDataLinks.EntityPrimaryType))) {
@@ -124,17 +122,21 @@ public class DustTempHacks extends DustUtils implements DustKernelComponents {
                                 DustUtils.accessEntity(DataCommand.setValue, de, DustGenericAtts.IdentifiedIdLocal, itemName);
 
                                 if (null != parentKey) {
-                                    parentSet = false;
+                                    int parentNameMatchLength = 0;
+                                    Object parentEnum = null;
                                     for (Object ep : parentKey.getEnumConstants()) {
-                                        if (itemName.startsWith(ep.toString())) {
-                                            DustUtils.accessEntity(DataCommand.setRef, de, parentLink, ep);
-                                            parentSet = true;
-                                            break;
+                                        String parentName = ep.toString();
+                                        int pl = parentName.length();
+                                        if (itemName.startsWith(parentName) && (pl > parentNameMatchLength)) {
+                                            parentEnum = ep;
+                                            parentNameMatchLength = pl;
                                         }
                                     }
 
-                                    if (!parentSet) {
+                                    if (null == parentEnum) {
                                         DustUtilsDev.dump("missing parent for", e);
+                                    } else {
+                                        DustUtils.accessEntity(DataCommand.setRef, de, parentLink, parentEnum);                                        
                                     }
                                 }
                             }

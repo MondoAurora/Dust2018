@@ -61,6 +61,12 @@ class DustDataEntity implements DustEntity {
         return (RetType) content.get(EntityResolver.getEntity(key));
     }
 
+    public <RetType> RetType get(DustEntityKey key, RetType defVal) {
+        RetType ret = (RetType) content.get(EntityResolver.getEntity(key));
+        
+        return ( null == ret) ? defVal : ret;
+    }
+
     public DustDataEntity getSingleRef(DustEntityKey key) {
         DustDataRef r = get(EntityResolver.getEntity(key));
         return (null == r) ? null : r.target;

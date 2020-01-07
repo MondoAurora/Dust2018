@@ -6,16 +6,19 @@ import dust.mj02.dust.DustComponents;
 
 public interface DustCommComponents extends DustComponents {
 	enum DustCommTypes implements DustEntityKey {
-		Domain, Unit, Persistent, Store, RemoteRef
+		Domain, Unit, Persistent, Store, RemoteRef,
+		ChangeItem, ChangeStatement
 	};
 	
 	enum DustCommAtts implements DustEntityKey {
 		PersistentEntityId, PersistentCommitId, UnitNextEntityId,
 		RemoteRefModuleName, RemoteRefModuleCommitId, RemoteRefItemModuleId, 
+		ChangeItemOldValue, ChangeItemNewValue, 
 	}
 	
 	enum DustCommLinks implements DustEntityKey {
 		PersistentContainingUnit, PersistentStoreWith, UnitEntities, UnitDomain, UnitMainEntities, 
+		ChangeItemCmd, ChangeItemEntity, ChangeItemKey,
 	}
 
 	enum DustCommTags implements DustEntityKey {
