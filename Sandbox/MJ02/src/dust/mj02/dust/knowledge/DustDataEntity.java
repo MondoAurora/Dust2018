@@ -22,6 +22,8 @@ class DustDataEntity implements DustEntity {
     DustUtilsFactory<DustDataEntity, Method> factMethods;
     boolean justCreated = true;
     boolean internal;
+    
+    private String fmtString;
 
     public DustDataEntity(DustProcSession session, boolean internal) {
         this.internal = internal;
@@ -99,10 +101,18 @@ class DustDataEntity implements DustEntity {
     public <RetType> RetType put(DustEntityKey key, Object value) {
         return (RetType) put((DustDataEntity)EntityResolver.getEntity(key), value);
     }
+    
+    void resetToString() {
+        fmtString = null;
+    }
 
     @Override
     public String toString() {
-        return DustUtils.formatEntity(this);
+        if ( null == fmtString ) {
+            fmtString = DustUtils.formatEntity(this);
+        }
+        
+        return fmtString;
         
 //        String id = get(EntityResolver.getEntity(DustGenericAtts.IdentifiedIdLocal));
 //

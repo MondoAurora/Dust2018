@@ -410,24 +410,29 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
                 Dust.wrapAndRethrowException("Error in message processing", err);
             }
         } finally {
+//            if (2 > depth) {
+//                ctxSelf.put(DustProcLinks.SessionCurrentStatement, null);
+//            }
             ctxSelf.put(DustProcAtts.SessionCallDepth, --depth);
         }
     }
 
     void notifyChangeItem(DustDataRef listeners, DustDataEntity msg) {
         if (null != listeners) {
-            DustEntity cmd = msg.getSingleRef(DustProcLinks.ChangeCmd);
-            DustDataEntity entity = msg.getSingleRef(DustProcLinks.ChangeEntity);
-            DustEntity key = msg.getSingleRef(DustProcLinks.ChangeKey);
+            DustEntity cmd = msg.getSingleRef(DustCommLinks.ChangeItemCmd);
+            DustDataEntity entity = msg.getSingleRef(DustCommLinks.ChangeItemEntity);
+            DustEntity key = msg.getSingleRef(DustCommLinks.ChangeItemKey);
+            
+            msg.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.ListenerProcessChange);
 
             listeners.processAll(new RefProcessor() {
                 @Override
                 public void processRef(DustRef ref) {
                     DustDataEntity listener = ((DustDataRef) ref).target;
 
-                    if (DustUtilsJava.isEqualLenient(cmd, listener.getSingleRef(DustProcLinks.ChangeCmd))
-                            && DustUtilsJava.isEqualLenient(entity, listener.getSingleRef(DustProcLinks.ChangeEntity))
-                            && DustUtilsJava.isEqualLenient(key, listener.getSingleRef(DustProcLinks.ChangeKey))) {
+                    if (DustUtilsJava.isEqualLenient(cmd, listener.getSingleRef(DustCommLinks.ChangeItemCmd))
+                            && DustUtilsJava.isEqualLenient(entity, listener.getSingleRef(DustCommLinks.ChangeItemEntity))
+                            && DustUtilsJava.isEqualLenient(key, listener.getSingleRef(DustCommLinks.ChangeItemKey))) {
 
                         binConn.send(listener, msg);
                     }
@@ -436,10 +441,26 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
         }
     }
 
+    void notifyChangeAgents(DustDataEntity stmt) {
+        DustDataRef agents = ctxSelf.get(DustProcLinks.SessionChangeAgents);
+
+        if (null != agents) {
+//            DustUtilsDev.dump("Notifying agents...");
+
+            stmt.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.AgentProcessStatement);
+
+            agents.processAll(new RefProcessor() {
+                @Override
+                public void processRef(DustRef ref) {
+                    DustDataEntity agent = ((DustDataRef) ref).target;
+                    binConn.send(agent, stmt);
+                }
+            });
+        }
+    }
+
     void notifyChangeStatement() {
         DustDataEntity stmt = ctxSelf.getSingleRef(DustProcLinks.SessionCurrentStatement);
-
-        DustUtilsDev.dump("now notifying listeners...");
 
         DustDataRef listeners = ctxSelf.get(DustProcLinks.SessionChangeListeners);
 
@@ -448,6 +469,8 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
         }
 
         if (null != listeners) {
+//            DustUtilsDev.dump("Notifying listeners...");
+
             try {
                 DustUtilsMuteManager.mute(DustUtilsMuteManager.MutableModule.GUI, true);
 
@@ -464,9 +487,12 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
                 DustUtilsMuteManager.mute(DustUtilsMuteManager.MutableModule.GUI, false);
             }
         }
+        
+        notifyChangeAgents(stmt);
     }
 
     void collectChange(DataCommand cmd, DustDataEntity entity, DustEntity key, Object newVal, Object oldVal) {
+        entity.resetToString();
 
         if ((DataCommand.setRef == cmd) && (null != newVal) && (key == EntityResolver.getEntity(DustDataLinks.EntityServices))) {
             DustDataEntity svc = ((DustDataRef) newVal).target;
@@ -480,25 +506,14 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
             }
         }
 
-        // DustDataEntity chg = new DustDataEntity(DustProcSession.this, true);
-        //
-        // chg.putLocalRef(DustCommLinks.ChangeItemCmd, cmd);
-        // chg.putLocalRef(DustCommLinks.ChangeItemEntity, entity);
-        // chg.putLocalRef(DustCommLinks.ChangeItemKey, (DustDataEntity) key);
-        //
-        // chg.put(DustCommAtts.ChangeItemOldValue, oldVal);
-        // chg.put(DustCommAtts.ChangeItemNewValue, newVal);
-
         DustDataEntity chg = new DustDataEntity(DustProcSession.this, true);
 
-        chg.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.ListenerProcessChange);
+        chg.putLocalRef(DustCommLinks.ChangeItemCmd, cmd);
+        chg.putLocalRef(DustCommLinks.ChangeItemEntity, entity);
+        chg.putLocalRef(DustCommLinks.ChangeItemKey, (DustDataEntity) key);
 
-        chg.putLocalRef(DustProcLinks.ChangeCmd, cmd);
-        chg.putLocalRef(DustProcLinks.ChangeEntity, entity);
-        chg.putLocalRef(DustProcLinks.ChangeKey, (DustDataEntity) key);
-
-        chg.put(DustProcAtts.ChangeOldValue, oldVal);
-        chg.put(DustProcAtts.ChangeNewValue, newVal);
+        chg.put(DustCommAtts.ChangeItemOldValue, oldVal);
+        chg.put(DustCommAtts.ChangeItemNewValue, newVal);
 
         DustDataEntity currStmt = ctxSelf.getSingleRef(DustProcLinks.SessionCurrentStatement);
 
@@ -514,6 +529,9 @@ public class DustProcSession implements DustKernelImplComponents, Dust.DustConte
         } else {
             DustDataRef listeners = ctxSelf.get(DustProcLinks.SessionChangeListeners);
             notifyChangeItem(listeners, chg);
+            currStmt = new DustDataEntity(DustProcSession.this, true);
+            currStmt.putLocalRef(DustCollectionLinks.SequenceMembers, chg);
+            notifyChangeAgents(currStmt);
         }
 
         DustEntity eEchg = EntityResolver.getEntity(DustDataTags.EntityChanged);

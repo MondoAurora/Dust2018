@@ -8,11 +8,11 @@ public class DustSandboxListenerDump implements DustSandboxComponents, DustProcC
 
 	@Override
 	public void dustProcListenerProcessChange() throws Exception {
-		DustUtilsDev.dump("Dump change", EntityResolver.getKey(DustUtils.getMsgVal(DustProcLinks.ChangeCmd, true)),
-				"\n :", DustUtils.getMsgVal(DustProcLinks.ChangeEntity, true), ".",
-				DustUtils.getMsgVal(DustProcLinks.ChangeKey, true), "\n ",
-				DustUtils.getMsgVal(DustProcAtts.ChangeOldValue, true), ">",
-				DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, true));
+		DustUtilsDev.dump("Dump change", EntityResolver.getKey(DustUtils.getMsgVal(DustCommLinks.ChangeItemCmd, true)),
+				"\n :", DustUtils.getMsgVal(DustCommLinks.ChangeItemEntity, true), ".",
+				DustUtils.getMsgVal(DustCommLinks.ChangeItemKey, true), "\n ",
+				DustUtils.getMsgVal(DustCommAtts.ChangeItemOldValue, true), ">",
+				DustUtils.getMsgVal(DustCommAtts.ChangeItemNewValue, true));
 	}
 
 }

@@ -69,9 +69,9 @@ public class DustProcAccessControl implements DustKernelImplComponents {
 
                 msgChk.putLocalRef(DustDataLinks.MessageCommand, DustProcMessages.EvaluatorEvaluate);
 
-                msgChk.putLocalRef(DustProcLinks.ChangeCmd, cmd);
-                msgChk.putLocalRef(DustProcLinks.ChangeEntity, target);
-                msgChk.putLocalRef(DustProcLinks.ChangeKey, (DustDataEntity) key);
+                msgChk.putLocalRef(DustCommLinks.ChangeItemCmd, cmd);
+                msgChk.putLocalRef(DustCommLinks.ChangeItemEntity, target);
+                msgChk.putLocalRef(DustCommLinks.ChangeItemKey, (DustDataEntity) key);
                 msgChk.putLocalRef(DustProcLinks.ChangeSource, source);
 
                 return msgChk;

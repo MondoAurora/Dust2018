@@ -18,7 +18,7 @@ public class MontruGuiSwingGen implements DustGuiComponents, MontruGuiComponents
 		DustGuiSwingGen.init();
 
 		DustUtils.registerService(DustGuiSwingMontruDesktop.class, true, MontruGuiServices.MontruDesktop,
-				DustProcServices.Listener, DustProcServices.Active);
+		        DustProcServices.Listener, DustProcServices.Agent, DustProcServices.Active);
 
 		DustUtils.accessEntity(DataCommand.setRef, MontruGuiTypes.MontruDesktop, DustMetaLinks.TypeLinkedServices,
 				MontruGuiServices.MontruDesktop);

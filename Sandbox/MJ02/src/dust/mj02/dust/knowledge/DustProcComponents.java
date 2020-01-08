@@ -5,20 +5,20 @@ import dust.mj02.dust.DustComponents;
 public interface DustProcComponents extends DustComponents, DustDataComponents {
 	
 	enum DustProcTypes implements DustEntityKey {
-		System, Session, Change, Binary, NativeBound, Scheduler, Task, AccessControl,
+		System, Session, Binary, NativeBound, Scheduler, Task, AccessControl,
 		Relay, Iterator, ValueUpdater, Dispatcher, UndoStack
 	};
 	
 	enum DustProcAtts implements DustEntityKey {
-		ChangeOldValue, ChangeNewValue, BinaryObjectName, BinaryAutoInit, NativeBoundId,
+		BinaryObjectName, BinaryAutoInit, NativeBoundId,
 		TaskRepeatSec, TaskNextRun, SessionChangeMute, SessionCallDepth,
 	}
 	
 	enum DustProcLinks implements DustEntityKey {
-		SessionRootEntity, SessionType, SessionChangeListeners, SessionBinaryAssignments, 
+		SessionRootEntity, SessionType, SessionChangeListeners, SessionChangeAgents, SessionBinaryAssignments, 
 		SessionCurrentStatement, SessionUndoStack, 
 		BinaryImplementedServices,
-		ChangeCmd, ChangeEntity, ChangeKey, ChangeSource,
+		ChangeSource,
 		SchedulerTasks, TaskEntity, TaskMessage, TaskInitiator,
 		AccessControlAccess, AccessControlChange,
 		RelayTarget, IteratorLinkLoop, IteratorPathMsgTarget, IteratorEvalFilter, IteratorMsgStart, IteratorMsgSep, IteratorMsgEnd,
@@ -31,12 +31,12 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 
 
 	enum DustProcServices implements DustEntityKey {
-		Listener, Channel, Processor, Active, Scheduler, Evaluator, AccessControl, 
+		Listener, Agent, Channel, Processor, Active, Scheduler, Evaluator, AccessControl, 
 		Iterator, ValueUpdater
 	};
 	
 	enum DustProcMessages implements DustEntityKey {
-		ListenerProcessChange, ChannelOpen, ChannelClose, ProcessorProcess, EvaluatorEvaluate, 
+		ListenerProcessChange, AgentProcessStatement, ChannelOpen, ChannelClose, ProcessorProcess, EvaluatorEvaluate, 
 		ActiveInit, ActiveRelease,
 	};
 	
@@ -54,13 +54,11 @@ public interface DustProcComponents extends DustComponents, DustDataComponents {
 		public void activeRelease() throws Exception;
 	}
 	
-	interface DustProcListener {
-		public void dustProcListenerProcessChange() throws Exception;
-	}
-	
-	interface DustProcChangeListener {
-		public void dustProcChangedAttribute(DustEntity entity, DustEntity att, Object value) throws Exception;
-		public void dustProcChangedRef(DustEntity entity, DustRef ref, DataCommand cmd) throws Exception;
-	}
-	
+    interface DustProcListener {
+        public void dustProcListenerProcessChange() throws Exception;
+    }
+    
+    interface DustProcAgent {
+        public void dustProcAgentProcessStatement() throws Exception;
+    }
 }

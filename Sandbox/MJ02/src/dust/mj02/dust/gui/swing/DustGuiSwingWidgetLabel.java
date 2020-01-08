@@ -22,7 +22,7 @@ public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents
 
 	@Override
 	public void dustProcListenerProcessChange() throws Exception {
-		Object val = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, false);
+		Object val = DustUtils.getMsgVal(DustCommAtts.ChangeItemNewValue, false);
 //		DustUtilsDev.dump("updating label to", DustUtilsJava.toString(val));
 		
 		updateLabel(val);
@@ -46,8 +46,8 @@ public class DustGuiSwingWidgetLabel extends JLabel implements DustGuiComponents
 
 	@Override
 	public void activeInit() throws Exception {
-		DustRef e = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustProcLinks.ChangeEntity);
-		DustRef a = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustProcLinks.ChangeKey);
+		DustRef e = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustCommLinks.ChangeItemEntity);
+		DustRef a = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustCommLinks.ChangeItemKey);
 
 		eEntity = e.get(RefKey.target);
 		eData = a.get(RefKey.target);

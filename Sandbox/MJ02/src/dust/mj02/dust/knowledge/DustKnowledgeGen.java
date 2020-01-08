@@ -38,9 +38,13 @@ public class DustKnowledgeGen implements DustCommComponents, DustMetaComponents,
 		Dust.accessEntity(DataCommand.setRef, dlGenExtends, dlLinkDefType, dlLinkDefTypeSet, null);
 		Dust.accessEntity(DataCommand.setRef, dlGenRequires, dlLinkDefType, dlLinkDefTypeSet, null);
 		
-		DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Listener, DustGenericAtts.IdentifiedIdLocal, "DustProcListener");
-		DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ListenerProcessChange, DustGenericAtts.IdentifiedIdLocal, "ProcessChange");
-		DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ListenerProcessChange, DustGenericLinks.ConnectedOwner, DustProcServices.Listener);
+        DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Listener, DustGenericAtts.IdentifiedIdLocal, "DustProcListener");
+        DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.ListenerProcessChange, DustGenericAtts.IdentifiedIdLocal, "ProcessChange");
+        DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.ListenerProcessChange, DustGenericLinks.ConnectedOwner, DustProcServices.Listener);
+
+        DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Agent, DustGenericAtts.IdentifiedIdLocal, "DustProcAgent");
+        DustUtils.accessEntity(DataCommand.setValue, DustProcMessages.AgentProcessStatement, DustGenericAtts.IdentifiedIdLocal, "ProcessStatement");
+        DustUtils.accessEntity(DataCommand.setRef, DustProcMessages.AgentProcessStatement, DustGenericLinks.ConnectedOwner, DustProcServices.Agent);
 
 		
 		DustUtils.accessEntity(DataCommand.setValue, DustProcServices.Active, DustGenericAtts.IdentifiedIdLocal, "Active");

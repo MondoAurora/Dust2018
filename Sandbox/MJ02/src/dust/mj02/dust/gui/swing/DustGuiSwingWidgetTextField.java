@@ -57,14 +57,14 @@ public class DustGuiSwingWidgetTextField extends JFormattedTextField
 	@Override
 	public void dustProcListenerProcessChange() throws Exception {
 	    setText(DustUtils.AttConverter.getAttAsString(eEntity, eData));
-//		Object val = DustUtils.getMsgVal(DustProcAtts.ChangeNewValue, false);
+//		Object val = DustUtils.getMsgVal(DustCommAtts.ChangeItemNewValue, false);
 //		setText(DustUtilsJava.toString(val));
 	}
 
 	@Override
 	public void activeInit() throws Exception {
-		DustRef e = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustProcLinks.ChangeEntity);
-		DustRef a = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustProcLinks.ChangeKey);
+		DustRef e = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustCommLinks.ChangeItemEntity);
+		DustRef a = DustUtils.accessEntity(DataCommand.getValue, ContextRef.self, DustCommLinks.ChangeItemKey);
 
 		eEntity = e.get(RefKey.target);
 		eData = a.get(RefKey.target);

@@ -50,7 +50,7 @@ import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
 
 public class DustGuiSwingPanelEntity extends JPanel
-        implements DustGuiSwingComponents, DustTextComponents, DustGeometryComponents, DustProcComponents.DustProcListener, DustProcComponents.DustProcActive {
+        implements DustGuiSwingComponents, DustTextComponents, DustGeometryComponents, DustProcComponents.DustProcAgent, DustProcComponents.DustProcActive {
     private static final long serialVersionUID = 1L;
 
     private static final Object RB_LINK_KEY = new Object();
@@ -213,8 +213,8 @@ public class DustGuiSwingPanelEntity extends JPanel
             DustEntity eLabel = DustUtils.accessEntity(DataCommand.getEntity, DustGuiTypes.Label, ContextRef.self, null, new EntityProcessor() {
                 @Override
                 public void processEntity(DustEntity entity) {
-                    DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeEntity, (null == key) ? eEntity : key);
-                    DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeKey, DATT_ID);
+                    DustUtils.accessEntity(DataCommand.setRef, entity, DustCommLinks.ChangeItemEntity, (null == key) ? eEntity : key);
+                    DustUtils.accessEntity(DataCommand.setRef, entity, DustCommLinks.ChangeItemKey, DATT_ID);
                 }
             });
 
@@ -248,8 +248,8 @@ public class DustGuiSwingPanelEntity extends JPanel
                     new EntityProcessor() {
                         @Override
                         public void processEntity(DustEntity entity) {
-                            DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeEntity, eEntity);
-                            DustUtils.accessEntity(DataCommand.setRef, entity, DustProcLinks.ChangeKey, key);
+                            DustUtils.accessEntity(DataCommand.setRef, entity, DustCommLinks.ChangeItemEntity, eEntity);
+                            DustUtils.accessEntity(DataCommand.setRef, entity, DustCommLinks.ChangeItemKey, key);
                         }
                     });
 
@@ -400,6 +400,7 @@ public class DustGuiSwingPanelEntity extends JPanel
     }
 
     private void updatePanel() {
+//        DustUtilsDev.dump("Updating panel", eEntity.toString());
         if (0 == tpCenter.getTabCount()) {
             JComponent top = factAnchored.get(null);
             add(top, BorderLayout.NORTH);
@@ -521,23 +522,28 @@ public class DustGuiSwingPanelEntity extends JPanel
     }
 
     @Override
-    public void dustProcListenerProcessChange() throws Exception {
-        DustEntity eChanged = ((DustRef) DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustProcLinks.ChangeEntity)).get(RefKey.target);
-
-        if (eChanged == eEntity) {
-            updatePanel();
-            return;
-        } else {
-            DustRef kr = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustProcLinks.ChangeKey);
-            int ti = DustUtilsJava.indexOf(EntityResolver.getKey(kr.get(RefKey.target)), DustMetaLinks.TypeAttDefs, DustMetaLinks.TypeLinkDefs);
-            if (-1 != ti) {
-                DustRef rModels = DustUtils.accessEntity(DataCommand.getValue, eEntity, DustDataLinks.EntityModels);
-                if ((null != rModels) && rModels.contains(eChanged)) {
-                    updatePanel();
-                }
-            }
-        }
+    public void dustProcAgentProcessStatement() throws Exception {
+        updatePanel();
     }
+    
+//    @Override
+//    public void dustProcListenerProcessChange() throws Exception {
+//        DustEntity eChanged = ((DustRef) DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustCommLinks.ChangeItemEntity)).get(RefKey.target);
+//
+//        if (eChanged == eEntity) {
+//            updatePanel();
+//            return;
+//        } else {
+//            DustRef kr = DustUtils.accessEntity(DataCommand.getValue, ContextRef.msg, DustCommLinks.ChangeItemKey);
+//            int ti = DustUtilsJava.indexOf(EntityResolver.getKey(kr.get(RefKey.target)), DustMetaLinks.TypeAttDefs, DustMetaLinks.TypeLinkDefs);
+//            if (-1 != ti) {
+//                DustRef rModels = DustUtils.accessEntity(DataCommand.getValue, eEntity, DustDataLinks.EntityModels);
+//                if ((null != rModels) && rModels.contains(eChanged)) {
+//                    updatePanel();
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public void activeInit() throws Exception {
@@ -550,10 +556,11 @@ public class DustGuiSwingPanelEntity extends JPanel
 
         updatePanel();
 
-        DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeListeners, ContextRef.self);
+        DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeAgents, ContextRef.self);
     }
 
     @Override
     public void activeRelease() throws Exception {
+        DustUtils.accessEntity(DataCommand.removeRef, ContextRef.session, DustProcLinks.SessionChangeAgents, ContextRef.self);
     }
 }

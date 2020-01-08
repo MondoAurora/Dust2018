@@ -44,7 +44,7 @@ public class DustSandboxScheduler implements DustSandboxComponents, DustProcComp
     public void activeInit() throws Exception {
 //        eSelf = DustUtils.getByPath(ContextRef.self);
         eSelf = DustUtils.getCtxVal(ContextRef.self, null, false);
-        DustUtils.accessEntity(DataCommand.setRef, ContextRef.self, DustProcLinks.ChangeEntity, ContextRef.self);
+        DustUtils.accessEntity(DataCommand.setRef, ContextRef.self, DustCommLinks.ChangeItemEntity, ContextRef.self);
         DustUtils.accessEntity(DataCommand.setRef, ContextRef.session, DustProcLinks.SessionChangeListeners, ContextRef.self);
 
         thSched.start();
@@ -72,7 +72,7 @@ public class DustSandboxScheduler implements DustSandboxComponents, DustProcComp
 
     @Override
     public void dustProcListenerProcessChange() throws Exception {
-        DustEntity eKey = DustUtils.getMsgVal(DustProcLinks.ChangeKey, true);
+        DustEntity eKey = DustUtils.getMsgVal(DustCommLinks.ChangeItemKey, true);
 
         if (EntityResolver.getEntity(DustProcLinks.SchedulerTasks) == eKey) {
             eNextTask = null;
