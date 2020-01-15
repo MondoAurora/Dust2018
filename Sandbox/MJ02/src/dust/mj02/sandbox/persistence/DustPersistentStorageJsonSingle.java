@@ -81,6 +81,10 @@ public class DustPersistentStorageJsonSingle implements DustPersistenceComponent
             }
             map = (JSONObject) parser.parse(r);
 
+            if (null == is) {
+                r.close();
+            }
+            is = null;
         }
         return map.get(unitId);
     }

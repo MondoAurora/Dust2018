@@ -1,5 +1,6 @@
 package dust.utils;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
@@ -216,4 +217,30 @@ public class DustUtilsJava implements DustUtilsComponents {
         return (null == array) || (0 == array.length);
     }
 
+    public static File safeGetDir(String path) {
+        return safeGetDir(null, path);
+    }
+
+    public static File safeGetDir(File parent, String name) {
+        File f = (null == parent) ? new File(name) : new File(parent, name);
+
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+
+        return f;
+    }
+
+    public static File safeGetFile(String fName) {
+        File f = new File(fName);
+
+        if (!f.exists()) {
+            File d = f.getParentFile();
+            if (!d.exists()) {
+                d.mkdirs();
+            }
+        }
+
+        return f;
+    }
 }

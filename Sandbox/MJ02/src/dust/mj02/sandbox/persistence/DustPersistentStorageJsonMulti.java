@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import dust.mj02.dust.Dust;
+import dust.mj02.sandbox.persistence.DustPersistence.SaveContext;
 import dust.utils.DustUtilsDev;
 import dust.utils.DustUtilsJava;
 
@@ -81,38 +83,96 @@ public class DustPersistentStorageJsonMulti implements
     public Map<String, Map> load(String unitId, String commitId)
             throws Exception {
         File uf = getFile(unitId, commitId);
+        
+        String cp = uf.getCanonicalFile().getName();
+        if ( !cp.startsWith(unitId) ) {
+            throw new DustException("unit name mismatch! " + unitId + ".json <> " + cp);
+        }
+        
         Reader r = new InputStreamReader(new FileInputStream(uf), CHARSET_UTF8);
 
-        return (JSONObject) parser.parse(r);
+        Map<String, Map> ret = (JSONObject) parser.parse(r);
+        
+        r.close();
+        
+        return ret;
     }
     
     public void restore(String timestamp) {
         File dirPers = new File(pathPersistence);
         File dirHistory = new File(dirPers, pathHistory);
+        boolean toLatest = false;
+        
+        if ( DustUtilsJava.isEmpty(timestamp) ) {
+            timestamp = SaveContext.SDF.format(new Date());
+            toLatest = true;
+        }
 
-        String search = MessageFormat.format("_{0}.json", timestamp);
+        String ext = ".json";
+        String search = MessageFormat.format("_{0}" + ext, timestamp);
+        
+        int postifxLen = search.length();
+        int extLen = ext.length();
+        
+        Map<String, File> currentState = new HashMap<>();
+
+        for (File f : dirPers.listFiles()) {
+            String fn = f.getName();
+            currentState.put(fn.substring(0, fn.length()-extLen), f);
+        }
+
         Map<String, File> toCopy = new HashMap<>();
 
         for (File f : dirHistory.listFiles()) {
             String fn = f.getName();
-            int idx = fn.indexOf(search);
-            if (-1 != idx) {
-                toCopy.put(fn.substring(0, idx) + ".json", f);
+            
+            String unitName = fn.substring(0, fn.length()-postifxLen);
+            String postfix = fn.substring(unitName.length());
+            
+            File cf = currentState.get(unitName);
+            File hf = toCopy.get(unitName);
+            
+            if ( null != cf ) {
+                int comp = search.compareTo(postfix);                
+//                if ( "MiNDTest01".equals(unitName) ) {
+//                    DustUtilsDev.dump("here");
+//                }
+                
+                if ( 0 <= comp ) {
+                    long cm = cf.lastModified();
+                    long fm = f.lastModified();
+                    long hm = (null == hf) ? 0 : hf.lastModified();
+                    
+                    if ( (toLatest || (cm >= fm)) && (fm > hm) ) {
+                        toCopy.put(unitName, f);
+                    }
+                }
             }
         }
 
         try {
             DustUtilsDev.dump("Restoring timestamp", timestamp);
+            
+            int count = 0;
 
             for (Map.Entry<String, File> tc : toCopy.entrySet()) {
-                File target = new File(dirPers, tc.getKey());
+                File fc = tc.getValue();
+                String unitName = tc.getKey();
+                
+                if ( fc.lastModified() == currentState.get(unitName).lastModified() ) {
+                    // same file
+                    continue;
+                }
+                
+                File target = new File(dirPers, tc.getKey() + ext);
                 Path pT = target.toPath();
-                Path pS = tc.getValue().toPath();
+                Path pS = fc.toPath();
                 Files.copy(pS, pT, StandardCopyOption.REPLACE_EXISTING);
                 DustUtilsDev.dump("Copied", pS, "to", pT);
+                ++count;
             }
 
-            DustUtilsDev.dump("Successfully restored", toCopy.size(), "files.");
+            DustUtilsDev.dump("Successfully verified", toCopy.size(), "restored", count, "files.");
         } catch (Throwable e) {
             Dust.wrapAndRethrowException("Restore failed", e);
         }

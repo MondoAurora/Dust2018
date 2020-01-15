@@ -1,6 +1,5 @@
 package dust.mj02.sandbox;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -11,6 +10,7 @@ import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.sandbox.persistence.DustPersistence;
 import dust.utils.DustUtilsDev;
+import dust.utils.DustUtilsJava;
 
 public class DustSandboxSrcGen implements DustSandboxComponents, DustProcComponents.DustProcPocessor {
 
@@ -83,13 +83,7 @@ public class DustSandboxSrcGen implements DustSandboxComponents, DustProcCompone
 
             Writer fw;
             try {
-                File f = new File(fName);
-                if ( !f.exists() ) {
-                    File d = f.getParentFile();
-                    if ( !d.exists() ) {
-                        d.mkdirs();
-                    }
-                }
+                DustUtilsJava.safeGetFile(fName);
                 fw = new OutputStreamWriter(new FileOutputStream(fName), CHARSET_UTF8);
                 fw.write(txt);
                 fw.flush();
@@ -142,5 +136,4 @@ public class DustSandboxSrcGen implements DustSandboxComponents, DustProcCompone
             DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);
         }
     }
-
 }

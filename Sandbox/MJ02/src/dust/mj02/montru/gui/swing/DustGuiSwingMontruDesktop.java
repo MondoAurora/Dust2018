@@ -390,7 +390,9 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 				for ( EntityDocWindow edw : factDocWindows.values() ) {
 					edw.updateTitle();
 				}
-				control.tmTypes.update();
+                if (null != control) {
+                    control.tmTypes.update();
+                }
 			} else {
 				EntityDocWindow edw = factDocWindows.peek(eChg);
 				if (null != edw) {

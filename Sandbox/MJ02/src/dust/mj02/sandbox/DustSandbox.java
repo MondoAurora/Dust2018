@@ -4,6 +4,7 @@ import dust.mj02.dust.Dust;
 import dust.mj02.dust.DustUtils;
 import dust.mj02.dust.geometry.DustGeometryComponents;
 import dust.mj02.dust.geometry.DustGeometryCoreServices;
+import dust.mj02.sandbox.development.DustDevelopmentUtils;
 import dust.mj02.sandbox.http.DustHttpClient;
 import dust.mj02.sandbox.http.DustHttpComponents;
 import dust.mj02.sandbox.http.DustHttpServerCoreServices;
@@ -30,6 +31,8 @@ public class DustSandbox implements DustSandboxComponents, DustHttpComponents, D
             initSrcGen();
             
             initDraw();
+            
+            DustDevelopmentUtils.init();
             
             inited = true;
         }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project MJ02 with libraries in sub-folder">
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
+	<!--define folder properties-->
+	<property name="dir.buildfile" value="." />
+	<property name="dir.workspace" value="C:/Users/loran/work/eclipseWS" />
+	<property name="dir.jarfile" value="${dir.buildfile}/exec" />
+	<property name="dir.libdir" value="${dir.jarfile}/lib" />
+
+	<target name="create_run_jar">
+		<delete dir="${dir.libdir}" />
+		<mkdir dir="${dir.libdir}" />
+
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+
+
+		<jar destfile="${dir.libdir}/montru.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<!--attribute name="Main-Class" value="dust.mj02.dust.knowledge.DustProcRuntime" />
+				<attribute name="Class-Path" value=". mj02_lib/*" /-->
+			</manifest>
+			<fileset dir="${dir.buildfile}/bin" />
+			<fileset dir="C:/Users/loran/work/git/Dust2018/Java/DustUtils/bin" />
+		</jar>
+		<copydir src="${dir.buildfile}/../ExtLib/lib/" includes="**" flatten="true" dest="${dir.libdir}" />
+
+		<delete dir="${dir.jarfile}/output" />
+		<mkdir dir="${dir.jarfile}/output/persistence" />
+		<copydir src="${dir.buildfile}/output/persistence" includes="*.json" dest="${dir.jarfile}/output/persistence" />
+
+		<copydir src="${dir.buildfile}/images/" dest="${dir.jarfile}/images" />
+		<copy file="${dir.buildfile}/montru.bat" todir="${dir.jarfile}" />
+	</target>
+</project>

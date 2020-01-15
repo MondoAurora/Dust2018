@@ -131,7 +131,7 @@ public class DustPersistence implements DustKernelComponents, DustPersistenceCom
 //    };
 
     static class SaveContext {
-        private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
+        static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
         private static final DustEntity MT_ATT = EntityResolver.getEntity(DustMetaTypes.AttDef);
         private static final DustEntity MT_LINK =  EntityResolver.getEntity(DustMetaTypes.LinkDef);
         private static final DustEntity MID_ATT = EntityResolver.getEntity(DustMetaAttDefTypeValues.AttDefIdentifier);

@@ -1,5 +1,8 @@
 package dust.mj02.dust;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -490,6 +493,24 @@ public class DustUtils implements DustComponents, DustKernelComponents {
         }
 
         protected abstract DustEntity createMsg();
+    }
+
+    public static void writeToFile(File dir, String name, String content) {
+        try {
+            if (!dir.exists() ) {
+                dir.mkdirs();
+            }
+            
+            File f = new File(dir, name);
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            bw.write(content);
+            bw.flush();
+            bw.close();
+        } catch (Throwable t) {
+            Dust.wrapAndRethrowException("Error writing file", t);
+        }
+
     }
 
 }

@@ -109,8 +109,9 @@ class DustGuiSwingMontruControl extends JPanel implements DustGuiSwingMontruComp
                     }
                     break;
                 case RESTORE:
-                    String timestamp = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Restore timestamp?", "20190618_121717_717");
-                    if (!DustUtilsJava.isEmpty(timestamp)) {
+                    String timestamp = JOptionPane.showInputDialog(DustGuiSwingMontruControl.this, "Restore timestamp?", "20200113_194110_986");
+//                    if (!DustUtilsJava.isEmpty(timestamp)) 
+                    {
                         DustPersistence.restoreFromHistory(PERS_STORAGE_DEF_MULTI, timestamp);
                     }
                     break;
