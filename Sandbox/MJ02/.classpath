@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="/SandboxExtLib/lib/jetty/servlet-api-3.1.jar"/>
 	<classpathentry kind="lib" path="/SandboxExtLib/lib/jdbc/mysql-connector-java-8.0.18.jar"/>
 	<classpathentry kind="lib" path="/SandboxExtLib/lib/jdbc/mssql-jdbc-7.4.1.jre8-shaded.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/MiNDTest01"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

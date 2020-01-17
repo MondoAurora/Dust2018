@@ -137,7 +137,11 @@ class DustGuiSwingMontruLinks extends JPanel implements DustGuiSwingMontruCompon
                 DustEntity eiSrc = ref.get(RefKey.source);
                 DustEntity eiTarg = ref.get(RefKey.target);
 
-                DustEntity srcType = ((DustRef) DustUtils.accessEntity(DataCommand.getValue, eiSrc, DustMetaLinks.LinkDefParent)).get(RefKey.target);
+                DustRef refLDP = (DustRef) DustUtils.accessEntity(DataCommand.getValue, eiSrc, DustMetaLinks.LinkDefParent);
+                if ( null == refLDP ) {
+                    return;
+                }
+                DustEntity srcType = refLDP.get(RefKey.target);
 
                 EntityDocWindow edwSrc = desktop.factDocWindows.peek(srcType);
                 EntityDocWindow edwTrg = desktop.factDocWindows.peek(eiTarg);

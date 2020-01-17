@@ -15,6 +15,7 @@ public interface DustGenericComponents extends DustComponents {
 	};
 	
 	enum DustGenericLinks implements DustEntityKey {
+	    TagClass,
 		ConnectedOwner, ConnectedRequires, ConnectedExtends, 
 		ContextAwareEntity, ReferencePath, CallbackMessage
 	};

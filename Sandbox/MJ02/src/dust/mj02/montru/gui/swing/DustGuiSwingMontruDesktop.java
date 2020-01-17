@@ -36,6 +36,8 @@ import dust.mj02.dust.knowledge.DustProcComponents;
 import dust.mj02.sandbox.DustSandbox;
 import dust.utils.DustUtilsFactory;
 import dust.utils.DustUtilsJava;
+import dust.utils.DustUtilsMuteManager;
+import dust.utils.DustUtilsMuteManager.MutableModule;
 
 public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSwingMontruComponents,
 		DustProcComponents.DustProcListener, DustProcComponents.DustProcAgent, DustProcComponents.DustProcActive {
@@ -136,6 +138,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
 		@Override
         public void activateEntities(DustEntity... entities) {
             try {
+                DustUtilsMuteManager.mute(MutableModule.GUI, true);
                 DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, true);
 
                 for (DustEntity de : entities) {
@@ -143,6 +146,7 @@ public class DustGuiSwingMontruDesktop extends JDesktopPane implements DustGuiSw
                 }
             } finally {
                 DustUtils.accessEntity(DataCommand.setValue, ContextRef.session, DustProcAtts.SessionChangeMute, false);
+                DustUtilsMuteManager.mute(MutableModule.GUI, false);
             }
         }
 
