@@ -104,8 +104,9 @@ public class DustDevelopmentProject implements DustDevelopmentComponents, DustPr
                 @Override
                 public void processRef(DustRef ref) {
                     StringBuilder sb = null;
-                    for (DustEntity ePkg = ref.get(RefKey.target); null != ePkg; ePkg = mapParents.get(ePkg)) {
-                        String fn = DustUtils.getByPath(ePkg, DustGenericAtts.IdentifiedIdLocal);
+                    DustEntity ePkg = ref.get(RefKey.target);
+                    for (DustEntity ePkgPath = ePkg; null != ePkgPath; ePkgPath = mapParents.get(ePkgPath)) {
+                        String fn = DustUtils.getByPath(ePkgPath, DustGenericAtts.IdentifiedIdLocal);
                         if ( null == sb ) {
                             sb = new StringBuilder(fn);
                         } else {
@@ -113,7 +114,21 @@ public class DustDevelopmentProject implements DustDevelopmentComponents, DustPr
                             sb.insert(0, fn);
                         }
                     }
-                    createSubdir(genDir, sb.toString());
+                    
+                    String pkgPath = sb.toString();
+                    File fPkg = createSubdir(genDir, pkgPath);
+                    
+                    Dust.processRefs(new RefProcessor() {
+                        @Override
+                        public void processRef(DustRef ref) {
+                            DustEntity eJavaItem = ref.get(RefKey.source);
+                            String name = DustUtils.getByPath(eJavaItem, DustGenericAtts.IdentifiedIdLocal);
+                            
+                            String txt = "package " + pkgPath.replace(File.separatorChar, '.') + ";\n\n";
+                            
+                            DustUtils.writeToFile(fPkg, name + ".java", txt);
+                        }
+                    }, null, EntityResolver.getEntity(DustDataLinks.EntityTags), ePkg);
                 }
             });
         }
